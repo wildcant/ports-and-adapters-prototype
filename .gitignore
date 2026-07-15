@@ -1,0 +1,6 @@
+node_modules
+.env
+*.db
+
+# Prisma generated client (regenerate with: npx prisma generate)
+backend/generated/
