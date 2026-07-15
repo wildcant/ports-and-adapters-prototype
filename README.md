@@ -16,30 +16,31 @@ A minimal prototype exploring **Ports & Adapters** (Hexagonal Architecture) with
 
 ```
 ├── backend/
-│   ├── index.ts                          # Composition root (standalone API server)
-│   ├── container.ts                      # Shared container (importable as a library)
-│   ├── server/
-│   │   ├── ports.ts                      # App + HttpRequest/HttpResult interfaces
-│   │   ├── app.ts                        # Zero-dependency fetch-based router
-│   │   └── platforms.ts                  # Node.js, Express, Vercel, Lambda, etc.
-│   ├── routes-loader.ts                  # File-based route discovery
-│   ├── api/
-│   │   └── identity/
-│   │       ├── route.ts                  # GET /identity, POST /identity
-│   │       └── [id]/route.ts             # GET/PATCH/DELETE /identity/:id
-│   └── modules/
-│       └── identity/
-│           ├── ports.ts                  # Domain types + service/repository interfaces
-│           ├── service.ts                # Business logic (depends only on ports)
-│           ├── index.ts                  # Module wiring (swap adapters here)
-│           └── adapters/
-│               ├── drizzle/              # Drizzle + SQLite adapter
-│               │   ├── schema.ts
-│               │   ├── db.ts
-│               │   └── repo.ts
-│               └── prisma/               # Prisma + SQLite adapter
-│                   ├── db.ts
-│                   └── repo.ts
+│   └── src/
+│       ├── index.ts                      # Composition root (standalone API server)
+│       ├── container.ts                  # Shared container (importable as a library)
+│       ├── routes-loader.ts              # File-based route discovery
+│       ├── server/
+│       │   ├── ports.ts                  # App + HttpRequest/HttpResult interfaces
+│       │   ├── app.ts                    # Zero-dependency fetch-based router
+│       │   └── platforms.ts              # Node.js, Express, Vercel, Lambda, etc.
+│       ├── api/
+│       │   └── identity/
+│       │       ├── route.ts              # GET /identity, POST /identity
+│       │       └── [id]/route.ts         # GET/PATCH/DELETE /identity/:id
+│       └── modules/
+│           └── identity/
+│               ├── ports.ts              # Domain types + service/repository interfaces
+│               ├── service.ts            # Business logic (depends only on ports)
+│               ├── index.ts              # Module wiring (swap adapters here)
+│               └── adapters/
+│                   ├── drizzle/           # Drizzle + SQLite adapter
+│                   │   ├── schema.ts
+│                   │   ├── db.ts
+│                   │   └── repo.ts
+│                   └── prisma/            # Prisma + SQLite adapter
+│                       ├── db.ts
+│                       └── repo.ts
 ├── frontend/                             # TanStack Start (SSR React)
 │   └── src/
 │       ├── server/users.ts               # Server functions using backend container
@@ -86,7 +87,7 @@ npm run --workspace=frontend dev
 
 ### Swap ORM (Drizzle -> Prisma)
 
-Change one import in `backend/modules/identity/index.ts`:
+Change one import in `backend/src/modules/identity/index.ts`:
 
 ```diff
 -import { createDb, createUserRepository } from "./adapters/drizzle/index.js"
@@ -99,7 +100,7 @@ The service, routes, and frontend all keep working unchanged.
 
 The route handlers in `api/` are framework-agnostic — they use `HttpRequest`/`HttpResult`, not Express `req`/`res`. The `App` port exposes a Web Standard `fetch(Request) -> Response` interface.
 
-See `backend/server/platforms.ts` for examples of plugging the same `App` into Node.js, Express, Vercel, Lambda, Cloudflare Workers, Bun, or Deno.
+See `backend/src/server/platforms.ts` for examples of plugging the same `App` into Node.js, Express, Vercel, Lambda, Cloudflare Workers, Bun, or Deno.
 
 ## Key concepts
 
@@ -133,3 +134,12 @@ TanStack Start:    createServerFn -> container -> service -> DB
 ```
 
 The service layer doesn't know or care which entry point called it.
+
+## TODO
+
+- [ ] Add a Supabase adapter to the identity module (alongside Drizzle and Prisma)
+- [ ] Investigate how to handle circular dependencies between modules — how does DDD suggest resolving cross-module references?
+- [ ] Deploy the app and backend to different infrastructure targets:
+  - [ ] Serverless: Cloudflare Workers, AWS Lambda
+  - [ ] Server-based: regular VPS on AWS
+- [ ] Explore TanStack's different approaches to building and rendering (SPA vs SSR)

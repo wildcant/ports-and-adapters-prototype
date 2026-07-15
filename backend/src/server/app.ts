@@ -6,7 +6,6 @@
  * Runs everywhere: Node.js, Vercel, Lambda, CF Workers, Bun, Deno.
  */
 
-import type { AwilixContainer } from "awilix"
 import type { App, CreateApp, RouteHandler } from "./ports.js"
 
 type Route = {

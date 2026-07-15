@@ -3,10 +3,10 @@
   "private": true,
   "type": "module",
   "exports": {
-    "./container": "./container.ts"
+    "./container": "./src/container.ts"
   },
   "scripts": {
-    "start": "tsx index.ts",
+    "start": "tsx src/index.ts",
     "typecheck": "tsc --noEmit",
     "db:generate": "drizzle-kit generate",
     "db:migrate": "drizzle-kit migrate",

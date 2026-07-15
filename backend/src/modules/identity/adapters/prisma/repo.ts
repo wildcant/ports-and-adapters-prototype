@@ -3,7 +3,7 @@
  * Fulfills the exact same port as the Drizzle adapter.
  */
 
-import type { PrismaClient } from "../../../../generated/prisma/client.js"
+import type { PrismaClient } from "../../../../../generated/prisma/client.js"
 import type { UserRepository } from "../../ports.js"
 
 type Dependencies = {
