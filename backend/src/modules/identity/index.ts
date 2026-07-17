@@ -6,12 +6,13 @@
  * the service or the routes.
  *
  * To swap ORMs, change the import path:
- *   "./adapters/drizzle/index.js"  ->  Drizzle + SQLite (in-memory)
- *   "./adapters/prisma/index.js"   ->  Prisma + SQLite (file)
+ *   "./adapters/drizzle/index.js"   ->  Drizzle + SQLite (in-memory)
+ *   "./adapters/prisma/index.js"    ->  Prisma + SQLite (file)
+ *   "./adapters/supabase/index.js"  ->  Drizzle + Supabase Postgres
  */
 
 import { asFunction, type AwilixContainer } from "awilix"
-import { createDb, createUserRepository } from "./adapters/drizzle/index.js"
+import { createDb, createUserRepository } from "./adapters/supabase/index.js"
 import { createIdentityService } from "./service.js"
 
 export function registerIdentityModule(container: AwilixContainer) {

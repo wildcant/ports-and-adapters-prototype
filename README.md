@@ -138,7 +138,7 @@ The service layer doesn't know or care which entry point called it.
 ## TODO
 
 - [ ] Add a Supabase adapter to the identity module (alongside Drizzle and Prisma)
-- [ ] Investigate how to handle circular dependencies between modules — how does DDD suggest resolving cross-module references?
+- [ ] Investigate how to handle circular dependencies between modules — how does DDD suggest resolving cross-module references? When is the event bus necessary? is awilix enough for my usecase?
 - [ ] Deploy the app and backend to different infrastructure targets:
   - [ ] Serverless: Cloudflare Workers, AWS Lambda
   - [ ] Server-based: regular VPS on AWS
