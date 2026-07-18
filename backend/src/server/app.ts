@@ -6,7 +6,7 @@
  * Runs everywhere: Node.js, Vercel, Lambda, CF Workers, Bun, Deno.
  */
 
-import type { App, CreateApp, RouteHandler } from "./ports.js"
+import type { App, CreateApp, RouteHandler } from './ports.js'
 
 type Route = {
   method: string
@@ -22,7 +22,7 @@ function compilePath(path: string): { pattern: RegExp; paramNames: string[] } {
   const paramNames: string[] = []
   const regexStr = path.replace(/:(\w+)/g, (_, name) => {
     paramNames.push(name)
-    return "([^/]+)"
+    return '([^/]+)'
   })
   return { pattern: new RegExp(`^${regexStr}$`), paramNames }
 }
@@ -40,13 +40,13 @@ export const createApp: CreateApp = ({ container }) => {
       const url = new URL(request.url)
       const method = request.method.toUpperCase()
       const corsHeaders = {
-        "Access-Control-Allow-Origin": "*",
-        "Access-Control-Allow-Methods": "GET, POST, PUT, PATCH, DELETE, OPTIONS",
-        "Access-Control-Allow-Headers": "Content-Type",
+        'Access-Control-Allow-Origin': '*',
+        'Access-Control-Allow-Methods': 'GET, POST, PUT, PATCH, DELETE, OPTIONS',
+        'Access-Control-Allow-Headers': 'Content-Type',
       }
 
       // Handle CORS preflight
-      if (method === "OPTIONS") {
+      if (method === 'OPTIONS') {
         return new Response(null, { status: 204, headers: corsHeaders })
       }
 
@@ -60,7 +60,7 @@ export const createApp: CreateApp = ({ container }) => {
           params[name] = match[i + 1]
         })
 
-        const body = ["GET", "HEAD", "DELETE"].includes(method)
+        const body = ['GET', 'HEAD', 'DELETE'].includes(method)
           ? undefined
           : await request.json().catch(() => undefined)
 
@@ -73,7 +73,7 @@ export const createApp: CreateApp = ({ container }) => {
         return Response.json(result.json, { status: result.status, headers: corsHeaders })
       }
 
-      return Response.json({ error: "Not Found" }, { status: 404, headers: corsHeaders })
+      return Response.json({ error: 'Not Found' }, { status: 404, headers: corsHeaders })
     },
   }
 

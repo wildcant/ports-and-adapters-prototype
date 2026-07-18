@@ -1,12 +1,8 @@
-import { createFileRoute } from "@tanstack/react-router"
-import { useState } from "react"
-import {
-  listUsers,
-  createUser,
-  deleteUser as deleteUserFn,
-} from "../server/users"
+import { createFileRoute } from '@tanstack/react-router'
+import { useState } from 'react'
+import { createUser, deleteUser as deleteUserFn, listUsers } from '../server/users'
 
-export const Route = createFileRoute("/users")({
+export const Route = createFileRoute('/users')({
   component: UsersPage,
   loader: () => listUsers(),
 })
@@ -14,8 +10,8 @@ export const Route = createFileRoute("/users")({
 function UsersPage() {
   const initialUsers = Route.useLoaderData()
   const [users, setUsers] = useState(initialUsers)
-  const [name, setName] = useState("")
-  const [email, setEmail] = useState("")
+  const [name, setName] = useState('')
+  const [email, setEmail] = useState('')
 
   async function refresh() {
     setUsers(await listUsers())
@@ -24,8 +20,8 @@ function UsersPage() {
   async function addUser(e: React.FormEvent) {
     e.preventDefault()
     await createUser({ data: { name, email } })
-    setName("")
-    setEmail("")
+    setName('')
+    setEmail('')
     await refresh()
   }
 
@@ -38,15 +34,10 @@ function UsersPage() {
     <main className="page-wrap px-4 pb-8 pt-14">
       <section className="island-shell rise-in rounded-[2rem] px-6 py-10 sm:px-10 sm:py-14">
         <p className="island-kicker mb-3">Identity Module</p>
-        <h1 className="display-title mb-5 text-4xl font-bold tracking-tight text-[var(--sea-ink)]">
-          Users
-        </h1>
+        <h1 className="display-title mb-5 text-4xl font-bold tracking-tight text-[var(--sea-ink)]">Users</h1>
         <p className="mb-6 text-[var(--sea-ink-soft)]">
-          Using{" "}
-          <code className="rounded bg-black/5 px-1.5 py-0.5 text-sm">
-            createServerFn
-          </code>{" "}
-          — calls the backend service directly, no HTTP round-trip
+          Using <code className="rounded bg-black/5 px-1.5 py-0.5 text-sm">createServerFn</code> — calls the backend
+          service directly, no HTTP round-trip
         </p>
 
         <form onSubmit={addUser} className="mb-8 flex flex-wrap gap-3">
@@ -76,19 +67,13 @@ function UsersPage() {
 
         <div className="space-y-3">
           {users.map((user) => (
-            <div
-              key={user.id}
-              className="island-shell flex items-center justify-between rounded-xl p-4"
-            >
+            <div key={user.id} className="island-shell flex items-center justify-between rounded-xl p-4">
               <div>
-                <p className="font-semibold text-[var(--sea-ink)]">
-                  {user.name}
-                </p>
-                <p className="text-sm text-[var(--sea-ink-soft)]">
-                  {user.email}
-                </p>
+                <p className="font-semibold text-[var(--sea-ink)]">{user.name}</p>
+                <p className="text-sm text-[var(--sea-ink-soft)]">{user.email}</p>
               </div>
               <button
+                type="button"
                 onClick={() => handleDelete(user.id)}
                 className="rounded-full border border-red-200 bg-red-50 px-4 py-1.5 text-xs font-semibold text-red-600 transition hover:bg-red-100"
               >
@@ -97,9 +82,7 @@ function UsersPage() {
             </div>
           ))}
           {users.length === 0 && (
-            <p className="text-center text-sm text-[var(--sea-ink-soft)]">
-              No users yet. Add one above.
-            </p>
+            <p className="text-center text-sm text-[var(--sea-ink-soft)]">No users yet. Add one above.</p>
           )}
         </div>
       </section>

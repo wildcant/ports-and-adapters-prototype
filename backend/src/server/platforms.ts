@@ -3,32 +3,32 @@
  * Each is a thin adapter from app.fetch to the platform's entry point.
  */
 
-import type { App } from "./ports.js"
+import type { App } from './ports.js'
 
 // ---- Node.js (local dev, traditional servers) ----
 
 export async function serveNode(app: App, port: number, callback?: () => void) {
   // Node 18+ has built-in fetch, but no built-in way to serve it.
   // Use @hono/node-server which accepts any fetch handler.
-  const { serve } = await import("@hono/node-server")
+  const { serve } = await import('@hono/node-server')
   serve({ fetch: app.fetch, port }, callback)
 }
 
 // ---- Express (existing apps, legacy integrations) ----
 
 export async function serveExpress(app: App, port: number, callback?: () => void) {
-  const express = (await import("express")).default
-  const { Readable } = await import("node:stream")
+  const express = (await import('express')).default
+  const { Readable } = await import('node:stream')
   const server = express()
 
-  server.all("*", async (req, res) => {
-    const url = `${req.protocol}://${req.get("host")}${req.originalUrl}`
-    const hasBody = !["GET", "HEAD", "DELETE"].includes(req.method)
+  server.all('*', async (req, res) => {
+    const url = `${req.protocol}://${req.get('host')}${req.originalUrl}`
+    const hasBody = !['GET', 'HEAD', 'DELETE'].includes(req.method)
     const request = new Request(url, {
       method: req.method,
       headers: req.headers as Record<string, string>,
-      body: hasBody ? Readable.toWeb(req) as ReadableStream : undefined,
-      duplex: hasBody ? "half" : undefined,
+      body: hasBody ? (Readable.toWeb(req) as ReadableStream) : undefined,
+      duplex: hasBody ? 'half' : undefined,
     } as RequestInit)
 
     const response = await app.fetch(request)

@@ -1,0 +1,4 @@
+1. .env validation with zod
+2. no db in repo (only client) or module service (only repo)
+3. global error class and error handling (see MedusaError)
+4. http body and query validations and strict types (dtos?).

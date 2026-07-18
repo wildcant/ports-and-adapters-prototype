@@ -3,15 +3,13 @@
  * Receives the repository via Awilix injection (FP factory style).
  */
 
-import type { IdentityService, UserRepository } from "./ports.js"
+import type { IdentityService, UserRepository } from './ports.js'
 
 type Dependencies = {
   userRepository: UserRepository
 }
 
-export const createIdentityService = ({
-  userRepository,
-}: Dependencies): IdentityService => {
+export const createIdentityService = ({ userRepository }: Dependencies): IdentityService => {
   return {
     listUsers: () => userRepository.find(),
 
@@ -24,15 +22,15 @@ export const createIdentityService = ({
     },
 
     createUser: async (data) => {
-      if (!data.email?.includes("@")) {
-        throw new Error("A valid email is required")
+      if (!data.email?.includes('@')) {
+        throw new Error('A valid email is required')
       }
       return userRepository.create(data)
     },
 
     updateUser: async (id, data) => {
-      if (data.email && !data.email.includes("@")) {
-        throw new Error("A valid email is required")
+      if (data.email && !data.email.includes('@')) {
+        throw new Error('A valid email is required')
       }
       const updated = await userRepository.update(id, data)
       if (!updated) {

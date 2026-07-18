@@ -4,19 +4,17 @@
  * Swap this file to switch ORMs without touching the service or ports.
  */
 
-import { randomUUID } from "crypto"
-import { eq } from "drizzle-orm"
-import type { BetterSQLite3Database } from "drizzle-orm/better-sqlite3"
-import type { UserRepository } from "../../ports.js"
-import { usersTable } from "./schema.js"
+import { randomUUID } from 'node:crypto'
+import { eq } from 'drizzle-orm'
+import type { BetterSQLite3Database } from 'drizzle-orm/better-sqlite3'
+import type { UserRepository } from '../../ports.js'
+import { usersTable } from './schema.js'
 
 type Dependencies = {
   db: BetterSQLite3Database
 }
 
-export const createDrizzleUserRepository = ({
-  db,
-}: Dependencies): UserRepository => {
+export const createDrizzleUserRepository = ({ db }: Dependencies): UserRepository => {
   return {
     find: async () => {
       return db.select().from(usersTable).all()
@@ -39,29 +37,17 @@ export const createDrizzleUserRepository = ({
     },
 
     update: async (id, data) => {
-      const existing = db
-        .select()
-        .from(usersTable)
-        .where(eq(usersTable.id, id))
-        .all()
+      const existing = db.select().from(usersTable).where(eq(usersTable.id, id)).all()
       if (!existing[0]) return null
 
       db.update(usersTable).set(data).where(eq(usersTable.id, id)).run()
 
-      const updated = db
-        .select()
-        .from(usersTable)
-        .where(eq(usersTable.id, id))
-        .all()
+      const updated = db.select().from(usersTable).where(eq(usersTable.id, id)).all()
       return updated[0] ?? null
     },
 
     delete: async (id) => {
-      const existing = db
-        .select()
-        .from(usersTable)
-        .where(eq(usersTable.id, id))
-        .all()
+      const existing = db.select().from(usersTable).where(eq(usersTable.id, id)).all()
       if (!existing[0]) return false
 
       db.delete(usersTable).where(eq(usersTable.id, id)).run()

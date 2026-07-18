@@ -8,13 +8,13 @@
  *    These are one-liners that plug an App into a specific runtime.
  */
 
-import type { AwilixContainer } from "awilix"
+import type { AwilixContainer } from 'awilix'
 
 // ---- Route handler types (used by api/ route files) ----
 
-export type HttpRequest = {
-  params: Record<string, string>
-  body: any
+export type HttpRequest<TBody = unknown, TParams extends Record<string, string> = Record<string, string>> = {
+  params: TParams
+  body: TBody
   scope: AwilixContainer
 }
 

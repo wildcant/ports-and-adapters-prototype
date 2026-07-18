@@ -1,8 +1,8 @@
-import { readdirSync, statSync } from "fs"
-import { join, sep } from "path"
-import type { App } from "./server/ports.js"
+import { readdirSync, statSync } from 'node:fs'
+import { join, sep } from 'node:path'
+import type { App } from './server/ports.js'
 
-const HTTP_METHODS = ["GET", "POST", "PUT", "PATCH", "DELETE"] as const
+const HTTP_METHODS = ['GET', 'POST', 'PUT', 'PATCH', 'DELETE'] as const
 
 /**
  * Recursively find all route.ts files under a directory.
@@ -14,7 +14,7 @@ function findRouteFiles(dir: string): string[] {
     const full = join(dir, entry)
     if (statSync(full).isDirectory()) {
       results.push(...findRouteFiles(full))
-    } else if (entry === "route.ts" || entry === "route.js") {
+    } else if (entry === 'route.ts' || entry === 'route.js') {
       results.push(full)
     }
   }
@@ -29,7 +29,7 @@ function findRouteFiles(dir: string): string[] {
  */
 function filePathToRoute(relativePath: string): string {
   const segments = relativePath
-    .replace(/route\.(ts|js)$/, "")
+    .replace(/route\.(ts|js)$/, '')
     .split(sep)
     .filter(Boolean)
     .map((segment) => {
@@ -37,7 +37,7 @@ function filePathToRoute(relativePath: string): string {
       return match ? `:${match[1]}` : segment
     })
 
-  return `/${segments.join("/")}`
+  return `/${segments.join('/')}`
 }
 
 /**
@@ -47,13 +47,13 @@ export async function loadRoutes(server: App, sourceDir: string) {
   const routeFiles = findRouteFiles(sourceDir)
 
   for (const absolutePath of routeFiles) {
-    const relativePath = absolutePath.replace(sourceDir + sep, "")
+    const relativePath = absolutePath.replace(sourceDir + sep, '')
     const routePath = filePathToRoute(relativePath)
 
     const routeExports = await import(absolutePath)
 
     for (const method of HTTP_METHODS) {
-      if (typeof routeExports[method] === "function") {
+      if (typeof routeExports[method] === 'function') {
         server.addRoute(method, routePath, routeExports[method])
         console.log(`  ${method} ${routePath}  <-  ${relativePath}`)
       }

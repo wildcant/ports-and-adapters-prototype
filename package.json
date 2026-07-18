@@ -1,8 +1,17 @@
 {
   "name": "ports-and-adapters-prototype",
   "private": true,
-  "workspaces": ["backend", "frontend"],
+  "workspaces": [
+    "backend",
+    "frontend"
+  ],
   "scripts": {
-    "setup": "npm install && npm run --workspace=backend db:setup"
+    "setup": "npm install && npm run --workspace=backend db:setup",
+    "lint": "biome lint .",
+    "format": "biome format --write .",
+    "check": "biome check ."
+  },
+  "devDependencies": {
+    "@biomejs/biome": "2.5.4"
   }
 }

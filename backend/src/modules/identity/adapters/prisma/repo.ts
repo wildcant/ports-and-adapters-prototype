@@ -3,16 +3,14 @@
  * Fulfills the exact same port as the Drizzle adapter.
  */
 
-import type { PrismaClient } from "../../../../../generated/prisma/client.js"
-import type { UserRepository } from "../../ports.js"
+import type { PrismaClient } from '../../../../../generated/prisma/client.js'
+import type { UserRepository } from '../../ports.js'
 
 type Dependencies = {
   db: PrismaClient
 }
 
-export const createPrismaUserRepository = ({
-  db: prisma,
-}: Dependencies): UserRepository => ({
+export const createPrismaUserRepository = ({ db: prisma }: Dependencies): UserRepository => ({
   find: async () => {
     return prisma.user.findMany()
   },

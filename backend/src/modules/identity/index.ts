@@ -11,9 +11,9 @@
  *   "./adapters/supabase/index.js"  ->  Drizzle + Supabase Postgres
  */
 
-import { asFunction, type AwilixContainer } from "awilix"
-import { createDb, createUserRepository } from "./adapters/supabase/index.js"
-import { createIdentityService } from "./service.js"
+import { type AwilixContainer, asFunction } from 'awilix'
+import { createDb, createUserRepository } from './adapters/supabase/index.js'
+import { createIdentityService } from './service.js'
 
 export function registerIdentityModule(container: AwilixContainer) {
   container.register({
