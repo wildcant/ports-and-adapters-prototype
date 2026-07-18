@@ -1,94 +1,85 @@
-import type { PostgresJsDatabase } from 'drizzle-orm/postgres-js'
 import type {
+  Context,
   CreateCustomerDTO,
   CustomerDTO,
   FilterableCustomerProps,
   FindConfig,
   ICustomerModuleService,
-  SharedContext,
   UpdateCustomerDTO,
 } from '../../../core/types/index.js'
-import { withTransaction } from '../../../core/utils/with-transaction.js'
+import type { WithTransaction } from '../../../core/utils/with-transaction.js'
 import type { CustomerRepository } from '../repositories/customer.js'
 
 type InjectedDependencies = {
   customerRepository: CustomerRepository
-  db: PostgresJsDatabase
+  withTransaction: WithTransaction
 }
 
 export class CustomerModuleService implements ICustomerModuleService {
   private customerRepository: CustomerRepository
-  private db: PostgresJsDatabase
+  private withTransaction: WithTransaction
 
-  constructor({ customerRepository, db }: InjectedDependencies) {
+  constructor({ customerRepository, withTransaction }: InjectedDependencies) {
     this.customerRepository = customerRepository
-    this.db = db
+    this.withTransaction = withTransaction
   }
 
   async retrieveCustomer(
     customerId: string,
     config?: FindConfig<CustomerDTO>,
-    context: SharedContext = {},
+    context?: Context,
   ): Promise<CustomerDTO> {
     const customer = await this.customerRepository.findById(customerId, config, context)
     if (!customer) {
       throw new Error(`Customer with id "${customerId}" not found`)
     }
-    return customer as CustomerDTO
+    return customer
   }
 
   async listCustomers(
     filters?: FilterableCustomerProps,
     config?: FindConfig<CustomerDTO>,
-    context: SharedContext = {},
+    context?: Context,
   ): Promise<CustomerDTO[]> {
-    return this.customerRepository.find(filters, config, context) as Promise<CustomerDTO[]>
+    return this.customerRepository.find(filters, config, context)
   }
 
   async listAndCountCustomers(
     filters?: FilterableCustomerProps,
     config?: FindConfig<CustomerDTO>,
-    context: SharedContext = {},
+    context?: Context,
   ): Promise<[CustomerDTO[], number]> {
     const [rows, count] = await this.customerRepository.findAndCount(filters, config, context)
-    return [rows as CustomerDTO[], count]
+    return [rows, count]
   }
 
-  async createCustomers(data: CreateCustomerDTO, context: SharedContext = {}): Promise<CustomerDTO> {
-    return withTransaction(this.db, context, async (ctx) => {
-      return this.customerRepository.create(data, ctx) as Promise<CustomerDTO>
+  async createCustomers(data: CreateCustomerDTO[], context: Context): Promise<CustomerDTO[]> {
+    return this.withTransaction(context, async (ctx) => {
+      return this.customerRepository.createMany(data, ctx)
     })
   }
 
-  async updateCustomers(
-    customerId: string,
-    data: UpdateCustomerDTO,
-    context: SharedContext = {},
-  ): Promise<CustomerDTO> {
-    return withTransaction(this.db, context, async (ctx) => {
-      return this.customerRepository.update(customerId, data, ctx) as Promise<CustomerDTO>
+  async updateCustomers(customerIds: string[], data: UpdateCustomerDTO, context: Context): Promise<CustomerDTO[]> {
+    return this.withTransaction(context, async (ctx) => {
+      return this.customerRepository.update(customerIds, data, ctx)
     })
   }
 
-  async deleteCustomers(customerId: string, context: SharedContext = {}): Promise<void> {
-    return withTransaction(this.db, context, async (ctx) => {
-      return this.customerRepository.delete(customerId, ctx)
+  async deleteCustomers(customerIds: string[], context: Context): Promise<void> {
+    return this.withTransaction(context, async (ctx) => {
+      await this.customerRepository.delete(customerIds, ctx)
     })
   }
 
-  async softDeleteCustomers(customerIds: string[], context: SharedContext = {}): Promise<void> {
-    return withTransaction(this.db, context, async (ctx) => {
-      for (const id of customerIds) {
-        await this.customerRepository.softDelete(id, ctx)
-      }
+  async softDeleteCustomers(customerIds: string[], context: Context): Promise<void> {
+    return this.withTransaction(context, async (ctx) => {
+      await this.customerRepository.softDelete(customerIds, ctx)
     })
   }
 
-  async restoreCustomers(customerIds: string[], context: SharedContext = {}): Promise<void> {
-    return withTransaction(this.db, context, async (ctx) => {
-      for (const id of customerIds) {
-        await this.customerRepository.restore(id, ctx)
-      }
+  async restoreCustomers(customerIds: string[], context: Context): Promise<void> {
+    return this.withTransaction(context, async (ctx) => {
+      await this.customerRepository.restore(customerIds, ctx)
     })
   }
 }

@@ -1,20 +1,15 @@
-import type { SharedContext } from '@core/types/shared-context.js'
-import { eq } from 'drizzle-orm'
-import type { PostgresJsDatabase } from 'drizzle-orm/postgres-js'
+import type { Context } from '@core/types/context.js'
+import { count, isNull } from 'drizzle-orm'
 import { BaseRepository } from '../../../core/utils/base-repository.js'
 import { customerTable } from '../models/customer.js'
 
-type InjectedDependencies = {
-  db: PostgresJsDatabase
-}
-
-export class CustomerRepository extends BaseRepository<typeof customerTable> {
-  constructor({ db }: InjectedDependencies) {
-    super(db, customerTable)
-  }
-
-  async findCustomCustomer(context: SharedContext = {}) {
-    const client = this.getClient(context)
-    client.select().from(customerTable).where(eq(customerTable.status, 'active'))
+export class CustomerRepository extends BaseRepository(customerTable) {
+  // Example: custom query not covered by the base repository's generic interface
+  async countByStatus(context: Context) {
+    return this.getClient(context)
+      .select({ status: this.table.status, count: count() })
+      .from(this.table)
+      .where(isNull(this.table.deleted_at))
+      .groupBy(this.table.status)
   }
 }

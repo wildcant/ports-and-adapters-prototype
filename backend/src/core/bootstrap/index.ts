@@ -3,6 +3,7 @@ import { drizzle } from 'drizzle-orm/postgres-js'
 import type { Sql } from 'postgres'
 import { ContainerRegistrationKeys } from '../utils/container.js'
 import type { ModuleDefinition } from '../utils/module.js'
+import { createWithTransaction } from '../utils/with-transaction.js'
 
 export function bootstrapModule(sharedContainer: AwilixContainer, moduleDefinition: ModuleDefinition): void {
   const localContainer = createContainer()
@@ -13,6 +14,7 @@ export function bootstrapModule(sharedContainer: AwilixContainer, moduleDefiniti
 
   localContainer.register({
     db: asValue(db),
+    withTransaction: asValue(createWithTransaction(db)),
   })
 
   // Register repositories in the local container (private to this module)
