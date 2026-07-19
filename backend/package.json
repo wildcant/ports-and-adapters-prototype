@@ -6,16 +6,20 @@
     "./container": "./src/container.ts"
   },
   "scripts": {
-    "start": "tsx src/index.ts",
+    "start": "dotenvx run -f ../.env -- tsx src/index.ts",
     "test": "vitest run",
     "typecheck": "tsc --noEmit",
     "db:generate": "drizzle-kit generate",
     "db:migrate": "drizzle-kit migrate",
-    "db:generate:supabase": "drizzle-kit generate --config=drizzle.config.supabase.ts",
-    "db:migrate:supabase": "drizzle-kit migrate --config=drizzle.config.supabase.ts",
-    "db:setup": "drizzle-kit migrate && prisma generate --schema=prisma/schema.prisma"
+    "db:generate:supabase": "dotenvx run -f ../.env -- drizzle-kit generate --config=drizzle.config.supabase.ts",
+    "db:migrate:supabase": "dotenvx run -f ../.env -- drizzle-kit migrate --config=drizzle.config.supabase.ts",
+    "db:migrate:customer": "dotenvx run -f ../.env -- drizzle-kit migrate --config=src/modules/customer/drizzle.config.ts",
+    "db:setup": "drizzle-kit migrate && prisma generate --schema=prisma/schema.prisma",
+    "openapi:dump": "curl -s http://localhost:3000/openapi.json | python3 -m json.tool > ../openapi.json && echo 'Saved to openapi.json'"
   },
   "dependencies": {
+    "@asteasolutions/zod-to-openapi": "^8.5.0",
+    "@dotenvx/dotenvx": "^2.14.0",
     "@hono/node-server": "^2.0.0",
     "@prisma/adapter-better-sqlite3": "^7.8.0",
     "@prisma/client": "^7.8.0",
@@ -26,11 +30,13 @@
     "hono": "^4.12.0",
     "postgres": "^3.4.7",
     "prisma": "^7.8.0",
+    "swagger-ui-express": "^5.0.1",
     "zod": "^4.4.3"
   },
   "devDependencies": {
     "@types/better-sqlite3": "^7.6.0",
     "@types/express": "^5.0.0",
+    "@types/swagger-ui-express": "^4.1.8",
     "drizzle-kit": "^0.31.0",
     "tsx": "^4.19.0",
     "typescript": "^7.0.0",

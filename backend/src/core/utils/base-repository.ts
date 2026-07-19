@@ -2,6 +2,8 @@ import type { Column, InferInsertModel, InferSelectModel, SQL } from 'drizzle-or
 import { and, asc, count, desc, eq, getTableColumns, inArray, isNull } from 'drizzle-orm'
 import type { PgTable } from 'drizzle-orm/pg-core'
 import type { PostgresJsDatabase } from 'drizzle-orm/postgres-js'
+import { AppError, ErrorTypes } from '../errors/app-error.js'
+import { dbErrorMapper } from '../errors/db-error-mapper.js'
 import type { FindConfig, OperatorMap } from '../types/common.js'
 import type { Context } from '../types/context.js'
 import type { FilterRecord } from './build-filters.js'
@@ -100,6 +102,17 @@ export function BaseRepository<TTable extends PgTable & BaseColumns>(table: TTab
       return (rows[0] as Select) ?? null
     }
 
+    async findByIdOrFail(id: string, config?: FindConfig<Select>, context?: Context): Promise<Select> {
+      const entity = await this.findById(id, config, context)
+      if (!entity) {
+        throw new AppError({
+          type: ErrorTypes.NOT_FOUND,
+          message: `Entity with id "${id}" not found`,
+        })
+      }
+      return entity
+    }
+
     async findAndCount(
       filters?: EntityFilters<Select>,
       config?: FindConfig<Select>,
@@ -170,12 +183,26 @@ export function BaseRepository<TTable extends PgTable & BaseColumns>(table: TTab
     async restore(ids: string[], context?: Context): Promise<void> {
       if (ids.length === 0) return
       const client = this.getClient(context)
-      await client
-        .update(this.table)
-        .set({ deleted_at: null })
-        .where(inArray(this.table.id, ids))
+      await client.update(this.table).set({ deleted_at: null }).where(inArray(this.table.id, ids))
     }
   }
 
-  return Repository
+  return new Proxy(Repository, {
+    construct(Target, args) {
+      const instance = new Target(args[0])
+      return new Proxy(instance, {
+        get(target, prop, receiver) {
+          const val = Reflect.get(target, prop, receiver)
+          if (typeof val !== 'function') return val
+          return (...fnArgs: unknown[]) => {
+            const result = (val as (...a: unknown[]) => unknown).apply(target, fnArgs)
+            if (result instanceof Promise) {
+              return result.catch(dbErrorMapper)
+            }
+            return result
+          }
+        },
+      })
+    },
+  })
 }

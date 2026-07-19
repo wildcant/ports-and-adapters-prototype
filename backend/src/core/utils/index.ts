@@ -1,3 +1,4 @@
+export * from '../errors/index.js'
 export { BaseRepository } from './base-repository.js'
 export { buildFilters } from './build-filters.js'
 export { ContainerRegistrationKeys } from './container.js'

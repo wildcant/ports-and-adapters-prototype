@@ -1,5 +1,8 @@
-import { readdirSync, statSync } from 'node:fs'
+import { existsSync, readdirSync, statSync } from 'node:fs'
 import { join, sep } from 'node:path'
+import { applyMiddleware } from './core/middleware/apply-middleware.js'
+import type { MiddlewareRoute } from './core/middleware/types.js'
+import { registerOpenApiRoute } from './openapi/register-route.js'
 import type { App } from './server/ports.js'
 
 const HTTP_METHODS = ['GET', 'POST', 'PUT', 'PATCH', 'DELETE'] as const
@@ -41,22 +44,54 @@ function filePathToRoute(relativePath: string): string {
 }
 
 /**
+ * Find the middlewares.ts file for a given route file.
+ * Looks in the top-level API subdirectory (one level deep from sourceDir).
+ */
+function findMiddlewarePath(routeFilePath: string, sourceDir: string): string | null {
+  const relativePath = routeFilePath.replace(sourceDir + sep, '')
+  const topDir = relativePath.split(sep)[0]
+  const middlewarePath = join(sourceDir, topDir, 'middlewares.ts')
+  return existsSync(middlewarePath) ? middlewarePath : null
+}
+
+/**
  * Scan a source directory for route files and register them with the HttpServer.
  */
 export async function loadRoutes(server: App, sourceDir: string) {
   const routeFiles = findRouteFiles(sourceDir)
+  const middlewareCache = new Map<string, MiddlewareRoute[]>()
 
   for (const absolutePath of routeFiles) {
     const relativePath = absolutePath.replace(sourceDir + sep, '')
     const routePath = filePathToRoute(relativePath)
 
+    // Load middleware config (cached per file)
+    const middlewarePath = findMiddlewarePath(absolutePath, sourceDir)
+    let middlewareConfigs: MiddlewareRoute[] = []
+    if (middlewarePath) {
+      if (!middlewareCache.has(middlewarePath)) {
+        const mod = await import(middlewarePath)
+        middlewareCache.set(middlewarePath, mod.default ?? [])
+      }
+      middlewareConfigs = middlewareCache.get(middlewarePath) ?? []
+    }
+
     const routeExports = await import(absolutePath)
 
     for (const method of HTTP_METHODS) {
-      if (typeof routeExports[method] === 'function') {
-        server.addRoute(method, routePath, routeExports[method])
-        console.log(`  ${method} ${routePath}  <-  ${relativePath}`)
+      if (typeof routeExports[method] !== 'function') continue
+
+      let handler = routeExports[method]
+
+      // Match middleware by path and method
+      const config = middlewareConfigs.find((m) => m.matcher === routePath && m.method === method)
+      if (config) {
+        handler = applyMiddleware(config, handler)
+        registerOpenApiRoute(routePath, config)
       }
+
+      server.addRoute(method, routePath, handler)
+      console.log(`  ${method} ${routePath}  <-  ${relativePath}`)
     }
   }
 }

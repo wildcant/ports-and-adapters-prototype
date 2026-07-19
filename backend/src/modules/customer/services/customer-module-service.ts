@@ -29,11 +29,7 @@ export class CustomerModuleService implements ICustomerModuleService {
     config?: FindConfig<CustomerDTO>,
     context?: Context,
   ): Promise<CustomerDTO> {
-    const customer = await this.customerRepository.findById(customerId, config, context)
-    if (!customer) {
-      throw new Error(`Customer with id "${customerId}" not found`)
-    }
-    return customer
+    return this.customerRepository.findByIdOrFail(customerId, config, context)
   }
 
   async listCustomers(
@@ -53,31 +49,31 @@ export class CustomerModuleService implements ICustomerModuleService {
     return [rows, count]
   }
 
-  async createCustomers(data: CreateCustomerDTO[], context: Context): Promise<CustomerDTO[]> {
+  async createCustomers(data: CreateCustomerDTO[], context?: Context): Promise<CustomerDTO[]> {
     return this.withTransaction(context, async (ctx) => {
       return this.customerRepository.createMany(data, ctx)
     })
   }
 
-  async updateCustomers(customerIds: string[], data: UpdateCustomerDTO, context: Context): Promise<CustomerDTO[]> {
+  async updateCustomers(customerIds: string[], data: UpdateCustomerDTO, context?: Context): Promise<CustomerDTO[]> {
     return this.withTransaction(context, async (ctx) => {
       return this.customerRepository.update(customerIds, data, ctx)
     })
   }
 
-  async deleteCustomers(customerIds: string[], context: Context): Promise<void> {
+  async deleteCustomers(customerIds: string[], context?: Context): Promise<void> {
     return this.withTransaction(context, async (ctx) => {
       await this.customerRepository.delete(customerIds, ctx)
     })
   }
 
-  async softDeleteCustomers(customerIds: string[], context: Context): Promise<void> {
+  async softDeleteCustomers(customerIds: string[], context?: Context): Promise<void> {
     return this.withTransaction(context, async (ctx) => {
       await this.customerRepository.softDelete(customerIds, ctx)
     })
   }
 
-  async restoreCustomers(customerIds: string[], context: Context): Promise<void> {
+  async restoreCustomers(customerIds: string[], context?: Context): Promise<void> {
     return this.withTransaction(context, async (ctx) => {
       await this.customerRepository.restore(customerIds, ctx)
     })

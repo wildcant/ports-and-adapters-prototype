@@ -9,11 +9,6 @@ export const GET = async (req: HttpRequest): Promise<HttpResult> => {
 
 export const POST = async (req: HttpRequest<CreateUserInput>): Promise<HttpResult> => {
   const identityService = req.scope.resolve<IdentityService>('identityService')
-  try {
-    const user = await identityService.createUser(req.body)
-    return { status: 201, json: { user } }
-  } catch (err: unknown) {
-    const message = err instanceof Error ? err.message : 'Unknown error'
-    return { status: 400, json: { error: message } }
-  }
+  const user = await identityService.createUser(req.body)
+  return { status: 201, json: { user } }
 }

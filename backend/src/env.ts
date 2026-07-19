@@ -1,7 +1,13 @@
+import { dirname, resolve } from 'node:path'
+import { fileURLToPath } from 'node:url'
+import { config } from '@dotenvx/dotenvx'
 import { z } from 'zod'
 
+const __dirname = dirname(fileURLToPath(import.meta.url))
+config({ path: resolve(__dirname, '../../.env'), quiet: true })
+
 const envSchema = z.object({
-  SUPABASE_DATABASE_URL: z.string().url(),
+  SUPABASE_DATABASE_URL: z.url(),
   DATABASE_URL: z.string().optional(),
 })
 

@@ -14,6 +14,7 @@ import type { AwilixContainer } from 'awilix'
 
 export type HttpRequest<TBody = unknown, TParams extends Record<string, string> = Record<string, string>> = {
   params: TParams
+  query: Record<string, string | string[]>
   body: TBody
   scope: AwilixContainer
 }

@@ -6,6 +6,7 @@
  * Runs everywhere: Node.js, Vercel, Lambda, CF Workers, Bun, Deno.
  */
 
+import { errorHandler } from '../core/errors/index.js'
 import type { App, CreateApp, RouteHandler } from './ports.js'
 
 type Route = {
@@ -60,17 +61,33 @@ export const createApp: CreateApp = ({ container }) => {
           params[name] = match[i + 1]
         })
 
+        const query: Record<string, string | string[]> = {}
+        for (const [key, value] of url.searchParams.entries()) {
+          const existing = query[key]
+          if (existing) {
+            query[key] = Array.isArray(existing) ? [...existing, value] : [existing, value]
+          } else {
+            query[key] = value
+          }
+        }
+
         const body = ['GET', 'HEAD', 'DELETE'].includes(method)
           ? undefined
           : await request.json().catch(() => undefined)
 
-        const result = await route.handler({
-          params,
-          body,
-          scope: container.createScope(),
-        })
+        try {
+          const result = await route.handler({
+            params,
+            query,
+            body,
+            scope: container.createScope(),
+          })
 
-        return Response.json(result.json, { status: result.status, headers: corsHeaders })
+          return Response.json(result.json, { status: result.status, headers: corsHeaders })
+        } catch (err) {
+          const { status, json } = errorHandler(err)
+          return Response.json(json, { status, headers: corsHeaders })
+        }
       }
 
       return Response.json({ error: 'Not Found' }, { status: 404, headers: corsHeaders })

@@ -4,3 +4,5 @@ node_modules
 
 # Prisma generated client (regenerate with: npx prisma generate)
 backend/generated/
+
+tmp
