@@ -1,4 +1,4 @@
-import '../../../openapi/setup.js'
+import '../../openapi/setup.js'
 import { z } from 'zod'
 
 export const CreateCustomer = z

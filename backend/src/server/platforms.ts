@@ -20,7 +20,7 @@ export async function serveExpress(app: App, port: number, callback?: () => void
   const express = (await import('express')).default
   const { Readable } = await import('node:stream')
   const swaggerUi = await import('swagger-ui-express')
-  const { generateDocument } = await import('../openapi/registry.js')
+  const { generateDocument } = await import('../core/openapi/registry.js')
   const server = express()
 
   server.use('/docs', swaggerUi.serve, swaggerUi.setup(generateDocument()))

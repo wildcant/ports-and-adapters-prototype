@@ -1,3 +1,4 @@
+- tests. make sure db transactions are working properly.
 - global error class and error handling (see MedusaError)
 - http body and query validations and strict types (dtos?).
 - zod to open api. generate api client types.
@@ -5,7 +6,6 @@
 - consolidate database url after prisma and sqlite removal.
 - review last commit changes and add automated testing.
 - logger.
-- tests. make sure db transactions are working properly.
 
 Future TODOs
 - sagas for cross module resilient workflows

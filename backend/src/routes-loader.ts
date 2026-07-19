@@ -2,7 +2,7 @@ import { existsSync, readdirSync, statSync } from 'node:fs'
 import { join, sep } from 'node:path'
 import { applyMiddleware } from './core/middleware/apply-middleware.js'
 import type { MiddlewareRoute } from './core/middleware/types.js'
-import { registerOpenApiRoute } from './openapi/register-route.js'
+import { registerOpenApiRoute } from './core/openapi/register-route.js'
 import type { App } from './server/ports.js'
 
 const HTTP_METHODS = ['GET', 'POST', 'PUT', 'PATCH', 'DELETE'] as const

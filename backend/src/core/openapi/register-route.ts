@@ -1,5 +1,5 @@
 import type { RouteConfig } from '@asteasolutions/zod-to-openapi'
-import type { MiddlewareRoute } from '../core/middleware/types.js'
+import type { MiddlewareRoute } from '../middleware/types.js'
 import { registry } from './registry.js'
 
 const methodMap = {

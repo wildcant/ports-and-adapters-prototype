@@ -1,6 +1,6 @@
 import { join } from 'node:path'
 import { container } from './container.js'
-import { generateDocument } from './openapi/registry.js'
+import { generateDocument } from './core/openapi/registry.js'
 import { loadRoutes } from './routes-loader.js'
 import { createApp } from './server/app.js'
 import { serveExpress } from './server/platforms.js'
