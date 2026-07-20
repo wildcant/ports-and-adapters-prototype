@@ -19,7 +19,7 @@ type Route = {
 }
 
 /**
- * Convert "/identity/:id" to a regex + param names.
+ * Convert "/users/:id" to a regex + param names.
  */
 function compilePath(path: string): { pattern: RegExp; paramNames: string[] } {
   const paramNames: string[] = []

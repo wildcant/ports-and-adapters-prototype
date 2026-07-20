@@ -4,20 +4,20 @@ import { Modules } from '@core/utils/index.js'
 import type { z } from 'zod'
 import type { HttpRequest, HttpResult } from '../../../server/ports.js'
 
-export const GET = async (req: HttpRequest): Promise<HttpResult> => {
+export const GET = async (req: HttpRequest) => {
   const customerService = req.scope.resolve<ICustomerModuleService>(Modules.CUSTOMER)
   const customer = await customerService.retrieveCustomer(req.params.id)
-  return { status: 200, json: { customer } }
+  return { status: 200, json: { customer } } satisfies HttpResult
 }
 
-export const PATCH = async (req: HttpRequest<z.infer<typeof UpdateCustomer>>): Promise<HttpResult> => {
+export const PATCH = async (req: HttpRequest<z.infer<typeof UpdateCustomer>>) => {
   const customerService = req.scope.resolve<ICustomerModuleService>(Modules.CUSTOMER)
   const [customer] = await customerService.updateCustomers([req.params.id], req.body)
-  return { status: 200, json: { customer } }
+  return { status: 200, json: { customer } } satisfies HttpResult
 }
 
-export const DELETE = async (req: HttpRequest): Promise<HttpResult> => {
+export const DELETE = async (req: HttpRequest) => {
   const customerService = req.scope.resolve<ICustomerModuleService>(Modules.CUSTOMER)
   await customerService.softDeleteCustomers([req.params.id])
-  return { status: 200, json: { id: req.params.id, deleted: true } }
+  return { status: 200, json: { id: req.params.id, deleted: true } } satisfies HttpResult
 }

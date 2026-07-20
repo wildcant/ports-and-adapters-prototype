@@ -1,0 +1,11 @@
+import { Module } from '../../core/utils/module.js'
+import { Modules } from '../../core/utils/modules-definition.js'
+import { UserRepository } from './repositories/user.js'
+import { UserModuleService } from './services/user-module-service.js'
+
+export default Module(Modules.USER, {
+  service: UserModuleService,
+  repositories: {
+    userRepository: UserRepository,
+  },
+})

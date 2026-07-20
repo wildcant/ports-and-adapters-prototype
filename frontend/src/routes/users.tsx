@@ -1,6 +1,6 @@
 import { createFileRoute } from '@tanstack/react-router'
 import { useState } from 'react'
-import { createUser, deleteUser as deleteUserFn, listUsers } from '../server/users'
+import { createUser, deleteUser as deleteUserFn, listUsers, updateUser as updateUserFn } from '../server/users'
 
 export const Route = createFileRoute('/users')({
   component: UsersPage,
@@ -9,9 +9,12 @@ export const Route = createFileRoute('/users')({
 
 function UsersPage() {
   const initialUsers = Route.useLoaderData()
-  const [users, setUsers] = useState(initialUsers)
+  const [{ users }, setUsers] = useState(initialUsers)
   const [name, setName] = useState('')
   const [email, setEmail] = useState('')
+  const [editingId, setEditingId] = useState<string | null>(null)
+  const [editName, setEditName] = useState('')
+  const [editEmail, setEditEmail] = useState('')
 
   async function refresh() {
     setUsers(await listUsers())
@@ -22,6 +25,20 @@ function UsersPage() {
     await createUser({ data: { name, email } })
     setName('')
     setEmail('')
+    await refresh()
+  }
+
+  function startEditing(user: { id: string; name: string; email: string }) {
+    setEditingId(user.id)
+    setEditName(user.name)
+    setEditEmail(user.email)
+  }
+
+  async function saveEdit(e: React.FormEvent) {
+    e.preventDefault()
+    if (!editingId) return
+    await updateUserFn({ data: { id: editingId, name: editName, email: editEmail } })
+    setEditingId(null)
     await refresh()
   }
 
@@ -68,17 +85,60 @@ function UsersPage() {
         <div className="space-y-3">
           {users.map((user) => (
             <div key={user.id} className="island-shell flex items-center justify-between rounded-xl p-4">
-              <div>
-                <p className="font-semibold text-[var(--sea-ink)]">{user.name}</p>
-                <p className="text-sm text-[var(--sea-ink-soft)]">{user.email}</p>
-              </div>
-              <button
-                type="button"
-                onClick={() => handleDelete(user.id)}
-                className="rounded-full border border-red-200 bg-red-50 px-4 py-1.5 text-xs font-semibold text-red-600 transition hover:bg-red-100"
-              >
-                Delete
-              </button>
+              {editingId === user.id ? (
+                <form onSubmit={saveEdit} className="flex flex-1 flex-wrap items-center gap-3">
+                  <input
+                    type="text"
+                    value={editName}
+                    onChange={(e) => setEditName(e.target.value)}
+                    required
+                    className="rounded-lg border border-[rgba(23,58,64,0.2)] bg-white/50 px-3 py-1.5 text-sm"
+                  />
+                  <input
+                    type="email"
+                    value={editEmail}
+                    onChange={(e) => setEditEmail(e.target.value)}
+                    required
+                    className="rounded-lg border border-[rgba(23,58,64,0.2)] bg-white/50 px-3 py-1.5 text-sm"
+                  />
+                  <button
+                    type="submit"
+                    className="rounded-full border border-[rgba(50,143,151,0.3)] bg-[rgba(79,184,178,0.14)] px-4 py-1.5 text-xs font-semibold text-[var(--lagoon-deep)] transition hover:bg-[rgba(79,184,178,0.24)]"
+                  >
+                    Save
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setEditingId(null)}
+                    className="rounded-full border border-gray-200 bg-gray-50 px-4 py-1.5 text-xs font-semibold text-gray-600 transition hover:bg-gray-100"
+                  >
+                    Cancel
+                  </button>
+                </form>
+              ) : (
+                <>
+                  <div>
+                    <p className="font-semibold text-[var(--sea-ink)]">{user.name}</p>
+                    <p className="text-sm text-[var(--sea-ink-soft)]">{user.email}</p>
+                  </div>
+                  <div className="flex gap-2">
+                    <button
+                      type="button"
+                      onClick={() => startEditing(user)}
+                      className="rounded-full border border-[rgba(50,143,151,0.3)] bg-[rgba(79,184,178,0.14)] px-4 py-1.5 text-xs font-semibold text-[var(--lagoon-deep)] transition hover:bg-[rgba(79,184,178,0.24)]"
+                    >
+                      Edit
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => handleDelete(user.id)}
+                      className="rounded-full border border-red-200 bg-red-50 px-4 py-1.5 text-xs font-semibold text-red-600 transition hover:bg-red-100"
+                    >
+                      Delete
+                    </button>
+                  </div>
+                </>
+              )}
             </div>
           ))}
           {users.length === 0 && (

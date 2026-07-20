@@ -8,6 +8,8 @@ import {
   generateCustomerDTO,
   generateUpdateCustomerDTO,
 } from '../factories/customer-dto.js'
+import { generateUser } from '../factories/user.js'
+import { generateCreateUserDTO, generateUpdateUserDTO, generateUserDTO } from '../factories/user-dto.js'
 import { db as dbInstance } from './db-setup.js'
 
 const noopLogger: Logger = {
@@ -24,6 +26,7 @@ interface Fixtures {
   db: PostgresJsDatabase
   factories: {
     customer: typeof generateCustomer
+    user: typeof generateUser
   }
   dto: {
     generate: {
@@ -31,6 +34,9 @@ interface Fixtures {
       createCustomerAddress: typeof generateCreateCustomerAddressDTO
       updateCustomer: typeof generateUpdateCustomerDTO
       customer: typeof generateCustomerDTO
+      createUser: typeof generateCreateUserDTO
+      updateUser: typeof generateUpdateUserDTO
+      user: typeof generateUserDTO
     }
   }
   logger: Logger
@@ -43,6 +49,7 @@ export const test = testBase.extend<Fixtures>({
   async factories({ task: _ }, use) {
     await use({
       customer: generateCustomer,
+      user: generateUser,
     })
   },
   async dto({ task: _ }, use) {
@@ -52,6 +59,9 @@ export const test = testBase.extend<Fixtures>({
         createCustomerAddress: generateCreateCustomerAddressDTO,
         updateCustomer: generateUpdateCustomerDTO,
         customer: generateCustomerDTO,
+        createUser: generateCreateUserDTO,
+        updateUser: generateUpdateUserDTO,
+        user: generateUserDTO,
       },
     })
   },

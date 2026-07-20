@@ -16,7 +16,7 @@ beforeEach(async () => {
   await db.execute(dsql`DROP SCHEMA IF EXISTS drizzle CASCADE`)
   await db.execute(dsql`DROP SCHEMA IF EXISTS public CASCADE`)
   await db.execute(dsql`CREATE SCHEMA public`)
-  await migrate(db, { migrationsFolder: join(migrationsRoot, 'drizzle-supabase') })
+  await migrate(db, { migrationsFolder: join(migrationsRoot, 'src/modules/user/migrations') })
   await migrate(db, { migrationsFolder: join(migrationsRoot, 'src/modules/customer/migrations') })
   await db.execute(dsql`SET client_min_messages = NOTICE`)
 })

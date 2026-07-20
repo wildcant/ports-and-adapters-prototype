@@ -29,7 +29,7 @@ function findRouteFiles(dir: string): string[] {
 /**
  * Convert a file path relative to the source dir into a route pattern.
  *
- *   "identity/[id]/route.ts"  ->  "/identity/:id"
+ *   "users/[id]/route.ts"  ->  "/users/:id"
  */
 function filePathToRoute(relativePath: string): string {
   const segments = relativePath

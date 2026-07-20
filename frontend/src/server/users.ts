@@ -1,25 +1,15 @@
 import { createServerFn } from '@tanstack/react-start'
-import type { IdentityService } from 'backend/container'
-import { container } from 'backend/container'
+import { apiCall, userByIdApi, usersApi } from 'backend/api'
+import { CreateUser, IdParams, UpdateUser } from 'backend/validators'
 
-const getService = () => container.createScope().resolve<IdentityService>('identityService')
+export const listUsers = createServerFn({ method: 'GET' }).handler(apiCall(usersApi.GET))
 
-export const listUsers = createServerFn({ method: 'GET' }).handler(async () => {
-  const service = getService()
-  const users = await service.listUsers()
-  return users
-})
+export const createUser = createServerFn({ method: 'POST' }).validator(CreateUser).handler(apiCall(usersApi.POST))
 
-export const createUser = createServerFn({ method: 'POST' })
-  .validator((data: { name: string; email: string }) => data)
-  .handler(async ({ data }) => {
-    const service = getService()
-    return await service.createUser(data)
-  })
+export const updateUser = createServerFn({ method: 'POST' })
+  .validator(IdParams.extend(UpdateUser.shape))
+  .handler(apiCall(userByIdApi.PATCH, ({ id, ...body }) => ({ params: { id }, body })))
 
 export const deleteUser = createServerFn({ method: 'POST' })
-  .validator((data: { id: string }) => data)
-  .handler(async ({ data }) => {
-    const service = getService()
-    return await service.deleteUser(data.id)
-  })
+  .validator(IdParams)
+  .handler(apiCall(userByIdApi.DELETE, (data) => ({ params: data })))

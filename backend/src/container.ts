@@ -10,7 +10,7 @@ import { createLogger } from './core/logger/index.js'
 import { ContainerRegistrationKeys } from './core/utils/index.js'
 import { env } from './env.js'
 import customerModule from './modules/customer/index.js'
-import { registerIdentityModule } from './modules/identity/index.js'
+import userModule from './modules/user/index.js'
 
 const container = createContainer()
 
@@ -25,15 +25,8 @@ container.register({
   [ContainerRegistrationKeys.PG_CONNECTION]: asValue(client),
 })
 
-// Legacy module (uses old pattern — will be migrated in ticket 02)
-registerIdentityModule(container)
-
-// New modules using two-container bootstrap
+// Modules using two-container bootstrap
+bootstrapModule(container, userModule)
 bootstrapModule(container, customerModule)
 
-export type {
-  CreateUserInput,
-  IdentityService,
-  User,
-} from './modules/identity/ports.js'
 export { container }
