@@ -84,6 +84,7 @@ export default [
   {
     method: 'GET',
     matcher: '/customers',
+    operationId: 'listCustomers',
     summary: 'List customers',
     tags: [Tags.CUSTOMERS],
     responseSchema: CustomerListResponse,
@@ -92,6 +93,7 @@ export default [
     method: 'POST',
     matcher: '/customers',
     bodySchema: CreateCustomers,
+    operationId: 'createCustomers',
     summary: 'Create customers',
     tags: [Tags.CUSTOMERS],
     responseSchema: CustomerListResponse,
@@ -100,6 +102,7 @@ export default [
     method: 'GET',
     matcher: '/customers/:id',
     paramsSchema: IdParams,
+    operationId: 'getCustomer',
     summary: 'Retrieve a customer',
     tags: [Tags.CUSTOMERS],
     responseSchema: CustomerResponse,
@@ -120,7 +123,8 @@ export default [
 | `responseSchema` | No | Zod schema for response — used for OpenAPI docs only (not validated at runtime) |
 | `summary` | No | OpenAPI summary |
 | `description` | No | OpenAPI description |
-| `tags` | No | OpenAPI tags — use the `Tags` enum |
+| `operationId` | Yes | Unique operation name — used by Orval to generate function/type names |
+| `tags` | Yes | OpenAPI tags — use the `Tags` enum |
 
 ### Tags
 
@@ -129,7 +133,7 @@ Tags are defined as an enum in `backend/src/core/middleware/types.ts`. Add new t
 ```typescript
 export const Tags = {
   CUSTOMERS: 'Customers',
-  IDENTITY: 'Identity',
+  USERS: 'Users',
 } as const
 ```
 
@@ -142,7 +146,7 @@ The route loader (`backend/src/routes-loader.ts`) handles everything automatical
 3. Wraps matched handlers with validation (function composition at registration time)
 4. Registers matched routes with the OpenAPI registry
 
-Routes without a matching middleware config (e.g. identity routes) continue to work unchanged — they just don't get automatic validation or OpenAPI docs.
+Routes without a matching middleware config continue to work unchanged — they just don't get automatic validation or OpenAPI docs.
 
 ### Simplified handlers
 

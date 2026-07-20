@@ -25,22 +25,24 @@ A minimal prototype exploring **Ports & Adapters** (Hexagonal Architecture) with
 │       │   ├── app.ts                    # Zero-dependency fetch-based router
 │       │   └── platforms.ts              # Node.js, Express, Vercel, Lambda, etc.
 │       ├── api/
-│       │   └── identity/
-│       │       ├── route.ts              # GET /identity, POST /identity
-│       │       └── [id]/route.ts         # GET/PATCH/DELETE /identity/:id
+│       │   ├── users/
+│       │   │   ├── route.ts              # GET /users, POST /users
+│       │   │   └── [id]/route.ts         # GET/PATCH/DELETE /users/:id
+│       │   └── customers/
+│       │       ├── route.ts              # GET /customers, POST /customers
+│       │       ├── [id]/route.ts         # GET/PATCH/DELETE /customers/:id
+│       │       └── middlewares.ts         # Validation + OpenAPI metadata
 │       └── modules/
-│           └── identity/
-│               ├── ports.ts              # Domain types + service/repository interfaces
-│               ├── service.ts            # Business logic (depends only on ports)
-│               ├── index.ts              # Module wiring (swap adapters here)
-│               └── adapters/
-│                   ├── drizzle/           # Drizzle + SQLite adapter
-│                   │   ├── schema.ts
-│                   │   ├── db.ts
-│                   │   └── repo.ts
-│                   └── prisma/            # Prisma + SQLite adapter
-│                       ├── db.ts
-│                       └── repo.ts
+│           ├── user/
+│           │   ├── models/               # Drizzle table definitions
+│           │   ├── repositories/         # Database access
+│           │   ├── services/             # Business logic
+│           │   └── index.ts              # Module wiring
+│           └── customer/
+│               ├── models/               # Drizzle table definitions
+│               ├── repositories/         # Database access
+│               ├── services/             # Business logic
+│               └── index.ts              # Module wiring
 ├── frontend/                             # TanStack Start (SSR React)
 │   └── src/
 │       ├── server/users.ts               # Server functions using backend container
@@ -87,7 +89,7 @@ npm run --workspace=frontend dev
 
 ### Swap ORM (Drizzle -> Prisma)
 
-Change one import in `backend/src/modules/identity/index.ts`:
+Change one import in a module's `index.ts`:
 
 ```diff
 -import { createDb, createUserRepository } from "./adapters/drizzle/index.js"
@@ -111,7 +113,7 @@ See `backend/src/server/platforms.ts` for examples of plugging the same `App` in
   HTTP Request ───> │  Route Handler (driving adapter) │
                     │         │                        │
                     │         v                        │
-                    │  IdentityService (port)          │
+                    │  UserService (port)              │
                     │         │                        │
                     │         v                        │
                     │  UserRepository (port)            │
@@ -137,7 +139,7 @@ The service layer doesn't know or care which entry point called it.
 
 ## TODO
 
-- [x] Add a Supabase adapter to the identity module (alongside Drizzle and Prisma)
+- [x] Add a Supabase adapter to the user module (alongside Drizzle and Prisma)
 - [ ] Investigate how to handle circular dependencies between modules — how does DDD suggest resolving cross-module references? When is the event bus necessary? is awilix enough for my usecase? atomic workflow when data mutation happen across multiple modules, how to rollback on failure?.
 - [ ] Deploy the app and backend to different infrastructure targets:
   - [ ] Serverless: Cloudflare Workers, AWS Lambda

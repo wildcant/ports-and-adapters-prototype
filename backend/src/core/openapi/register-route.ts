@@ -50,6 +50,7 @@ export function registerOpenApiRoute(routePath: string, config: MiddlewareRoute)
   const routeConfig: RouteConfig = {
     method,
     path: openApiPath,
+    operationId: config.operationId,
     summary: config.summary,
     description: config.description,
     tags: config.tags,

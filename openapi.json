@@ -11,6 +11,24 @@
   ],
   "components": {
     "schemas": {
+      "CustomerListResponse": {
+        "type": "object",
+        "properties": {
+          "customers": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Customer"
+            }
+          },
+          "count": {
+            "type": "number"
+          }
+        },
+        "required": [
+          "customers",
+          "count"
+        ]
+      },
       "Customer": {
         "type": "object",
         "properties": {
@@ -33,10 +51,21 @@
             "type": "string"
           },
           "deleted_at": {
-            "type": ["string", "null"]
+            "type": [
+              "string",
+              "null"
+            ]
           }
         },
-        "required": ["id", "first_name", "last_name", "email", "created_at", "updated_at", "deleted_at"]
+        "required": [
+          "id",
+          "first_name",
+          "last_name",
+          "email",
+          "created_at",
+          "updated_at",
+          "deleted_at"
+        ]
       },
       "CreateCustomer": {
         "type": "object",
@@ -54,7 +83,22 @@
             "format": "email"
           }
         },
-        "required": ["first_name", "last_name", "email"]
+        "required": [
+          "first_name",
+          "last_name",
+          "email"
+        ]
+      },
+      "CustomerResponse": {
+        "type": "object",
+        "properties": {
+          "customer": {
+            "$ref": "#/components/schemas/Customer"
+          }
+        },
+        "required": [
+          "customer"
+        ]
       },
       "UpdateCustomer": {
         "type": "object",
@@ -72,6 +116,125 @@
             "format": "email"
           }
         }
+      },
+      "CustomerDeleteResponse": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "deleted": {
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "id",
+          "deleted"
+        ]
+      },
+      "UserListResponse": {
+        "type": "object",
+        "properties": {
+          "users": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/User"
+            }
+          }
+        },
+        "required": [
+          "users"
+        ]
+      },
+      "User": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "email": {
+            "type": "string"
+          },
+          "created_at": {
+            "type": "string"
+          },
+          "updated_at": {
+            "type": "string"
+          },
+          "deleted_at": {
+            "type": [
+              "string",
+              "null"
+            ]
+          }
+        },
+        "required": [
+          "id",
+          "name",
+          "email",
+          "created_at",
+          "updated_at",
+          "deleted_at"
+        ]
+      },
+      "UserResponse": {
+        "type": "object",
+        "properties": {
+          "user": {
+            "$ref": "#/components/schemas/User"
+          }
+        },
+        "required": [
+          "user"
+        ]
+      },
+      "CreateUser": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "minLength": 1
+          },
+          "email": {
+            "type": "string",
+            "format": "email"
+          }
+        },
+        "required": [
+          "name",
+          "email"
+        ]
+      },
+      "UpdateUser": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "minLength": 1
+          },
+          "email": {
+            "type": "string",
+            "format": "email"
+          }
+        }
+      },
+      "UserDeleteResponse": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "deleted": {
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "id",
+          "deleted"
+        ]
       }
     },
     "parameters": {}
@@ -79,27 +242,18 @@
   "paths": {
     "/customers": {
       "get": {
+        "operationId": "listCustomers",
         "summary": "List customers",
-        "tags": ["Customers"],
+        "tags": [
+          "Customers"
+        ],
         "responses": {
           "200": {
             "description": "Successful response",
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "object",
-                  "properties": {
-                    "customers": {
-                      "type": "array",
-                      "items": {
-                        "$ref": "#/components/schemas/Customer"
-                      }
-                    },
-                    "count": {
-                      "type": "number"
-                    }
-                  },
-                  "required": ["customers", "count"]
+                  "$ref": "#/components/schemas/CustomerListResponse"
                 }
               }
             }
@@ -110,8 +264,11 @@
         }
       },
       "post": {
+        "operationId": "createCustomers",
         "summary": "Create customers",
-        "tags": ["Customers"],
+        "tags": [
+          "Customers"
+        ],
         "requestBody": {
           "content": {
             "application/json": {
@@ -130,19 +287,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "object",
-                  "properties": {
-                    "customers": {
-                      "type": "array",
-                      "items": {
-                        "$ref": "#/components/schemas/Customer"
-                      }
-                    },
-                    "count": {
-                      "type": "number"
-                    }
-                  },
-                  "required": ["customers", "count"]
+                  "$ref": "#/components/schemas/CustomerListResponse"
                 }
               }
             }
@@ -155,8 +300,11 @@
     },
     "/customers/{id}": {
       "get": {
+        "operationId": "getCustomer",
         "summary": "Retrieve a customer",
-        "tags": ["Customers"],
+        "tags": [
+          "Customers"
+        ],
         "parameters": [
           {
             "schema": {
@@ -174,13 +322,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "object",
-                  "properties": {
-                    "customer": {
-                      "$ref": "#/components/schemas/Customer"
-                    }
-                  },
-                  "required": ["customer"]
+                  "$ref": "#/components/schemas/CustomerResponse"
                 }
               }
             }
@@ -194,8 +336,11 @@
         }
       },
       "patch": {
+        "operationId": "updateCustomer",
         "summary": "Update a customer",
-        "tags": ["Customers"],
+        "tags": [
+          "Customers"
+        ],
         "parameters": [
           {
             "schema": {
@@ -222,13 +367,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "object",
-                  "properties": {
-                    "customer": {
-                      "$ref": "#/components/schemas/Customer"
-                    }
-                  },
-                  "required": ["customer"]
+                  "$ref": "#/components/schemas/CustomerResponse"
                 }
               }
             }
@@ -242,8 +381,11 @@
         }
       },
       "delete": {
+        "operationId": "deleteCustomer",
         "summary": "Delete a customer",
-        "tags": ["Customers"],
+        "tags": [
+          "Customers"
+        ],
         "parameters": [
           {
             "schema": {
@@ -261,16 +403,181 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "object",
-                  "properties": {
-                    "id": {
-                      "type": "string"
-                    },
-                    "deleted": {
-                      "type": "boolean"
-                    }
-                  },
-                  "required": ["id", "deleted"]
+                  "$ref": "#/components/schemas/CustomerDeleteResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Validation error"
+          },
+          "404": {
+            "description": "Not found"
+          }
+        }
+      }
+    },
+    "/users": {
+      "get": {
+        "operationId": "listUsers",
+        "summary": "List users",
+        "tags": [
+          "Users"
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UserListResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Validation error"
+          }
+        }
+      },
+      "post": {
+        "operationId": "createUser",
+        "summary": "Create a user",
+        "tags": [
+          "Users"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateUser"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UserResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Validation error"
+          }
+        }
+      }
+    },
+    "/users/{id}": {
+      "get": {
+        "operationId": "getUser",
+        "summary": "Retrieve a user",
+        "tags": [
+          "Users"
+        ],
+        "parameters": [
+          {
+            "schema": {
+              "type": "string",
+              "minLength": 1
+            },
+            "required": true,
+            "name": "id",
+            "in": "path"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UserResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Validation error"
+          },
+          "404": {
+            "description": "Not found"
+          }
+        }
+      },
+      "patch": {
+        "operationId": "updateUser",
+        "summary": "Update a user",
+        "tags": [
+          "Users"
+        ],
+        "parameters": [
+          {
+            "schema": {
+              "type": "string",
+              "minLength": 1
+            },
+            "required": true,
+            "name": "id",
+            "in": "path"
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateUser"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UserResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Validation error"
+          },
+          "404": {
+            "description": "Not found"
+          }
+        }
+      },
+      "delete": {
+        "operationId": "deleteUser",
+        "summary": "Delete a user",
+        "tags": [
+          "Users"
+        ],
+        "parameters": [
+          {
+            "schema": {
+              "type": "string",
+              "minLength": 1
+            },
+            "required": true,
+            "name": "id",
+            "in": "path"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UserDeleteResponse"
                 }
               }
             }

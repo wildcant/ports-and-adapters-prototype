@@ -1,10 +1,5 @@
-- http body and query validations and strict types.
-- zod to open api. generate api client types.
-- open api to client types.
 - standard naming casing - model is using snake case, could use drizzle for naming casing transformation (check how medusa does it)
-- consolidate database url after prisma and sqlite removal.
-- review last commit changes and add automated testing.
-- logger.
+- endpoint pagination
 
 Future TODOs
 - sagas for cross module resilient workflows

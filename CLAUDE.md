@@ -60,7 +60,7 @@ All factories use Awilix FP-style: `const createThing = ({ dep1, dep2 }: Depende
 
 ### Database
 
-SQLite via `backend/dev.db`. Drizzle schema in `src/modules/identity/adapters/drizzle/schema.ts`, Prisma schema in `backend/prisma/schema.prisma`. Both adapters map to the same `users` table.
+Drizzle schemas live in each module's `models/` directory (e.g. `src/modules/user/models/`, `src/modules/customer/models/`). Each module has its own `drizzle.config.ts` and colocated migrations.
 
 ### Frontend
 
