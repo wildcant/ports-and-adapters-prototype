@@ -16,9 +16,6 @@ export class CustomerAddressRepository extends BaseRepository(customerAddressTab
   async restoreByCustomerIds(customerIds: string[], context?: Context): Promise<void> {
     if (customerIds.length === 0) return
     const client = this.getClient(context)
-    await client
-      .update(this.table)
-      .set({ deleted_at: null })
-      .where(inArray(this.table.customer_id, customerIds))
+    await client.update(this.table).set({ deleted_at: null }).where(inArray(this.table.customer_id, customerIds))
   }
 }
