@@ -1,10 +1,11 @@
 import type { FindConfig } from '../common.js'
 import type { Context } from '../context.js'
-import type { CustomerDTO, FilterableCustomerProps } from './common.js'
-import type { CreateCustomerDTO, UpdateCustomerDTO } from './mutations.js'
+import type { CustomerAddressDTO, CustomerDTO, FilterableCustomerAddressProps, FilterableCustomerProps } from './common.js'
+import type { CreateCustomerAddressDTO, CreateCustomerDTO, UpdateCustomerAddressDTO, UpdateCustomerDTO } from './mutations.js'
 
 export type ICustomerModuleService = {
   retrieveCustomer(customerId: string, config?: FindConfig<CustomerDTO>, context?: Context): Promise<CustomerDTO>
+  retrieveCustomerWithAddresses(customerId: string, context?: Context): Promise<CustomerDTO & { addresses: CustomerAddressDTO[] }>
   listCustomers(
     filters?: FilterableCustomerProps,
     config?: FindConfig<CustomerDTO>,
@@ -20,4 +21,12 @@ export type ICustomerModuleService = {
   deleteCustomers(customerIds: string[], context?: Context): Promise<void>
   softDeleteCustomers(customerIds: string[], context?: Context): Promise<void>
   restoreCustomers(customerIds: string[], context?: Context): Promise<void>
+
+  listCustomerAddresses(
+    filters?: FilterableCustomerAddressProps,
+    config?: FindConfig<CustomerAddressDTO>,
+    context?: Context,
+  ): Promise<CustomerAddressDTO[]>
+  createCustomerAddresses(data: CreateCustomerAddressDTO[], context?: Context): Promise<CustomerAddressDTO[]>
+  updateCustomerAddresses(addressIds: string[], data: UpdateCustomerAddressDTO, context?: Context): Promise<CustomerAddressDTO[]>
 }

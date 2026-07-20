@@ -1,6 +1,11 @@
 import { test as testBase } from 'vitest'
 import { generateCustomer } from '../factories/customer.js'
-import { generateCreateCustomerDTO, generateCustomerDTO, generateUpdateCustomerDTO } from '../factories/customer-dto.js'
+import {
+  generateCreateCustomerAddressDTO,
+  generateCreateCustomerDTO,
+  generateCustomerDTO,
+  generateUpdateCustomerDTO,
+} from '../factories/customer-dto.js'
 
 interface Fixtures {
   db: {
@@ -11,6 +16,7 @@ interface Fixtures {
   dto: {
     generate: {
       createCustomer: typeof generateCreateCustomerDTO
+      createCustomerAddress: typeof generateCreateCustomerAddressDTO
       updateCustomer: typeof generateUpdateCustomerDTO
       customer: typeof generateCustomerDTO
     }
@@ -29,6 +35,7 @@ export const test = testBase.extend<Fixtures>({
     await use({
       generate: {
         createCustomer: generateCreateCustomerDTO,
+        createCustomerAddress: generateCreateCustomerAddressDTO,
         updateCustomer: generateUpdateCustomerDTO,
         customer: generateCustomerDTO,
       },

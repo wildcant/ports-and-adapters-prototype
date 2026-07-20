@@ -7,7 +7,7 @@ export const customerTable = pgTable('customer', {
   id: text('id').primaryKey().default(sql`CONCAT('cus_', REPLACE(gen_random_uuid()::text, '-', ''))`),
   first_name: text('first_name').notNull(),
   last_name: text('last_name').notNull(),
-  email: text('email').notNull(),
+  email: text('email').notNull().unique(),
   status: customerStatusEnum('status').default('active').notNull(),
   created_at: timestamp('created_at').defaultNow().notNull(),
   updated_at: timestamp('updated_at').defaultNow().notNull(),

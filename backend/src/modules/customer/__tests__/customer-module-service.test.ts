@@ -1,10 +1,12 @@
+import { AppError, ErrorTypes } from '@core/errors/app-error.js'
 import { test } from '@tests/setup/test-extend.js'
 import { drizzle } from 'drizzle-orm/postgres-js'
 import postgres from 'postgres'
-import { beforeEach, describe } from 'vitest'
+import { beforeEach, describe, vi } from 'vitest'
 import { createWithTransaction } from '../../../core/utils/with-transaction.js'
 import { env } from '../../../env.js'
 import { CustomerRepository } from '../repositories/customer.js'
+import { CustomerAddressRepository } from '../repositories/customer-address.js'
 import { CustomerModuleService } from '../services/customer-module-service.js'
 
 let service: CustomerModuleService
@@ -13,8 +15,9 @@ beforeEach(() => {
   const sql = postgres(env.SUPABASE_DATABASE_URL, { prepare: false })
   const db = drizzle(sql)
   const customerRepository = new CustomerRepository({ db })
+  const customerAddressRepository = new CustomerAddressRepository({ db })
   const withTransaction = createWithTransaction(db)
-  service = new CustomerModuleService({ customerRepository, withTransaction })
+  service = new CustomerModuleService({ customerRepository, customerAddressRepository, withTransaction })
 })
 
 describe('CustomerModuleService', () => {
@@ -31,6 +34,45 @@ describe('CustomerModuleService', () => {
     })
     expect(result[0].id).toBeDefined()
     expect(result[0].created_at).toBeInstanceOf(Date)
+  })
+
+  test('createCustomers with addresses persists both', async ({ expect, dto }) => {
+    const input = [
+      dto.generate.createCustomer({
+        addresses: [
+          dto.generate.createCustomerAddress({ is_default_shipping: true }),
+          dto.generate.createCustomerAddress({ is_default_billing: true }),
+        ],
+      }),
+    ]
+
+    const [created] = await service.createCustomers(input)
+
+    const customer = await service.retrieveCustomerWithAddresses(created.id)
+
+    expect(customer.id).toBeDefined()
+    expect(customer.addresses).toHaveLength(2)
+    expect(customer.addresses.map((a) => a.customer_id)).toEqual([customer.id, customer.id])
+  })
+
+  test('createCustomers rolls back customer when address insert fails', async ({ expect, dto }) => {
+    const input = [
+      dto.generate.createCustomer({
+        addresses: [
+          dto.generate.createCustomerAddress({ is_default_shipping: true }),
+          dto.generate.createCustomerAddress({ is_default_shipping: true }), // violates partial unique index
+        ],
+      }),
+    ]
+
+    const error = await service.createCustomers(input).catch((e) => e)
+
+    expect(AppError.isError(error)).toBe(true)
+    expect(error.type).toBe(ErrorTypes.INVALID_DATA)
+
+    // Customer should NOT exist — transaction rolled back
+    const customers = await service.listCustomers()
+    expect(customers).toHaveLength(0)
   })
 
   test('retrieveCustomer', async ({ expect, dto }) => {
@@ -86,16 +128,53 @@ describe('CustomerModuleService', () => {
 
     await service.deleteCustomers([created.id])
 
-    await expect(service.retrieveCustomer(created.id)).rejects.toThrow()
+    const error = await service.retrieveCustomer(created.id).catch((e) => e)
+    expect(AppError.isError(error)).toBe(true)
+    expect(error.type).toBe(ErrorTypes.NOT_FOUND)
   })
 
-  test('softDeleteCustomers', async ({ expect, dto }) => {
-    const [created] = await service.createCustomers([dto.generate.createCustomer()])
+  test('softDeleteCustomers also soft-deletes addresses', async ({ expect, dto }) => {
+    const input = [
+      dto.generate.createCustomer({
+        addresses: [
+          dto.generate.createCustomerAddress({ is_default_shipping: true }),
+          dto.generate.createCustomerAddress({ is_default_billing: true }),
+        ],
+      }),
+    ]
+    const [created] = await service.createCustomers(input)
 
     await service.softDeleteCustomers([created.id])
 
-    const list = await service.listCustomers()
-    expect(list).toHaveLength(0)
+    const customers = await service.listCustomers()
+    expect(customers).toHaveLength(0)
+
+    const addresses = await service.listCustomerAddresses({ customer_id: created.id })
+    expect(addresses).toHaveLength(0)
+  })
+
+  test('softDeleteCustomers rolls back when address soft-delete fails', async ({ expect, dto }) => {
+    const input = [
+      dto.generate.createCustomer({
+        addresses: [dto.generate.createCustomerAddress({ is_default_shipping: true })],
+      }),
+    ]
+    const [created] = await service.createCustomers(input)
+
+    const spy = vi
+      .spyOn(CustomerAddressRepository.prototype, 'softDeleteByCustomerIds')
+      .mockRejectedValueOnce(new Error('address soft-delete failed'))
+
+    const error = await service.softDeleteCustomers([created.id]).catch((e) => e)
+
+    expect(error).toBeInstanceOf(Error)
+    expect(error.message).toBe('address soft-delete failed')
+
+    // Customer should still be active — transaction rolled back
+    const customer = await service.retrieveCustomer(created.id)
+    expect(customer.id).toBe(created.id)
+
+    spy.mockRestore()
   })
 
   test('restoreCustomers', async ({ expect, dto }) => {
@@ -107,5 +186,93 @@ describe('CustomerModuleService', () => {
     const list = await service.listCustomers()
     expect(list).toHaveLength(1)
     expect(list[0].id).toBe(created.id)
+  })
+
+  describe('error paths', () => {
+    test('retrieveCustomer throws NOT_FOUND for non-existent id', async ({ expect }) => {
+      const error = await service.retrieveCustomer('cus_nonexistent').catch((e) => e)
+
+      expect(AppError.isError(error)).toBe(true)
+      expect(error.type).toBe(ErrorTypes.NOT_FOUND)
+      expect(error.message).toContain('cus_nonexistent')
+    })
+
+    test('retrieveCustomer throws NOT_FOUND for soft-deleted customer', async ({ expect, dto }) => {
+      const [created] = await service.createCustomers([dto.generate.createCustomer()])
+      await service.softDeleteCustomers([created.id])
+
+      const error = await service.retrieveCustomer(created.id).catch((e) => e)
+
+      expect(AppError.isError(error)).toBe(true)
+      expect(error.type).toBe(ErrorTypes.NOT_FOUND)
+    })
+
+    test('createCustomers with missing required field throws INVALID_DATA', async ({ expect }) => {
+      // biome-ignore lint/suspicious/noExplicitAny: intentionally invalid input to test runtime error
+      const invalid = { first_name: 'Test', last_name: 'User' } as any
+
+      const error = await service.createCustomers([invalid]).catch((e) => e)
+
+      expect(AppError.isError(error)).toBe(true)
+      expect(error.type).toBe(ErrorTypes.INVALID_DATA)
+    })
+
+    test('updateCustomers with non-existent ids returns empty array', async ({ expect, dto }) => {
+      const update = dto.generate.updateCustomer({ first_name: 'Ghost' })
+
+      const result = await service.updateCustomers(['cus_nonexistent'], update)
+
+      expect(result).toEqual([])
+    })
+
+    test('updateCustomers with soft-deleted id returns empty array', async ({ expect, dto }) => {
+      const [created] = await service.createCustomers([dto.generate.createCustomer()])
+      await service.softDeleteCustomers([created.id])
+      const update = dto.generate.updateCustomer({ first_name: 'Ghost' })
+
+      const result = await service.updateCustomers([created.id], update)
+
+      expect(result).toEqual([])
+    })
+
+    test('deleteCustomers with non-existent ids does not throw', async ({ expect }) => {
+      await expect(service.deleteCustomers(['cus_nonexistent'])).resolves.toBeUndefined()
+    })
+
+    test('softDeleteCustomers with non-existent ids does not throw', async ({ expect }) => {
+      await expect(service.softDeleteCustomers(['cus_nonexistent'])).resolves.toBeUndefined()
+    })
+
+    test('restoreCustomers on non-soft-deleted customer does not throw', async ({ expect, dto }) => {
+      const [created] = await service.createCustomers([dto.generate.createCustomer()])
+
+      await expect(service.restoreCustomers([created.id])).resolves.toBeUndefined()
+    })
+
+    test('createCustomers with empty array returns empty array', async ({ expect }) => {
+      const result = await service.createCustomers([])
+
+      expect(result).toEqual([])
+    })
+
+    test('updateCustomers with empty ids returns empty array', async ({ expect, dto }) => {
+      const update = dto.generate.updateCustomer()
+
+      const result = await service.updateCustomers([], update)
+
+      expect(result).toEqual([])
+    })
+
+    test('deleteCustomers with empty ids does not throw', async ({ expect }) => {
+      await expect(service.deleteCustomers([])).resolves.toBeUndefined()
+    })
+
+    test('softDeleteCustomers with empty ids does not throw', async ({ expect }) => {
+      await expect(service.softDeleteCustomers([])).resolves.toBeUndefined()
+    })
+
+    test('restoreCustomers with empty ids does not throw', async ({ expect }) => {
+      await expect(service.restoreCustomers([])).resolves.toBeUndefined()
+    })
   })
 })

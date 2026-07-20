@@ -188,8 +188,8 @@ export function BaseRepository<TTable extends PgTable & BaseColumns>(table: TTab
   }
 
   return new Proxy(Repository, {
-    construct(Target, args) {
-      const instance = new Target(args[0])
+    construct(Target, args, newTarget) {
+      const instance = Reflect.construct(Target, args, newTarget)
       return new Proxy(instance, {
         get(target, prop, receiver) {
           const val = Reflect.get(target, prop, receiver)

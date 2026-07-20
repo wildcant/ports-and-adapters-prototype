@@ -8,6 +8,13 @@
       "when": 1784418231357,
       "tag": "0000_create-customer-table",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1784507802567,
+      "tag": "0001_create-customer-address-table",
+      "breakpoints": true
     }
   ]
 }

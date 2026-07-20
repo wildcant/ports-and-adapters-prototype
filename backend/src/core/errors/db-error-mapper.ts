@@ -3,8 +3,9 @@ import { AppError, ErrorTypes } from './app-error.js'
 interface PgError {
   code?: string
   detail?: string
-  constraint?: string
+  constraint_name?: string
   column?: string
+  table_name?: string
 }
 
 function isPgError(err: unknown): err is PgError & Error {
@@ -32,9 +33,10 @@ export function dbErrorMapper(err: unknown): never {
     // unique_violation
     case '23505': {
       const info = getConstraintInfo(err.detail)
+      const constraint = err.constraint_name ? ` (constraint: ${err.constraint_name})` : ''
       throw new AppError({
         type: ErrorTypes.INVALID_DATA,
-        message: info ? `Already exists: ${info}` : 'Already exists',
+        message: info ? `Already exists: ${info}${constraint}` : `Already exists${constraint}`,
       })
     }
     // not_null_violation

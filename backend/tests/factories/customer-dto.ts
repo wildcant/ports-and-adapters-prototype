@@ -1,4 +1,4 @@
-import type { CreateCustomerDTO, CustomerDTO, UpdateCustomerDTO } from '@core/types/index.js'
+import type { CreateCustomerAddressDTO, CreateCustomerDTO, CustomerDTO, UpdateCustomerDTO } from '@core/types/index.js'
 import { faker } from '@faker-js/faker'
 
 /**
@@ -23,6 +23,24 @@ export function generateUpdateCustomerDTO(overrides?: Partial<UpdateCustomerDTO>
     first_name: faker.person.firstName(),
     last_name: faker.person.lastName(),
     email: faker.internet.email(),
+    ...overrides,
+  }
+}
+
+/**
+ * Generate a `CreateCustomerAddressDTO` (without `customer_id`) — the nested address input for `createCustomers()`.
+ */
+export function generateCreateCustomerAddressDTO(
+  overrides?: Partial<Omit<CreateCustomerAddressDTO, 'customer_id'>>,
+): Omit<CreateCustomerAddressDTO, 'customer_id'> {
+  return {
+    address_name: faker.location.secondaryAddress(),
+    first_name: faker.person.firstName(),
+    last_name: faker.person.lastName(),
+    address_1: faker.location.streetAddress(),
+    city: faker.location.city(),
+    country_code: faker.location.countryCode('alpha-2'),
+    postal_code: faker.location.zipCode(),
     ...overrides,
   }
 }
