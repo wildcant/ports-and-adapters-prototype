@@ -7,6 +7,9 @@ node_modules
 # Prisma generated client (regenerate with: npx prisma generate)
 backend/generated/
 
+# Orval generated API client (regenerate with: npm run openapi:generate)
+frontend/src/api/generated/
+
 tmp
 
 # Supabase CLI local state

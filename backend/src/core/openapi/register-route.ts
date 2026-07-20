@@ -10,6 +10,12 @@ const methodMap = {
   DELETE: 'delete',
 } as const
 
+export function registerOpenApiRoutes(configs: MiddlewareRoute[]) {
+  for (const config of configs) {
+    registerOpenApiRoute(config.matcher, config)
+  }
+}
+
 export function registerOpenApiRoute(routePath: string, config: MiddlewareRoute) {
   const method = methodMap[config.method]
   const openApiPath = routePath.replace(/:(\w+)/g, '{$1}')

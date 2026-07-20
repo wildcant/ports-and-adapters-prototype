@@ -2,7 +2,7 @@ import { existsSync, readdirSync, statSync } from 'node:fs'
 import { join, sep } from 'node:path'
 import { applyMiddleware } from './core/middleware/apply-middleware.js'
 import type { MiddlewareRoute } from './core/middleware/types.js'
-import { registerOpenApiRoute } from './core/openapi/register-route.js'
+import { registerOpenApiRoutes } from './core/openapi/register-route.js'
 import type { App } from './server/ports.js'
 
 const HTTP_METHODS = ['GET', 'POST', 'PUT', 'PATCH', 'DELETE'] as const
@@ -71,7 +71,9 @@ export async function loadRoutes(server: App, sourceDir: string) {
     if (middlewarePath) {
       if (!middlewareCache.has(middlewarePath)) {
         const mod = await import(middlewarePath)
-        middlewareCache.set(middlewarePath, mod.default ?? [])
+        const configs = mod.default ?? []
+        middlewareCache.set(middlewarePath, configs)
+        registerOpenApiRoutes(configs)
       }
       middlewareConfigs = middlewareCache.get(middlewarePath) ?? []
     }
@@ -87,7 +89,6 @@ export async function loadRoutes(server: App, sourceDir: string) {
       const config = middlewareConfigs.find((m) => m.matcher === routePath && m.method === method)
       if (config) {
         handler = applyMiddleware(config, handler)
-        registerOpenApiRoute(routePath, config)
       }
 
       server.addRoute(method, routePath, handler)

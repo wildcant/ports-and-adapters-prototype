@@ -10,10 +10,10 @@
     "generate-routes": "tsr generate",
     "build": "vite build",
     "preview": "vite preview",
-    "test": "vitest run"
+    "test": "vitest run",
+    "openapi:client": "orval"
   },
   "dependencies": {
-    "backend": "*",
     "@tailwindcss/vite": "^4.1.18",
     "@tanstack/react-devtools": "latest",
     "@tanstack/react-router": "latest",
@@ -21,6 +21,7 @@
     "@tanstack/react-router-ssr-query": "latest",
     "@tanstack/react-start": "latest",
     "@tanstack/router-plugin": "^1.132.0",
+    "backend": "*",
     "lucide-react": "^0.545.0",
     "react": "^19.2.0",
     "react-dom": "^19.2.0",
@@ -37,6 +38,7 @@
     "@types/react-dom": "^19.2.0",
     "@vitejs/plugin-react": "^6.0.1",
     "jsdom": "^28.1.0",
+    "orval": "^8.22.0",
     "typescript": "^6.0.2",
     "vite": "^8.0.0",
     "vitest": "^4.1.5"

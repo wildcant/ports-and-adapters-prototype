@@ -33,27 +33,21 @@
             "type": "string"
           },
           "deleted_at": {
-            "type": ["string", "null"]
+            "type": [
+              "string",
+              "null"
+            ]
           }
         },
-        "required": ["id", "first_name", "last_name", "email", "created_at", "updated_at", "deleted_at"]
-      },
-      "UpdateCustomer": {
-        "type": "object",
-        "properties": {
-          "first_name": {
-            "type": "string",
-            "minLength": 1
-          },
-          "last_name": {
-            "type": "string",
-            "minLength": 1
-          },
-          "email": {
-            "type": "string",
-            "format": "email"
-          }
-        }
+        "required": [
+          "id",
+          "first_name",
+          "last_name",
+          "email",
+          "created_at",
+          "updated_at",
+          "deleted_at"
+        ]
       },
       "CreateCustomer": {
         "type": "object",
@@ -71,16 +65,125 @@
             "format": "email"
           }
         },
-        "required": ["first_name", "last_name", "email"]
+        "required": [
+          "first_name",
+          "last_name",
+          "email"
+        ]
+      },
+      "UpdateCustomer": {
+        "type": "object",
+        "properties": {
+          "first_name": {
+            "type": "string",
+            "minLength": 1
+          },
+          "last_name": {
+            "type": "string",
+            "minLength": 1
+          },
+          "email": {
+            "type": "string",
+            "format": "email"
+          }
+        }
       }
     },
     "parameters": {}
   },
   "paths": {
+    "/customers": {
+      "get": {
+        "summary": "List customers",
+        "tags": [
+          "Customers"
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "customers": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/Customer"
+                      }
+                    },
+                    "count": {
+                      "type": "number"
+                    }
+                  },
+                  "required": [
+                    "customers",
+                    "count"
+                  ]
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Validation error"
+          }
+        }
+      },
+      "post": {
+        "summary": "Create customers",
+        "tags": [
+          "Customers"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "array",
+                "items": {
+                  "$ref": "#/components/schemas/CreateCustomer"
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "customers": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/Customer"
+                      }
+                    },
+                    "count": {
+                      "type": "number"
+                    }
+                  },
+                  "required": [
+                    "customers",
+                    "count"
+                  ]
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Validation error"
+          }
+        }
+      }
+    },
     "/customers/{id}": {
       "get": {
         "summary": "Retrieve a customer",
-        "tags": ["Customers"],
+        "tags": [
+          "Customers"
+        ],
         "parameters": [
           {
             "schema": {
@@ -104,7 +207,9 @@
                       "$ref": "#/components/schemas/Customer"
                     }
                   },
-                  "required": ["customer"]
+                  "required": [
+                    "customer"
+                  ]
                 }
               }
             }
@@ -119,7 +224,9 @@
       },
       "patch": {
         "summary": "Update a customer",
-        "tags": ["Customers"],
+        "tags": [
+          "Customers"
+        ],
         "parameters": [
           {
             "schema": {
@@ -152,7 +259,9 @@
                       "$ref": "#/components/schemas/Customer"
                     }
                   },
-                  "required": ["customer"]
+                  "required": [
+                    "customer"
+                  ]
                 }
               }
             }
@@ -167,7 +276,9 @@
       },
       "delete": {
         "summary": "Delete a customer",
-        "tags": ["Customers"],
+        "tags": [
+          "Customers"
+        ],
         "parameters": [
           {
             "schema": {
@@ -194,7 +305,10 @@
                       "type": "boolean"
                     }
                   },
-                  "required": ["id", "deleted"]
+                  "required": [
+                    "id",
+                    "deleted"
+                  ]
                 }
               }
             }
@@ -204,82 +318,6 @@
           },
           "404": {
             "description": "Not found"
-          }
-        }
-      }
-    },
-    "/customers": {
-      "get": {
-        "summary": "List customers",
-        "tags": ["Customers"],
-        "responses": {
-          "200": {
-            "description": "Successful response",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "customers": {
-                      "type": "array",
-                      "items": {
-                        "$ref": "#/components/schemas/Customer"
-                      }
-                    },
-                    "count": {
-                      "type": "number"
-                    }
-                  },
-                  "required": ["customers", "count"]
-                }
-              }
-            }
-          },
-          "400": {
-            "description": "Validation error"
-          }
-        }
-      },
-      "post": {
-        "summary": "Create customers",
-        "tags": ["Customers"],
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "type": "array",
-                "items": {
-                  "$ref": "#/components/schemas/CreateCustomer"
-                }
-              }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "description": "Successful response",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "customers": {
-                      "type": "array",
-                      "items": {
-                        "$ref": "#/components/schemas/Customer"
-                      }
-                    },
-                    "count": {
-                      "type": "number"
-                    }
-                  },
-                  "required": ["customers", "count"]
-                }
-              }
-            }
-          },
-          "400": {
-            "description": "Validation error"
           }
         }
       }

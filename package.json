@@ -9,7 +9,8 @@
     "setup": "npm install && npm run --workspace=backend db:setup",
     "lint": "biome lint .",
     "format": "biome format --write .",
-    "check": "biome check ."
+    "check": "biome check .",
+    "openapi:generate": "npm run --workspace=backend openapi:dump:offline && npm run --workspace=frontend openapi:client"
   },
   "devDependencies": {
     "@biomejs/biome": "2.5.4"

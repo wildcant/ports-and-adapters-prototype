@@ -20,7 +20,8 @@
     "db:migrate:supabase": "dotenvx run -f ../.env -- drizzle-kit migrate --config=drizzle.config.supabase.ts",
     "db:migrate:customer": "dotenvx run -f ../.env -- drizzle-kit migrate --config=src/modules/customer/drizzle.config.ts",
     "db:setup": "drizzle-kit migrate && prisma generate --schema=prisma/schema.prisma",
-    "openapi:dump": "curl -s http://localhost:3000/openapi.json | python3 -m json.tool > ../openapi.json && echo 'Saved to openapi.json'"
+    "openapi:dump": "curl -s http://localhost:3000/openapi.json | python3 -m json.tool > ../openapi.json && echo 'Saved to openapi.json'",
+    "openapi:dump:offline": "tsx src/scripts/openapi-dump.ts"
   },
   "dependencies": {
     "@asteasolutions/zod-to-openapi": "^8.5.0",
