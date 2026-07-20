@@ -3,8 +3,10 @@ import { AppError, ErrorTypes } from './app-error.js'
 interface PgError {
   code?: string
   detail?: string
+  // biome-ignore lint/style/useNamingConvention: Postgres wire protocol field name
   constraint_name?: string
   column?: string
+  // biome-ignore lint/style/useNamingConvention: Postgres wire protocol field name
   table_name?: string
 }
 

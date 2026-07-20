@@ -37,6 +37,7 @@ function RootDocument({ children }: { children: React.ReactNode }) {
     <html lang="en" suppressHydrationWarning>
       <head>
         {/** biome-ignore lint/security/noDangerouslySetInnerHtml: Tanstack start default */}
+        {/* biome-ignore lint/style/useNamingConvention: React API */}
         <script dangerouslySetInnerHTML={{ __html: THEME_INIT_SCRIPT }} />
         <HeadContent />
       </head>

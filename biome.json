@@ -7,7 +7,10 @@
   },
   "files": {
     "ignoreUnknown": false,
-    "includes": ["**", "!frontend/src/routeTree.gen.ts"]
+    "includes": [
+      "**",
+      "!frontend/src/routeTree.gen.ts"
+    ]
   },
   "formatter": {
     "enabled": true,
@@ -20,7 +23,45 @@
     "rules": {
       "preset": "recommended",
       "style": {
-        "useComponentExportOnlyModules": "warn"
+        "useComponentExportOnlyModules": "warn",
+        "useNamingConvention": {
+          "level": "warn",
+          "options": {
+            "strictCase": false,
+            "conventions": [
+              {
+                "selector": {
+                  "kind": "enumMember"
+                },
+                "formats": [
+                  "CONSTANT_CASE"
+                ]
+              },
+              {
+                "selector": {
+                  "kind": "objectLiteralProperty"
+                },
+                "formats": [
+                  "camelCase",
+                  "CONSTANT_CASE"
+                ]
+              },
+              {
+                "selector": {
+                  "kind": "classProperty",
+                  "modifiers": [
+                    "static"
+                  ]
+                },
+                "formats": [
+                  "camelCase",
+                  "PascalCase",
+                  "CONSTANT_CASE"
+                ]
+              }
+            ]
+          }
+        }
       }
     }
   },
