@@ -9,13 +9,13 @@ export class CustomerAddressRepository extends BaseRepository(customerAddressTab
     const client = this.getClient(context)
     await client
       .update(this.table)
-      .set({ deleted_at: new Date() })
-      .where(and(inArray(this.table.customer_id, customerIds), isNull(this.table.deleted_at)))
+      .set({ deletedAt: new Date() })
+      .where(and(inArray(this.table.customerId, customerIds), isNull(this.table.deletedAt)))
   }
 
   async restoreByCustomerIds(customerIds: string[], context?: Context): Promise<void> {
     if (customerIds.length === 0) return
     const client = this.getClient(context)
-    await client.update(this.table).set({ deleted_at: null }).where(inArray(this.table.customer_id, customerIds))
+    await client.update(this.table).set({ deletedAt: null }).where(inArray(this.table.customerId, customerIds))
   }
 }

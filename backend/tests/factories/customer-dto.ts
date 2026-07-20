@@ -7,8 +7,8 @@ import { faker } from '@faker-js/faker'
  */
 export function generateCreateCustomerDTO(overrides?: Partial<CreateCustomerDTO>): CreateCustomerDTO {
   return {
-    first_name: faker.person.firstName(),
-    last_name: faker.person.lastName(),
+    firstName: faker.person.firstName(),
+    lastName: faker.person.lastName(),
     email: faker.internet.email(),
     ...overrides,
   }
@@ -20,27 +20,27 @@ export function generateCreateCustomerDTO(overrides?: Partial<CreateCustomerDTO>
  */
 export function generateUpdateCustomerDTO(overrides?: Partial<UpdateCustomerDTO>): UpdateCustomerDTO {
   return {
-    first_name: faker.person.firstName(),
-    last_name: faker.person.lastName(),
+    firstName: faker.person.firstName(),
+    lastName: faker.person.lastName(),
     email: faker.internet.email(),
     ...overrides,
   }
 }
 
 /**
- * Generate a `CreateCustomerAddressDTO` (without `customer_id`) — the nested address input for `createCustomers()`.
+ * Generate a `CreateCustomerAddressDTO` (without `customerId`) — the nested address input for `createCustomers()`.
  */
 export function generateCreateCustomerAddressDTO(
-  overrides?: Partial<Omit<CreateCustomerAddressDTO, 'customer_id'>>,
-): Omit<CreateCustomerAddressDTO, 'customer_id'> {
+  overrides?: Partial<Omit<CreateCustomerAddressDTO, 'customerId'>>,
+): Omit<CreateCustomerAddressDTO, 'customerId'> {
   return {
-    address_name: faker.location.secondaryAddress(),
-    first_name: faker.person.firstName(),
-    last_name: faker.person.lastName(),
-    address_1: faker.location.streetAddress(),
+    addressName: faker.location.secondaryAddress(),
+    firstName: faker.person.firstName(),
+    lastName: faker.person.lastName(),
+    address1: faker.location.streetAddress(),
     city: faker.location.city(),
-    country_code: faker.location.countryCode('alpha-2'),
-    postal_code: faker.location.zipCode(),
+    countryCode: faker.location.countryCode('alpha-2'),
+    postalCode: faker.location.zipCode(),
     ...overrides,
   }
 }
@@ -52,12 +52,12 @@ export function generateCreateCustomerAddressDTO(
 export function generateCustomerDTO(overrides?: Partial<CustomerDTO>): CustomerDTO {
   return {
     id: `cus_${faker.string.alphanumeric(32)}`,
-    first_name: faker.person.firstName(),
-    last_name: faker.person.lastName(),
+    firstName: faker.person.firstName(),
+    lastName: faker.person.lastName(),
     email: faker.internet.email(),
-    created_at: faker.date.recent(),
-    updated_at: faker.date.recent(),
-    deleted_at: null,
+    createdAt: faker.date.recent(),
+    updatedAt: faker.date.recent(),
+    deletedAt: null,
     ...overrides,
   }
 }

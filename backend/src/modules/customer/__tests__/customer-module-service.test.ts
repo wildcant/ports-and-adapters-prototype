@@ -23,20 +23,20 @@ describe('CustomerModuleService', () => {
 
     expect(result).toHaveLength(2)
     expect(result[0]).toMatchObject({
-      first_name: input[0].first_name,
-      last_name: input[0].last_name,
+      firstName: input[0].firstName,
+      lastName: input[0].lastName,
       email: input[0].email,
     })
     expect(result[0].id).toBeDefined()
-    expect(result[0].created_at).toBeInstanceOf(Date)
+    expect(result[0].createdAt).toBeInstanceOf(Date)
   })
 
   test('createCustomers with addresses persists both', async ({ expect, dto }) => {
     const input = [
       dto.generate.createCustomer({
         addresses: [
-          dto.generate.createCustomerAddress({ is_default_shipping: true }),
-          dto.generate.createCustomerAddress({ is_default_billing: true }),
+          dto.generate.createCustomerAddress({ isDefaultShipping: true }),
+          dto.generate.createCustomerAddress({ isDefaultBilling: true }),
         ],
       }),
     ]
@@ -47,15 +47,15 @@ describe('CustomerModuleService', () => {
 
     expect(customer.id).toBeDefined()
     expect(customer.addresses).toHaveLength(2)
-    expect(customer.addresses.map((a) => a.customer_id)).toEqual([customer.id, customer.id])
+    expect(customer.addresses.map((a) => a.customerId)).toEqual([customer.id, customer.id])
   })
 
   test('createCustomers rolls back customer when address insert fails', async ({ expect, dto }) => {
     const input = [
       dto.generate.createCustomer({
         addresses: [
-          dto.generate.createCustomerAddress({ is_default_shipping: true }),
-          dto.generate.createCustomerAddress({ is_default_shipping: true }), // violates partial unique index
+          dto.generate.createCustomerAddress({ isDefaultShipping: true }),
+          dto.generate.createCustomerAddress({ isDefaultShipping: true }), // violates partial unique index
         ],
       }),
     ]
@@ -77,8 +77,8 @@ describe('CustomerModuleService', () => {
 
     expect(result).toMatchObject({
       id: created.id,
-      first_name: created.first_name,
-      last_name: created.last_name,
+      firstName: created.firstName,
+      lastName: created.lastName,
       email: created.email,
     })
   })
@@ -110,11 +110,11 @@ describe('CustomerModuleService', () => {
 
   test('updateCustomers', async ({ expect, dto }) => {
     const [created] = await service.createCustomers([dto.generate.createCustomer()])
-    const update = dto.generate.updateCustomer({ first_name: 'Updated' })
+    const update = dto.generate.updateCustomer({ firstName: 'Updated' })
 
     const [updated] = await service.updateCustomers([created.id], update)
 
-    expect(updated.first_name).toBe('Updated')
+    expect(updated.firstName).toBe('Updated')
     expect(updated.id).toBe(created.id)
   })
 
@@ -132,8 +132,8 @@ describe('CustomerModuleService', () => {
     const input = [
       dto.generate.createCustomer({
         addresses: [
-          dto.generate.createCustomerAddress({ is_default_shipping: true }),
-          dto.generate.createCustomerAddress({ is_default_billing: true }),
+          dto.generate.createCustomerAddress({ isDefaultShipping: true }),
+          dto.generate.createCustomerAddress({ isDefaultBilling: true }),
         ],
       }),
     ]
@@ -144,14 +144,14 @@ describe('CustomerModuleService', () => {
     const customers = await service.listCustomers()
     expect(customers).toHaveLength(0)
 
-    const addresses = await service.listCustomerAddresses({ customer_id: created.id })
+    const addresses = await service.listCustomerAddresses({ customerId: created.id })
     expect(addresses).toHaveLength(0)
   })
 
   test('softDeleteCustomers rolls back when address soft-delete fails', async ({ expect, dto }) => {
     const input = [
       dto.generate.createCustomer({
-        addresses: [dto.generate.createCustomerAddress({ is_default_shipping: true })],
+        addresses: [dto.generate.createCustomerAddress({ isDefaultShipping: true })],
       }),
     ]
     const [created] = await service.createCustomers(input)
@@ -204,7 +204,7 @@ describe('CustomerModuleService', () => {
 
     test('createCustomers with missing required field throws INVALID_DATA', async ({ expect }) => {
       // biome-ignore lint/suspicious/noExplicitAny: intentionally invalid input to test runtime error
-      const invalid = { first_name: 'Test', last_name: 'User' } as any
+      const invalid = { firstName: 'Test', lastName: 'User' } as any
 
       const error = await service.createCustomers([invalid]).catch((e) => e)
 
@@ -213,7 +213,7 @@ describe('CustomerModuleService', () => {
     })
 
     test('updateCustomers with non-existent ids returns empty array', async ({ expect, dto }) => {
-      const update = dto.generate.updateCustomer({ first_name: 'Ghost' })
+      const update = dto.generate.updateCustomer({ firstName: 'Ghost' })
 
       const result = await service.updateCustomers(['cus_nonexistent'], update)
 
@@ -223,7 +223,7 @@ describe('CustomerModuleService', () => {
     test('updateCustomers with soft-deleted id returns empty array', async ({ expect, dto }) => {
       const [created] = await service.createCustomers([dto.generate.createCustomer()])
       await service.softDeleteCustomers([created.id])
-      const update = dto.generate.updateCustomer({ first_name: 'Ghost' })
+      const update = dto.generate.updateCustomer({ firstName: 'Ghost' })
 
       const result = await service.updateCustomers([created.id], update)
 

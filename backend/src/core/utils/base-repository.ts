@@ -11,7 +11,7 @@ import { buildFilters } from './build-filters.js'
 
 type BaseColumns = {
   id: Column
-  deleted_at: Column
+  deletedAt: Column
 }
 
 /** Derive a type-safe filter shape from the entity's select model */
@@ -44,7 +44,7 @@ export function BaseRepository<TTable extends PgTable & BaseColumns>(table: TTab
       const parts: SQL[] = []
 
       if (!config?.withDeleted) {
-        parts.push(isNull(this.table.deleted_at))
+        parts.push(isNull(this.table.deletedAt))
       }
 
       if (filters) {
@@ -92,7 +92,7 @@ export function BaseRepository<TTable extends PgTable & BaseColumns>(table: TTab
 
       const idFilter = config?.withDeleted
         ? eq(this.table.id, id)
-        : and(eq(this.table.id, id), isNull(this.table.deleted_at))
+        : and(eq(this.table.id, id), isNull(this.table.deletedAt))
 
       const query = selectObj
         ? client.select(selectObj).from(this.table).where(idFilter)
@@ -160,7 +160,7 @@ export function BaseRepository<TTable extends PgTable & BaseColumns>(table: TTab
       const rows = await client
         .update(this.table)
         .set(data)
-        .where(and(inArray(this.table.id, ids), isNull(this.table.deleted_at)))
+        .where(and(inArray(this.table.id, ids), isNull(this.table.deletedAt)))
         .returning()
       return rows as Select[]
     }
@@ -176,14 +176,14 @@ export function BaseRepository<TTable extends PgTable & BaseColumns>(table: TTab
       const client = this.getClient(context)
       await client
         .update(this.table)
-        .set({ deleted_at: new Date() })
-        .where(and(inArray(this.table.id, ids), isNull(this.table.deleted_at)))
+        .set({ deletedAt: new Date() })
+        .where(and(inArray(this.table.id, ids), isNull(this.table.deletedAt)))
     }
 
     async restore(ids: string[], context?: Context): Promise<void> {
       if (ids.length === 0) return
       const client = this.getClient(context)
-      await client.update(this.table).set({ deleted_at: null }).where(inArray(this.table.id, ids))
+      await client.update(this.table).set({ deletedAt: null }).where(inArray(this.table.id, ids))
     }
   }
 

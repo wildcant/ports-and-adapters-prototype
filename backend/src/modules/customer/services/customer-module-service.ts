@@ -49,7 +49,7 @@ export class CustomerModuleService implements ICustomerModuleService {
     context?: Context,
   ): Promise<CustomerDTO & { addresses: CustomerAddressDTO[] }> {
     const customer = await this.customerRepository.findByIdOrFail(customerId, undefined, context)
-    const addresses = await this.customerAddressRepository.find({ customer_id: customerId }, undefined, context)
+    const addresses = await this.customerAddressRepository.find({ customerId }, undefined, context)
     return { ...customer, addresses }
   }
 
@@ -76,7 +76,7 @@ export class CustomerModuleService implements ICustomerModuleService {
       const customers = await this.customerRepository.createMany(data, ctx)
 
       const addressData = customers.flatMap((customer, i) =>
-        (data[i].addresses ?? []).map((addr) => ({ ...addr, customer_id: customer.id })),
+        (data[i].addresses ?? []).map((addr) => ({ ...addr, customerId: customer.id })),
       )
       if (addressData.length > 0) {
         await this.customerAddressRepository.createMany(addressData, ctx)

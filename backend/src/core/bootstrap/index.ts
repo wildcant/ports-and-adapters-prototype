@@ -12,7 +12,7 @@ export function bootstrapModule(sharedContainer: AwilixContainer, moduleDefiniti
   // Bridge shared pg pool and create per-module Drizzle instance
   const pgClient: Sql = sharedContainer.resolve(ContainerRegistrationKeys.PG_CONNECTION)
   const logger: Logger = sharedContainer.resolve(ContainerRegistrationKeys.LOGGER)
-  const db = drizzle(pgClient)
+  const db = drizzle(pgClient, { casing: 'snake_case' })
 
   localContainer.register({
     db: asValue(db),

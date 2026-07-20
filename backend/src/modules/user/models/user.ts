@@ -2,12 +2,12 @@ import { sql } from 'drizzle-orm'
 import { pgTable, text, timestamp } from 'drizzle-orm/pg-core'
 
 export const userTable = pgTable('user', {
-  id: text('id').primaryKey().default(sql`CONCAT('usr_', REPLACE(gen_random_uuid()::text, '-', ''))`),
-  email: text('email').notNull().unique(),
-  name: text('name').notNull(),
-  created_at: timestamp('created_at').defaultNow().notNull(),
-  updated_at: timestamp('updated_at').defaultNow().notNull(),
-  deleted_at: timestamp('deleted_at'),
+  id: text().primaryKey().default(sql`CONCAT('usr_', REPLACE(gen_random_uuid()::text, '-', ''))`),
+  email: text().notNull().unique(),
+  name: text().notNull(),
+  createdAt: timestamp().defaultNow().notNull(),
+  updatedAt: timestamp().defaultNow().notNull(),
+  deletedAt: timestamp(),
 })
 
 export type User = typeof userTable.$inferSelect

@@ -6,8 +6,8 @@ export const User = z
     id: z.string(),
     name: z.string(),
     email: z.string(),
-    created_at: z.string(),
-    updated_at: z.string(),
-    deleted_at: z.string().nullable(),
+    createdAt: z.string(),
+    updatedAt: z.string(),
+    deletedAt: z.string().nullable(),
   })
   .openapi('User')

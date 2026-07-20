@@ -1,47 +1,47 @@
 export type CreateCustomerDTO = {
-  first_name: string
-  last_name: string
+  firstName: string
+  lastName: string
   email: string
-  addresses?: Omit<CreateCustomerAddressDTO, 'customer_id'>[]
+  addresses?: Omit<CreateCustomerAddressDTO, 'customerId'>[]
 }
 
 export type UpdateCustomerDTO = {
-  first_name?: string
-  last_name?: string
+  firstName?: string
+  lastName?: string
   email?: string
 }
 
 export type CreateCustomerAddressDTO = {
-  customer_id: string
-  address_name?: string | null
-  is_default_shipping?: boolean
-  is_default_billing?: boolean
+  customerId: string
+  addressName?: string | null
+  isDefaultShipping?: boolean
+  isDefaultBilling?: boolean
   company?: string | null
-  first_name?: string | null
-  last_name?: string | null
-  address_1?: string | null
-  address_2?: string | null
+  firstName?: string | null
+  lastName?: string | null
+  address1?: string | null
+  address2?: string | null
   city?: string | null
-  country_code?: string | null
+  countryCode?: string | null
   province?: string | null
-  postal_code?: string | null
+  postalCode?: string | null
   phone?: string | null
   metadata?: string | null
 }
 
 export type UpdateCustomerAddressDTO = {
-  address_name?: string | null
-  is_default_shipping?: boolean
-  is_default_billing?: boolean
+  addressName?: string | null
+  isDefaultShipping?: boolean
+  isDefaultBilling?: boolean
   company?: string | null
-  first_name?: string | null
-  last_name?: string | null
-  address_1?: string | null
-  address_2?: string | null
+  firstName?: string | null
+  lastName?: string | null
+  address1?: string | null
+  address2?: string | null
   city?: string | null
-  country_code?: string | null
+  countryCode?: string | null
   province?: string | null
-  postal_code?: string | null
+  postalCode?: string | null
   phone?: string | null
   metadata?: string | null
 }

@@ -9,7 +9,7 @@ export class CustomerRepository extends BaseRepository(customerTable) {
     return this.getClient(context)
       .select({ status: this.table.status, count: count() })
       .from(this.table)
-      .where(isNull(this.table.deleted_at))
+      .where(isNull(this.table.deletedAt))
       .groupBy(this.table.status)
   }
 }

@@ -8,13 +8,13 @@ import type { CreateCustomer } from '../../src/modules/customer/models/customer.
 export function generateCustomer(overrides?: Partial<CreateCustomer>): CreateCustomer {
   return {
     id: `cus_${faker.string.alphanumeric(32)}`,
-    first_name: faker.person.firstName(),
-    last_name: faker.person.lastName(),
+    firstName: faker.person.firstName(),
+    lastName: faker.person.lastName(),
     email: faker.internet.email(),
     status: faker.helpers.arrayElement(['active', 'inactive']),
-    created_at: faker.date.recent(),
-    updated_at: faker.date.recent(),
-    deleted_at: null,
+    createdAt: faker.date.recent(),
+    updatedAt: faker.date.recent(),
+    deletedAt: null,
     ...overrides,
   }
 }

@@ -5,6 +5,7 @@ export default defineConfig({
   schema: './src/modules/user/models/*.ts',
   out: './src/modules/user/migrations',
   dialect: 'postgresql',
+  casing: 'snake_case',
   dbCredentials: {
     url: env.SUPABASE_DATABASE_URL,
   },

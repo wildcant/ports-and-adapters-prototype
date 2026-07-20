@@ -1,10 +1,6 @@
 import { IdParams } from '../../core/http-schemas/common.js'
 import { CreateUser, UpdateUser } from '../../core/http-schemas/user/payloads.js'
-import {
-  UserDeleteResponse,
-  UserListResponse,
-  UserResponse,
-} from '../../core/http-schemas/user/responses.js'
+import { UserDeleteResponse, UserListResponse, UserResponse } from '../../core/http-schemas/user/responses.js'
 import type { MiddlewareRoute } from '../../core/middleware/types.js'
 import { Tags } from '../../core/middleware/types.js'
 

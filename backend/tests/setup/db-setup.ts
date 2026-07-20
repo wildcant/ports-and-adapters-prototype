@@ -7,7 +7,7 @@ import { afterAll, beforeEach } from 'vitest'
 import { env } from '../../src/env.js'
 
 const sql = postgres(env.SUPABASE_DATABASE_URL, { prepare: false })
-export const db = drizzle(sql)
+export const db = drizzle(sql, { casing: 'snake_case' })
 
 const migrationsRoot = join(import.meta.dirname, '../../')
 
