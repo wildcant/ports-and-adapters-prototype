@@ -1,4 +1,6 @@
+import type { PostgresJsDatabase } from 'drizzle-orm/postgres-js'
 import { test as testBase } from 'vitest'
+import type { Logger } from '../../src/core/types/logger.js'
 import { generateCustomer } from '../factories/customer.js'
 import {
   generateCreateCustomerAddressDTO,
@@ -6,12 +8,22 @@ import {
   generateCustomerDTO,
   generateUpdateCustomerDTO,
 } from '../factories/customer-dto.js'
+import { db as dbInstance } from './db-setup.js'
+
+const noopLogger: Logger = {
+  error() {},
+  warn() {},
+  info() {},
+  http() {},
+  debug() {},
+  setLogLevel() {},
+  shouldLog: () => true,
+}
 
 interface Fixtures {
-  db: {
-    generate: {
-      customer: typeof generateCustomer
-    }
+  db: PostgresJsDatabase
+  factories: {
+    customer: typeof generateCustomer
   }
   dto: {
     generate: {
@@ -21,14 +33,16 @@ interface Fixtures {
       customer: typeof generateCustomerDTO
     }
   }
+  logger: Logger
 }
 
 export const test = testBase.extend<Fixtures>({
   async db({ task: _ }, use) {
+    await use(dbInstance)
+  },
+  async factories({ task: _ }, use) {
     await use({
-      generate: {
-        customer: generateCustomer,
-      },
+      customer: generateCustomer,
     })
   },
   async dto({ task: _ }, use) {
@@ -40,5 +54,8 @@ export const test = testBase.extend<Fixtures>({
         customer: generateCustomerDTO,
       },
     })
+  },
+  async logger({ task: _ }, use) {
+    await use(noopLogger)
   },
 })

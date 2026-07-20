@@ -1,6 +1,7 @@
 import { type AwilixContainer, asClass, asValue, createContainer } from 'awilix'
 import { drizzle } from 'drizzle-orm/postgres-js'
 import type { Sql } from 'postgres'
+import type { Logger } from '../types/logger.js'
 import { ContainerRegistrationKeys } from '../utils/container.js'
 import type { ModuleDefinition } from '../utils/module.js'
 import { createWithTransaction } from '../utils/with-transaction.js'
@@ -10,10 +11,12 @@ export function bootstrapModule(sharedContainer: AwilixContainer, moduleDefiniti
 
   // Bridge shared pg pool and create per-module Drizzle instance
   const pgClient: Sql = sharedContainer.resolve(ContainerRegistrationKeys.PG_CONNECTION)
+  const logger: Logger = sharedContainer.resolve(ContainerRegistrationKeys.LOGGER)
   const db = drizzle(pgClient)
 
   localContainer.register({
     db: asValue(db),
+    logger: asValue(logger),
     withTransaction: asValue(createWithTransaction(db)),
   })
 

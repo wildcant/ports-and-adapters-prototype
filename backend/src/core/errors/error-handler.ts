@@ -1,3 +1,4 @@
+import type { Logger } from '../types/logger.js'
 import { AppError, ErrorTypes } from './app-error.js'
 
 const typeToStatus: Record<ErrorTypes, number> = {
@@ -30,7 +31,10 @@ const typeToApiCode: Record<ErrorTypes, ApiCode> = {
 
 const serverErrorTypes = new Set<ErrorTypes>([ErrorTypes.DB_ERROR])
 
-export function errorHandler(err: unknown): {
+export function errorHandler(
+  err: unknown,
+  logger: Logger,
+): {
   status: number
   json: { code: ApiCode; type: string; message: string }
 } {
@@ -39,9 +43,9 @@ export function errorHandler(err: unknown): {
     const isServer = serverErrorTypes.has(err.type)
 
     if (status >= 500) {
-      console.error(err)
+      logger.error(err)
     } else {
-      console.info(`${status} ${err.type}: ${err.message}`)
+      logger.info(`${status} ${err.type}: ${err.message}`)
     }
 
     return {
@@ -54,7 +58,11 @@ export function errorHandler(err: unknown): {
     }
   }
 
-  console.error(err)
+  if (err instanceof Error) {
+    logger.error(err)
+  } else {
+    logger.error(String(err))
+  }
   return {
     status: 500,
     json: {

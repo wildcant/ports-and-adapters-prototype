@@ -7,6 +7,8 @@
  */
 
 import { errorHandler } from '../core/errors/index.js'
+import type { Logger } from '../core/types/logger.js'
+import { ContainerRegistrationKeys } from '../core/utils/index.js'
 import type { App, CreateApp, RouteHandler } from './ports.js'
 
 type Route = {
@@ -29,6 +31,7 @@ function compilePath(path: string): { pattern: RegExp; paramNames: string[] } {
 }
 
 export const createApp: CreateApp = ({ container }) => {
+  const logger: Logger = container.resolve(ContainerRegistrationKeys.LOGGER)
   const routes: Route[] = []
 
   const app: App = {
@@ -85,7 +88,7 @@ export const createApp: CreateApp = ({ container }) => {
 
           return Response.json(result.json, { status: result.status, headers: corsHeaders })
         } catch (err) {
-          const { status, json } = errorHandler(err)
+          const { status, json } = errorHandler(err, logger)
           return Response.json(json, { status, headers: corsHeaders })
         }
       }

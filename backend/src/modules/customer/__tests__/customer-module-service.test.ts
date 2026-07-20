@@ -1,23 +1,18 @@
 import { AppError, ErrorTypes } from '@core/errors/app-error.js'
 import { test } from '@tests/setup/test-extend.js'
-import { drizzle } from 'drizzle-orm/postgres-js'
-import postgres from 'postgres'
-import { beforeEach, describe, vi } from 'vitest'
+import { describe, vi } from 'vitest'
 import { createWithTransaction } from '../../../core/utils/with-transaction.js'
-import { env } from '../../../env.js'
 import { CustomerRepository } from '../repositories/customer.js'
 import { CustomerAddressRepository } from '../repositories/customer-address.js'
 import { CustomerModuleService } from '../services/customer-module-service.js'
 
 let service: CustomerModuleService
 
-beforeEach(() => {
-  const sql = postgres(env.SUPABASE_DATABASE_URL, { prepare: false })
-  const db = drizzle(sql)
+test.beforeEach(({ db, logger }) => {
   const customerRepository = new CustomerRepository({ db })
   const customerAddressRepository = new CustomerAddressRepository({ db })
   const withTransaction = createWithTransaction(db)
-  service = new CustomerModuleService({ customerRepository, customerAddressRepository, withTransaction })
+  service = new CustomerModuleService({ customerRepository, customerAddressRepository, withTransaction, logger })
 })
 
 describe('CustomerModuleService', () => {

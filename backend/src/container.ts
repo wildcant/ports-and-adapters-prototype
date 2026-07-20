@@ -6,12 +6,18 @@
 import { asValue, createContainer } from 'awilix'
 import postgres from 'postgres'
 import { bootstrapModule } from './core/bootstrap/index.js'
+import { createLogger } from './core/logger/index.js'
 import { ContainerRegistrationKeys } from './core/utils/index.js'
 import { env } from './env.js'
 import customerModule from './modules/customer/index.js'
 import { registerIdentityModule } from './modules/identity/index.js'
 
 const container = createContainer()
+
+// Register logger
+container.register({
+  [ContainerRegistrationKeys.LOGGER]: asValue(createLogger()),
+})
 
 // Register shared pg connection pool
 const client = postgres(env.SUPABASE_DATABASE_URL, { prepare: false })

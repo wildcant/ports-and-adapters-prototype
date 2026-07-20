@@ -3,6 +3,7 @@ import { join, sep } from 'node:path'
 import { applyMiddleware } from './core/middleware/apply-middleware.js'
 import type { MiddlewareRoute } from './core/middleware/types.js'
 import { registerOpenApiRoutes } from './core/openapi/register-route.js'
+import type { Logger } from './core/types/logger.js'
 import type { App } from './server/ports.js'
 
 const HTTP_METHODS = ['GET', 'POST', 'PUT', 'PATCH', 'DELETE'] as const
@@ -57,7 +58,7 @@ function findMiddlewarePath(routeFilePath: string, sourceDir: string): string | 
 /**
  * Scan a source directory for route files and register them with the HttpServer.
  */
-export async function loadRoutes(server: App, sourceDir: string) {
+export async function loadRoutes(server: App, sourceDir: string, logger: Logger) {
   const routeFiles = findRouteFiles(sourceDir)
   const middlewareCache = new Map<string, MiddlewareRoute[]>()
 
@@ -92,7 +93,7 @@ export async function loadRoutes(server: App, sourceDir: string) {
       }
 
       server.addRoute(method, routePath, handler)
-      console.log(`  ${method} ${routePath}  <-  ${relativePath}`)
+      logger.info(`  ${method} ${routePath}  <-  ${relativePath}`)
     }
   }
 }

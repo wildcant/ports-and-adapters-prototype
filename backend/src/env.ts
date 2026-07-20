@@ -16,6 +16,9 @@ config({
 const envSchema = z.object({
   SUPABASE_DATABASE_URL: z.url(),
   DATABASE_URL: z.string().optional(),
+  NODE_ENV: z.string().default('development'),
+  LOG_LEVEL: z.string().default('http'),
+  LOG_FILE: z.string().default(''),
 })
 
 function createEnv() {

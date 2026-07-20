@@ -56,7 +56,6 @@ export function dbErrorMapper(err: unknown): never {
     }
     // undefined_column
     case '42703': {
-      console.error('Undefined column:', err.message)
       throw new AppError({
         type: ErrorTypes.INVALID_DATA,
         message: 'Invalid field referenced',

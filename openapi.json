@@ -33,21 +33,10 @@
             "type": "string"
           },
           "deleted_at": {
-            "type": [
-              "string",
-              "null"
-            ]
+            "type": ["string", "null"]
           }
         },
-        "required": [
-          "id",
-          "first_name",
-          "last_name",
-          "email",
-          "created_at",
-          "updated_at",
-          "deleted_at"
-        ]
+        "required": ["id", "first_name", "last_name", "email", "created_at", "updated_at", "deleted_at"]
       },
       "CreateCustomer": {
         "type": "object",
@@ -65,11 +54,7 @@
             "format": "email"
           }
         },
-        "required": [
-          "first_name",
-          "last_name",
-          "email"
-        ]
+        "required": ["first_name", "last_name", "email"]
       },
       "UpdateCustomer": {
         "type": "object",
@@ -95,9 +80,7 @@
     "/customers": {
       "get": {
         "summary": "List customers",
-        "tags": [
-          "Customers"
-        ],
+        "tags": ["Customers"],
         "responses": {
           "200": {
             "description": "Successful response",
@@ -116,10 +99,7 @@
                       "type": "number"
                     }
                   },
-                  "required": [
-                    "customers",
-                    "count"
-                  ]
+                  "required": ["customers", "count"]
                 }
               }
             }
@@ -131,9 +111,7 @@
       },
       "post": {
         "summary": "Create customers",
-        "tags": [
-          "Customers"
-        ],
+        "tags": ["Customers"],
         "requestBody": {
           "content": {
             "application/json": {
@@ -164,10 +142,7 @@
                       "type": "number"
                     }
                   },
-                  "required": [
-                    "customers",
-                    "count"
-                  ]
+                  "required": ["customers", "count"]
                 }
               }
             }
@@ -181,9 +156,7 @@
     "/customers/{id}": {
       "get": {
         "summary": "Retrieve a customer",
-        "tags": [
-          "Customers"
-        ],
+        "tags": ["Customers"],
         "parameters": [
           {
             "schema": {
@@ -207,9 +180,7 @@
                       "$ref": "#/components/schemas/Customer"
                     }
                   },
-                  "required": [
-                    "customer"
-                  ]
+                  "required": ["customer"]
                 }
               }
             }
@@ -224,9 +195,7 @@
       },
       "patch": {
         "summary": "Update a customer",
-        "tags": [
-          "Customers"
-        ],
+        "tags": ["Customers"],
         "parameters": [
           {
             "schema": {
@@ -259,9 +228,7 @@
                       "$ref": "#/components/schemas/Customer"
                     }
                   },
-                  "required": [
-                    "customer"
-                  ]
+                  "required": ["customer"]
                 }
               }
             }
@@ -276,9 +243,7 @@
       },
       "delete": {
         "summary": "Delete a customer",
-        "tags": [
-          "Customers"
-        ],
+        "tags": ["Customers"],
         "parameters": [
           {
             "schema": {
@@ -305,10 +270,7 @@
                       "type": "boolean"
                     }
                   },
-                  "required": [
-                    "id",
-                    "deleted"
-                  ]
+                  "required": ["id", "deleted"]
                 }
               }
             }

@@ -11,6 +11,7 @@ import type {
   UpdateCustomerAddressDTO,
   UpdateCustomerDTO,
 } from '../../../core/types/index.js'
+import type { Logger } from '../../../core/types/logger.js'
 import type { WithTransaction } from '../../../core/utils/with-transaction.js'
 import type { CustomerRepository } from '../repositories/customer.js'
 import type { CustomerAddressRepository } from '../repositories/customer-address.js'
@@ -19,17 +20,20 @@ type InjectedDependencies = {
   customerRepository: CustomerRepository
   customerAddressRepository: CustomerAddressRepository
   withTransaction: WithTransaction
+  logger: Logger
 }
 
 export class CustomerModuleService implements ICustomerModuleService {
   private customerRepository: CustomerRepository
   private customerAddressRepository: CustomerAddressRepository
   private withTransaction: WithTransaction
+  private logger: Logger
 
-  constructor({ customerRepository, customerAddressRepository, withTransaction }: InjectedDependencies) {
+  constructor({ customerRepository, customerAddressRepository, withTransaction, logger }: InjectedDependencies) {
     this.customerRepository = customerRepository
     this.customerAddressRepository = customerAddressRepository
     this.withTransaction = withTransaction
+    this.logger = logger
   }
 
   async retrieveCustomer(
@@ -67,6 +71,7 @@ export class CustomerModuleService implements ICustomerModuleService {
   }
 
   async createCustomers(data: CreateCustomerDTO[], context?: Context): Promise<CustomerDTO[]> {
+    this.logger.debug(`Creating ${data.length} customer(s)`)
     return this.withTransaction(context, async (ctx) => {
       const customers = await this.customerRepository.createMany(data, ctx)
 
