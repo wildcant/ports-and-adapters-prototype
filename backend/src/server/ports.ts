@@ -12,10 +12,17 @@ import type { AwilixContainer } from 'awilix'
 
 // ---- Route handler types (used by api/ route files) ----
 
-export type HttpRequest<TBody = unknown, TParams extends Record<string, string> = Record<string, string>> = {
-  params: TParams
+export type HttpRequest<
+  T extends {
+    body?: unknown
+    params?: Record<string, string>
+    query?: Record<string, unknown>
+  } = object,
+> = {
+  params: T extends { params: infer P } ? P : Record<string, string>
   query: Record<string, string | string[]>
-  body: TBody
+  validatedQuery: T extends { query: infer Q } ? Q : Record<string, unknown>
+  body: T extends { body: infer B } ? B : unknown
   scope: AwilixContainer
 }
 

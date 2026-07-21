@@ -7,10 +7,7 @@
   },
   "files": {
     "ignoreUnknown": false,
-    "includes": [
-      "**",
-      "!frontend/src/routeTree.gen.ts"
-    ]
+    "includes": ["**", "!frontend/src/routeTree.gen.ts"]
   },
   "formatter": {
     "enabled": true,
@@ -33,31 +30,20 @@
                 "selector": {
                   "kind": "enumMember"
                 },
-                "formats": [
-                  "CONSTANT_CASE"
-                ]
+                "formats": ["CONSTANT_CASE"]
               },
               {
                 "selector": {
                   "kind": "objectLiteralProperty"
                 },
-                "formats": [
-                  "camelCase",
-                  "CONSTANT_CASE"
-                ]
+                "formats": ["camelCase", "CONSTANT_CASE"]
               },
               {
                 "selector": {
                   "kind": "classProperty",
-                  "modifiers": [
-                    "static"
-                  ]
+                  "modifiers": ["static"]
                 },
-                "formats": [
-                  "camelCase",
-                  "PascalCase",
-                  "CONSTANT_CASE"
-                ]
+                "formats": ["camelCase", "PascalCase", "CONSTANT_CASE"]
               }
             ]
           }

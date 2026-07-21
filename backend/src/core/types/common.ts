@@ -21,8 +21,8 @@ export type IdParams = { id: string }
 
 export type FindConfig<Entity> = {
   select?: (keyof Entity)[]
-  skip?: number
-  take?: number
+  offset?: number
+  limit?: number
   order?: Partial<Record<keyof Entity, 'ASC' | 'DESC'>>
   withDeleted?: boolean
 }

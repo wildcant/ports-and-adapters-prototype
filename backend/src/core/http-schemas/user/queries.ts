@@ -1,9 +1,9 @@
 import { z } from 'zod'
 import { createFindParams, type FindParams } from '../common.js'
 
-export const CustomerListParams = createFindParams().extend({
+export const UserListParams = createFindParams().extend({
   id: z.union([z.string(), z.array(z.string())]).optional(),
   email: z.string().optional(),
 })
 
-export type CustomerListQuery = FindParams<typeof CustomerListParams>
+export type UserListQuery = FindParams<typeof UserListParams>

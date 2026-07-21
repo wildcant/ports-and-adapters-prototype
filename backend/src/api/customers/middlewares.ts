@@ -1,5 +1,6 @@
 import { IdParams } from '../../core/http-schemas/common.js'
 import { CreateCustomers, UpdateCustomer } from '../../core/http-schemas/customer/payloads.js'
+import { CustomerListParams } from '../../core/http-schemas/customer/queries.js'
 import {
   CustomerDeleteResponse,
   CustomerListResponse,
@@ -12,6 +13,7 @@ export default [
   {
     method: 'GET',
     matcher: '/customers',
+    querySchema: CustomerListParams,
     operationId: 'listCustomers',
     summary: 'List customers',
     tags: [Tags.CUSTOMERS],

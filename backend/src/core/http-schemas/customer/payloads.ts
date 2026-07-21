@@ -8,8 +8,10 @@ export const CreateCustomer = z
     email: z.email(),
   })
   .openapi('CreateCustomer')
+export type CreateCustomerBody = z.infer<typeof CreateCustomer>
 
 export const CreateCustomers = z.array(CreateCustomer)
+export type CreateCustomersBody = z.infer<typeof CreateCustomers>
 
 export const UpdateCustomer = z
   .object({
@@ -18,3 +20,4 @@ export const UpdateCustomer = z
     email: z.email().optional(),
   })
   .openapi('UpdateCustomer')
+export type UpdateCustomerBody = z.infer<typeof UpdateCustomer>

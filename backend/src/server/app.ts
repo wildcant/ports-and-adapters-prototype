@@ -82,6 +82,7 @@ export const createApp: CreateApp = ({ container }) => {
           const result = await route.handler({
             params,
             query,
+            validatedQuery: {},
             body,
             scope: container.createScope(),
           })

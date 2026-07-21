@@ -7,6 +7,7 @@ export const CreateUser = z
     email: z.email(),
   })
   .openapi('CreateUser')
+export type CreateUserBody = z.infer<typeof CreateUser>
 
 export const UpdateUser = z
   .object({
@@ -14,3 +15,4 @@ export const UpdateUser = z
     email: z.email().optional(),
   })
   .openapi('UpdateUser')
+export type UpdateUserBody = z.infer<typeof UpdateUser>

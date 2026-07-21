@@ -75,8 +75,8 @@ export function BaseRepository<TTable extends PgTable & BaseColumns>(table: TTab
         if (clauses.length) query = query.orderBy(...clauses)
       }
 
-      if (config?.take != null) query = query.limit(config.take)
-      if (config?.skip != null) query = query.offset(config.skip)
+      if (config?.limit != null) query = query.limit(config.limit)
+      if (config?.offset != null) query = query.offset(config.offset)
 
       const rows = await query
       return rows as Select[]

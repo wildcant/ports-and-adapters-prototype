@@ -11,3 +11,4 @@ export const User = z
     deletedAt: z.string().nullable(),
   })
   .openapi('User')
+export type User = z.infer<typeof User>

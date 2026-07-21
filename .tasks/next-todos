@@ -1,4 +1,3 @@
-- standard naming casing - model is using snake case, could use drizzle for naming casing transformation (check how medusa does it)
 - endpoint pagination
 
 Future TODOs
