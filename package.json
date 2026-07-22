@@ -10,7 +10,8 @@
     "lint": "biome lint .",
     "format": "biome format --write .",
     "check": "biome check .",
-    "openapi:generate": "npm run --workspace=backend openapi:dump:offline && npm run --workspace=frontend openapi:client"
+    "openapi:generate": "npm run --workspace=backend openapi:dump:offline && npm run --workspace=frontend openapi:client",
+    "typecheck": "npm run --workspace=backend typecheck && npm run --workspace=frontend typecheck"
   },
   "devDependencies": {
     "@biomejs/biome": "2.5.4"

@@ -20,7 +20,7 @@ container.register({
 })
 
 // Register shared pg connection pool
-const client = postgres(env.SUPABASE_DATABASE_URL, { prepare: false })
+const client = postgres(env.DATABASE_URL, { prepare: false })
 container.register({
   [ContainerRegistrationKeys.PG_CONNECTION]: asValue(client),
 })

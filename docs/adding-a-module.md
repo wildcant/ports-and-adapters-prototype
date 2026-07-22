@@ -313,7 +313,7 @@ export default defineConfig({
   out: './src/modules/inventory/migrations',
   dialect: 'postgresql',
   dbCredentials: {
-    url: env.SUPABASE_DATABASE_URL,
+    url: env.DATABASE_URL,
   },
 })
 ```

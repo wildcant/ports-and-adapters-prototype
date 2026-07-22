@@ -20,25 +20,21 @@ import * as _usersApi from './users/route.js'
 export { apiCall } from '../server/api-caller.js'
 
 /** Wrap each handler (keyed by HTTP method) with the matching middleware config. */
-function withMiddleware(handlers: Record<string, RouteHandler>, matcher: string, middlewares: MiddlewareRoute[]) {
-  const wrapped = { ...handlers }
+function withMiddleware<T extends Record<string, RouteHandler>>(
+  handlers: T,
+  matcher: string,
+  middlewares: MiddlewareRoute[],
+): T {
+  const wrapped = { ...handlers } as Record<string, RouteHandler>
   for (const config of middlewares) {
     if (config.matcher === matcher && wrapped[config.method]) {
       wrapped[config.method] = applyMiddleware(config, wrapped[config.method])
     }
   }
-  return wrapped
+  return wrapped as T
 }
 
-export const usersApi = withMiddleware(_usersApi as Record<string, RouteHandler>, '/users', userMiddlewares)
-export const userByIdApi = withMiddleware(_userByIdApi as Record<string, RouteHandler>, '/users/:id', userMiddlewares)
-export const customersApi = withMiddleware(
-  _customersApi as Record<string, RouteHandler>,
-  '/customers',
-  customerMiddlewares,
-)
-export const customerByIdApi = withMiddleware(
-  _customerByIdApi as Record<string, RouteHandler>,
-  '/customers/:id',
-  customerMiddlewares,
-)
+export const usersApi = withMiddleware(_usersApi, '/users', userMiddlewares)
+export const userByIdApi = withMiddleware(_userByIdApi, '/users/:id', userMiddlewares)
+export const customersApi = withMiddleware(_customersApi, '/customers', customerMiddlewares)
+export const customerByIdApi = withMiddleware(_customerByIdApi, '/customers/:id', customerMiddlewares)

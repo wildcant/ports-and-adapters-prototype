@@ -7,6 +7,7 @@
     "./validators": "./src/core/http-schemas/index.ts"
   },
   "scripts": {
+    "dev": "dotenvx run -f ../.env.local -- tsx src/index.ts",
     "start": "dotenvx run -f ../.env -- tsx src/index.ts",
     "test": "vitest run",
     "typecheck": "tsc --noEmit",
@@ -15,10 +16,11 @@
     "db:stop": "supabase stop",
     "db:status": "supabase status",
     "db:reset": "supabase db reset",
-    "db:migrate:user": "dotenvx run -f ../.env -- drizzle-kit migrate --config=src/modules/user/drizzle.config.ts",
+    "db:migrate:user": "dotenvx run -f ../.env.local -- drizzle-kit migrate --config=src/modules/user/drizzle.config.ts",
     "db:migrate:customer": "dotenvx run -f ../.env -- drizzle-kit migrate --config=src/modules/customer/drizzle.config.ts",
+    "db:seed:dev": "dotenvx run -f ../.env.local -- tsx scripts/seed-dev.ts",
     "openapi:dump": "curl -s http://localhost:3000/openapi.json | python3 -m json.tool > ../openapi.json && echo 'Saved to openapi.json'",
-    "openapi:dump:offline": "tsx src/scripts/openapi-dump.ts"
+    "openapi:dump:offline": "tsx scripts/openapi-dump.ts"
   },
   "dependencies": {
     "@asteasolutions/zod-to-openapi": "^8.5.0",

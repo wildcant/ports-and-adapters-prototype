@@ -2,22 +2,28 @@ import { createFileRoute } from '@tanstack/react-router'
 import { useState } from 'react'
 import { createUser, deleteUser as deleteUserFn, listUsers, updateUser as updateUserFn } from '../server/users'
 
+const PAGE_SIZE = 5
+
 export const Route = createFileRoute('/users')({
   component: UsersPage,
-  loader: () => listUsers(),
+  loader: () => listUsers({ data: { limit: PAGE_SIZE, offset: 0 } }),
 })
 
 function UsersPage() {
-  const initialUsers = Route.useLoaderData()
-  const [{ users }, setUsers] = useState(initialUsers)
+  const initialData = Route.useLoaderData()
+  const [{ users, count, offset, limit }, setData] = useState(initialData)
   const [name, setName] = useState('')
   const [email, setEmail] = useState('')
   const [editingId, setEditingId] = useState<string | null>(null)
   const [editName, setEditName] = useState('')
   const [editEmail, setEditEmail] = useState('')
 
+  async function fetchPage(newOffset: number) {
+    setData(await listUsers({ data: { limit: PAGE_SIZE, offset: newOffset } }))
+  }
+
   async function refresh() {
-    setUsers(await listUsers())
+    setData(await listUsers({ data: { limit, offset } }))
   }
 
   async function addUser(e: React.FormEvent) {
@@ -145,6 +151,32 @@ function UsersPage() {
             <p className="text-center text-sm text-[var(--sea-ink-soft)]">No users yet. Add one above.</p>
           )}
         </div>
+
+        {count > 0 && (
+          <div className="mt-6 flex items-center justify-between text-sm text-[var(--sea-ink-soft)]">
+            <span>
+              Showing {offset + 1}–{Math.min(offset + limit, count)} of {count}
+            </span>
+            <div className="flex gap-2">
+              <button
+                type="button"
+                disabled={offset === 0}
+                onClick={() => fetchPage(Math.max(0, offset - limit))}
+                className="rounded-full border border-[rgba(23,58,64,0.2)] px-4 py-1.5 text-xs font-semibold transition hover:bg-black/5 disabled:opacity-40 disabled:hover:bg-transparent"
+              >
+                Previous
+              </button>
+              <button
+                type="button"
+                disabled={offset + limit >= count}
+                onClick={() => fetchPage(offset + limit)}
+                className="rounded-full border border-[rgba(23,58,64,0.2)] px-4 py-1.5 text-xs font-semibold transition hover:bg-black/5 disabled:opacity-40 disabled:hover:bg-transparent"
+              >
+                Next
+              </button>
+            </div>
+          </div>
+        )}
       </section>
     </main>
   )

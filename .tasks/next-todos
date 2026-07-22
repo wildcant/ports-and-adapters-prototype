@@ -1,4 +1,5 @@
 - endpoint pagination
+- payment module (port) and payment providers (adapters)
 
 Future TODOs
 - sagas for cross module resilient workflows

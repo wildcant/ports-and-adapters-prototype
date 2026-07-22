@@ -1,21 +1,7 @@
-import { dirname, resolve } from 'node:path'
-import { fileURLToPath } from 'node:url'
-import { config } from '@dotenvx/dotenvx'
 import { z } from 'zod'
 
-const __dirname = dirname(fileURLToPath(import.meta.url))
-config({
-  path: [
-    resolve(__dirname, '../../.env.test'),
-    resolve(__dirname, '../../.env.local'),
-    resolve(__dirname, '../../.env'),
-  ],
-  quiet: true,
-})
-
 const envSchema = z.object({
-  SUPABASE_DATABASE_URL: z.url(),
-  DATABASE_URL: z.string().optional(),
+  DATABASE_URL: z.string(),
   NODE_ENV: z.string().default('development'),
   LOG_LEVEL: z.string().default('http'),
   LOG_FILE: z.string().default(''),
@@ -31,3 +17,4 @@ function createEnv() {
 }
 
 export const env = createEnv()
+console.log({ env })
