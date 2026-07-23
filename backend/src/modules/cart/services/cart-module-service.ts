@@ -1,0 +1,98 @@
+import { AppError, ErrorTypes } from '../../../core/errors/app-error.js'
+import type {
+  CartDTO,
+  Context,
+  CreateCartDTO,
+  FilterableCartProps,
+  FindConfig,
+  ICartModuleService,
+  UpdateCartDTO,
+} from '../../../core/types/index.js'
+import type { Logger } from '../../../core/types/logger.js'
+import type { WithTransaction } from '../../../core/utils/with-transaction.js'
+import type { CartRepository } from '../repositories/cart.js'
+
+type InjectedDependencies = {
+  cartRepository: CartRepository
+  withTransaction: WithTransaction
+  logger: Logger
+}
+
+export class CartModuleService implements ICartModuleService {
+  private cartRepository: CartRepository
+  private withTransaction: WithTransaction
+  private logger: Logger
+
+  constructor({ cartRepository, withTransaction, logger }: InjectedDependencies) {
+    this.cartRepository = cartRepository
+    this.withTransaction = withTransaction
+    this.logger = logger
+  }
+
+  async retrieveCart(cartId: string, config?: FindConfig<CartDTO>, context?: Context): Promise<CartDTO> {
+    return this.cartRepository.findByIdOrFail(cartId, config, context)
+  }
+
+  async listCarts(filters?: FilterableCartProps, config?: FindConfig<CartDTO>, context?: Context): Promise<CartDTO[]> {
+    return this.cartRepository.find(filters, config, context)
+  }
+
+  async listAndCountCarts(
+    filters?: FilterableCartProps,
+    config?: FindConfig<CartDTO>,
+    context?: Context,
+  ): Promise<[CartDTO[], number]> {
+    return this.cartRepository.findAndCount(filters, config, context)
+  }
+
+  async createCarts(data: CreateCartDTO[], context?: Context): Promise<CartDTO[]> {
+    this.logger.debug(`Creating ${data.length} cart(s)`)
+    return this.withTransaction(context, async (ctx) => {
+      return this.cartRepository.createMany(data, ctx)
+    })
+  }
+
+  async updateCarts(cartIds: string[], data: UpdateCartDTO, context?: Context): Promise<CartDTO[]> {
+    return this.withTransaction(context, async (ctx) => {
+      return this.cartRepository.update(cartIds, data, ctx)
+    })
+  }
+
+  async deleteCarts(cartIds: string[], context?: Context): Promise<void> {
+    return this.withTransaction(context, async (ctx) => {
+      await this.cartRepository.delete(cartIds, ctx)
+    })
+  }
+
+  async softDeleteCarts(cartIds: string[], context?: Context): Promise<void> {
+    return this.withTransaction(context, async (ctx) => {
+      await this.cartRepository.softDelete(cartIds, ctx)
+    })
+  }
+
+  async restoreCarts(cartIds: string[], context?: Context): Promise<void> {
+    return this.withTransaction(context, async (ctx) => {
+      await this.cartRepository.restore(cartIds, ctx)
+    })
+  }
+
+  async completeCart(cartId: string, context?: Context): Promise<CartDTO> {
+    return this.withTransaction(context, async (ctx) => {
+      const cart = await this.cartRepository.findByIdOrFail(cartId, undefined, ctx)
+
+      if (cart.status !== 'active') {
+        throw new AppError({
+          type: ErrorTypes.NOT_ALLOWED,
+          message: `Cart ${cartId} is not active (current status: ${cart.status})`,
+        })
+      }
+
+      const [updated] = await this.cartRepository.update(
+        [cartId],
+        { status: 'completed', completedAt: new Date() },
+        ctx,
+      )
+      return updated
+    })
+  }
+}
