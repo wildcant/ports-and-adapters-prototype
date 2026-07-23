@@ -18,6 +18,9 @@
     "db:reset": "supabase db reset",
     "db:migrate:user": "dotenvx run -f ../.env.local -- drizzle-kit migrate --config=src/modules/user/drizzle.config.ts",
     "db:migrate:customer": "dotenvx run -f ../.env -- drizzle-kit migrate --config=src/modules/customer/drizzle.config.ts",
+    "db:migrate:product": "dotenvx run -f ../.env -- drizzle-kit migrate --config=src/modules/product/drizzle.config.ts",
+    "db:migrate:inventory": "dotenvx run -f ../.env -- drizzle-kit migrate --config=src/modules/inventory/drizzle.config.ts",
+    "db:migrate": "npm run db:migrate:user && npm run db:migrate:customer && npm run db:migrate:product && npm run db:migrate:inventory",
     "db:seed:dev": "dotenvx run -f ../.env.local -- tsx scripts/seed-dev.ts",
     "openapi:dump": "curl -s http://localhost:3000/openapi.json | python3 -m json.tool > ../openapi.json && echo 'Saved to openapi.json'",
     "openapi:dump:offline": "tsx scripts/openapi-dump.ts"

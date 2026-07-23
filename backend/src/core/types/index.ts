@@ -1,5 +1,7 @@
 export * from './common.js'
 export * from './context.js'
 export * from './customer/index.js'
+export * from './inventory/index.js'
 export * from './logger.js'
+export * from './product/index.js'
 export * from './user/index.js'

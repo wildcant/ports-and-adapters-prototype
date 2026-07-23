@@ -10,6 +10,8 @@ import { createLogger } from './core/logger/index.js'
 import { ContainerRegistrationKeys } from './core/utils/index.js'
 import { env } from './env.js'
 import customerModule from './modules/customer/index.js'
+import inventoryModule from './modules/inventory/index.js'
+import productModule from './modules/product/index.js'
 import userModule from './modules/user/index.js'
 
 const container = createContainer()
@@ -28,5 +30,7 @@ container.register({
 // Modules using two-container bootstrap
 bootstrapModule(container, userModule)
 bootstrapModule(container, customerModule)
+bootstrapModule(container, inventoryModule)
+bootstrapModule(container, productModule)
 
 export { container }

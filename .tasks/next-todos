@@ -1,4 +1,4 @@
-- endpoint pagination
+- product module / inventory module, test read join table (only link).
 - payment module (port) and payment providers (adapters)
 
 Future TODOs

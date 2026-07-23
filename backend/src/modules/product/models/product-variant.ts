@@ -1,0 +1,42 @@
+import { sql } from 'drizzle-orm'
+import { boolean, doublePrecision, index, integer, pgTable, text, timestamp, uniqueIndex } from 'drizzle-orm/pg-core'
+import { productTable } from './product.js'
+
+export const productVariantTable = pgTable(
+  'product_variant',
+  {
+    id: text().primaryKey().default(sql`CONCAT('variant_', REPLACE(gen_random_uuid()::text, '-', ''))`),
+    productId: text()
+      .notNull()
+      .references(() => productTable.id, { onDelete: 'cascade' }),
+    title: text().notNull(),
+    sku: text(),
+    barcode: text(),
+    ean: text(),
+    upc: text(),
+    allowBackorder: boolean().default(false).notNull(),
+    manageInventory: boolean().default(true).notNull(),
+    hsCode: text(),
+    originCountry: text(),
+    midCode: text(),
+    material: text(),
+    weight: doublePrecision(),
+    length: doublePrecision(),
+    height: doublePrecision(),
+    width: doublePrecision(),
+    variantRank: integer().default(0),
+    metadata: text(),
+    createdAt: timestamp().defaultNow().notNull(),
+    deletedAt: timestamp(),
+  },
+  (table) => [
+    index('idx_product_variant_product_id').on(table.productId),
+    uniqueIndex('idx_product_variant_sku').on(table.sku).where(sql`deleted_at IS NULL`),
+    uniqueIndex('idx_product_variant_barcode').on(table.barcode).where(sql`deleted_at IS NULL`),
+    uniqueIndex('idx_product_variant_ean').on(table.ean).where(sql`deleted_at IS NULL`),
+    uniqueIndex('idx_product_variant_upc').on(table.upc).where(sql`deleted_at IS NULL`),
+  ],
+)
+
+export type ProductVariant = typeof productVariantTable.$inferSelect
+export type CreateProductVariant = typeof productVariantTable.$inferInsert

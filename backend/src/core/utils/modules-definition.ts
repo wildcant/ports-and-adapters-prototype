@@ -6,4 +6,5 @@ export const Modules = {
   PAYMENT: 'payment',
   PROMOTION: 'promotion',
   INVENTORY: 'inventory',
+  PRODUCT: 'product',
 } as const

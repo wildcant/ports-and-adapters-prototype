@@ -21,8 +21,7 @@ import { container } from '../container.js'
 type ReqOf<H> = H extends (req: infer R, ...args: never[]) => unknown ? R : never
 
 /** Extract the `json` return type from a handler. */
-type OutputOf<H> =
-  H extends (...args: never[]) => Promise<{ json: infer J }> ? J : never
+type OutputOf<H> = H extends (...args: never[]) => Promise<{ json: infer J }> ? J : never
 
 /** Collapse `{ a: X } & { b: Y }` into a single flat object type. */
 type Simplify<T> = { [K in keyof T]: T[K] }
@@ -47,22 +46,17 @@ type FlattenQuery<Q> = Q extends {
  *   body   — default is `unknown` → `unknown extends B`
  *   query  — default `validatedQuery` is `Record<string, unknown>` (has index sig)
  */
-type ApiCallData<H, R = ReqOf<H>> =
-  (R extends { params: infer P }
-    ? string extends keyof P ? unknown : { params: P }
-    : unknown)
-  & (R extends { body: infer B }
-    ? unknown extends B ? unknown : { body: B }
-    : unknown)
-  & (R extends { validatedQuery: infer Q }
-    ? string extends keyof Q ? unknown : { query: FlattenQuery<Q> }
-    : unknown)
+type ApiCallData<H, R = ReqOf<H>> = (R extends { params: infer P }
+  ? string extends keyof P
+    ? unknown
+    : { params: P }
+  : unknown) &
+  (R extends { body: infer B } ? (unknown extends B ? unknown : { body: B }) : unknown) &
+  (R extends { validatedQuery: infer Q } ? (string extends keyof Q ? unknown : { query: FlattenQuery<Q> }) : unknown)
 
 // ---- Runtime ----
 
-export async function apiCall<
-  H extends (...args: never[]) => Promise<{ status: number; json: unknown }>,
->(
+export async function apiCall<H extends (...args: never[]) => Promise<{ status: number; json: unknown }>>(
   handler: H,
   ...[data]: keyof ApiCallData<H> extends never ? [] : [data: ApiCallData<H>]
 ): Promise<OutputOf<H>> {
