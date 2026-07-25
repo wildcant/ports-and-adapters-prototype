@@ -2,8 +2,8 @@
   "name": "ports-and-adapters-prototype",
   "private": true,
   "workspaces": [
-    "backend",
-    "frontend"
+    "apps/backend",
+    "apps/frontend"
   ],
   "scripts": {
     "setup": "npm install && npm run --workspace=backend db:setup",

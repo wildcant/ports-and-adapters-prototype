@@ -8,6 +8,7 @@
     "skipLibCheck": true,
     "paths": {
       "@core/*": ["./src/core/*"],
+      "@workflows/*": ["./src/workflows/*"],
       "@tests/*": ["./tests/*"]
     }
   },

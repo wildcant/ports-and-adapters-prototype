@@ -11,6 +11,6 @@ registerOpenApiRoutes(userMiddlewares)
 
 const doc = generateDocument()
 const __dirname = dirname(fileURLToPath(import.meta.url))
-const outPath = resolve(__dirname, '../../openapi.json')
+const outPath = resolve(__dirname, '../../../openapi.json')
 writeFileSync(outPath, `${JSON.stringify(doc, null, 2)}\n`)
 console.log(`OpenAPI spec written to ${outPath}`)

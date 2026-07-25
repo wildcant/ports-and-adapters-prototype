@@ -1,5 +1,5 @@
+import { confirmInventoryWorkflow } from '@workflows/cart/confirm-inventory-workflow.js'
 import type { HttpRequest, HttpResult } from '../../../../../server/ports.js'
-import { confirmInventoryWorkflow } from '../../../../../workflows/cart/confirm-inventory-workflow.js'
 
 type CheckInventoryInput = { params: { id: string } }
 

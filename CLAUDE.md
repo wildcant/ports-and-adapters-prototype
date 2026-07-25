@@ -5,7 +5,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 ## Commands
 
 ```bash
-# First-time setup (install deps, run Drizzle migrations, generate Prisma client)
+# First-time setup (install deps, run Drizzle migrations)
 npm run setup
 
 # Start standalone backend API (http://localhost:3000)
@@ -26,8 +26,6 @@ npm run --workspace=backend db:generate
 # Drizzle: run migrations
 npm run --workspace=backend db:migrate
 
-# Prisma: regenerate client after schema change
-npx prisma generate --schema=backend/prisma/schema.prisma
 ```
 
 ## Architecture
@@ -45,14 +43,14 @@ Every module follows the same layered structure:
 
 ### Two entry points for the same business logic
 
-- **Standalone API** (`backend/src/index.ts`): Creates container → creates App (zero-dep fetch router) → loads file-based routes → serves via Node.js
-- **Backend-as-library** (`backend/src/container.ts`): Exports the container for direct use by `frontend/src/server/users.ts` via TanStack Start `createServerFn` — no HTTP round-trip
+- **Standalone API** (`apps/backend/src/index.ts`): Creates container → creates App (zero-dep fetch router) → loads file-based routes → serves via Node.js
+- **Backend-as-library** (`apps/backend/src/container.ts`): Exports the container for direct use by `apps/frontend/src/server/users.ts` via TanStack Start `createServerFn` — no HTTP round-trip
 
 ### HTTP layer
 
-- **Route handlers** (`backend/src/api/`) use file-based routing (Next.js-style `[id]` params). They export named HTTP methods (`GET`, `POST`, `PATCH`, `DELETE`) and receive `HttpRequest` / return `HttpResult` — framework-agnostic types defined in `backend/src/server/ports.ts`.
-- **App** (`backend/src/server/app.ts`) is a zero-dependency router that compiles route patterns to regexes and produces a Web Standard `fetch(Request) -> Response` handler.
-- **Platform runners** (`backend/src/server/platforms.ts`) are thin adapters that plug the App's fetch handler into Node.js, Express, Vercel, Lambda, Cloudflare Workers, Bun, or Deno.
+- **Route handlers** (`apps/backend/src/api/`) use file-based routing (Next.js-style `[id]` params). They export named HTTP methods (`GET`, `POST`, `PATCH`, `DELETE`) and receive `HttpRequest` / return `HttpResult` — framework-agnostic types defined in `apps/backend/src/server/ports.ts`.
+- **App** (`apps/backend/src/server/app.ts`) is a zero-dependency router that compiles route patterns to regexes and produces a Web Standard `fetch(Request) -> Response` handler.
+- **Platform runners** (`apps/backend/src/server/platforms.ts`) are thin adapters that plug the App's fetch handler into Node.js, Express, Vercel, Lambda, Cloudflare Workers, Bun, or Deno.
 
 ### DI convention
 

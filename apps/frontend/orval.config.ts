@@ -5,7 +5,7 @@ const pascal = (str: string) => str.charAt(0).toUpperCase() + str.slice(1)
 export default defineConfig({
   api: {
     input: {
-      target: '../openapi.json',
+      target: '../../openapi.json',
     },
     output: {
       target: 'src/api/generated',
