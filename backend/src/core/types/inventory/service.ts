@@ -1,6 +1,11 @@
 import type { FindConfig } from '../common.js'
 import type { Context } from '../context.js'
-import type { FilterableInventoryItemProps, FilterableInventoryLevelProps, InventoryItemDTO, InventoryLevelDTO } from './common.js'
+import type {
+  FilterableInventoryItemProps,
+  FilterableInventoryLevelProps,
+  InventoryItemDTO,
+  InventoryLevelDTO,
+} from './common.js'
 import type { CreateInventoryItemDTO, CreateInventoryLevelDTO, UpdateInventoryItemDTO } from './mutations.js'
 
 export type IInventoryModuleService = {
@@ -23,4 +28,10 @@ export type IInventoryModuleService = {
     context?: Context,
   ): Promise<InventoryLevelDTO[]>
   createInventoryLevels(data: CreateInventoryLevelDTO[], context?: Context): Promise<InventoryLevelDTO[]>
+  confirmInventory(
+    inventoryItemId: string,
+    locationIds: string[],
+    quantity: number,
+    context?: Context,
+  ): Promise<boolean>
 }

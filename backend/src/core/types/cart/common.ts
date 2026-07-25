@@ -1,5 +1,4 @@
-import type { BaseFilterable, FindConfig, OperatorMap } from '../common.js'
-import type { Context } from '../context.js'
+import type { BaseFilterable, OperatorMap } from '../common.js'
 
 export type CartStatus = 'active' | 'completed' | 'abandoned'
 

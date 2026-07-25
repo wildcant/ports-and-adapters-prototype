@@ -45,10 +45,21 @@ export type IProductVariantInventoryItemRepository = {
   find(filters?: unknown, config?: unknown, context?: Context): Promise<ProductVariantInventoryItemDTO[]>
   findById(id: string, config?: unknown, context?: Context): Promise<ProductVariantInventoryItemDTO | null>
   findByIdOrFail(id: string, config?: unknown, context?: Context): Promise<ProductVariantInventoryItemDTO>
-  findAndCount(filters?: unknown, config?: unknown, context?: Context): Promise<[ProductVariantInventoryItemDTO[], number]>
+  findAndCount(
+    filters?: unknown,
+    config?: unknown,
+    context?: Context,
+  ): Promise<[ProductVariantInventoryItemDTO[], number]>
   create(data: Partial<ProductVariantInventoryItemDTO>, context?: Context): Promise<ProductVariantInventoryItemDTO>
-  createMany(data: Partial<ProductVariantInventoryItemDTO>[], context?: Context): Promise<ProductVariantInventoryItemDTO[]>
-  update(ids: string[], data: Partial<ProductVariantInventoryItemDTO>, context?: Context): Promise<ProductVariantInventoryItemDTO[]>
+  createMany(
+    data: Partial<ProductVariantInventoryItemDTO>[],
+    context?: Context,
+  ): Promise<ProductVariantInventoryItemDTO[]>
+  update(
+    ids: string[],
+    data: Partial<ProductVariantInventoryItemDTO>,
+    context?: Context,
+  ): Promise<ProductVariantInventoryItemDTO[]>
   delete(ids: string[], context?: Context): Promise<void>
   softDelete(ids: string[], context?: Context): Promise<void>
   restore(ids: string[], context?: Context): Promise<void>

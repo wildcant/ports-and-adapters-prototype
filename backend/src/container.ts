@@ -8,6 +8,8 @@ import postgres from 'postgres'
 import { bootstrapModule } from './core/bootstrap/index.js'
 import { createLogger } from './core/logger/index.js'
 import { ContainerRegistrationKeys } from './core/utils/index.js'
+import { createSimpleWorkflowEngine } from './core/workflows/simple-adapter.js'
+import { setWorkflowEngine } from './core/workflows/types.js'
 import { env } from './env.js'
 import { registerLinkService } from './link-modules/index.js'
 import cartModule from './modules/cart/index.js'
@@ -38,5 +40,8 @@ bootstrapModule(container, userModule)
 
 // Link service (typed repository registry — not a module)
 registerLinkService(container)
+
+// Workflow engine (global — used implicitly by createWorkflow().run())
+setWorkflowEngine(createSimpleWorkflowEngine(), container)
 
 export { container }

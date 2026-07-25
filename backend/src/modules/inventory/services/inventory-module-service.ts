@@ -88,4 +88,21 @@ export class InventoryModuleService implements IInventoryModuleService {
       return this.inventoryLevelRepository.createMany(data, ctx)
     })
   }
+
+  async confirmInventory(
+    inventoryItemId: string,
+    locationIds: string[],
+    quantity: number,
+    context?: Context,
+  ): Promise<boolean> {
+    const levels = await this.inventoryLevelRepository.find(
+      { inventoryItemId, locationId: locationIds },
+      undefined,
+      context,
+    )
+
+    const availableQuantity = levels.reduce((sum, level) => sum + level.stockedQuantity - level.reservedQuantity, 0)
+
+    return availableQuantity >= quantity
+  }
 }

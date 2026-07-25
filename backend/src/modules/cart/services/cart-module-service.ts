@@ -12,8 +12,8 @@ import type {
 } from '../../../core/types/index.js'
 import type { Logger } from '../../../core/types/logger.js'
 import type { WithTransaction } from '../../../core/utils/with-transaction.js'
-import type { CartLineItemRepository } from '../repositories/cart-line-item.js'
 import type { CartRepository } from '../repositories/cart.js'
+import type { CartLineItemRepository } from '../repositories/cart-line-item.js'
 
 type InjectedDependencies = {
   cartRepository: CartRepository
