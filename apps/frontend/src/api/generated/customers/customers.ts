@@ -9,6 +9,7 @@ import type {
   CustomerDeleteResponse,
   CustomerListResponse,
   CustomerResponse,
+  ListCustomersParams,
   UpdateCustomer
 } from '../model';
 
@@ -32,20 +33,35 @@ export type ListCustomersResponseError = (ListCustomersResponse400) & {
 
 export type ListCustomersResponse = (ListCustomersResponseSuccess | ListCustomersResponseError)
 
-export const getListCustomersUrl = () => {
+export const getListCustomersUrl = (params?: ListCustomersParams,) => {
+  const normalizedParams = new URLSearchParams();
 
+  Object.entries(params || {}).forEach(([key, value]) => {
+    const explodeParameters = ["id"];
 
+    if (Array.isArray(value) && explodeParameters.includes(key)) {
+      value.forEach((v) => {
+        normalizedParams.append(key, v === null ? 'null' : String(v));
+      });
+      return;
+    }
 
+    if (value !== undefined) {
+      normalizedParams.append(key, value === null ? 'null' : String(value))
+    }
+  });
 
-  return `http://localhost:3000/customers`
+  const stringifiedParams = normalizedParams.toString();
+
+  return stringifiedParams.length > 0 ? `http://localhost:3000/customers?${stringifiedParams}` : `http://localhost:3000/customers`
 }
 
 /**
  * @summary List customers
  */
-export const listCustomers = async ( options?: RequestInit): Promise<ListCustomersResponse> => {
+export const listCustomers = async (params?: ListCustomersParams, options?: RequestInit): Promise<ListCustomersResponse> => {
 
-  const res = await fetch(getListCustomersUrl(),
+  const res = await fetch(getListCustomersUrl(params),
   {
     ...options,
     method: 'GET'

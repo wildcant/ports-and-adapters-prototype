@@ -27,6 +27,10 @@ Plus the implicit `product_variant_option` pivot (Variant <-> OptionValue M:M).
 
 No PriceRule needed — single currency, no context-based pricing.
 
+references
+/Users/willo/learn/medusa/medusa-source/packages/modules/pricing/src/models/price-set.ts
+/Users/willo/learn/medusa/medusa-source/packages/modules/pricing/src/models/price.ts
+
 ---
 
 ## 3. Inventory (3 tables)

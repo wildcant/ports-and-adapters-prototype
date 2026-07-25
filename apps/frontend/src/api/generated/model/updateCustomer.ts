@@ -7,8 +7,8 @@
 
 export interface UpdateCustomer {
   /** @minLength 1 */
-  first_name?: string;
+  firstName?: string;
   /** @minLength 1 */
-  last_name?: string;
+  lastName?: string;
   email?: string;
 }

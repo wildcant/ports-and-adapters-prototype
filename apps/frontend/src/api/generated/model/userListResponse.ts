@@ -7,5 +7,8 @@
 import type { User } from './user.ts';
 
 export interface UserListResponse {
+  count: number;
+  offset: number;
+  limit: number;
   users: User[];
 }

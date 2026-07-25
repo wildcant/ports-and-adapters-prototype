@@ -9,8 +9,8 @@ export interface User {
   id: string;
   name: string;
   email: string;
-  created_at: string;
-  updated_at: string;
+  createdAt: string;
+  updatedAt: string;
   /** @nullable */
-  deleted_at: string | null;
+  deletedAt: string | null;
 }

@@ -1,6 +1,7 @@
 - product module / inventory module, test read join table (only link).
 - payment module (port) and payment providers (adapters)
 - investigate how to supabase as event bus (supabase-event-bus.md)
+- composing workflows
 
 Future TODOs
 - sagas for cross module resilient workflows

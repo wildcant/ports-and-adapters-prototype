@@ -6,6 +6,7 @@
  */
 import type {
   CreateUser,
+  ListUsersParams,
   UpdateUser,
   UserDeleteResponse,
   UserListResponse,
@@ -32,20 +33,35 @@ export type ListUsersResponseError = (ListUsersResponse400) & {
 
 export type ListUsersResponse = (ListUsersResponseSuccess | ListUsersResponseError)
 
-export const getListUsersUrl = () => {
+export const getListUsersUrl = (params?: ListUsersParams,) => {
+  const normalizedParams = new URLSearchParams();
 
+  Object.entries(params || {}).forEach(([key, value]) => {
+    const explodeParameters = ["id"];
 
+    if (Array.isArray(value) && explodeParameters.includes(key)) {
+      value.forEach((v) => {
+        normalizedParams.append(key, v === null ? 'null' : String(v));
+      });
+      return;
+    }
 
+    if (value !== undefined) {
+      normalizedParams.append(key, value === null ? 'null' : String(value))
+    }
+  });
 
-  return `http://localhost:3000/users`
+  const stringifiedParams = normalizedParams.toString();
+
+  return stringifiedParams.length > 0 ? `http://localhost:3000/users?${stringifiedParams}` : `http://localhost:3000/users`
 }
 
 /**
  * @summary List users
  */
-export const listUsers = async ( options?: RequestInit): Promise<ListUsersResponse> => {
+export const listUsers = async (params?: ListUsersParams, options?: RequestInit): Promise<ListUsersResponse> => {
 
-  const res = await fetch(getListUsersUrl(),
+  const res = await fetch(getListUsersUrl(params),
   {
     ...options,
     method: 'GET'

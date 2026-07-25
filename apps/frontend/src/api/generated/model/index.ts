@@ -11,6 +11,8 @@ export * from './customer.ts';
 export * from './customerDeleteResponse.ts';
 export * from './customerListResponse.ts';
 export * from './customerResponse.ts';
+export * from './listCustomersParams.ts';
+export * from './listUsersParams.ts';
 export * from './updateCustomer.ts';
 export * from './updateUser.ts';
 export * from './user.ts';

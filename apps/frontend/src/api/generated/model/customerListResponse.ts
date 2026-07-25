@@ -7,6 +7,8 @@
 import type { Customer } from './customer.ts';
 
 export interface CustomerListResponse {
-  customers: Customer[];
   count: number;
+  offset: number;
+  limit: number;
+  customers: Customer[];
 }
