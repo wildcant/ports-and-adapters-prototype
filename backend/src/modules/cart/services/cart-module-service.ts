@@ -1,8 +1,10 @@
 import { AppError, ErrorTypes } from '../../../core/errors/app-error.js'
 import type {
   CartDTO,
+  CartLineItemDTO,
   Context,
   CreateCartDTO,
+  FilterableCartLineItemProps,
   FilterableCartProps,
   FindConfig,
   ICartModuleService,
@@ -10,21 +12,25 @@ import type {
 } from '../../../core/types/index.js'
 import type { Logger } from '../../../core/types/logger.js'
 import type { WithTransaction } from '../../../core/utils/with-transaction.js'
+import type { CartLineItemRepository } from '../repositories/cart-line-item.js'
 import type { CartRepository } from '../repositories/cart.js'
 
 type InjectedDependencies = {
   cartRepository: CartRepository
+  cartLineItemRepository: CartLineItemRepository
   withTransaction: WithTransaction
   logger: Logger
 }
 
 export class CartModuleService implements ICartModuleService {
   private cartRepository: CartRepository
+  private cartLineItemRepository: CartLineItemRepository
   private withTransaction: WithTransaction
   private logger: Logger
 
-  constructor({ cartRepository, withTransaction, logger }: InjectedDependencies) {
+  constructor({ cartRepository, cartLineItemRepository, withTransaction, logger }: InjectedDependencies) {
     this.cartRepository = cartRepository
+    this.cartLineItemRepository = cartLineItemRepository
     this.withTransaction = withTransaction
     this.logger = logger
   }
@@ -74,6 +80,14 @@ export class CartModuleService implements ICartModuleService {
     return this.withTransaction(context, async (ctx) => {
       await this.cartRepository.restore(cartIds, ctx)
     })
+  }
+
+  async listLineItems(
+    filters?: FilterableCartLineItemProps,
+    config?: FindConfig<CartLineItemDTO>,
+    context?: Context,
+  ): Promise<CartLineItemDTO[]> {
+    return this.cartLineItemRepository.find(filters, config, context)
   }
 
   async completeCart(cartId: string, context?: Context): Promise<CartDTO> {

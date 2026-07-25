@@ -1,9 +1,16 @@
 import { container } from '../src/container.js'
-import type { IProductModuleService, IUserModuleService } from '../src/core/types/index.js'
-import { Modules } from '../src/core/utils/index.js'
+import type {
+  IInventoryModuleService,
+  ILinkService,
+  IProductModuleService,
+  IUserModuleService,
+} from '../src/core/types/index.js'
+import { ContainerRegistrationKeys, Modules } from '../src/core/utils/index.js'
 
 const userService = container.resolve<IUserModuleService>(Modules.USER)
 const productService = container.resolve<IProductModuleService>(Modules.PRODUCT)
+const inventoryService = container.resolve<IInventoryModuleService>(Modules.INVENTORY)
+const linkService = container.resolve<ILinkService>(ContainerRegistrationKeys.LINK)
 
 // --- Users ---
 const existingUsers = await userService.listUsers()
@@ -137,6 +144,36 @@ await productService.createProductImages([
   { productId: shorts.id, url: 'https://placehold.co/600x400?text=Shorts+Back', rank: 1 },
 ])
 console.log('Seeded product images')
+
+// --- Inventory Items + Levels + Variant Links ---
+const inventoryData = createdVariants.map((v) => ({
+  sku: v.sku,
+  title: v.title,
+  requiresShipping: true,
+}))
+
+const createdItems = await inventoryService.createInventoryItems(inventoryData)
+console.log(`Seeded ${createdItems.length} inventory items`)
+
+// Create inventory levels (all items at a single default location with stock)
+await inventoryService.createInventoryLevels(
+  createdItems.map((item) => ({
+    inventoryItemId: item.id,
+    locationId: 'loc_default',
+    stockedQuantity: 100,
+    reservedQuantity: 0,
+    incomingQuantity: 0,
+  })),
+)
+console.log(`Seeded ${createdItems.length} inventory levels`)
+
+// Link variants -> inventory items (1:1 by matching SKU order)
+const links = createdVariants.map((variant, i) => ({
+  variantId: variant.id,
+  inventoryItemId: createdItems[i].id,
+}))
+await linkService.repo('productVariantInventoryItem').createMany(links)
+console.log(`Seeded ${links.length} variant-inventory links`)
 
 console.log('Done!')
 process.exit(0)

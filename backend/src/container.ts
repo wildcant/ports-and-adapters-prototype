@@ -9,6 +9,7 @@ import { bootstrapModule } from './core/bootstrap/index.js'
 import { createLogger } from './core/logger/index.js'
 import { ContainerRegistrationKeys } from './core/utils/index.js'
 import { env } from './env.js'
+import { registerLinkService } from './link-modules/index.js'
 import cartModule from './modules/cart/index.js'
 import customerModule from './modules/customer/index.js'
 import inventoryModule from './modules/inventory/index.js'
@@ -34,5 +35,8 @@ bootstrapModule(container, customerModule)
 bootstrapModule(container, inventoryModule)
 bootstrapModule(container, productModule)
 bootstrapModule(container, userModule)
+
+// Link service (typed repository registry — not a module)
+registerLinkService(container)
 
 export { container }

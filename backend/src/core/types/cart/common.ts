@@ -1,4 +1,5 @@
-import type { BaseFilterable, OperatorMap } from '../common.js'
+import type { BaseFilterable, FindConfig, OperatorMap } from '../common.js'
+import type { Context } from '../context.js'
 
 export type CartStatus = 'active' | 'completed' | 'abandoned'
 
@@ -27,5 +28,43 @@ export interface FilterableCartProps extends BaseFilterable<FilterableCartProps>
   status?: CartStatus | CartStatus[]
   regionId?: string | string[]
   salesChannelId?: string | string[]
+  createdAt?: OperatorMap<Date>
+}
+
+export type CartLineItemDTO = {
+  id: string
+  cartId: string
+  title: string
+  subtitle: string | null
+  thumbnail: string | null
+  quantity: number
+  variantId: string | null
+  productId: string | null
+  productTitle: string | null
+  productDescription: string | null
+  productSubtitle: string | null
+  productType: string | null
+  productHandle: string | null
+  variantSku: string | null
+  variantBarcode: string | null
+  variantTitle: string | null
+  variantOptionValues: string | null
+  requiresShipping: boolean
+  isDiscountable: boolean
+  isGiftcard: boolean
+  isTaxInclusive: boolean
+  compareAtUnitPrice: number | null
+  unitPrice: number
+  metadata: string | null
+  createdAt: Date
+  updatedAt: Date
+  deletedAt: Date | null
+}
+
+export interface FilterableCartLineItemProps extends BaseFilterable<FilterableCartLineItemProps> {
+  id?: string | string[]
+  cartId?: string | string[]
+  variantId?: string | string[]
+  productId?: string | string[]
   createdAt?: OperatorMap<Date>
 }

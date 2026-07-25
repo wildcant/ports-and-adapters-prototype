@@ -1,29 +1,36 @@
 import type {
   Context,
   CreateInventoryItemDTO,
+  CreateInventoryLevelDTO,
   FilterableInventoryItemProps,
+  FilterableInventoryLevelProps,
   FindConfig,
   IInventoryModuleService,
   InventoryItemDTO,
+  InventoryLevelDTO,
   UpdateInventoryItemDTO,
 } from '../../../core/types/index.js'
 import type { Logger } from '../../../core/types/logger.js'
 import type { WithTransaction } from '../../../core/utils/with-transaction.js'
 import type { InventoryItemRepository } from '../repositories/inventory-item.js'
+import type { InventoryLevelRepository } from '../repositories/inventory-level.js'
 
 type InjectedDependencies = {
   inventoryItemRepository: InventoryItemRepository
+  inventoryLevelRepository: InventoryLevelRepository
   withTransaction: WithTransaction
   logger: Logger
 }
 
 export class InventoryModuleService implements IInventoryModuleService {
   private inventoryItemRepository: InventoryItemRepository
+  private inventoryLevelRepository: InventoryLevelRepository
   private withTransaction: WithTransaction
   private logger: Logger
 
-  constructor({ inventoryItemRepository, withTransaction, logger }: InjectedDependencies) {
+  constructor({ inventoryItemRepository, inventoryLevelRepository, withTransaction, logger }: InjectedDependencies) {
     this.inventoryItemRepository = inventoryItemRepository
+    this.inventoryLevelRepository = inventoryLevelRepository
     this.withTransaction = withTransaction
     this.logger = logger
   }
@@ -64,6 +71,21 @@ export class InventoryModuleService implements IInventoryModuleService {
   async deleteInventoryItems(itemIds: string[], context?: Context): Promise<void> {
     return this.withTransaction(context, async (ctx) => {
       await this.inventoryItemRepository.softDelete(itemIds, ctx)
+    })
+  }
+
+  async listInventoryLevels(
+    filters?: FilterableInventoryLevelProps,
+    config?: FindConfig<InventoryLevelDTO>,
+    context?: Context,
+  ): Promise<InventoryLevelDTO[]> {
+    return this.inventoryLevelRepository.find(filters, config, context)
+  }
+
+  async createInventoryLevels(data: CreateInventoryLevelDTO[], context?: Context): Promise<InventoryLevelDTO[]> {
+    this.logger.debug(`Creating ${data.length} inventory level(s)`)
+    return this.withTransaction(context, async (ctx) => {
+      return this.inventoryLevelRepository.createMany(data, ctx)
     })
   }
 }

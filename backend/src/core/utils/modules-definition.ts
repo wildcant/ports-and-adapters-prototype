@@ -8,3 +8,8 @@ export const Modules = {
   INVENTORY: 'inventory',
   PRODUCT: 'product',
 } as const
+
+export const Links = {
+  PRODUCT_VARIANT_INVENTORY_ITEM: 'productVariantInventoryItem',
+  CART_PRODUCT: 'cartProduct',
+} as const

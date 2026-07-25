@@ -27,10 +27,12 @@ export function BaseRepository<TTable extends PgTable & BaseColumns>(table: TTab
   type Insert = InferInsertModel<TTable>
 
   class Repository {
-    #db: PostgresJsDatabase
+    // biome-ignore lint/suspicious/noExplicitAny: accept any schema variant (with or without relational schema)
+    #db: PostgresJsDatabase<any>
     protected readonly table: TTable = table
 
-    constructor({ db }: { db: PostgresJsDatabase }) {
+    // biome-ignore lint/suspicious/noExplicitAny: accept any schema variant (with or without relational schema)
+    constructor({ db }: { db: PostgresJsDatabase<any> }) {
       this.#db = db
     }
 

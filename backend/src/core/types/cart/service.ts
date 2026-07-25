@@ -1,6 +1,6 @@
 import type { FindConfig } from '../common.js'
 import type { Context } from '../context.js'
-import type { CartDTO, FilterableCartProps } from './common.js'
+import type { CartDTO, CartLineItemDTO, FilterableCartLineItemProps, FilterableCartProps } from './common.js'
 import type { CreateCartDTO, UpdateCartDTO } from './mutations.js'
 
 export type ICartModuleService = {
@@ -17,4 +17,9 @@ export type ICartModuleService = {
   softDeleteCarts(cartIds: string[], context?: Context): Promise<void>
   restoreCarts(cartIds: string[], context?: Context): Promise<void>
   completeCart(cartId: string, context?: Context): Promise<CartDTO>
+  listLineItems(
+    filters?: FilterableCartLineItemProps,
+    config?: FindConfig<CartLineItemDTO>,
+    context?: Context,
+  ): Promise<CartLineItemDTO[]>
 }
