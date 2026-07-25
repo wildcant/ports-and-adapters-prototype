@@ -6,7 +6,11 @@ import { ContainerRegistrationKeys } from '../utils/container.js'
 import type { ModuleDefinition } from '../utils/module.js'
 import { createWithTransaction } from '../utils/with-transaction.js'
 
-export function bootstrapModule(sharedContainer: AwilixContainer, moduleDefinition: ModuleDefinition): void {
+export async function bootstrapModule<TOptions = Record<string, unknown>>(
+  sharedContainer: AwilixContainer,
+  moduleDefinition: ModuleDefinition,
+  options?: TOptions,
+): Promise<void> {
   const localContainer = createContainer()
 
   // Bridge shared pg pool and create per-module Drizzle instance
@@ -25,6 +29,13 @@ export function bootstrapModule(sharedContainer: AwilixContainer, moduleDefiniti
     localContainer.register({
       [key]: asClass(RepoClass).singleton(),
     })
+  }
+
+  // Run loaders (e.g. provider registration) before instantiating the service
+  if (moduleDefinition.loaders) {
+    for (const loader of moduleDefinition.loaders) {
+      await loader({ container: localContainer, options: options as Record<string, unknown> })
+    }
   }
 
   // Instantiate the module service with all local deps

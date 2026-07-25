@@ -8,6 +8,14 @@ import {
   generateCustomerDTO,
   generateUpdateCustomerDTO,
 } from '../factories/customer-dto.js'
+import {
+  generateCreateAccountHolderDTO,
+  generateCreatePaymentCollectionDTO,
+  generateCreatePaymentSessionDTO,
+  generateCreateRefundReasonDTO,
+  generateUpdatePaymentCollectionDTO,
+  generateUpdateRefundReasonDTO,
+} from '../factories/payment-dto.js'
 import { generateUser } from '../factories/user.js'
 import { generateCreateUserDTO, generateUpdateUserDTO, generateUserDTO } from '../factories/user-dto.js'
 import { db as dbInstance } from './db-setup.js'
@@ -37,6 +45,12 @@ interface Fixtures {
       createUser: typeof generateCreateUserDTO
       updateUser: typeof generateUpdateUserDTO
       user: typeof generateUserDTO
+      createPaymentCollection: typeof generateCreatePaymentCollectionDTO
+      updatePaymentCollection: typeof generateUpdatePaymentCollectionDTO
+      createPaymentSession: typeof generateCreatePaymentSessionDTO
+      createRefundReason: typeof generateCreateRefundReasonDTO
+      updateRefundReason: typeof generateUpdateRefundReasonDTO
+      createAccountHolder: typeof generateCreateAccountHolderDTO
     }
   }
   logger: Logger
@@ -62,6 +76,12 @@ export const test = testBase.extend<Fixtures>({
         createUser: generateCreateUserDTO,
         updateUser: generateUpdateUserDTO,
         user: generateUserDTO,
+        createPaymentCollection: generateCreatePaymentCollectionDTO,
+        updatePaymentCollection: generateUpdatePaymentCollectionDTO,
+        createPaymentSession: generateCreatePaymentSessionDTO,
+        createRefundReason: generateCreateRefundReasonDTO,
+        updateRefundReason: generateUpdateRefundReasonDTO,
+        createAccountHolder: generateCreateAccountHolderDTO,
       },
     })
   },

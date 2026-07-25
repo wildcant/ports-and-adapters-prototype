@@ -1,9 +1,11 @@
+import type { CartPaymentCollectionRepository } from '../repositories/cart-payment-collection.js'
 import type { CartProductRepository } from '../repositories/cart-product.js'
 import type { ProductVariantInventoryItemRepository } from '../repositories/product-variant-inventory-item.js'
 
 export type LinkRepositoryMap = {
   productVariantInventoryItem: ProductVariantInventoryItemRepository
   cartProduct: CartProductRepository
+  cartPaymentCollection: CartPaymentCollectionRepository
 }
 
 type InjectedDependencies = {
@@ -13,10 +15,11 @@ type InjectedDependencies = {
 export class LinkService {
   private repositories: LinkRepositoryMap
 
-  constructor(deps: InjectedDependencies) {
+  constructor({ productVariantInventoryItem, cartProduct, cartPaymentCollection }: InjectedDependencies) {
     this.repositories = {
-      productVariantInventoryItem: deps.productVariantInventoryItem,
-      cartProduct: deps.cartProduct,
+      productVariantInventoryItem,
+      cartProduct,
+      cartPaymentCollection,
     }
   }
 

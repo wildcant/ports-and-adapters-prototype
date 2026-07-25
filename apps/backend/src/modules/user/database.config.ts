@@ -1,11 +1,12 @@
 import { defineConfig } from 'drizzle-kit'
-import { env } from '../env.js'
+import { env } from '../../env.js'
 
 export default defineConfig({
-  schema: './src/link-modules/definitions/product-variant-inventory-item.ts',
-  out: './src/link-modules/migrations',
+  schema: './src/modules/user/models/*.ts',
+  out: './src/modules/user/migrations',
   dialect: 'postgresql',
   casing: 'snake_case',
+  migrations: { table: 'migrations_user' },
   dbCredentials: {
     url: env.DATABASE_URL,
   },

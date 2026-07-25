@@ -54,7 +54,17 @@ export class CartModuleService implements ICartModuleService {
   async createCarts(data: CreateCartDTO[], context?: Context): Promise<CartDTO[]> {
     this.logger.debug(`Creating ${data.length} cart(s)`)
     return this.withTransaction(context, async (ctx) => {
-      return this.cartRepository.createMany(data, ctx)
+      const carts = await this.cartRepository.createMany(data, ctx)
+
+      const lineItemInputs = carts.flatMap((cart, i) =>
+        (data[i].items ?? []).map((item) => ({ ...item, cartId: cart.id })),
+      )
+
+      if (lineItemInputs.length) {
+        await this.cartLineItemRepository.createMany(lineItemInputs, ctx)
+      }
+
+      return carts
     })
   }
 

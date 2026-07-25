@@ -78,12 +78,18 @@ export const createApp: CreateApp = ({ container }) => {
           ? undefined
           : await request.json().catch(() => undefined)
 
+        const headers: Record<string, string> = {}
+        request.headers.forEach((value, key) => {
+          headers[key] = value
+        })
+
         try {
           const result = await route.handler({
             params,
             query,
             validatedQuery: {},
             body,
+            headers,
             scope: container.createScope(),
           })
 

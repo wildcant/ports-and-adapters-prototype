@@ -1,7 +1,9 @@
 import { container } from '../src/container.js'
 import type {
+  ICartModuleService,
   IInventoryModuleService,
   ILinkService,
+  IPaymentModuleService,
   IProductModuleService,
   IUserModuleService,
 } from '../src/core/types/index.js'
@@ -10,6 +12,8 @@ import { ContainerRegistrationKeys, Modules } from '../src/core/utils/index.js'
 const userService = container.resolve<IUserModuleService>(Modules.USER)
 const productService = container.resolve<IProductModuleService>(Modules.PRODUCT)
 const inventoryService = container.resolve<IInventoryModuleService>(Modules.INVENTORY)
+const cartService = container.resolve<ICartModuleService>(Modules.CART)
+const paymentService = container.resolve<IPaymentModuleService>(Modules.PAYMENT)
 const linkService = container.resolve<ILinkService>(ContainerRegistrationKeys.LINK)
 
 // --- Users ---
@@ -174,6 +178,58 @@ const links = createdVariants.map((variant, i) => ({
 }))
 await linkService.repo('productVariantInventoryItem').createMany(links)
 console.log(`Seeded ${links.length} variant-inventory links`)
+
+// --- Cart with line items (for testing payment endpoints) ---
+const existingCarts = await cartService.listCarts()
+if (existingCarts.length === 0) {
+  const tshirtVariant = createdVariants.find((v) => v.sku === 'SHIRT-M-BLACK') as (typeof createdVariants)[number]
+  const sweatshirtVariant = createdVariants.find((v) => v.sku === 'SWEATSHIRT-L') as (typeof createdVariants)[number]
+
+  const [cart] = await cartService.createCarts([
+    {
+      currencyCode: 'usd',
+      email: 'test@example.com',
+      items: [
+        {
+          title: 'Classic T-Shirt (M / Black)',
+          quantity: 2,
+          unitPrice: 2500,
+          variantId: tshirtVariant.id,
+          variantSku: tshirtVariant.sku,
+          productId: tshirt.id,
+          productTitle: 'Classic T-Shirt',
+        },
+        {
+          title: 'Vintage Sweatshirt (L)',
+          quantity: 1,
+          unitPrice: 4500,
+          variantId: sweatshirtVariant.id,
+          variantSku: sweatshirtVariant.sku,
+          productId: sweatshirt.id,
+          productTitle: 'Vintage Sweatshirt',
+        },
+      ],
+    },
+  ])
+
+  console.log(`Seeded cart ${cart.id} with 2 line items (total: $95.00)`)
+} else {
+  console.log(`Skipped cart (${existingCarts.length} already exist)`)
+}
+
+// --- Refund reasons ---
+const existingReasons = await paymentService.listRefundReasons()
+if (existingReasons.length === 0) {
+  await paymentService.createRefundReasons([
+    { label: 'Too Large', code: 'too_large' },
+    { label: 'Too Small', code: 'too_small' },
+    { label: 'Damaged', code: 'damaged' },
+    { label: 'Changed Mind', code: 'changed_mind' },
+  ])
+  console.log('Seeded 4 refund reasons')
+} else {
+  console.log(`Skipped refund reasons (${existingReasons.length} already exist)`)
+}
 
 console.log('Done!')
 process.exit(0)

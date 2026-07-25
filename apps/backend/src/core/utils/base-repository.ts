@@ -84,6 +84,15 @@ export function BaseRepository<TTable extends PgTable & BaseColumns>(table: TTab
       return rows as Select[]
     }
 
+    async findOne(
+      filters?: EntityFilters<Select>,
+      config?: FindConfig<Select>,
+      context?: Context,
+    ): Promise<Select | null> {
+      const rows = await this.find(filters, { ...config, limit: 1 }, context)
+      return rows[0] ?? null
+    }
+
     async findById(id: string, config?: FindConfig<Select>, context?: Context): Promise<Select | null> {
       const client = this.getClient(context)
       const columns = getTableColumns(this.table)

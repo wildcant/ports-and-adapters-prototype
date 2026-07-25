@@ -1,0 +1,287 @@
+import type { PaymentActions, PaymentSessionStatus } from './common.js'
+
+// ---------------------------------------------------------------------------
+// PaymentCollection
+// ---------------------------------------------------------------------------
+
+export type CreatePaymentCollectionDTO = {
+  amount: number
+  currencyCode?: string
+  metadata?: Record<string, unknown> | null
+}
+
+export type UpdatePaymentCollectionDTO = {
+  amount?: number
+  currencyCode?: string
+  metadata?: Record<string, unknown> | null
+}
+
+// ---------------------------------------------------------------------------
+// PaymentSession
+// ---------------------------------------------------------------------------
+
+export type CreatePaymentSessionDTO = {
+  providerId: string
+  amount: number
+  currencyCode?: string
+  data?: Record<string, unknown>
+  context?: Record<string, unknown>
+}
+
+export type UpdatePaymentSessionDTO = {
+  amount?: number
+  currencyCode?: string
+  data?: Record<string, unknown>
+  metadata?: Record<string, unknown> | null
+}
+
+// ---------------------------------------------------------------------------
+// Payment
+// ---------------------------------------------------------------------------
+
+export type CreatePaymentDTO = {
+  paymentCollectionId: string
+  paymentSessionId: string
+  amount: number
+  currencyCode: string
+  providerId: string
+  data?: Record<string, unknown> | null
+  metadata?: Record<string, unknown> | null
+}
+
+// ---------------------------------------------------------------------------
+// Capture
+// ---------------------------------------------------------------------------
+
+export type CreateCaptureDTO = {
+  paymentId: string
+  amount?: number
+  capturedBy?: string
+}
+
+// ---------------------------------------------------------------------------
+// Refund
+// ---------------------------------------------------------------------------
+
+export type CreateRefundDTO = {
+  paymentId: string
+  amount?: number
+  refundReasonId?: string
+  note?: string
+  createdBy?: string
+}
+
+// ---------------------------------------------------------------------------
+// RefundReason
+// ---------------------------------------------------------------------------
+
+export type CreateRefundReasonDTO = {
+  label: string
+  code: string
+  description?: string | null
+  metadata?: Record<string, unknown> | null
+}
+
+export type UpdateRefundReasonDTO = {
+  label?: string
+  code?: string
+  description?: string | null
+  metadata?: Record<string, unknown> | null
+}
+
+// ---------------------------------------------------------------------------
+// PaymentProvider
+// ---------------------------------------------------------------------------
+
+export type CreatePaymentProviderDTO = {
+  id: string
+  isEnabled?: boolean
+}
+
+// ---------------------------------------------------------------------------
+// AccountHolder
+// ---------------------------------------------------------------------------
+
+export type CreateAccountHolderDTO = {
+  providerId: string
+  externalId: string
+  email?: string | null
+  data?: Record<string, unknown>
+  metadata?: Record<string, unknown> | null
+}
+
+// ---------------------------------------------------------------------------
+// PaymentMethod (provider-managed, no DB table)
+// ---------------------------------------------------------------------------
+
+export type CreatePaymentMethodDTO = {
+  providerId: string
+  data: Record<string, unknown>
+  context: Record<string, unknown>
+}
+
+export type DeletePaymentMethodDTO = {
+  id: string
+  providerId: string
+  data?: Record<string, unknown>
+  context?: Record<string, unknown>
+}
+
+// ---------------------------------------------------------------------------
+// Webhook
+// ---------------------------------------------------------------------------
+
+export type ProviderWebhookPayload = {
+  provider: string
+  payload: {
+    data: Record<string, unknown>
+    rawData: string | Buffer
+    headers: Record<string, string>
+  }
+}
+
+export type WebhookActionResult = {
+  action: PaymentActions
+  data?: {
+    sessionId: string
+    amount: number
+  }
+}
+
+// ---------------------------------------------------------------------------
+// Provider input/output types
+// ---------------------------------------------------------------------------
+
+export type InitiatePaymentInput = {
+  amount: number
+  currencyCode: string
+  data?: Record<string, unknown>
+  context?: Record<string, unknown>
+}
+
+export type InitiatePaymentOutput = {
+  id: string
+  data?: Record<string, unknown>
+  status?: PaymentSessionStatus
+}
+
+export type AuthorizePaymentInput = {
+  data?: Record<string, unknown>
+  context?: Record<string, unknown>
+}
+
+export type AuthorizePaymentOutput = {
+  status: PaymentSessionStatus
+  data?: Record<string, unknown>
+}
+
+export type CapturePaymentInput = {
+  data?: Record<string, unknown>
+  context?: Record<string, unknown>
+}
+
+export type CapturePaymentOutput = {
+  data?: Record<string, unknown>
+}
+
+export type CancelPaymentInput = {
+  data?: Record<string, unknown>
+  context?: Record<string, unknown>
+}
+
+export type CancelPaymentOutput = {
+  data?: Record<string, unknown>
+}
+
+export type DeletePaymentInput = {
+  data?: Record<string, unknown>
+  context?: Record<string, unknown>
+}
+
+export type DeletePaymentOutput = {
+  data?: Record<string, unknown>
+}
+
+export type RefundPaymentInput = {
+  amount: number
+  data?: Record<string, unknown>
+  context?: Record<string, unknown>
+}
+
+export type RefundPaymentOutput = {
+  data?: Record<string, unknown>
+}
+
+export type RetrievePaymentInput = {
+  data?: Record<string, unknown>
+  context?: Record<string, unknown>
+}
+
+export type RetrievePaymentOutput = {
+  data?: Record<string, unknown>
+}
+
+export type UpdatePaymentInput = {
+  amount?: number
+  currencyCode?: string
+  data?: Record<string, unknown>
+  context?: Record<string, unknown>
+}
+
+export type UpdatePaymentOutput = {
+  data?: Record<string, unknown>
+}
+
+export type GetPaymentStatusInput = {
+  data?: Record<string, unknown>
+  context?: Record<string, unknown>
+}
+
+export type GetPaymentStatusOutput = {
+  status: PaymentSessionStatus
+}
+
+export type CreateAccountHolderInput = {
+  data?: Record<string, unknown>
+  context?: Record<string, unknown>
+}
+
+export type CreateAccountHolderOutput = {
+  id: string
+  data?: Record<string, unknown>
+}
+
+export type DeleteAccountHolderInput = {
+  data?: Record<string, unknown>
+  context?: Record<string, unknown>
+}
+
+export type DeleteAccountHolderOutput = {
+  data?: Record<string, unknown>
+}
+
+export type ListPaymentMethodsInput = {
+  context?: Record<string, unknown>
+}
+
+export type ListPaymentMethodsOutput = {
+  id: string
+  data?: Record<string, unknown>
+}[]
+
+export type SavePaymentMethodInput = {
+  data?: Record<string, unknown>
+  context?: Record<string, unknown>
+}
+
+export type SavePaymentMethodOutput = {
+  id: string
+  data?: Record<string, unknown>
+}
+
+export type DeletePaymentMethodInput = {
+  data?: Record<string, unknown>
+  context?: Record<string, unknown>
+}
+
+export type DeletePaymentMethodOutput = Record<string, unknown>

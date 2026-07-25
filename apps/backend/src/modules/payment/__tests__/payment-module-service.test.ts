@@ -1,0 +1,488 @@
+import { ErrorTypes } from '@core/errors/app-error.js'
+import { test } from '@tests/setup/test-extend.js'
+import { describe, expect, vi } from 'vitest'
+import { createWithTransaction } from '../../../core/utils/with-transaction.js'
+
+function assertDefined<T>(value: T | null | undefined): asserts value is NonNullable<T> {
+  expect(value).not.toBeNull()
+  expect(value).toBeDefined()
+}
+
+import {
+  AccountHolderRepository,
+  CaptureRepository,
+  PaymentCollectionRepository,
+  PaymentRepository,
+  PaymentSessionRepository,
+  RefundReasonRepository,
+  RefundRepository,
+} from '../repositories/index.js'
+import { PaymentModuleService } from '../services/payment-module-service.js'
+import type { PaymentProviderService } from '../services/payment-provider-service.js'
+
+function createMockProviderService() {
+  return {
+    createSession: vi.fn().mockResolvedValue({
+      id: 'ext_session_1',
+      data: { externalId: 'ext_session_1' },
+      status: 'pending',
+    }),
+    authorizePayment: vi.fn().mockResolvedValue({
+      status: 'authorized',
+      data: { externalId: 'ext_session_1' },
+    }),
+    capturePayment: vi.fn().mockResolvedValue({ data: {} }),
+    cancelPayment: vi.fn().mockResolvedValue({ data: {} }),
+    deleteSession: vi.fn().mockResolvedValue({ data: {} }),
+    refundPayment: vi.fn().mockResolvedValue({ data: {} }),
+    createAccountHolder: vi.fn().mockResolvedValue({ id: 'acct_ext_1', data: {} }),
+    deleteAccountHolder: vi.fn().mockResolvedValue({ data: {} }),
+    listPaymentMethods: vi.fn().mockResolvedValue([{ id: 'pm_1', data: { last4: '4242' } }]),
+    savePaymentMethod: vi.fn().mockResolvedValue({ id: 'pm_saved_1', data: { last4: '4242' } }),
+    deletePaymentMethod: vi.fn().mockResolvedValue({}),
+    list: vi.fn().mockResolvedValue([]),
+    getWebhookActionAndData: vi.fn().mockResolvedValue({ action: 'authorized' }),
+  }
+}
+
+let service: PaymentModuleService
+let mockProvider: ReturnType<typeof createMockProviderService>
+
+test.beforeEach(({ db, logger }) => {
+  mockProvider = createMockProviderService()
+
+  service = new PaymentModuleService({
+    paymentCollectionRepository: new PaymentCollectionRepository({ db }),
+    paymentSessionRepository: new PaymentSessionRepository({ db }),
+    paymentRepository: new PaymentRepository({ db }),
+    captureRepository: new CaptureRepository({ db }),
+    refundRepository: new RefundRepository({ db }),
+    refundReasonRepository: new RefundReasonRepository({ db }),
+    accountHolderRepository: new AccountHolderRepository({ db }),
+    paymentProviderService: mockProvider as unknown as PaymentProviderService,
+    withTransaction: createWithTransaction(db),
+    logger,
+  })
+})
+
+describe('PaymentModuleService', () => {
+  // ---------------------------------------------------------------------------
+  // PaymentCollection CRUD
+  // ---------------------------------------------------------------------------
+
+  describe('PaymentCollection CRUD', () => {
+    test('createPaymentCollections', async ({ expect, dto }) => {
+      const input = [dto.generate.createPaymentCollection(), dto.generate.createPaymentCollection({ amount: 5000 })]
+
+      const result = await service.createPaymentCollections(input)
+
+      expect(result).toHaveLength(2)
+      expect(result[0]).toMatchObject({ amount: 10000, currencyCode: 'usd', status: 'not_paid' })
+      expect(result[1]).toMatchObject({ amount: 5000, currencyCode: 'usd', status: 'not_paid' })
+      expect(result[0].id).toBeDefined()
+      expect(result[0].createdAt).toBeInstanceOf(Date)
+    })
+
+    test('retrievePaymentCollection', async ({ expect, dto }) => {
+      const [created] = await service.createPaymentCollections([dto.generate.createPaymentCollection()])
+
+      const result = await service.retrievePaymentCollection(created.id)
+
+      expect(result).toMatchObject({ id: created.id, amount: 10000, status: 'not_paid' })
+    })
+
+    test('updatePaymentCollections', async ({ expect, dto }) => {
+      const [created] = await service.createPaymentCollections([dto.generate.createPaymentCollection()])
+
+      const [updated] = await service.updatePaymentCollections([created.id], { amount: 20000 })
+
+      expect(updated.amount).toBe(20000)
+      expect(updated.id).toBe(created.id)
+    })
+
+    test('deletePaymentCollections', async ({ expect, dto }) => {
+      const [created] = await service.createPaymentCollections([dto.generate.createPaymentCollection()])
+
+      await service.deletePaymentCollections([created.id])
+
+      const error = await service.retrievePaymentCollection(created.id).catch((e) => e)
+      expect(error.type).toBe(ErrorTypes.NOT_FOUND)
+    })
+
+    test('softDeletePaymentCollections and restorePaymentCollections', async ({ expect, dto }) => {
+      const [created] = await service.createPaymentCollections([dto.generate.createPaymentCollection()])
+
+      await service.softDeletePaymentCollections([created.id])
+      const error = await service.retrievePaymentCollection(created.id).catch((e) => e)
+      expect(error.type).toBe(ErrorTypes.NOT_FOUND)
+
+      await service.restorePaymentCollections([created.id])
+      const restored = await service.retrievePaymentCollection(created.id)
+      expect(restored.id).toBe(created.id)
+    })
+  })
+
+  // ---------------------------------------------------------------------------
+  // PaymentSession lifecycle
+  // ---------------------------------------------------------------------------
+
+  describe('PaymentSession lifecycle', () => {
+    test('createPaymentSession creates session and calls provider', async ({ expect, dto }) => {
+      const [collection] = await service.createPaymentCollections([dto.generate.createPaymentCollection()])
+
+      const session = await service.createPaymentSession(collection.id, dto.generate.createPaymentSession())
+
+      expect(session.id).toBeDefined()
+      expect(session.paymentCollectionId).toBe(collection.id)
+      expect(session.providerId).toBe('system')
+      expect(session.amount).toBe(10000)
+      expect(session.status).toBe('pending')
+      expect(session.data).toEqual({ externalId: 'ext_session_1' })
+      expect(mockProvider.createSession).toHaveBeenCalledOnce()
+    })
+
+    test('createPaymentSession defaults currencyCode from collection', async ({ expect, dto }) => {
+      const [collection] = await service.createPaymentCollections([
+        dto.generate.createPaymentCollection({ currencyCode: 'eur' }),
+      ])
+
+      const session = await service.createPaymentSession(
+        collection.id,
+        dto.generate.createPaymentSession({ amount: 5000 }),
+      )
+
+      expect(session.currencyCode).toBe('eur')
+    })
+
+    test('authorizePaymentSession creates payment', async ({ expect, dto }) => {
+      const [collection] = await service.createPaymentCollections([dto.generate.createPaymentCollection()])
+      const session = await service.createPaymentSession(collection.id, dto.generate.createPaymentSession())
+
+      const payment = await service.authorizePaymentSession(session.id)
+      assertDefined(payment)
+
+      expect(payment.id).toBeDefined()
+      expect(payment.paymentCollectionId).toBe(collection.id)
+      expect(payment.paymentSessionId).toBe(session.id)
+      expect(payment.amount).toBe(10000)
+      expect(payment.captures).toEqual([])
+      expect(payment.refunds).toEqual([])
+      expect(mockProvider.authorizePayment).toHaveBeenCalledOnce()
+    })
+
+    test('authorizePaymentSession is idempotent', async ({ expect, dto }) => {
+      const [collection] = await service.createPaymentCollections([dto.generate.createPaymentCollection()])
+      const session = await service.createPaymentSession(collection.id, dto.generate.createPaymentSession())
+      const firstPayment = await service.authorizePaymentSession(session.id)
+      assertDefined(firstPayment)
+
+      const secondPayment = await service.authorizePaymentSession(session.id)
+      assertDefined(secondPayment)
+
+      expect(secondPayment.id).toBe(firstPayment.id)
+      // Provider should only be called once — second call returns early
+      expect(mockProvider.authorizePayment).toHaveBeenCalledOnce()
+    })
+
+    test('authorizePaymentSession returns null for async providers', async ({ expect, dto }) => {
+      const [collection] = await service.createPaymentCollections([dto.generate.createPaymentCollection()])
+      const session = await service.createPaymentSession(collection.id, dto.generate.createPaymentSession())
+
+      mockProvider.authorizePayment.mockResolvedValueOnce({
+        status: 'pending_authorization',
+        data: session.data,
+      })
+
+      const payment = await service.authorizePaymentSession(session.id)
+
+      expect(payment).toBeNull()
+    })
+
+    test('deletePaymentSession removes session and calls provider', async ({ expect, dto }) => {
+      const [collection] = await service.createPaymentCollections([dto.generate.createPaymentCollection()])
+      const session = await service.createPaymentSession(collection.id, dto.generate.createPaymentSession())
+
+      await service.deletePaymentSession(session.id)
+
+      expect(mockProvider.deleteSession).toHaveBeenCalledOnce()
+      // Collection should revert to not_paid (no sessions left)
+      const updated = await service.retrievePaymentCollection(collection.id)
+      expect(updated.status).toBe('not_paid')
+    })
+  })
+
+  // ---------------------------------------------------------------------------
+  // Payment lifecycle
+  // ---------------------------------------------------------------------------
+
+  describe('Payment lifecycle', () => {
+    test('capturePayment full capture', async ({ expect, dto }) => {
+      const [collection] = await service.createPaymentCollections([dto.generate.createPaymentCollection()])
+      const session = await service.createPaymentSession(collection.id, dto.generate.createPaymentSession())
+      const authorized = await service.authorizePaymentSession(session.id)
+      assertDefined(authorized)
+
+      const captured = await service.capturePayment({ paymentId: authorized.id })
+
+      expect(captured.capturedAt).toBeInstanceOf(Date)
+      expect(captured.captures).toHaveLength(1)
+      assertDefined(captured.captures)
+      expect(captured.captures[0].amount).toBe(10000)
+    })
+
+    test('capturePayment partial capture', async ({ expect, dto }) => {
+      const [collection] = await service.createPaymentCollections([dto.generate.createPaymentCollection()])
+      const session = await service.createPaymentSession(collection.id, dto.generate.createPaymentSession())
+      const authorized = await service.authorizePaymentSession(session.id)
+      assertDefined(authorized)
+
+      const firstCapture = await service.capturePayment({ paymentId: authorized.id, amount: 4000 })
+
+      expect(firstCapture.capturedAt).toBeNull()
+      expect(firstCapture.captures).toHaveLength(1)
+      assertDefined(firstCapture.captures)
+      expect(firstCapture.captures[0].amount).toBe(4000)
+
+      const secondCapture = await service.capturePayment({ paymentId: authorized.id, amount: 6000 })
+
+      expect(secondCapture.capturedAt).toBeInstanceOf(Date)
+      expect(secondCapture.captures).toHaveLength(2)
+    })
+
+    test('refundPayment full refund', async ({ expect, dto }) => {
+      const [collection] = await service.createPaymentCollections([dto.generate.createPaymentCollection()])
+      const session = await service.createPaymentSession(collection.id, dto.generate.createPaymentSession())
+      const authorized = await service.authorizePaymentSession(session.id)
+      assertDefined(authorized)
+      await service.capturePayment({ paymentId: authorized.id })
+
+      const refunded = await service.refundPayment({ paymentId: authorized.id })
+
+      expect(refunded.refunds).toHaveLength(1)
+      assertDefined(refunded.refunds)
+      expect(refunded.refunds[0].amount).toBe(10000)
+      expect(mockProvider.refundPayment).toHaveBeenCalledOnce()
+    })
+
+    test('refundPayment partial refund', async ({ expect, dto }) => {
+      const [collection] = await service.createPaymentCollections([dto.generate.createPaymentCollection()])
+      const session = await service.createPaymentSession(collection.id, dto.generate.createPaymentSession())
+      const authorized = await service.authorizePaymentSession(session.id)
+      assertDefined(authorized)
+      await service.capturePayment({ paymentId: authorized.id })
+
+      const first = await service.refundPayment({ paymentId: authorized.id, amount: 3000 })
+      expect(first.refunds).toHaveLength(1)
+      assertDefined(first.refunds)
+      expect(first.refunds[0].amount).toBe(3000)
+
+      const second = await service.refundPayment({ paymentId: authorized.id, amount: 7000 })
+      expect(second.refunds).toHaveLength(2)
+    })
+
+    test('cancelPayment', async ({ expect, dto }) => {
+      const [collection] = await service.createPaymentCollections([dto.generate.createPaymentCollection()])
+      const session = await service.createPaymentSession(collection.id, dto.generate.createPaymentSession())
+      const authorized = await service.authorizePaymentSession(session.id)
+      assertDefined(authorized)
+
+      const canceled = await service.cancelPayment(authorized.id)
+
+      expect(canceled.canceledAt).toBeInstanceOf(Date)
+      expect(mockProvider.cancelPayment).toHaveBeenCalledOnce()
+    })
+
+    test('cancelPayment is idempotent', async ({ expect, dto }) => {
+      const [collection] = await service.createPaymentCollections([dto.generate.createPaymentCollection()])
+      const session = await service.createPaymentSession(collection.id, dto.generate.createPaymentSession())
+      const authorized = await service.authorizePaymentSession(session.id)
+      assertDefined(authorized)
+
+      const first = await service.cancelPayment(authorized.id)
+      const second = await service.cancelPayment(authorized.id)
+
+      expect(second.canceledAt).toEqual(first.canceledAt)
+      // Provider should only be called once — second call returns early
+      expect(mockProvider.cancelPayment).toHaveBeenCalledOnce()
+    })
+  })
+
+  // ---------------------------------------------------------------------------
+  // Collection status transitions
+  // ---------------------------------------------------------------------------
+
+  describe('collection status transitions', () => {
+    test('full lifecycle: not_paid → awaiting → authorized → completed', async ({ expect, dto }) => {
+      const [collection] = await service.createPaymentCollections([dto.generate.createPaymentCollection()])
+      expect((await service.retrievePaymentCollection(collection.id)).status).toBe('not_paid')
+
+      const session = await service.createPaymentSession(collection.id, dto.generate.createPaymentSession())
+      expect((await service.retrievePaymentCollection(collection.id)).status).toBe('awaiting')
+
+      const payment = await service.authorizePaymentSession(session.id)
+      assertDefined(payment)
+      const afterAuth = await service.retrievePaymentCollection(collection.id)
+      expect(afterAuth.status).toBe('authorized')
+      expect(afterAuth.authorizedAmount).toBe(10000)
+
+      await service.capturePayment({ paymentId: payment.id })
+      const afterCapture = await service.retrievePaymentCollection(collection.id)
+      expect(afterCapture.status).toBe('completed')
+      expect(afterCapture.capturedAmount).toBe(10000)
+      expect(afterCapture.completedAt).toBeInstanceOf(Date)
+    })
+
+    test('partial authorization sets partially_authorized', async ({ expect, dto }) => {
+      const [collection] = await service.createPaymentCollections([
+        dto.generate.createPaymentCollection({ amount: 20000 }),
+      ])
+
+      await service.createPaymentSession(collection.id, dto.generate.createPaymentSession({ amount: 10000 }))
+      // Create a second session for the remaining half
+      const session2 = await service.createPaymentSession(
+        collection.id,
+        dto.generate.createPaymentSession({ amount: 10000 }),
+      )
+
+      // Authorize only the second session (10000 of 20000)
+      await service.authorizePaymentSession(session2.id)
+
+      const afterPartialAuth = await service.retrievePaymentCollection(collection.id)
+      expect(afterPartialAuth.status).toBe('partially_authorized')
+      expect(afterPartialAuth.authorizedAmount).toBe(10000)
+    })
+  })
+
+  // ---------------------------------------------------------------------------
+  // RefundReason CRUD
+  // ---------------------------------------------------------------------------
+
+  describe('RefundReason CRUD', () => {
+    test('createRefundReasons and listRefundReasons', async ({ expect, dto }) => {
+      await service.createRefundReasons([
+        dto.generate.createRefundReason(),
+        dto.generate.createRefundReason({ label: 'Wrong item', code: 'wrong_item' }),
+      ])
+
+      const result = await service.listRefundReasons()
+
+      expect(result).toHaveLength(2)
+      expect(result[0].id).toBeDefined()
+      expect(result.map((r) => r.code)).toContain('defective')
+      expect(result.map((r) => r.code)).toContain('wrong_item')
+    })
+
+    test('updateRefundReasons', async ({ expect, dto }) => {
+      const [created] = await service.createRefundReasons([dto.generate.createRefundReason()])
+
+      const [updated] = await service.updateRefundReasons([created.id], { label: 'Updated label' })
+
+      expect(updated.label).toBe('Updated label')
+      expect(updated.code).toBe('defective')
+    })
+
+    test('deleteRefundReasons', async ({ expect, dto }) => {
+      const [created] = await service.createRefundReasons([dto.generate.createRefundReason()])
+
+      await service.deleteRefundReasons([created.id])
+
+      const result = await service.listRefundReasons()
+      expect(result).toHaveLength(0)
+    })
+
+    test('softDeleteRefundReasons and restoreRefundReasons', async ({ expect, dto }) => {
+      const [created] = await service.createRefundReasons([dto.generate.createRefundReason()])
+
+      await service.softDeleteRefundReasons([created.id])
+      expect(await service.listRefundReasons()).toHaveLength(0)
+
+      await service.restoreRefundReasons([created.id])
+      expect(await service.listRefundReasons()).toHaveLength(1)
+    })
+  })
+
+  // ---------------------------------------------------------------------------
+  // AccountHolder
+  // ---------------------------------------------------------------------------
+
+  describe('AccountHolder', () => {
+    test('createAccountHolder', async ({ expect, dto }) => {
+      const input = dto.generate.createAccountHolder()
+
+      const result = await service.createAccountHolder(input)
+
+      expect(result.id).toBeDefined()
+      expect(result.providerId).toBe('system')
+      expect(result.externalId).toBe('acct_ext_1')
+      expect(mockProvider.createAccountHolder).toHaveBeenCalledOnce()
+    })
+
+    test('deleteAccountHolder', async ({ expect, dto }) => {
+      const created = await service.createAccountHolder(dto.generate.createAccountHolder())
+
+      await service.deleteAccountHolder(created.id)
+
+      expect(mockProvider.deleteAccountHolder).toHaveBeenCalledOnce()
+    })
+  })
+
+  // ---------------------------------------------------------------------------
+  // PaymentMethods (provider-managed, no DB table)
+  // ---------------------------------------------------------------------------
+
+  describe('PaymentMethods', () => {
+    test('createPaymentMethods', async ({ expect }) => {
+      const result = await service.createPaymentMethods([
+        { providerId: 'system', data: { token: 'tok_123' }, context: {} },
+      ])
+
+      expect(result).toHaveLength(1)
+      expect(result[0]).toEqual({ id: 'pm_saved_1', data: { last4: '4242' }, providerId: 'system' })
+      expect(mockProvider.savePaymentMethod).toHaveBeenCalledOnce()
+    })
+
+    test('listPaymentMethods', async ({ expect }) => {
+      const result = await service.listPaymentMethods({ providerId: 'system', context: { customerId: 'cus_1' } })
+
+      expect(result).toHaveLength(1)
+      expect(result[0]).toEqual({ id: 'pm_1', data: { last4: '4242' }, providerId: 'system' })
+      expect(mockProvider.listPaymentMethods).toHaveBeenCalledOnce()
+    })
+
+    test('deletePaymentMethods', async ({ expect }) => {
+      await service.deletePaymentMethods([{ id: 'pm_1', providerId: 'system' }])
+
+      expect(mockProvider.deletePaymentMethod).toHaveBeenCalledOnce()
+    })
+  })
+
+  // ---------------------------------------------------------------------------
+  // Webhooks
+  // ---------------------------------------------------------------------------
+
+  describe('Webhooks', () => {
+    test('getWebhookActionAndData delegates to provider', async ({ expect }) => {
+      const result = await service.getWebhookActionAndData({
+        provider: 'system',
+        payload: { data: {}, rawData: '', headers: {} },
+      })
+
+      expect(result.action).toBe('authorized')
+      expect(mockProvider.getWebhookActionAndData).toHaveBeenCalledOnce()
+    })
+  })
+
+  // ---------------------------------------------------------------------------
+  // Providers
+  // ---------------------------------------------------------------------------
+
+  describe('Providers', () => {
+    test('listPaymentProviders delegates to provider service', async ({ expect }) => {
+      mockProvider.list.mockResolvedValueOnce([{ id: 'system', isEnabled: true }])
+
+      const result = await service.listPaymentProviders()
+
+      expect(result).toEqual([{ id: 'system', isEnabled: true }])
+    })
+  })
+})

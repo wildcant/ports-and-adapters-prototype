@@ -63,3 +63,11 @@ Drizzle schemas live in each module's `models/` directory (e.g. `src/modules/use
 ### Frontend
 
 TanStack Start (React 19, Vite, TanStack Router). Uses `#/*` import alias for `./src/*`. The `/users` page calls `createServerFn` handlers that resolve services from the shared backend container.
+
+## Coding Style
+
+- Use simple, direct variable names. No unnecessary suffixes like `Result`, `Data`, `Value`, `Info`. Name variables for what they represent, not their type or origin.
+- Prefer guard clauses over nested conditionals. Check unusual conditions early and return, keeping the happy path linear and unindented. See `docs/refactoring/replace_nested_conditional_with_guard_clauses.txt`.
+- Comments should explain *why*, not *what*. Don't restate the code — document the intent, business reason, or non-obvious constraint.
+- For best-effort async calls, use `.catch((e) => this.logger.error(e))` instead of wrapping in try/catch with an empty or comment-only catch block.
+- Use `Promise.all` with `.map()` instead of `for` loops with `await` inside when iterations are independent.

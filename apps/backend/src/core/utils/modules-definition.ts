@@ -12,4 +12,5 @@ export const Modules = {
 export const Links = {
   PRODUCT_VARIANT_INVENTORY_ITEM: 'productVariantInventoryItem',
   CART_PRODUCT: 'cartProduct',
+  CART_PAYMENT_COLLECTION: 'cartPaymentCollection',
 } as const

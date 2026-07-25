@@ -71,3 +71,17 @@ export type ICartProductRepository = {
   findLineItemsWithProducts(cartId: string, context?: Context): Promise<LineItemWithProductDTO[]>
   findProductsByVariantIds(variantIds: string[], context?: Context): Promise<VariantProductDTO[]>
 }
+
+export type CartPaymentCollectionDTO = {
+  id: string
+  cartId: string
+  paymentCollectionId: string
+  createdAt: Date
+  deletedAt: Date | null
+}
+
+export type ICartPaymentCollectionRepository = {
+  findByCartId(cartId: string, context?: Context): Promise<CartPaymentCollectionDTO | null>
+  findByPaymentCollectionId(paymentCollectionId: string, context?: Context): Promise<CartPaymentCollectionDTO | null>
+  create(data: Partial<CartPaymentCollectionDTO>, context?: Context): Promise<CartPaymentCollectionDTO>
+}

@@ -24,6 +24,7 @@ export type HttpRequest<
   validatedQuery: T extends { query: infer Q } ? Q : Record<string, unknown>
   body: T extends { body: infer B } ? B : unknown
   scope: AwilixContainer
+  headers: Record<string, string>
 }
 
 export type HttpResult = {

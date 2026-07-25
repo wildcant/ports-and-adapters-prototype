@@ -16,14 +16,7 @@
     "db:stop": "supabase stop",
     "db:status": "supabase status",
     "db:reset": "supabase db reset",
-    "db:migrate:user": "dotenvx run -f ../../.env.local -- drizzle-kit migrate --config=src/modules/user/drizzle.config.ts",
-    "db:migrate:customer": "dotenvx run -f ../../.env -- drizzle-kit migrate --config=src/modules/customer/drizzle.config.ts",
-    "db:migrate:product": "dotenvx run -f ../../.env -- drizzle-kit migrate --config=src/modules/product/drizzle.config.ts",
-    "db:migrate:inventory": "dotenvx run -f ../../.env -- drizzle-kit migrate --config=src/modules/inventory/drizzle.config.ts",
-    "db:migrate:cart": "dotenvx run -f ../../.env -- drizzle-kit migrate --config=src/modules/cart/drizzle.config.ts",
-    "db:generate:links": "dotenvx run -f ../../.env -- drizzle-kit generate --config=src/link-modules/drizzle.config.ts",
-    "db:migrate:links": "dotenvx run -f ../../.env -- drizzle-kit migrate --config=src/link-modules/drizzle.config.ts",
-    "db:migrate": "npm run db:migrate:user && npm run db:migrate:customer && npm run db:migrate:product && npm run db:migrate:inventory && npm run db:migrate:cart && npm run db:migrate:links",
+    "db:migrate": "dotenvx run -f ../../.env.local -- sh -c 'for config in src/modules/*/database.config.ts src/link-modules/database.config.ts; do drizzle-kit migrate --config=\"$config\" || exit 1; done'",
     "db:seed:dev": "dotenvx run -f ../../.env.local -- tsx scripts/seed-dev.ts",
     "openapi:dump": "curl -s http://localhost:3000/openapi.json | python3 -m json.tool > ../../openapi.json && echo 'Saved to openapi.json'",
     "openapi:dump:offline": "tsx scripts/openapi-dump.ts"
@@ -37,6 +30,7 @@
     "express": "^4.21.0",
     "hono": "^4.12.0",
     "postgres": "^3.4.7",
+    "stripe": "^22.3.2",
     "swagger-ui-express": "^5.0.1",
     "winston": "^3.19.0",
     "zod": "^4.4.3"

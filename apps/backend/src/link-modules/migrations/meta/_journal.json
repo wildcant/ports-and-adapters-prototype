@@ -8,6 +8,13 @@
       "when": 1784817757261,
       "tag": "0000_sloppy_stature",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1785000284814,
+      "tag": "0001_cart_payment_collection",
+      "breakpoints": true
     }
   ]
 }

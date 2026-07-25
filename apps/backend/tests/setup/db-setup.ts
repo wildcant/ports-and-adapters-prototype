@@ -18,6 +18,7 @@ beforeEach(async () => {
   await db.execute(dsql`CREATE SCHEMA public`)
   await migrate(db, { migrationsFolder: join(migrationsRoot, 'src/modules/user/migrations') })
   await migrate(db, { migrationsFolder: join(migrationsRoot, 'src/modules/customer/migrations') })
+  await migrate(db, { migrationsFolder: join(migrationsRoot, 'src/modules/payment/migrations') })
   await db.execute(dsql`SET client_min_messages = NOTICE`)
 })
 
