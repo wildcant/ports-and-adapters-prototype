@@ -6,9 +6,9 @@ export type CreateCustomerDTO = {
 }
 
 export type UpdateCustomerDTO = {
-  firstName?: string
-  lastName?: string
-  email?: string
+  firstName?: string | undefined
+  lastName?: string | undefined
+  email?: string | undefined
 }
 
 export type CreateCustomerAddressDTO = {

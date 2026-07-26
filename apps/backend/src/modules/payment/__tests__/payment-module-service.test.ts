@@ -1,12 +1,8 @@
 import { ErrorTypes } from '@core/errors/app-error.js'
 import { test } from '@tests/setup/test-extend.js'
-import { describe, expect, vi } from 'vitest'
+import { assertDefined } from '@tests/utils/assert-defined.js'
+import { describe, vi } from 'vitest'
 import { createWithTransaction } from '../../../core/utils/with-transaction.js'
-
-function assertDefined<T>(value: T | null | undefined): asserts value is NonNullable<T> {
-  expect(value).not.toBeNull()
-  expect(value).toBeDefined()
-}
 
 import {
   AccountHolderRepository,
@@ -79,12 +75,13 @@ describe('PaymentModuleService', () => {
       expect(result).toHaveLength(2)
       expect(result[0]).toMatchObject({ amount: 10000, currencyCode: 'usd', status: 'not_paid' })
       expect(result[1]).toMatchObject({ amount: 5000, currencyCode: 'usd', status: 'not_paid' })
-      expect(result[0].id).toBeDefined()
-      expect(result[0].createdAt).toBeInstanceOf(Date)
+      expect(result[0]?.id).toBeDefined()
+      expect(result[0]?.createdAt).toBeInstanceOf(Date)
     })
 
     test('retrievePaymentCollection', async ({ expect, dto }) => {
       const [created] = await service.createPaymentCollections([dto.generate.createPaymentCollection()])
+      assertDefined(created)
 
       const result = await service.retrievePaymentCollection(created.id)
 
@@ -93,8 +90,10 @@ describe('PaymentModuleService', () => {
 
     test('updatePaymentCollections', async ({ expect, dto }) => {
       const [created] = await service.createPaymentCollections([dto.generate.createPaymentCollection()])
+      assertDefined(created)
 
       const [updated] = await service.updatePaymentCollections([created.id], { amount: 20000 })
+      assertDefined(updated)
 
       expect(updated.amount).toBe(20000)
       expect(updated.id).toBe(created.id)
@@ -102,6 +101,7 @@ describe('PaymentModuleService', () => {
 
     test('deletePaymentCollections', async ({ expect, dto }) => {
       const [created] = await service.createPaymentCollections([dto.generate.createPaymentCollection()])
+      assertDefined(created)
 
       await service.deletePaymentCollections([created.id])
 
@@ -111,6 +111,7 @@ describe('PaymentModuleService', () => {
 
     test('softDeletePaymentCollections and restorePaymentCollections', async ({ expect, dto }) => {
       const [created] = await service.createPaymentCollections([dto.generate.createPaymentCollection()])
+      assertDefined(created)
 
       await service.softDeletePaymentCollections([created.id])
       const error = await service.retrievePaymentCollection(created.id).catch((e) => e)
@@ -129,6 +130,7 @@ describe('PaymentModuleService', () => {
   describe('PaymentSession lifecycle', () => {
     test('createPaymentSession creates session and calls provider', async ({ expect, dto }) => {
       const [collection] = await service.createPaymentCollections([dto.generate.createPaymentCollection()])
+      assertDefined(collection)
 
       const session = await service.createPaymentSession(collection.id, dto.generate.createPaymentSession())
 
@@ -145,6 +147,7 @@ describe('PaymentModuleService', () => {
       const [collection] = await service.createPaymentCollections([
         dto.generate.createPaymentCollection({ currencyCode: 'eur' }),
       ])
+      assertDefined(collection)
 
       const session = await service.createPaymentSession(
         collection.id,
@@ -156,6 +159,7 @@ describe('PaymentModuleService', () => {
 
     test('authorizePaymentSession creates payment', async ({ expect, dto }) => {
       const [collection] = await service.createPaymentCollections([dto.generate.createPaymentCollection()])
+      assertDefined(collection)
       const session = await service.createPaymentSession(collection.id, dto.generate.createPaymentSession())
 
       const payment = await service.authorizePaymentSession(session.id)
@@ -172,6 +176,7 @@ describe('PaymentModuleService', () => {
 
     test('authorizePaymentSession is idempotent', async ({ expect, dto }) => {
       const [collection] = await service.createPaymentCollections([dto.generate.createPaymentCollection()])
+      assertDefined(collection)
       const session = await service.createPaymentSession(collection.id, dto.generate.createPaymentSession())
       const firstPayment = await service.authorizePaymentSession(session.id)
       assertDefined(firstPayment)
@@ -186,6 +191,7 @@ describe('PaymentModuleService', () => {
 
     test('authorizePaymentSession returns null for async providers', async ({ expect, dto }) => {
       const [collection] = await service.createPaymentCollections([dto.generate.createPaymentCollection()])
+      assertDefined(collection)
       const session = await service.createPaymentSession(collection.id, dto.generate.createPaymentSession())
 
       mockProvider.authorizePayment.mockResolvedValueOnce({
@@ -200,6 +206,7 @@ describe('PaymentModuleService', () => {
 
     test('deletePaymentSession removes session and calls provider', async ({ expect, dto }) => {
       const [collection] = await service.createPaymentCollections([dto.generate.createPaymentCollection()])
+      assertDefined(collection)
       const session = await service.createPaymentSession(collection.id, dto.generate.createPaymentSession())
 
       await service.deletePaymentSession(session.id)
@@ -218,6 +225,7 @@ describe('PaymentModuleService', () => {
   describe('Payment lifecycle', () => {
     test('capturePayment full capture', async ({ expect, dto }) => {
       const [collection] = await service.createPaymentCollections([dto.generate.createPaymentCollection()])
+      assertDefined(collection)
       const session = await service.createPaymentSession(collection.id, dto.generate.createPaymentSession())
       const authorized = await service.authorizePaymentSession(session.id)
       assertDefined(authorized)
@@ -227,11 +235,12 @@ describe('PaymentModuleService', () => {
       expect(captured.capturedAt).toBeInstanceOf(Date)
       expect(captured.captures).toHaveLength(1)
       assertDefined(captured.captures)
-      expect(captured.captures[0].amount).toBe(10000)
+      expect(captured.captures[0]?.amount).toBe(10000)
     })
 
     test('capturePayment partial capture', async ({ expect, dto }) => {
       const [collection] = await service.createPaymentCollections([dto.generate.createPaymentCollection()])
+      assertDefined(collection)
       const session = await service.createPaymentSession(collection.id, dto.generate.createPaymentSession())
       const authorized = await service.authorizePaymentSession(session.id)
       assertDefined(authorized)
@@ -241,7 +250,7 @@ describe('PaymentModuleService', () => {
       expect(firstCapture.capturedAt).toBeNull()
       expect(firstCapture.captures).toHaveLength(1)
       assertDefined(firstCapture.captures)
-      expect(firstCapture.captures[0].amount).toBe(4000)
+      expect(firstCapture.captures[0]?.amount).toBe(4000)
 
       const secondCapture = await service.capturePayment({ paymentId: authorized.id, amount: 6000 })
 
@@ -251,6 +260,7 @@ describe('PaymentModuleService', () => {
 
     test('refundPayment full refund', async ({ expect, dto }) => {
       const [collection] = await service.createPaymentCollections([dto.generate.createPaymentCollection()])
+      assertDefined(collection)
       const session = await service.createPaymentSession(collection.id, dto.generate.createPaymentSession())
       const authorized = await service.authorizePaymentSession(session.id)
       assertDefined(authorized)
@@ -260,12 +270,13 @@ describe('PaymentModuleService', () => {
 
       expect(refunded.refunds).toHaveLength(1)
       assertDefined(refunded.refunds)
-      expect(refunded.refunds[0].amount).toBe(10000)
+      expect(refunded.refunds[0]?.amount).toBe(10000)
       expect(mockProvider.refundPayment).toHaveBeenCalledOnce()
     })
 
     test('refundPayment partial refund', async ({ expect, dto }) => {
       const [collection] = await service.createPaymentCollections([dto.generate.createPaymentCollection()])
+      assertDefined(collection)
       const session = await service.createPaymentSession(collection.id, dto.generate.createPaymentSession())
       const authorized = await service.authorizePaymentSession(session.id)
       assertDefined(authorized)
@@ -274,7 +285,7 @@ describe('PaymentModuleService', () => {
       const first = await service.refundPayment({ paymentId: authorized.id, amount: 3000 })
       expect(first.refunds).toHaveLength(1)
       assertDefined(first.refunds)
-      expect(first.refunds[0].amount).toBe(3000)
+      expect(first.refunds[0]?.amount).toBe(3000)
 
       const second = await service.refundPayment({ paymentId: authorized.id, amount: 7000 })
       expect(second.refunds).toHaveLength(2)
@@ -282,6 +293,7 @@ describe('PaymentModuleService', () => {
 
     test('cancelPayment', async ({ expect, dto }) => {
       const [collection] = await service.createPaymentCollections([dto.generate.createPaymentCollection()])
+      assertDefined(collection)
       const session = await service.createPaymentSession(collection.id, dto.generate.createPaymentSession())
       const authorized = await service.authorizePaymentSession(session.id)
       assertDefined(authorized)
@@ -294,6 +306,7 @@ describe('PaymentModuleService', () => {
 
     test('cancelPayment is idempotent', async ({ expect, dto }) => {
       const [collection] = await service.createPaymentCollections([dto.generate.createPaymentCollection()])
+      assertDefined(collection)
       const session = await service.createPaymentSession(collection.id, dto.generate.createPaymentSession())
       const authorized = await service.authorizePaymentSession(session.id)
       assertDefined(authorized)
@@ -314,6 +327,7 @@ describe('PaymentModuleService', () => {
   describe('collection status transitions', () => {
     test('full lifecycle: not_paid → awaiting → authorized → completed', async ({ expect, dto }) => {
       const [collection] = await service.createPaymentCollections([dto.generate.createPaymentCollection()])
+      assertDefined(collection)
       expect((await service.retrievePaymentCollection(collection.id)).status).toBe('not_paid')
 
       const session = await service.createPaymentSession(collection.id, dto.generate.createPaymentSession())
@@ -336,6 +350,7 @@ describe('PaymentModuleService', () => {
       const [collection] = await service.createPaymentCollections([
         dto.generate.createPaymentCollection({ amount: 20000 }),
       ])
+      assertDefined(collection)
 
       await service.createPaymentSession(collection.id, dto.generate.createPaymentSession({ amount: 10000 }))
       // Create a second session for the remaining half
@@ -367,15 +382,17 @@ describe('PaymentModuleService', () => {
       const result = await service.listRefundReasons()
 
       expect(result).toHaveLength(2)
-      expect(result[0].id).toBeDefined()
+      expect(result[0]?.id).toBeDefined()
       expect(result.map((r) => r.code)).toContain('defective')
       expect(result.map((r) => r.code)).toContain('wrong_item')
     })
 
     test('updateRefundReasons', async ({ expect, dto }) => {
       const [created] = await service.createRefundReasons([dto.generate.createRefundReason()])
+      assertDefined(created)
 
       const [updated] = await service.updateRefundReasons([created.id], { label: 'Updated label' })
+      assertDefined(updated)
 
       expect(updated.label).toBe('Updated label')
       expect(updated.code).toBe('defective')
@@ -383,6 +400,7 @@ describe('PaymentModuleService', () => {
 
     test('deleteRefundReasons', async ({ expect, dto }) => {
       const [created] = await service.createRefundReasons([dto.generate.createRefundReason()])
+      assertDefined(created)
 
       await service.deleteRefundReasons([created.id])
 
@@ -392,6 +410,7 @@ describe('PaymentModuleService', () => {
 
     test('softDeleteRefundReasons and restoreRefundReasons', async ({ expect, dto }) => {
       const [created] = await service.createRefundReasons([dto.generate.createRefundReason()])
+      assertDefined(created)
 
       await service.softDeleteRefundReasons([created.id])
       expect(await service.listRefundReasons()).toHaveLength(0)

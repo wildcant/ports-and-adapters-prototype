@@ -12,7 +12,7 @@ export default defineConfig({
     },
   },
   test: {
-    env: testEnv,
+    env: testEnv ?? {},
     include: ['./src/**/*.test.{ts,tsx}'],
     setupFiles: ['./tests/setup/setup-test-env.ts'],
     fileParallelism: false,

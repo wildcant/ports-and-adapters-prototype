@@ -23,9 +23,9 @@ export type UpdatePaymentCollectionDTO = {
 export type CreatePaymentSessionDTO = {
   providerId: string
   amount: number
-  currencyCode?: string
-  data?: Record<string, unknown>
-  context?: Record<string, unknown>
+  currencyCode?: string | undefined
+  data?: Record<string, unknown> | undefined
+  context?: Record<string, unknown> | undefined
 }
 
 export type UpdatePaymentSessionDTO = {
@@ -55,8 +55,8 @@ export type CreatePaymentDTO = {
 
 export type CreateCaptureDTO = {
   paymentId: string
-  amount?: number
-  capturedBy?: string
+  amount?: number | undefined
+  capturedBy?: string | undefined
 }
 
 // ---------------------------------------------------------------------------
@@ -65,10 +65,10 @@ export type CreateCaptureDTO = {
 
 export type CreateRefundDTO = {
   paymentId: string
-  amount?: number
-  refundReasonId?: string
-  note?: string
-  createdBy?: string
+  amount?: number | undefined
+  refundReasonId?: string | undefined
+  note?: string | undefined
+  createdBy?: string | undefined
 }
 
 // ---------------------------------------------------------------------------
@@ -78,8 +78,8 @@ export type CreateRefundDTO = {
 export type CreateRefundReasonDTO = {
   label: string
   code: string
-  description?: string | null
-  metadata?: Record<string, unknown> | null
+  description?: string | null | undefined
+  metadata?: Record<string, unknown> | null | undefined
 }
 
 export type UpdateRefundReasonDTO = {
@@ -155,8 +155,8 @@ export type WebhookActionResult = {
 export type InitiatePaymentInput = {
   amount: number
   currencyCode: string
-  data?: Record<string, unknown>
-  context?: Record<string, unknown>
+  data?: Record<string, unknown> | undefined
+  context?: Record<string, unknown> | undefined
 }
 
 export type InitiatePaymentOutput = {
@@ -166,8 +166,8 @@ export type InitiatePaymentOutput = {
 }
 
 export type AuthorizePaymentInput = {
-  data?: Record<string, unknown>
-  context?: Record<string, unknown>
+  data?: Record<string, unknown> | undefined
+  context?: Record<string, unknown> | undefined
 }
 
 export type AuthorizePaymentOutput = {
@@ -176,8 +176,8 @@ export type AuthorizePaymentOutput = {
 }
 
 export type CapturePaymentInput = {
-  data?: Record<string, unknown>
-  context?: Record<string, unknown>
+  data?: Record<string, unknown> | undefined
+  context?: Record<string, unknown> | undefined
 }
 
 export type CapturePaymentOutput = {
@@ -185,8 +185,8 @@ export type CapturePaymentOutput = {
 }
 
 export type CancelPaymentInput = {
-  data?: Record<string, unknown>
-  context?: Record<string, unknown>
+  data?: Record<string, unknown> | undefined
+  context?: Record<string, unknown> | undefined
 }
 
 export type CancelPaymentOutput = {
@@ -204,8 +204,8 @@ export type DeletePaymentOutput = {
 
 export type RefundPaymentInput = {
   amount: number
-  data?: Record<string, unknown>
-  context?: Record<string, unknown>
+  data?: Record<string, unknown> | undefined
+  context?: Record<string, unknown> | undefined
 }
 
 export type RefundPaymentOutput = {
@@ -242,8 +242,8 @@ export type GetPaymentStatusOutput = {
 }
 
 export type CreateAccountHolderInput = {
-  data?: Record<string, unknown>
-  context?: Record<string, unknown>
+  data?: Record<string, unknown> | undefined
+  context?: Record<string, unknown> | undefined
 }
 
 export type CreateAccountHolderOutput = {
@@ -280,8 +280,8 @@ export type SavePaymentMethodOutput = {
 }
 
 export type DeletePaymentMethodInput = {
-  data?: Record<string, unknown>
-  context?: Record<string, unknown>
+  data?: Record<string, unknown> | undefined
+  context?: Record<string, unknown> | undefined
 }
 
 export type DeletePaymentMethodOutput = Record<string, unknown>

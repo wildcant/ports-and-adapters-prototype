@@ -22,6 +22,7 @@ logger.info('Registering routes:')
 await loadRoutes(app, join(import.meta.dirname, 'api'), logger, (routePath) => {
   if (routePath.startsWith('/admin/')) return adminRegistry
   if (routePath.startsWith('/store/')) return storeRegistry
+  return undefined
 })
 
 // ---- OpenAPI ----

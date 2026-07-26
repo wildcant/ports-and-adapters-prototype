@@ -10,9 +10,9 @@ export type UserDTO = {
 }
 
 export interface FilterableUserProps extends BaseFilterable<FilterableUserProps> {
-  id?: string | string[]
-  email?: string | string[] | OperatorMap<string>
-  name?: string | OperatorMap<string>
-  createdAt?: OperatorMap<Date>
-  updatedAt?: OperatorMap<Date>
+  id?: string | string[] | undefined
+  email?: string | string[] | OperatorMap<string> | undefined
+  name?: string | OperatorMap<string> | undefined
+  createdAt?: OperatorMap<Date> | undefined
+  updatedAt?: OperatorMap<Date> | undefined
 }

@@ -36,7 +36,7 @@ if (existingProducts.length > 0) {
   process.exit(0)
 }
 
-const [tshirt, sweatshirt, sweatpants, shorts] = await productService.createProducts([
+const createdProducts = await productService.createProducts([
   {
     title: 'Classic T-Shirt',
     handle: 't-shirt',
@@ -74,16 +74,29 @@ const [tshirt, sweatshirt, sweatpants, shorts] = await productService.createProd
     thumbnail: 'https://placehold.co/600x400?text=Shorts',
   },
 ])
+const [tshirt, sweatshirt, sweatpants, shorts] = createdProducts as [
+  (typeof createdProducts)[number],
+  (typeof createdProducts)[number],
+  (typeof createdProducts)[number],
+  (typeof createdProducts)[number],
+]
 console.log(`Seeded ${4} products`)
 
 // --- Options ---
-const [tshirtSize, tshirtColor] = await productService.createProductOptions([
+const tshirtOptions = await productService.createProductOptions([
   { productId: tshirt.id, title: 'Size' },
   { productId: tshirt.id, title: 'Color' },
 ])
-const [sweatshirtSize] = await productService.createProductOptions([{ productId: sweatshirt.id, title: 'Size' }])
-const [sweatpantsSize] = await productService.createProductOptions([{ productId: sweatpants.id, title: 'Size' }])
-const [shortsSize] = await productService.createProductOptions([{ productId: shorts.id, title: 'Size' }])
+const [tshirtSize, tshirtColor] = tshirtOptions as [(typeof tshirtOptions)[number], (typeof tshirtOptions)[number]]
+const [sweatshirtSize] = (await productService.createProductOptions([{ productId: sweatshirt.id, title: 'Size' }])) as [
+  (typeof tshirtOptions)[number],
+]
+const [sweatpantsSize] = (await productService.createProductOptions([{ productId: sweatpants.id, title: 'Size' }])) as [
+  (typeof tshirtOptions)[number],
+]
+const [shortsSize] = (await productService.createProductOptions([{ productId: shorts.id, title: 'Size' }])) as [
+  (typeof tshirtOptions)[number],
+]
 console.log('Seeded product options')
 
 // --- Option Values ---
@@ -172,10 +185,11 @@ await inventoryService.createInventoryLevels(
 console.log(`Seeded ${createdItems.length} inventory levels`)
 
 // Link variants -> inventory items (1:1 by matching SKU order)
-const links = createdVariants.map((variant, i) => ({
-  variantId: variant.id,
-  inventoryItemId: createdItems[i].id,
-}))
+const links = createdVariants.map((variant, i) => {
+  const item = createdItems[i]
+  if (!item) throw new Error(`Missing inventory item for variant "${variant.id}"`)
+  return { variantId: variant.id, inventoryItemId: item.id }
+})
 await linkService.repo('productVariantInventoryItem').createMany(links)
 console.log(`Seeded ${links.length} variant-inventory links`)
 
@@ -185,7 +199,7 @@ if (existingCarts.length === 0) {
   const tshirtVariant = createdVariants.find((v) => v.sku === 'SHIRT-M-BLACK') as (typeof createdVariants)[number]
   const sweatshirtVariant = createdVariants.find((v) => v.sku === 'SWEATSHIRT-L') as (typeof createdVariants)[number]
 
-  const [cart] = await cartService.createCarts([
+  const [cart] = (await cartService.createCarts([
     {
       currencyCode: 'usd',
       email: 'test@example.com',
@@ -210,7 +224,7 @@ if (existingCarts.length === 0) {
         },
       ],
     },
-  ])
+  ])) as [Awaited<ReturnType<typeof cartService.createCarts>>[number]]
 
   console.log(`Seeded cart ${cart.id} with 2 line items (total: $95.00)`)
 } else {

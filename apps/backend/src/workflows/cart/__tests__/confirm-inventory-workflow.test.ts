@@ -167,7 +167,7 @@ describe('confirmInventoryWorkflow', () => {
     const result = await confirmInventoryWorkflow.run({ cartId: 'cart_1' })
 
     expect(result.items).toHaveLength(1)
-    expect(result.items[0].locationIds).toEqual(['loc_1', 'loc_2'])
+    expect(result.items[0]?.locationIds).toEqual(['loc_1', 'loc_2'])
   })
 
   it('skips line items without a variant', async () => {

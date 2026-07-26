@@ -59,7 +59,7 @@ export class CartModuleService implements ICartModuleService {
       const carts = await this.cartRepository.createMany(data, ctx)
 
       const lineItemInputs = carts.flatMap((cart, i) =>
-        (data[i].items ?? []).map((item) => ({ ...item, cartId: cart.id })),
+        (data[i]?.items ?? []).map((item) => ({ ...item, cartId: cart.id })),
       )
 
       if (lineItemInputs.length) {
@@ -118,10 +118,9 @@ export class CartModuleService implements ICartModuleService {
     })
   }
 
-  async updateLineItem(lineItemId: string, data: UpdateLineItemDTO, context?: Context): Promise<CartLineItemDTO> {
+  async updateLineItems(lineItemIds: string[], data: UpdateLineItemDTO, context?: Context): Promise<CartLineItemDTO[]> {
     return this.withTransaction(context, async (ctx) => {
-      const [updated] = await this.cartLineItemRepository.update([lineItemId], data, ctx)
-      return updated
+      return this.cartLineItemRepository.update(lineItemIds, data, ctx)
     })
   }
 
@@ -147,6 +146,7 @@ export class CartModuleService implements ICartModuleService {
         { status: 'completed', completedAt: new Date() },
         ctx,
       )
+      if (!updated) throw new AppError({ type: ErrorTypes.NOT_FOUND, message: `Cart "${cartId}" not found` })
       return updated
     })
   }

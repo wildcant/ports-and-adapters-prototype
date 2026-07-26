@@ -1,5 +1,6 @@
 import { AppError, ErrorTypes } from '@core/errors/app-error.js'
 import { test } from '@tests/setup/test-extend.js'
+import { assertDefined } from '@tests/utils/assert-defined.js'
 import { describe } from 'vitest'
 import { createWithTransaction } from '../../../core/utils/with-transaction.js'
 import { UserRepository } from '../repositories/user.js'
@@ -21,15 +22,16 @@ describe('UserModuleService', () => {
 
     expect(result).toHaveLength(2)
     expect(result[0]).toMatchObject({
-      name: input[0].name,
-      email: input[0].email,
+      name: input[0]?.name,
+      email: input[0]?.email,
     })
-    expect(result[0].id).toBeDefined()
-    expect(result[0].createdAt).toBeInstanceOf(Date)
+    expect(result[0]?.id).toBeDefined()
+    expect(result[0]?.createdAt).toBeInstanceOf(Date)
   })
 
   test('retrieveUser', async ({ expect, dto }) => {
     const [created] = await service.createUsers([dto.generate.createUser()])
+    assertDefined(created)
 
     const result = await service.retrieveUser(created.id)
 
@@ -59,9 +61,11 @@ describe('UserModuleService', () => {
 
   test('updateUsers', async ({ expect, dto }) => {
     const [created] = await service.createUsers([dto.generate.createUser()])
+    assertDefined(created)
     const update = dto.generate.updateUser({ name: 'Updated Name' })
 
     const [updated] = await service.updateUsers([created.id], update)
+    assertDefined(updated)
 
     expect(updated.name).toBe('Updated Name')
     expect(updated.id).toBe(created.id)
@@ -69,6 +73,7 @@ describe('UserModuleService', () => {
 
   test('deleteUsers', async ({ expect, dto }) => {
     const [created] = await service.createUsers([dto.generate.createUser()])
+    assertDefined(created)
 
     await service.deleteUsers([created.id])
 
@@ -79,6 +84,7 @@ describe('UserModuleService', () => {
 
   test('softDeleteUsers', async ({ expect, dto }) => {
     const [created] = await service.createUsers([dto.generate.createUser()])
+    assertDefined(created)
 
     await service.softDeleteUsers([created.id])
 
@@ -88,13 +94,14 @@ describe('UserModuleService', () => {
 
   test('restoreUsers', async ({ expect, dto }) => {
     const [created] = await service.createUsers([dto.generate.createUser()])
+    assertDefined(created)
     await service.softDeleteUsers([created.id])
 
     await service.restoreUsers([created.id])
 
     const list = await service.listUsers()
     expect(list).toHaveLength(1)
-    expect(list[0].id).toBe(created.id)
+    expect(list[0]?.id).toBe(created.id)
   })
 
   describe('error paths', () => {
@@ -108,6 +115,7 @@ describe('UserModuleService', () => {
 
     test('retrieveUser throws NOT_FOUND for soft-deleted user', async ({ expect, dto }) => {
       const [created] = await service.createUsers([dto.generate.createUser()])
+      assertDefined(created)
       await service.softDeleteUsers([created.id])
 
       const error = await service.retrieveUser(created.id).catch((e) => e)
@@ -136,6 +144,7 @@ describe('UserModuleService', () => {
 
     test('updateUsers with soft-deleted id returns empty array', async ({ expect, dto }) => {
       const [created] = await service.createUsers([dto.generate.createUser()])
+      assertDefined(created)
       await service.softDeleteUsers([created.id])
       const update = dto.generate.updateUser({ name: 'Ghost' })
 
@@ -154,6 +163,7 @@ describe('UserModuleService', () => {
 
     test('restoreUsers on non-soft-deleted user does not throw', async ({ expect, dto }) => {
       const [created] = await service.createUsers([dto.generate.createUser()])
+      assertDefined(created)
 
       await expect(service.restoreUsers([created.id])).resolves.toBeUndefined()
     })

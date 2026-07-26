@@ -204,6 +204,10 @@ export class PaymentModuleService implements IPaymentModuleService {
 
       await this.maybeUpdatePaymentCollection_(paymentCollectionId, context)
 
+      if (!updated) {
+        throw new AppError({ type: ErrorTypes.NOT_FOUND, message: `Payment session "${session.id}" not found` })
+      }
+
       return updated
     } catch (error) {
       await this.paymentSessionRepository.delete([session.id], context)

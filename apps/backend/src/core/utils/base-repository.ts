@@ -16,10 +16,10 @@ type BaseColumns = {
 
 /** Derive a type-safe filter shape from the entity's select model */
 export type EntityFilters<T> = {
-  [K in keyof T]?: T[K] | OperatorMap<T[K]> | T[K][] | null
+  [K in keyof T]?: T[K] | OperatorMap<T[K]> | T[K][] | null | undefined
 } & {
-  $and?: EntityFilters<T>[]
-  $or?: EntityFilters<T>[]
+  $and?: EntityFilters<T>[] | undefined
+  $or?: EntityFilters<T>[] | undefined
 }
 
 export function BaseRepository<TTable extends PgTable & BaseColumns>(table: TTable) {
@@ -165,7 +165,11 @@ export function BaseRepository<TTable extends PgTable & BaseColumns>(table: TTab
       return rows as Select[]
     }
 
-    async update(ids: string[], data: Partial<Insert>, context?: Context): Promise<Select[]> {
+    async update(
+      ids: string[],
+      data: { [K in keyof Insert]?: Insert[K] | undefined },
+      context?: Context,
+    ): Promise<Select[]> {
       if (ids.length === 0) return []
       const client = this.getClient(context)
       const rows = await client

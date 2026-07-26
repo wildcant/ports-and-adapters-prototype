@@ -23,6 +23,6 @@ export type ICartModuleService = {
     context?: Context,
   ): Promise<CartLineItemDTO[]>
   addLineItems(cartId: string, items: CreateLineItemDTO[], context?: Context): Promise<CartLineItemDTO[]>
-  updateLineItem(lineItemId: string, data: UpdateLineItemDTO, context?: Context): Promise<CartLineItemDTO>
+  updateLineItems(lineItemIds: string[], data: UpdateLineItemDTO, context?: Context): Promise<CartLineItemDTO[]>
   deleteLineItems(lineItemIds: string[], context?: Context): Promise<void>
 }

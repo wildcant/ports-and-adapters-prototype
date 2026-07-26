@@ -61,7 +61,7 @@ export const createApp: CreateApp = ({ container }) => {
 
         const params: Record<string, string> = {}
         route.paramNames.forEach((name, i) => {
-          params[name] = match[i + 1]
+          params[name] = match[i + 1] ?? ''
         })
 
         const query: Record<string, string | string[]> = {}

@@ -27,8 +27,9 @@ function withMiddleware<T extends Record<string, RouteHandler>>(
 ): T {
   const wrapped = { ...handlers } as Record<string, RouteHandler>
   for (const config of middlewares) {
-    if (config.matcher === matcher && wrapped[config.method]) {
-      wrapped[config.method] = applyMiddleware(config, wrapped[config.method])
+    const handler = wrapped[config.method]
+    if (config.matcher === matcher && handler) {
+      wrapped[config.method] = applyMiddleware(config, handler)
     }
   }
   return wrapped as T

@@ -35,7 +35,7 @@ type FlattenQuery<Q> = Q extends {
   pagination: { offset: number; limit: number }
   filters: infer F
 }
-  ? Simplify<{ offset: number; limit: number; order?: string } & F>
+  ? Simplify<{ offset: number; limit: number; order?: string | undefined } & F>
   : Q
 
 /**

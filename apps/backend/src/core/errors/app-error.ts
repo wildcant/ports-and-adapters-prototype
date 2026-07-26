@@ -14,7 +14,7 @@ export enum ErrorTypes {
 export class AppError extends Error {
   __isAppError = true
   type: ErrorTypes
-  code?: string
+  code?: string | undefined
   date: Date
 
   constructor(opts: { type: ErrorTypes; message: string; code?: string }) {

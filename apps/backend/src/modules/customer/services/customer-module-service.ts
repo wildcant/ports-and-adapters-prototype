@@ -76,7 +76,7 @@ export class CustomerModuleService implements ICustomerModuleService {
       const customers = await this.customerRepository.createMany(data, ctx)
 
       const addressData = customers.flatMap((customer, i) =>
-        (data[i].addresses ?? []).map((addr) => ({ ...addr, customerId: customer.id })),
+        (data[i]?.addresses ?? []).map((addr) => ({ ...addr, customerId: customer.id })),
       )
       if (addressData.length > 0) {
         await this.customerAddressRepository.createMany(addressData, ctx)

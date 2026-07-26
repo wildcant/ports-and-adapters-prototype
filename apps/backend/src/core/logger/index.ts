@@ -95,6 +95,7 @@ class WinstonLogger implements Logger {
   shouldLog(level: string): boolean {
     const levelValue = this.logger.levels[level]
     const currentLevel = this.logger.levels[this.logger.level]
+    if (levelValue === undefined || currentLevel === undefined) return false
     return levelValue <= currentLevel
   }
 }

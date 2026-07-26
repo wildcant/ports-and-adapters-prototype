@@ -145,11 +145,10 @@ export class StripeProviderService extends AbstractPaymentProvider<StripeOptions
   }
 
   async getWebhookActionAndData(payload: ProviderWebhookPayload['payload']): Promise<WebhookActionResult> {
-    const event = this.stripe.webhooks.constructEvent(
-      payload.rawData as string,
-      payload.headers['stripe-signature'],
-      this.config.webhookSecret,
-    )
+    const signature = payload.headers['stripe-signature']
+    if (!signature) throw new Error('Missing stripe-signature header')
+
+    const event = this.stripe.webhooks.constructEvent(payload.rawData as string, signature, this.config.webhookSecret)
 
     const intent = event.data.object as Stripe.PaymentIntent
     const sessionId = intent.metadata?.sessionId

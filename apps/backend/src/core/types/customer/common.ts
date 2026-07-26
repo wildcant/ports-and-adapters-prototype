@@ -11,12 +11,12 @@ export type CustomerDTO = {
 }
 
 export interface FilterableCustomerProps extends BaseFilterable<FilterableCustomerProps> {
-  id?: string | string[]
-  email?: string | string[] | OperatorMap<string>
-  firstName?: string | OperatorMap<string>
-  lastName?: string | OperatorMap<string>
-  createdAt?: OperatorMap<Date>
-  updatedAt?: OperatorMap<Date>
+  id?: string | string[] | undefined
+  email?: string | string[] | OperatorMap<string> | undefined
+  firstName?: string | OperatorMap<string> | undefined
+  lastName?: string | OperatorMap<string> | undefined
+  createdAt?: OperatorMap<Date> | undefined
+  updatedAt?: OperatorMap<Date> | undefined
 }
 
 export interface FilterableCustomerAddressProps extends BaseFilterable<FilterableCustomerAddressProps> {

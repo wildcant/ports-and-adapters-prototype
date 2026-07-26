@@ -5,6 +5,11 @@
     "moduleResolution": "Node16",
     "esModuleInterop": true,
     "strict": true,
+    "noImplicitReturns": true,
+    "noFallthroughCasesInSwitch": true,
+    "forceConsistentCasingInFileNames": true,
+    "exactOptionalPropertyTypes": true,
+    "noUncheckedIndexedAccess": true,
     "skipLibCheck": true,
     "paths": {
       "@core/*": ["./src/core/*"],

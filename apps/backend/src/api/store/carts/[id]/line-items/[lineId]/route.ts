@@ -7,7 +7,7 @@ type PostInput = { params: LineIdParams; body: UpdateLineItemBody }
 
 export const POST = async (req: HttpRequest<PostInput>) => {
   const cartService = req.scope.resolve<ICartModuleService>(Modules.CART)
-  const lineItem = await cartService.updateLineItem(req.params.lineId, req.body)
+  const [lineItem] = await cartService.updateLineItems([req.params.lineId], req.body)
 
   return { status: 200, json: { lineItem } } satisfies HttpResult
 }

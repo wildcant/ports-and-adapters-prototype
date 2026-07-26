@@ -33,8 +33,7 @@ export function createSimpleWorkflowEngine(): WorkflowEngine {
         )
       } catch (error) {
         // Simple adapter treats all errors as terminal — run compensations in reverse
-        for (let i = compensations.length - 1; i >= 0; i--) {
-          const entry = compensations[i]
+        for (const entry of compensations.reverse()) {
           try {
             await entry.compensation(entry.output, stepContext)
           } catch {
