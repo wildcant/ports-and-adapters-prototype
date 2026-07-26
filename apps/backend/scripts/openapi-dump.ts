@@ -24,7 +24,7 @@ registerOpenApiRoutes(adminRegistry, refundReasonMiddlewares)
 registerOpenApiRoutes(adminRegistry, userMiddlewares)
 
 const adminDoc = generateDocument(adminRegistry, 'Admin API')
-const adminPath = resolve(__dirname, '../../../openapi-admin.json')
+const adminPath = resolve(__dirname, '../openapi-admin.json')
 writeFileSync(adminPath, `${JSON.stringify(adminDoc, null, 2)}\n`)
 console.log(`Admin OpenAPI spec written to ${adminPath}`)
 
@@ -36,6 +36,6 @@ registerOpenApiRoutes(storeRegistry, storePaymentProviderMiddlewares)
 registerOpenApiRoutes(storeRegistry, storeProductMiddlewares)
 
 const storeDoc = generateDocument(storeRegistry, 'Store API')
-const storePath = resolve(__dirname, '../../../openapi-store.json')
+const storePath = resolve(__dirname, '../openapi-store.json')
 writeFileSync(storePath, `${JSON.stringify(storeDoc, null, 2)}\n`)
 console.log(`Store OpenAPI spec written to ${storePath}`)
