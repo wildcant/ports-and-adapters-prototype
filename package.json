@@ -6,12 +6,14 @@
     "apps/frontend"
   ],
   "scripts": {
-    "setup": "npm install && npm run --workspace=backend db:setup",
+    "setup": "npm install && npm run pull-keys",
     "lint": "biome lint .",
     "format": "biome format --write .",
     "check": "biome check . && node apps/backend/scripts/check-module-boundaries.js",
     "openapi:generate": "npm run --workspace=backend openapi:dump:offline && npm run --workspace=frontend openapi:client",
-    "typecheck": "npm run --workspace=backend typecheck && npm run --workspace=frontend typecheck"
+    "typecheck": "npm run --workspace=backend typecheck && npm run --workspace=frontend typecheck",
+    "sync-secrets": "./scripts/sync-secrets.sh proteus",
+    "pull-keys": "npx wrangler r2 object get dotenv-keys/.env.keys --file=.env.keys --remote"
   },
   "devDependencies": {
     "@biomejs/biome": "2.5.4"

@@ -9,7 +9,7 @@
   "scripts": {
     "dev": "dotenvx run -f ../../.env.local -- tsx src/index.ts",
     "start": "dotenvx run -f ../../.env -- tsx src/index.ts",
-    "test": "vitest run",
+    "test": "dotenvx run -f ../../.env.test -- vitest run",
     "typecheck": "tsc --noEmit",
     "db:start": "supabase start",
     "db:start:lean": "supabase start -x studio,imgproxy,inbucket,edge-runtime,functions,analytics,vector,realtime,storage,meta",
@@ -17,7 +17,8 @@
     "db:status": "supabase status",
     "db:reset": "supabase db reset",
     "db:generate": "dotenvx run -f ../../.env.local -- sh -c 'for config in src/modules/*/database.config.ts src/link-modules/database.config.ts; do drizzle-kit generate --config=\"$config\" || exit 1; done'",
-    "db:migrate": "dotenvx run -f ../../.env.local -- sh -c 'for config in src/modules/*/database.config.ts src/link-modules/database.config.ts; do drizzle-kit migrate --config=\"$config\" || exit 1; done'",
+    "db:migrate": "MIGRATING=true sh -c 'for config in src/modules/*/database.config.ts src/link-modules/database.config.ts; do drizzle-kit migrate --config=\"$config\" || exit 1; done'",
+    "db:migrate:dev": "dotenvx run -f ../../.env.local -- npm run db:migrate",
     "db:seed:dev": "dotenvx run -f ../../.env.local -- tsx scripts/seed-dev.ts",
     "openapi:dump": "curl -s http://localhost:3000/admin/openapi.json | python3 -m json.tool > openapi-admin.json && curl -s http://localhost:3000/store/openapi.json | python3 -m json.tool > openapi-store.json && echo 'Saved openapi-admin.json and openapi-store.json'",
     "openapi:dump:offline": "tsx scripts/openapi-dump.ts"

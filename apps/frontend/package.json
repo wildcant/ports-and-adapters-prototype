@@ -9,8 +9,10 @@
     "dev": "dotenvx run --env-file=../../.env.local -- vite dev --port 3001",
     "generate-routes": "tsr generate",
     "build": "vite build",
-    "preview": "vite preview",
-    "test": "vitest run",
+    "preview": "npm run build && vite preview",
+    "deploy": "npm run build && wrangler deploy",
+    "cf-typegen": "wrangler types",
+    "test": "dotenvx run -f ../../.env.test -- vitest run",
     "typecheck": "tsc --noEmit",
     "openapi:client": "orval"
   },
@@ -29,6 +31,7 @@
     "tailwindcss": "^4.1.18"
   },
   "devDependencies": {
+    "@cloudflare/vite-plugin": "^1.47.0",
     "@dotenvx/dotenvx": "^2.17.1",
     "@tailwindcss/typography": "^0.5.16",
     "@tanstack/devtools-vite": "latest",
@@ -43,7 +46,8 @@
     "orval": "^8.22.0",
     "typescript": "^6.0.2",
     "vite": "^8.0.0",
-    "vitest": "^4.1.5"
+    "vitest": "^4.1.5",
+    "wrangler": "^4.114.0"
   },
   "pnpm": {
     "onlyBuiltDependencies": [

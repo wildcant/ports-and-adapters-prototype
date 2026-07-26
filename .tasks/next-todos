@@ -1,16 +1,8 @@
-- product module / inventory module, test read join table (only link).
-- payment module (port) and payment providers (adapters)
 - fulfillment module (port) and providers (adapters)
 - migration order in prod (first modules and then link modules, are there edge cases?).
 - deploy to supabase and coudflare workers.
-- investigate how to supabase as event bus (supabase-event-bus.md)
+- investigate how to supabase as event bus (supabase-event-bus.md) (cloudflare queues)
 ![event](./subscriber-example.png)
 - cron
 ![cron](./cron-example.png)
 - composing workflows
-
-Chores
-- add strict tsconfig flags (noImplicitReturns, noFallthroughCasesInSwitch, forceConsistentCasingInFileNames, exactOptionalPropertyTypes) and fix all resulting type errors across the codebase (including noUncheckedIndexedAccess errors already surfaced)
-
-Future TODOs
-- sagas for cross module resilient workflows
