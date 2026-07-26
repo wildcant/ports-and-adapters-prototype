@@ -9,7 +9,7 @@
     "setup": "npm install && npm run --workspace=backend db:setup",
     "lint": "biome lint .",
     "format": "biome format --write .",
-    "check": "biome check .",
+    "check": "biome check . && node apps/backend/scripts/check-module-boundaries.js",
     "openapi:generate": "npm run --workspace=backend openapi:dump:offline && npm run --workspace=frontend openapi:client",
     "typecheck": "npm run --workspace=backend typecheck && npm run --workspace=frontend typecheck"
   },
