@@ -52,9 +52,9 @@ export class PaymentProviderService {
 
   retrieveProvider(providerId: string): IPaymentProvider {
     try {
-      return this.container.resolve<IPaymentProvider>(`pp_${providerId}`)
+      return this.container.resolve<IPaymentProvider>(providerId)
     } catch {
-      throw new Error(`Payment provider "pp_${providerId}" is not registered.`)
+      throw new Error(`Payment provider "${providerId}" is not registered.`)
     }
   }
 

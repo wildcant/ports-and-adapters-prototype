@@ -4,11 +4,13 @@ import type {
   CartLineItemDTO,
   Context,
   CreateCartDTO,
+  CreateLineItemDTO,
   FilterableCartLineItemProps,
   FilterableCartProps,
   FindConfig,
   ICartModuleService,
   UpdateCartDTO,
+  UpdateLineItemDTO,
 } from '../../../core/types/index.js'
 import type { Logger } from '../../../core/types/logger.js'
 import type { WithTransaction } from '../../../core/utils/with-transaction.js'
@@ -98,6 +100,35 @@ export class CartModuleService implements ICartModuleService {
     context?: Context,
   ): Promise<CartLineItemDTO[]> {
     return this.cartLineItemRepository.find(filters, config, context)
+  }
+
+  async addLineItems(cartId: string, items: CreateLineItemDTO[], context?: Context): Promise<CartLineItemDTO[]> {
+    return this.withTransaction(context, async (ctx) => {
+      const cart = await this.cartRepository.findByIdOrFail(cartId, undefined, ctx)
+
+      if (cart.status !== 'active') {
+        throw new AppError({
+          type: ErrorTypes.NOT_ALLOWED,
+          message: `Cart ${cartId} is not active (current status: ${cart.status})`,
+        })
+      }
+
+      const inputs = items.map((item) => ({ ...item, cartId }))
+      return this.cartLineItemRepository.createMany(inputs, ctx)
+    })
+  }
+
+  async updateLineItem(lineItemId: string, data: UpdateLineItemDTO, context?: Context): Promise<CartLineItemDTO> {
+    return this.withTransaction(context, async (ctx) => {
+      const [updated] = await this.cartLineItemRepository.update([lineItemId], data, ctx)
+      return updated
+    })
+  }
+
+  async deleteLineItems(lineItemIds: string[], context?: Context): Promise<void> {
+    return this.withTransaction(context, async (ctx) => {
+      await this.cartLineItemRepository.delete(lineItemIds, ctx)
+    })
   }
 
   async completeCart(cartId: string, context?: Context): Promise<CartDTO> {

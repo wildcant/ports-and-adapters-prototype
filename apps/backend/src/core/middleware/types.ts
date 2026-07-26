@@ -1,11 +1,13 @@
 import type { z } from 'zod'
 
 export const Tags = {
+  CARTS: 'Carts',
   CUSTOMERS: 'Customers',
-  USERS: 'Users',
   PAYMENTS: 'Payments',
   PAYMENT_COLLECTIONS: 'Payment Collections',
+  PRODUCTS: 'Products',
   REFUND_REASONS: 'Refund Reasons',
+  USERS: 'Users',
   WEBHOOKS: 'Webhooks',
 } as const
 

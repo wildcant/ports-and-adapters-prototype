@@ -6,6 +6,7 @@ import type {
   CreateProductOptionValueDTO,
   CreateProductVariantDTO,
   FilterableProductProps,
+  FilterableProductVariantProps,
   FindConfig,
   IProductModuleService,
   ProductDTO,
@@ -113,6 +114,14 @@ export class ProductModuleService implements IProductModuleService {
     return this.withTransaction(context, async (ctx) => {
       return this.productOptionValueRepository.createMany(data, ctx)
     })
+  }
+
+  async listProductVariants(
+    filters?: FilterableProductVariantProps,
+    config?: FindConfig<ProductVariantDTO>,
+    context?: Context,
+  ): Promise<ProductVariantDTO[]> {
+    return this.productVariantRepository.find(filters, config, context)
   }
 
   async createProductImages(data: CreateProductImageDTO[], context?: Context): Promise<ProductImageDTO[]> {

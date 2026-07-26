@@ -23,6 +23,12 @@ export type CreateLineItemDTO = {
   metadata?: string | null
 }
 
+export type UpdateLineItemDTO = {
+  quantity?: number
+  unitPrice?: number
+  metadata?: string | null
+}
+
 export type CreateCartDTO = {
   regionId?: string | null
   customerId?: string | null

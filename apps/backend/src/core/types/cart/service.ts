@@ -1,7 +1,7 @@
 import type { FindConfig } from '../common.js'
 import type { Context } from '../context.js'
 import type { CartDTO, CartLineItemDTO, FilterableCartLineItemProps, FilterableCartProps } from './common.js'
-import type { CreateCartDTO, UpdateCartDTO } from './mutations.js'
+import type { CreateCartDTO, CreateLineItemDTO, UpdateCartDTO, UpdateLineItemDTO } from './mutations.js'
 
 export type ICartModuleService = {
   retrieveCart(cartId: string, config?: FindConfig<CartDTO>, context?: Context): Promise<CartDTO>
@@ -22,4 +22,7 @@ export type ICartModuleService = {
     config?: FindConfig<CartLineItemDTO>,
     context?: Context,
   ): Promise<CartLineItemDTO[]>
+  addLineItems(cartId: string, items: CreateLineItemDTO[], context?: Context): Promise<CartLineItemDTO[]>
+  updateLineItem(lineItemId: string, data: UpdateLineItemDTO, context?: Context): Promise<CartLineItemDTO>
+  deleteLineItems(lineItemIds: string[], context?: Context): Promise<void>
 }
