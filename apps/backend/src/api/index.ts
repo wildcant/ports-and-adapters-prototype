@@ -10,12 +10,12 @@
 import { applyMiddleware } from '../core/middleware/apply-middleware.js'
 import type { MiddlewareRoute } from '../core/middleware/types.js'
 import type { RouteHandler } from '../server/ports.js'
-import * as _customerByIdApi from './customers/[id]/route.js'
-import customerMiddlewares from './customers/middlewares.js'
-import * as _customersApi from './customers/route.js'
-import * as _userByIdApi from './users/[id]/route.js'
-import userMiddlewares from './users/middlewares.js'
-import * as _usersApi from './users/route.js'
+import * as _customerByIdApi from './admin/customers/[id]/route.js'
+import customerMiddlewares from './admin/customers/middlewares.js'
+import * as _customersApi from './admin/customers/route.js'
+import * as _userByIdApi from './admin/users/[id]/route.js'
+import userMiddlewares from './admin/users/middlewares.js'
+import * as _usersApi from './admin/users/route.js'
 
 export { apiCall } from '../server/api-caller.js'
 
@@ -34,7 +34,7 @@ function withMiddleware<T extends Record<string, RouteHandler>>(
   return wrapped as T
 }
 
-export const usersApi = withMiddleware(_usersApi, '/users', userMiddlewares)
-export const userByIdApi = withMiddleware(_userByIdApi, '/users/:id', userMiddlewares)
-export const customersApi = withMiddleware(_customersApi, '/customers', customerMiddlewares)
-export const customerByIdApi = withMiddleware(_customerByIdApi, '/customers/:id', customerMiddlewares)
+export const usersApi = withMiddleware(_usersApi, '/admin/users', userMiddlewares)
+export const userByIdApi = withMiddleware(_userByIdApi, '/admin/users/:id', userMiddlewares)
+export const customersApi = withMiddleware(_customersApi, '/admin/customers', customerMiddlewares)
+export const customerByIdApi = withMiddleware(_customerByIdApi, '/admin/customers/:id', customerMiddlewares)

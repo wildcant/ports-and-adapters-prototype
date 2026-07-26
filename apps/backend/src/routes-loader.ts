@@ -1,5 +1,6 @@
 import { existsSync, readdirSync, statSync } from 'node:fs'
 import { join, sep } from 'node:path'
+import type { OpenAPIRegistry } from '@asteasolutions/zod-to-openapi'
 import { applyMiddleware } from './core/middleware/apply-middleware.js'
 import type { MiddlewareRoute } from './core/middleware/types.js'
 import { registerOpenApiRoutes } from './core/openapi/register-route.js'
@@ -45,20 +46,26 @@ function filePathToRoute(relativePath: string): string {
 }
 
 /**
- * Find the middlewares.ts file for a given route file.
- * Looks in the top-level API subdirectory (one level deep from sourceDir).
+ * Find the nearest middlewares.ts file for a given route file.
+ * Walks up from the route file's directory until it reaches sourceDir.
  */
 function findMiddlewarePath(routeFilePath: string, sourceDir: string): string | null {
-  const relativePath = routeFilePath.replace(sourceDir + sep, '')
-  const topDir = relativePath.split(sep)[0]
-  const middlewarePath = join(sourceDir, topDir, 'middlewares.ts')
-  return existsSync(middlewarePath) ? middlewarePath : null
+  let dir = join(routeFilePath, '..')
+  while (dir.startsWith(sourceDir)) {
+    const candidate = join(dir, 'middlewares.ts')
+    if (existsSync(candidate)) return candidate
+    if (dir === sourceDir) break
+    dir = join(dir, '..')
+  }
+  return null
 }
 
 /**
  * Scan a source directory for route files and register them with the HttpServer.
  */
-export async function loadRoutes(server: App, sourceDir: string, logger: Logger) {
+export type RegistryResolver = (routePath: string) => OpenAPIRegistry | undefined
+
+export async function loadRoutes(server: App, sourceDir: string, logger: Logger, resolveRegistry?: RegistryResolver) {
   const routeFiles = findRouteFiles(sourceDir)
   const middlewareCache = new Map<string, MiddlewareRoute[]>()
 
@@ -74,7 +81,10 @@ export async function loadRoutes(server: App, sourceDir: string, logger: Logger)
         const mod = await import(middlewarePath)
         const configs = mod.default ?? []
         middlewareCache.set(middlewarePath, configs)
-        registerOpenApiRoutes(configs)
+        if (resolveRegistry && configs.length > 0) {
+          const registry = resolveRegistry(configs[0].matcher)
+          if (registry) registerOpenApiRoutes(registry, configs)
+        }
       }
       middlewareConfigs = middlewareCache.get(middlewarePath) ?? []
     }

@@ -16,14 +16,20 @@ export async function serveNode(app: App, port: number, callback?: () => void) {
 
 // ---- Express (existing apps, legacy integrations) ----
 
-export async function serveExpress(app: App, port: number, callback?: () => void) {
+export async function serveExpress(
+  app: App,
+  port: number,
+  callback?: () => void,
+  openApiDocs?: { path: string; document: object }[],
+) {
   const express = (await import('express')).default
   const { Readable } = await import('node:stream')
   const swaggerUi = await import('swagger-ui-express')
-  const { generateDocument } = await import('../core/openapi/registry.js')
   const server = express()
 
-  server.use('/docs', swaggerUi.serve, swaggerUi.setup(generateDocument()))
+  for (const doc of openApiDocs ?? []) {
+    server.use(doc.path, swaggerUi.serve, swaggerUi.setup(doc.document))
+  }
 
   server.all('*', async (req, res) => {
     const url = `${req.protocol}://${req.get('host')}${req.originalUrl}`

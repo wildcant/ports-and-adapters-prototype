@@ -1,6 +1,5 @@
-import type { RouteConfig } from '@asteasolutions/zod-to-openapi'
+import type { OpenAPIRegistry, RouteConfig } from '@asteasolutions/zod-to-openapi'
 import type { MiddlewareRoute } from '../middleware/types.js'
-import { registry } from './registry.js'
 
 const methodMap = {
   GET: 'get',
@@ -10,13 +9,13 @@ const methodMap = {
   DELETE: 'delete',
 } as const
 
-export function registerOpenApiRoutes(configs: MiddlewareRoute[]) {
+export function registerOpenApiRoutes(registry: OpenAPIRegistry, configs: MiddlewareRoute[]) {
   for (const config of configs) {
-    registerOpenApiRoute(config.matcher, config)
+    registerOpenApiRoute(registry, config.matcher, config)
   }
 }
 
-export function registerOpenApiRoute(routePath: string, config: MiddlewareRoute) {
+export function registerOpenApiRoute(registry: OpenAPIRegistry, routePath: string, config: MiddlewareRoute) {
   const method = methodMap[config.method]
   const openApiPath = routePath.replace(/:(\w+)/g, '{$1}')
 

@@ -1,16 +1,41 @@
 import { writeFileSync } from 'node:fs'
 import { dirname, resolve } from 'node:path'
 import { fileURLToPath } from 'node:url'
-import customerMiddlewares from '../src/api/customers/middlewares.js'
-import userMiddlewares from '../src/api/users/middlewares.js'
+import customerMiddlewares from '../src/api/admin/customers/middlewares.js'
+import paymentCollectionMiddlewares from '../src/api/admin/payment-collections/middlewares.js'
+import paymentMiddlewares from '../src/api/admin/payments/middlewares.js'
+import refundReasonMiddlewares from '../src/api/admin/refund-reasons/middlewares.js'
+import userMiddlewares from '../src/api/admin/users/middlewares.js'
+import storeCartMiddlewares from '../src/api/store/carts/middlewares.js'
+import storePaymentCollectionMiddlewares from '../src/api/store/payment-collections/middlewares.js'
+import storePaymentProviderMiddlewares from '../src/api/store/payment-providers/middlewares.js'
+import storeProductMiddlewares from '../src/api/store/products/middlewares.js'
 import { registerOpenApiRoutes } from '../src/core/openapi/register-route.js'
-import { generateDocument } from '../src/core/openapi/registry.js'
+import { createRegistry, generateDocument } from '../src/core/openapi/registry.js'
 
-registerOpenApiRoutes(customerMiddlewares)
-registerOpenApiRoutes(userMiddlewares)
-
-const doc = generateDocument()
 const __dirname = dirname(fileURLToPath(import.meta.url))
-const outPath = resolve(__dirname, '../../../openapi.json')
-writeFileSync(outPath, `${JSON.stringify(doc, null, 2)}\n`)
-console.log(`OpenAPI spec written to ${outPath}`)
+
+// Admin API
+const adminRegistry = createRegistry()
+registerOpenApiRoutes(adminRegistry, customerMiddlewares)
+registerOpenApiRoutes(adminRegistry, paymentCollectionMiddlewares)
+registerOpenApiRoutes(adminRegistry, paymentMiddlewares)
+registerOpenApiRoutes(adminRegistry, refundReasonMiddlewares)
+registerOpenApiRoutes(adminRegistry, userMiddlewares)
+
+const adminDoc = generateDocument(adminRegistry, 'Admin API')
+const adminPath = resolve(__dirname, '../../../openapi-admin.json')
+writeFileSync(adminPath, `${JSON.stringify(adminDoc, null, 2)}\n`)
+console.log(`Admin OpenAPI spec written to ${adminPath}`)
+
+// Store API
+const storeRegistry = createRegistry()
+registerOpenApiRoutes(storeRegistry, storeCartMiddlewares)
+registerOpenApiRoutes(storeRegistry, storePaymentCollectionMiddlewares)
+registerOpenApiRoutes(storeRegistry, storePaymentProviderMiddlewares)
+registerOpenApiRoutes(storeRegistry, storeProductMiddlewares)
+
+const storeDoc = generateDocument(storeRegistry, 'Store API')
+const storePath = resolve(__dirname, '../../../openapi-store.json')
+writeFileSync(storePath, `${JSON.stringify(storeDoc, null, 2)}\n`)
+console.log(`Store OpenAPI spec written to ${storePath}`)
