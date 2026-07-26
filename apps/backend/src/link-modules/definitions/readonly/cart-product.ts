@@ -1,5 +1,5 @@
 import { relations } from 'drizzle-orm'
-import { cartLineItemTable, productTable, productVariantTable } from '../../definitions/index.js'
+import { cartLineItemTable, productTable, productVariantTable } from '../../modules-definitions.js'
 
 export const cartLineItemProductRelations = relations(cartLineItemTable, ({ one }) => ({
   product: one(productTable, {

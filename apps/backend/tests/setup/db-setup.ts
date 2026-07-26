@@ -4,10 +4,11 @@ import { drizzle } from 'drizzle-orm/postgres-js'
 import { migrate } from 'drizzle-orm/postgres-js/migrator'
 import postgres from 'postgres'
 import { afterAll, beforeEach } from 'vitest'
+import { DRIZZLE_OPTIONS } from '../../src/core/db/config.js'
 import { env } from '../../src/env.js'
 
 const sql = postgres(env.DATABASE_URL, { prepare: false })
-export const db = drizzle(sql, { casing: 'snake_case' })
+export const db = drizzle(sql, DRIZZLE_OPTIONS)
 
 const migrationsRoot = join(import.meta.dirname, '../../')
 

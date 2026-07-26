@@ -1,7 +1,7 @@
 import type { Column, InferInsertModel, InferSelectModel, SQL } from 'drizzle-orm'
 import { and, asc, count, desc, eq, getTableColumns, inArray, isNull } from 'drizzle-orm'
 import type { PgTable } from 'drizzle-orm/pg-core'
-import type { PostgresJsDatabase } from 'drizzle-orm/postgres-js'
+import type { Database } from '../../schema.type.js'
 import { AppError, ErrorTypes } from '../errors/app-error.js'
 import { dbErrorMapper } from '../errors/db-error-mapper.js'
 import type { FindConfig, OperatorMap } from '../types/common.js'
@@ -27,18 +27,20 @@ export function BaseRepository<TTable extends PgTable & BaseColumns>(table: TTab
   type Insert = InferInsertModel<TTable>
 
   class Repository {
-    // biome-ignore lint/suspicious/noExplicitAny: accept any schema variant (with or without relational schema)
-    #db: PostgresJsDatabase<any>
+    #getDb: () => Database
     protected readonly table: TTable = table
 
-    // biome-ignore lint/suspicious/noExplicitAny: accept any schema variant (with or without relational schema)
-    constructor({ db }: { db: PostgresJsDatabase<any> }) {
-      this.#db = db
+    constructor({ getDb }: { getDb: () => Database }) {
+      this.#getDb = getDb
+    }
+
+    protected getClient(context?: Context) {
+      return (context?.transaction as Database) ?? this.#getDb()
     }
 
     // biome-ignore lint/suspicious/noExplicitAny: drizzle's dynamic query builder requires untyped access
-    protected getClient(context?: Context): any {
-      return (context?.transaction as PostgresJsDatabase) ?? this.#db
+    private getClient_(context?: Context): any {
+      return (context?.transaction as Database) ?? this.#getDb()
     }
 
     private buildWhere(filters?: EntityFilters<Select>, config?: FindConfig<Select>): SQL | undefined {
@@ -58,7 +60,7 @@ export function BaseRepository<TTable extends PgTable & BaseColumns>(table: TTab
     }
 
     async find(filters?: EntityFilters<Select>, config?: FindConfig<Select>, context?: Context): Promise<Select[]> {
-      const client = this.getClient(context)
+      const client = this.getClient_(context)
       const columns = getTableColumns(this.table)
 
       const selectObj = config?.select
@@ -94,7 +96,7 @@ export function BaseRepository<TTable extends PgTable & BaseColumns>(table: TTab
     }
 
     async findById(id: string, config?: FindConfig<Select>, context?: Context): Promise<Select | null> {
-      const client = this.getClient(context)
+      const client = this.getClient_(context)
       const columns = getTableColumns(this.table)
 
       const selectObj = config?.select
@@ -141,7 +143,7 @@ export function BaseRepository<TTable extends PgTable & BaseColumns>(table: TTab
       config?: FindConfig<Select>,
       context?: Context,
     ): Promise<number> {
-      const client = this.getClient(context)
+      const client = this.getClient_(context)
 
       let query = client.select({ count: count() }).from(this.table)
 
@@ -153,14 +155,14 @@ export function BaseRepository<TTable extends PgTable & BaseColumns>(table: TTab
     }
 
     async create(data: Insert, context?: Context): Promise<Select> {
-      const client = this.getClient(context)
+      const client = this.getClient_(context)
       const rows = await client.insert(this.table).values(data).returning()
       return rows[0] as Select
     }
 
     async createMany(data: Insert[], context?: Context): Promise<Select[]> {
       if (data.length === 0) return []
-      const client = this.getClient(context)
+      const client = this.getClient_(context)
       const rows = await client.insert(this.table).values(data).returning()
       return rows as Select[]
     }
@@ -171,7 +173,7 @@ export function BaseRepository<TTable extends PgTable & BaseColumns>(table: TTab
       context?: Context,
     ): Promise<Select[]> {
       if (ids.length === 0) return []
-      const client = this.getClient(context)
+      const client = this.getClient_(context)
       const rows = await client
         .update(this.table)
         .set(data)
@@ -182,13 +184,13 @@ export function BaseRepository<TTable extends PgTable & BaseColumns>(table: TTab
 
     async delete(ids: string[], context?: Context): Promise<void> {
       if (ids.length === 0) return
-      const client = this.getClient(context)
+      const client = this.getClient_(context)
       await client.delete(this.table).where(inArray(this.table.id, ids))
     }
 
     async softDelete(ids: string[], context?: Context): Promise<void> {
       if (ids.length === 0) return
-      const client = this.getClient(context)
+      const client = this.getClient_(context)
       await client
         .update(this.table)
         .set({ deletedAt: new Date() })
@@ -197,7 +199,7 @@ export function BaseRepository<TTable extends PgTable & BaseColumns>(table: TTab
 
     async restore(ids: string[], context?: Context): Promise<void> {
       if (ids.length === 0) return
-      const client = this.getClient(context)
+      const client = this.getClient_(context)
       await client.update(this.table).set({ deletedAt: null }).where(inArray(this.table.id, ids))
     }
   }

@@ -1,10 +1,10 @@
 import { eq, isNull } from 'drizzle-orm'
 import type { Context } from '../../core/types/context.js'
 import { ReadonlyLinkRepository } from '../../core/utils/readonly-link-repository.js'
-import type * as schema from '../definitions/index.js'
-import { cartLineItemTable } from '../definitions/index.js'
+import type { DatabaseSchema } from '../../schema.type.js'
+import { cartLineItemTable } from '../modules-definitions.js'
 
-type CartProductSchema = Pick<typeof schema, 'cartLineItemTable' | 'cartLineItemProductRelations'>
+type CartProductSchema = Pick<DatabaseSchema, 'cartLineItemTable' | 'cartLineItemProductRelations'>
 type CartProductTable = typeof cartLineItemTable
 
 export class CartProductRepository extends ReadonlyLinkRepository<CartProductSchema, CartProductTable>(

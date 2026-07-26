@@ -1,8 +1,8 @@
 import { and, eq, inArray, isNull } from 'drizzle-orm'
-import type { PostgresJsDatabase } from 'drizzle-orm/postgres-js'
 import type { Context } from '../../core/types/context.js'
 import { BaseRepository } from '../../core/utils/base-repository.js'
-import { inventoryLevelTable, productVariantInventoryItemTable } from '../definitions/index.js'
+import { productVariantInventoryItemTable } from '../definitions/product-variant-inventory-item.js'
+import { inventoryLevelTable } from '../modules-definitions.js'
 
 export class ProductVariantInventoryItemRepository extends BaseRepository(productVariantInventoryItemTable) {
   async findByVariantIds(variantIds: string[], context?: Context) {
@@ -16,7 +16,7 @@ export class ProductVariantInventoryItemRepository extends BaseRepository(produc
 
   async getInventoryAvailability(variantIds: string[], context?: Context) {
     if (variantIds.length === 0) return []
-    const client = this.getClient(context) as PostgresJsDatabase
+    const client = this.getClient(context)
     return client
       .select({
         variantId: this.table.variantId,

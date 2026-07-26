@@ -20,8 +20,10 @@
     "db:migrate": "MIGRATING=true sh -c 'for config in src/modules/*/database.config.ts src/link-modules/database.config.ts; do drizzle-kit migrate --config=\"$config\" || exit 1; done'",
     "db:migrate:dev": "dotenvx run -f ../../.env.local -- npm run db:migrate",
     "db:seed:dev": "dotenvx run -f ../../.env.local -- tsx scripts/seed-dev.ts",
+    "db:seed:providers": "dotenvx run -f ../../.env -- tsx --dns-result-order=ipv4first scripts/seed-providers.ts",
     "openapi:dump": "curl -s http://localhost:3000/admin/openapi.json | python3 -m json.tool > openapi-admin.json && curl -s http://localhost:3000/store/openapi.json | python3 -m json.tool > openapi-store.json && echo 'Saved openapi-admin.json and openapi-store.json'",
-    "openapi:dump:offline": "tsx scripts/openapi-dump.ts"
+    "openapi:dump:offline": "tsx scripts/openapi-dump.ts",
+    "check:circular": "npx madge --circular --extensions ts --ts-config tsconfig.json src/"
   },
   "dependencies": {
     "@asteasolutions/zod-to-openapi": "^8.5.0",

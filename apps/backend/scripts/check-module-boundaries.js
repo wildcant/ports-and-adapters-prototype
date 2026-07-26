@@ -32,23 +32,38 @@ function printViolations(label, detail, violations) {
 const importRe = /from\s+['"](\.[^'"]+)['"]/g
 let errors = 0
 
-// --- Check 1: No cross-module imports within src/modules/ ---
+// Files allowed to import directly from modules/ (composition roots)
+const ALLOWED_CROSS_MODULE = new Set([
+  join(SRC, 'schema.ts'),
+  join(SRC, 'container.ts'),
+  join(SRC, 'link-modules/modules-definitions.ts'),
+])
+
+// --- Check 1: Cross-module imports ---
+// Any file importing from modules/X/ must be inside that same module or in the allowed set.
 const crossModuleViolations = []
 
-for (const mod of modules) {
-  for (const file of findTs(join(MODULES_DIR, mod))) {
-    const lines = readFileSync(file, 'utf8').split('\n')
-    for (let i = 0; i < lines.length; i++) {
-      for (const match of lines[i].matchAll(importRe)) {
-        const resolved = resolve(dirname(file), match[1])
-        const rel = relative(MODULES_DIR, resolved)
-        if (rel.startsWith('..')) continue
+for (const file of findTs(SRC)) {
+  if (ALLOWED_CROSS_MODULE.has(file)) continue
 
-        const target = rel.split('/')[0]
-        if (target !== mod && modules.includes(target)) {
-          crossModuleViolations.push({ file, line: i + 1, text: lines[i].trim() })
-        }
-      }
+  // Determine which module this file belongs to (if any)
+  const relToModules = relative(MODULES_DIR, file)
+  const ownerModule = !relToModules.startsWith('..') ? relToModules.split('/')[0] : null
+
+  const lines = readFileSync(file, 'utf8').split('\n')
+  for (let i = 0; i < lines.length; i++) {
+    for (const match of lines[i].matchAll(importRe)) {
+      const resolved = resolve(dirname(file), match[1])
+      const rel = relative(MODULES_DIR, resolved)
+      if (rel.startsWith('..')) continue
+
+      const targetModule = rel.split('/')[0]
+      if (!modules.includes(targetModule)) continue
+
+      // Intra-module imports are fine
+      if (targetModule === ownerModule) continue
+
+      crossModuleViolations.push({ file, line: i + 1, text: lines[i].trim() })
     }
   }
 }
@@ -56,18 +71,19 @@ for (const mod of modules) {
 if (crossModuleViolations.length) {
   printViolations(
     'Cross-module import',
-    'Modules must not import from each other. Use core types/ports instead.',
+    `Only ${[...ALLOWED_CROSS_MODULE].join(' and ')} may import across module boundaries.`,
     crossModuleViolations,
   )
   errors += crossModuleViolations.length
 }
 
-// --- Check 2: definitions barrel only imported from within link-modules/ ---
+// --- Check 2: definitions barrel only imported from within link-modules/ or schema.ts ---
 const linkLeaks = []
+const LINK_DIR = join(SRC, 'link-modules')
 const barrelName = 'definitions/index'
 
 for (const file of findTs(SRC)) {
-  if (file.startsWith(join(SRC, 'link-modules/'))) continue
+  if (ALLOWED_CROSS_MODULE.has(file) || file.startsWith(LINK_DIR)) continue
 
   const lines = readFileSync(file, 'utf8').split('\n')
   for (let i = 0; i < lines.length; i++) {
@@ -80,7 +96,7 @@ for (const file of findTs(SRC)) {
 if (linkLeaks.length) {
   printViolations(
     'Link definitions leak',
-    'link-modules/definitions/index.ts must only be imported from within link-modules/.',
+    'link-modules/modules-definitions.ts must only be imported from within link-modules/ or schema.ts.',
     linkLeaks,
   )
   errors += linkLeaks.length

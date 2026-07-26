@@ -11,9 +11,12 @@
  * is required when the handler uses query validation — its value type
  * comes from TanStack's validator, not from here, because middleware
  * transforms the flat query into a structured { pagination, filters } shape.
+ *
+ * On Workers, each call is wrapped in `dbProvider.withConnection()` so
+ * the DB connection is created and disposed per-request.
  */
 
-import { container } from '../container.js'
+import { container, dbProvider } from '../container.workerd.js'
 
 // ---- Type-level helpers ----
 
@@ -60,12 +63,14 @@ export async function apiCall<H extends (...args: never[]) => Promise<{ status: 
   handler: H,
   ...[data]: keyof ApiCallData<H> extends never ? [] : [data: ApiCallData<H>]
 ): Promise<OutputOf<H>> {
-  const d = data as { params?: unknown; query?: unknown; body?: unknown } | undefined
-  const result = await handler({
-    scope: container.createScope(),
-    params: d?.params ?? {},
-    query: d?.query ?? {},
-    body: d?.body,
-  } as never)
-  return result.json as OutputOf<H>
+  return dbProvider.withConnection(async () => {
+    const d = data as { params?: unknown; query?: unknown; body?: unknown } | undefined
+    const result = await handler({
+      scope: container.createScope(),
+      params: d?.params ?? {},
+      query: d?.query ?? {},
+      body: d?.body,
+    } as never)
+    return result.json as OutputOf<H>
+  })
 }

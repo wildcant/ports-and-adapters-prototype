@@ -1,0 +1,12 @@
+/** Workers entry point — per-request connections, console logger. */
+
+import { bootstrapContainer } from './container.js'
+import { createWorkersDbProvider } from './core/db/workers-provider.js'
+import { ConsoleLogger } from './core/logger/console-logger.js'
+import { env } from './env.js'
+
+const dbProvider = createWorkersDbProvider(env.DATABASE_URL)
+const logger = new ConsoleLogger()
+
+export const container = await bootstrapContainer({ logger, dbProvider })
+export { dbProvider }

@@ -5,6 +5,10 @@
   "compatibility_date": "2026-07-26",
   "compatibility_flags": ["nodejs_compat"],
   "main": "@tanstack/react-start/server-entry",
+  "vars": {
+    "RUNTIME": "workerd",
+    "LOG_LEVEL": "info"
+  },
   "observability": {
     "enabled": true
   }

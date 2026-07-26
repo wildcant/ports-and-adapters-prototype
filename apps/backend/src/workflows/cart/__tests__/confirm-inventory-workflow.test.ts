@@ -1,3 +1,4 @@
+import { noopLogger } from '@core/logger/noop-logger.js'
 import type { CartLineItemDTO } from '@core/types/cart/common.js'
 import type { ICartModuleService } from '@core/types/cart/service.js'
 import type { InventoryLevelDTO } from '@core/types/inventory/common.js'
@@ -94,16 +95,6 @@ function setupWorkflow(opts: {
       const available = matching.reduce((sum, l) => sum + l.stockedQuantity - l.reservedQuantity, 0)
       return available >= quantity
     },
-  }
-
-  const noopLogger = {
-    error() {},
-    warn() {},
-    info() {},
-    http() {},
-    debug() {},
-    setLogLevel() {},
-    shouldLog: () => false,
   }
 
   const container = createContainer()

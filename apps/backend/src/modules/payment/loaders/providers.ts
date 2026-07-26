@@ -2,10 +2,11 @@ import type { AwilixContainer } from 'awilix'
 import { asValue } from 'awilix'
 import type { AbstractPaymentProvider } from '../../../core/utils/abstract-payment-provider.js'
 import type { ModuleProviderExports } from '../../../core/utils/module-provider.js'
+import { env } from '../../../env.js'
 import { SystemPaymentProvider } from '../providers/system.js'
 import { PaymentProviderService } from '../services/payment-provider-service.js'
 
-type ProviderConfig = {
+export type ProviderConfig = {
   resolve: ModuleProviderExports
   id: string
   options?: Record<string, unknown>
@@ -18,6 +19,34 @@ type LoaderOptions = {
 // biome-ignore lint/suspicious/noExplicitAny: provider constructors accept varied dependency shapes
 type ProviderConstructor = (new (...args: any[]) => AbstractPaymentProvider) & { identifier: string }
 
+export const SYSTEM_PROVIDER_KEY = 'system_default'
+
+/** Computes the full list of provider keys (including system_default) from a config array. */
+export function computeProviderKeys(configs?: ProviderConfig[]): string[] {
+  const keys = [SYSTEM_PROVIDER_KEY]
+  if (configs) {
+    for (const config of configs) {
+      for (const ServiceClass of config.resolve.services) {
+        const Klass = ServiceClass as ProviderConstructor
+        if (!Klass.identifier) {
+          throw new Error(`Provider class ${Klass.name} is missing static "identifier" property.`)
+        }
+        keys.push(`${Klass.identifier}_${config.id}`)
+      }
+    }
+  }
+  return keys
+}
+
+/** Upserts all provider keys into the payment_provider table. */
+export function seedProviders(
+  providerService: { upsert: (data: { id: string; isEnabled: boolean }[]) => Promise<unknown> },
+  configs?: ProviderConfig[],
+) {
+  const keys = computeProviderKeys(configs)
+  return providerService.upsert(keys.map((key) => ({ id: `pp_${key}`, isEnabled: true })))
+}
+
 export async function loadProviders({
   container,
   options,
@@ -26,13 +55,10 @@ export async function loadProviders({
   options?: Record<string, unknown>
 }): Promise<void> {
   const opts = options as LoaderOptions | undefined
-  const providerKeys: string[] = []
 
   // 1. Always register the system provider
-  const systemKey = 'system_default'
   const systemProvider = new SystemPaymentProvider()
-  container.register({ [`pp_${systemKey}`]: asValue(systemProvider) })
-  providerKeys.push(systemKey)
+  container.register({ [`pp_${SYSTEM_PROVIDER_KEY}`]: asValue(systemProvider) })
 
   // 2. Register configured providers
   if (opts?.providers) {
@@ -41,15 +67,8 @@ export async function loadProviders({
 
       for (const ServiceClass of providerExports.services) {
         const Klass = ServiceClass as ProviderConstructor
-        const identifier = Klass.identifier
-        if (!identifier) {
-          throw new Error(`Provider class ${Klass.name} is missing static "identifier" property.`)
-        }
-
-        const key = `${identifier}_${id}`
         const instance = new Klass(container.cradle, providerOptions ?? {})
-        container.register({ [`pp_${key}`]: asValue(instance) })
-        providerKeys.push(key)
+        container.register({ [`pp_${Klass.identifier}_${id}`]: asValue(instance) })
       }
     }
   }
@@ -62,6 +81,8 @@ export async function loadProviders({
   })
   container.register({ paymentProviderService: asValue(providerService) })
 
-  // 4. Upsert all provider keys into the payment_provider table
-  await providerService.upsert(providerKeys.map((key) => ({ id: `pp_${key}`, isEnabled: true })))
+  // 4. Upsert all provider keys into the payment_provider table (skip on workerd — use seed script instead)
+  if (env.RUNTIME !== 'workerd') {
+    await seedProviders(providerService, opts?.providers)
+  }
 }

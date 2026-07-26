@@ -18,13 +18,10 @@ fi
 DOTENV_PRIVATE_KEY=$(grep '^DOTENV_PRIVATE_KEY=' "$KEYS_FILE" | cut -d'=' -f2)
 export DOTENV_PRIVATE_KEY
 
-dotenvx get -f "$ENV_FILE" --format json \
-  | jq -r 'to_entries[] | select(.key | startswith("DOTENV_") | not) | @base64' \
-  | while read -r entry; do
-      key=$(echo "$entry" | base64 -d | jq -r '.key')
-      value=$(echo "$entry" | base64 -d | jq -r '.value')
-      echo "Setting $key..."
-      echo "$value" | npx wrangler secret put "$key" --name "$WORKER_NAME"
-    done
+SECRETS_JSON=$(dotenvx get -f "$ENV_FILE" --format json \
+  | jq 'with_entries(select(.key | startswith("DOTENV_") | not))')
+
+echo "Setting $(echo "$SECRETS_JSON" | jq 'length') secrets..."
+echo "$SECRETS_JSON" | npx wrangler secret bulk --name "$WORKER_NAME"
 
 echo "Done."

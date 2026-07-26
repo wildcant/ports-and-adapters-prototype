@@ -44,19 +44,19 @@ function createMockProviderService() {
 let service: PaymentModuleService
 let mockProvider: ReturnType<typeof createMockProviderService>
 
-test.beforeEach(({ db, logger }) => {
+test.beforeEach(({ getDb, logger }) => {
   mockProvider = createMockProviderService()
 
   service = new PaymentModuleService({
-    paymentCollectionRepository: new PaymentCollectionRepository({ db }),
-    paymentSessionRepository: new PaymentSessionRepository({ db }),
-    paymentRepository: new PaymentRepository({ db }),
-    captureRepository: new CaptureRepository({ db }),
-    refundRepository: new RefundRepository({ db }),
-    refundReasonRepository: new RefundReasonRepository({ db }),
-    accountHolderRepository: new AccountHolderRepository({ db }),
+    paymentCollectionRepository: new PaymentCollectionRepository({ getDb }),
+    paymentSessionRepository: new PaymentSessionRepository({ getDb }),
+    paymentRepository: new PaymentRepository({ getDb }),
+    captureRepository: new CaptureRepository({ getDb }),
+    refundRepository: new RefundRepository({ getDb }),
+    refundReasonRepository: new RefundReasonRepository({ getDb }),
+    accountHolderRepository: new AccountHolderRepository({ getDb }),
     paymentProviderService: mockProvider as unknown as PaymentProviderService,
-    withTransaction: createWithTransaction(db),
+    withTransaction: createWithTransaction(getDb),
     logger,
   })
 })

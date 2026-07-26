@@ -1,4 +1,4 @@
-import { container } from '../src/container.js'
+import { container } from '../src/container.node.js'
 import type {
   ICartModuleService,
   IInventoryModuleService,

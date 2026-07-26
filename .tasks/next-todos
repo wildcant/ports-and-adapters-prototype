@@ -1,3 +1,5 @@
+- ci workflow to handle deployment!
+- check script no process.env usage out of env.ts
 - fulfillment module (port) and providers (adapters)
 - migration order in prod (first modules and then link modules, are there edge cases?).
 - deploy to supabase and coudflare workers.

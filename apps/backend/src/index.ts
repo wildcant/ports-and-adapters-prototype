@@ -1,5 +1,5 @@
 import { join } from 'node:path'
-import { container } from './container.js'
+import { container } from './container.node.js'
 import { createRegistry, generateDocument } from './core/openapi/registry.js'
 import type { Logger } from './core/types/logger.js'
 import { ContainerRegistrationKeys } from './core/utils/index.js'

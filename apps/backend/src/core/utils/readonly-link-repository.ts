@@ -6,15 +6,15 @@ export function ReadonlyLinkRepository<TSchema extends Record<string, unknown>, 
   type Db = PostgresJsDatabase<TSchema>
 
   class Repository {
-    #db: Db
+    #getDb: () => Db
     protected readonly table: TTable = table
 
-    constructor({ db }: { db: Db }) {
-      this.#db = db
+    constructor({ getDb }: { getDb: () => Db }) {
+      this.#getDb = getDb
     }
 
     protected getClient(context?: Context): Db {
-      return (context?.transaction as Db) ?? this.#db
+      return (context?.transaction as Db) ?? this.#getDb()
     }
   }
 

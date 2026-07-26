@@ -1,6 +1,6 @@
 import { relations, sql } from 'drizzle-orm'
 import { index, integer, pgTable, text, timestamp, uniqueIndex } from 'drizzle-orm/pg-core'
-import { inventoryItemTable, productVariantTable } from '../definitions/index.js'
+import { inventoryItemTable, productVariantTable } from '../modules-definitions.js'
 
 export const productVariantInventoryItemTable = pgTable(
   'product_variant_inventory_item',

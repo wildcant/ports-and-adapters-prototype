@@ -8,9 +8,9 @@ import { UserModuleService } from '../services/user-module-service.js'
 
 let service: UserModuleService
 
-test.beforeEach(({ db, logger }) => {
-  const userRepository = new UserRepository({ db })
-  const withTransaction = createWithTransaction(db)
+test.beforeEach(({ getDb, logger }) => {
+  const userRepository = new UserRepository({ getDb })
+  const withTransaction = createWithTransaction(getDb)
   service = new UserModuleService({ userRepository, withTransaction, logger })
 })
 

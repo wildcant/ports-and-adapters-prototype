@@ -1,5 +1,6 @@
 export const ContainerRegistrationKeys = {
-  PG_CONNECTION: '__pg_connection__',
+  GET_DB: '__get_db__',
+  DB_PROVIDER: '__db_provider__',
   LOGGER: 'logger',
   LINK: 'link',
 } as const

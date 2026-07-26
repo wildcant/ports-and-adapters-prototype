@@ -9,10 +9,10 @@ import { CustomerModuleService } from '../services/customer-module-service.js'
 
 let service: CustomerModuleService
 
-test.beforeEach(({ db, logger }) => {
-  const customerRepository = new CustomerRepository({ db })
-  const customerAddressRepository = new CustomerAddressRepository({ db })
-  const withTransaction = createWithTransaction(db)
+test.beforeEach(({ getDb, logger }) => {
+  const customerRepository = new CustomerRepository({ getDb })
+  const customerAddressRepository = new CustomerAddressRepository({ getDb })
+  const withTransaction = createWithTransaction(getDb)
   service = new CustomerModuleService({ customerRepository, customerAddressRepository, withTransaction, logger })
 })
 
