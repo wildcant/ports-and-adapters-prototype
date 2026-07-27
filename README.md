@@ -1,148 +1,283 @@
-# Ports & Adapters Prototype
+# Proteus
 
-A minimal prototype exploring **Ports & Adapters** (Hexagonal Architecture) with **Awilix DI**, **file-based routing**, and **swappable adapters** — inspired by [Medusa](https://github.com/medusajs/medusa).
+An architectural prototype exploring **Ports & Adapters** (Hexagonal Architecture) combined with **Domain-Driven Design** concepts. The goal is to define a modular, loosely-coupled system where any piece — ORM, HTTP framework, payment gateway, runtime platform — can be swapped without touching business logic.
 
-## What this demonstrates
+The backend follows a strict module isolation pattern with Awilix DI, and the frontend follows [Bulletproof React](https://github.com/alan2207/bulletproof-react) conventions for unidirectional, feature-based organization.
 
-- **Ports & Adapters architecture** — business logic depends only on interfaces (ports), never on frameworks or ORMs
-- **Dependency Injection with Awilix** — FP-style factories (`asFunction`) wired into a container
-- **File-based routing** — filesystem structure defines the route table (like Next.js, Medusa, etc.)
-- **Swappable ORM adapters** — swap Drizzle for Prisma by changing one import path
-- **Swappable HTTP frameworks** — zero-dep router, Express, or Hono — same route handlers
-- **Swappable platform runners** — Node.js, Vercel, Lambda, Cloudflare Workers, Bun, Deno
-- **Backend as a library** — TanStack Start server functions call the service layer directly via the shared container, no HTTP round-trip
+---
+
+## Table of Contents
+
+- [Why this exists](#why-this-exists)
+- [Tech stack](#tech-stack)
+- [Project structure](#project-structure)
+- [Architecture](#architecture)
+  - [Backend — Ports & Adapters](#backend--ports--adapters)
+  - [Frontend — Bulletproof React](#frontend--bulletproof-react)
+- [Key design decisions](#key-design-decisions)
+- [Getting started](#getting-started)
+- [Documentation](#documentation)
+
+---
+
+## Why this exists
+
+Most frameworks couple your business logic to their internals. Adding a feature means touching framework code. Swapping a database means rewriting services. Deploying to a different platform means restructuring the app.
+
+This prototype proves you don't have to accept that. It demonstrates:
+
+- **Swappable ORM adapters** — change one import to go from Drizzle to Prisma
+- **Swappable HTTP frameworks** — same route handlers work with a zero-dep router, Express, or Hono
+- **Swappable platform runners** — Node.js, Cloudflare Workers, Bun, Deno, Vercel, Lambda — same code
+- **Swappable payment providers** — Stripe, system (mark-as-paid), or your own — same payment module
+- **Backend as a library** — the frontend can call services directly via the DI container, skipping HTTP entirely
+- **True module independence** — modules don't import each other; cross-module concerns live in dedicated link modules and workflows
+
+---
+
+## Tech stack
+
+| Layer | Technology |
+|-------|-----------|
+| **Language** | TypeScript (strict) |
+| **Backend runtime** | Node.js, Cloudflare Workers (workerd) |
+| **DI container** | Awilix (FP-style factories) |
+| **Database** | PostgreSQL (via Supabase) |
+| **ORM** | Drizzle ORM |
+| **Validation** | Zod |
+| **API docs** | OpenAPI 3.1 + Swagger UI (auto-generated from Zod schemas) |
+| **Frontend framework** | React 19 + TanStack Router + TanStack Start |
+| **API client generation** | Orval (from OpenAPI spec) |
+| **Styling** | Tailwind CSS v4 |
+| **Testing** | Vitest + Testing Library |
+| **Linting/formatting** | Biome |
+| **Dependency analysis** | dependency-cruiser (enforced rules) |
+
+---
 
 ## Project structure
 
 ```
-├── backend/
-│   └── src/
-│       ├── index.ts                      # Composition root (standalone API server)
-│       ├── container.ts                  # Shared container (importable as a library)
-│       ├── routes-loader.ts              # File-based route discovery
-│       ├── server/
-│       │   ├── ports.ts                  # App + HttpRequest/HttpResult interfaces
-│       │   ├── app.ts                    # Zero-dependency fetch-based router
-│       │   └── platforms.ts              # Node.js, Express, Vercel, Lambda, etc.
-│       ├── api/
-│       │   ├── users/
-│       │   │   ├── route.ts              # GET /users, POST /users
-│       │   │   └── [id]/route.ts         # GET/PATCH/DELETE /users/:id
-│       │   └── customers/
-│       │       ├── route.ts              # GET /customers, POST /customers
-│       │       ├── [id]/route.ts         # GET/PATCH/DELETE /customers/:id
-│       │       └── middlewares.ts         # Validation + OpenAPI metadata
-│       └── modules/
-│           ├── user/
-│           │   ├── models/               # Drizzle table definitions
-│           │   ├── repositories/         # Database access
-│           │   ├── services/             # Business logic
-│           │   └── index.ts              # Module wiring
-│           └── customer/
-│               ├── models/               # Drizzle table definitions
-│               ├── repositories/         # Database access
-│               ├── services/             # Business logic
-│               └── index.ts              # Module wiring
-├── frontend/                             # TanStack Start (SSR React)
-│   └── src/
-│       ├── server/users.ts               # Server functions using backend container
-│       └── routes/users.tsx              # Users page (no HTTP fetch needed)
-└── package.json                          # npm workspaces root
+proteus/
+├── apps/
+│   ├── backend/                        # API server (Ports & Adapters)
+│   │   └── src/
+│   │       ├── api/                    # Route handlers (file-based routing)
+│   │       │   ├── admin/              # Admin API (customers, users, payments, ...)
+│   │       │   ├── store/              # Store API (carts, products, payment-collections, ...)
+│   │       │   └── hooks/              # Webhook handlers (payment providers)
+│   │       ├── core/                   # Shared infrastructure
+│   │       │   ├── bootstrap/          # Module bootstrapping
+│   │       │   ├── db/                 # DbProvider port + Node/Workers adapters
+│   │       │   ├── errors/             # AppError, error handler, DB error mapper
+│   │       │   ├── logger/             # Winston (Node), Console (Workers), Noop (tests)
+│   │       │   ├── middleware/         # Validation middleware + OpenAPI registration
+│   │       │   ├── openapi/            # OpenAPI registry + spec generation
+│   │       │   ├── types/              # Public type contracts (DTOs, service interfaces)
+│   │       │   ├── utils/              # BaseRepository, withTransaction, Module()
+│   │       │   └── workflows/          # Workflow engine port + adapters
+│   │       ├── modules/                # Domain modules (isolated)
+│   │       │   ├── customer/
+│   │       │   ├── user/
+│   │       │   ├── cart/
+│   │       │   ├── product/
+│   │       │   ├── inventory/
+│   │       │   └── payment/
+│   │       ├── link-modules/           # Cross-module relationships
+│   │       ├── providers/              # External service adapters (Stripe, etc.)
+│   │       ├── workflows/              # Cross-module orchestration (saga/compensation)
+│   │       ├── server/                 # Zero-dep router + platform adapters
+│   │       ├── container.ts            # Composition root
+│   │       └── index.ts                # Entry point (standalone API)
+│   │
+│   └── frontend/                       # SPA (Bulletproof React)
+│       └── src/
+│           ├── api/                    # Generated API client (Orval)
+│           ├── features/               # Feature modules (co-located logic)
+│           │   └── customers/
+│           ├── components/             # Shared UI components
+│           ├── lib/                    # App-wide utilities (query client, etc.)
+│           ├── routes/                 # TanStack Router pages
+│           └── server/                 # TanStack Start server functions
+│
+├── packages/
+│   └── http-schemas/                   # Shared Zod schemas (used by both apps)
+│
+└── docs/
+    ├── adr/                            # Architecture Decision Records
+    ├── research/                       # Deep-dive research notes
+    ├── adding-a-module.md              # Step-by-step guide
+    ├── error-handling.md               # Error handling patterns
+    └── middleware-and-openapi.md        # Middleware + OpenAPI guide
 ```
 
-## Setup
+---
 
-```bash
-npm run setup
+## Architecture
+
+### Backend — Ports & Adapters
+
+Every domain module follows the same layered structure. Business logic depends only on interfaces (ports), never on frameworks or ORMs. Concrete implementations (adapters) are injected at boot time via Awilix.
+
+```
+                  ┌──────────────────────────────────────────────┐
+  HTTP Request ──>│  Route Handler (driving adapter)             │
+                  │         │                                    │
+                  │         v                                    │
+                  │  ModuleService (business logic)              │
+                  │         │                                    │
+                  │         v                                    │
+                  │  Repository interface (driven port)          │
+                  └─────────│────────────────────────────────────┘
+                            v
+                  ┌───────────────────────┐
+                  │  Drizzle / Prisma      │  <── driven adapter (swap by changing one import)
+                  │  (implements repo)     │
+                  └───────────────────────┘
 ```
 
-This installs dependencies, runs Drizzle migrations (creates the SQLite DB), and generates the Prisma client.
+**Module isolation**: Each module gets its own private Awilix container. Only the public service is exposed to the shared container. Modules cannot access each other's repositories or internals.
 
-## Running
+```
+shared container
+  ├── "customer"   → CustomerModuleService (public API)
+  ├── "cart"       → CartModuleService (public API)
+  ├── "payment"    → PaymentModuleService (public API)
+  └── ...
 
-**Option A — Standalone backend API:**
+customer local container (private)
+  ├── db               → drizzle instance
+  ├── withTransaction  → transaction helper
+  └── customerRepository → CustomerRepository
+```
+
+**Cross-module relationships** don't live inside modules. They live in `link-modules/` — a flat structure of join tables and Drizzle `relations()` definitions that modules never import. A typed `LinkService` provides repository access through `linkService.repo("cartProduct")`.
+
+**Workflows** handle cross-module orchestration. They chain `ctx.step()` calls, where each step resolves its own services from the container. Workflows are pure composition — steps are the unit of work. Failed workflows can compensate (undo completed steps).
+
+**Two entry points** serve the same business logic without code changes:
+
+```
+Standalone API:    Request → fetch router → container → service → DB
+TanStack Start:    createServerFn → container → service → DB (no HTTP round-trip)
+```
+
+#### Backend dependency graph
+
+This graph is generated by dependency-cruiser with enforced rules — modules cannot import each other, and dependency direction is strictly enforced.
+
+![Backend dependency graph](apps/backend/deps-analyzer/dependency-graph.svg)
+
+### Frontend — Bulletproof React
+
+The frontend follows [Bulletproof React](https://github.com/alan2207/bulletproof-react) conventions: feature-based organization with unidirectional dependencies. Shared code (components, hooks, lib, types, utils) flows into features, features flow into the application shell. Features never import from each other.
+
+![Frontend unidirectional architecture](apps/frontend/deps-analyzer/unidirectional-codebase.png)
+
+- **`api/`** — Generated TypeScript client from the backend's OpenAPI spec (via Orval). Type-safe API calls with zero manual typing.
+- **`features/`** — Self-contained feature modules. Each feature co-locates its API layer, components, hooks, and types.
+- **`components/`** — Shared UI components used across features.
+- **`lib/`** — App-wide utilities (query client, query key factory, etc.).
+- **`routes/`** — TanStack Router file-based pages. Thin — they compose feature components.
+
+---
+
+## Key design decisions
+
+Each major decision is documented as an ADR in [`docs/adr/`](docs/adr/). Here's the quick-reference:
+
+| # | Decision | Why it matters |
+|---|----------|---------------|
+| [0001](docs/adr/0001-per-module-container-isolation.md) | Per-module container isolation | Modules can't accidentally depend on each other's internals |
+| [0002](docs/adr/0002-no-cross-module-transactions.md) | No cross-module transactions | Each module owns its transactional boundary; enables future service extraction |
+| [0003](docs/adr/0003-sql-level-prefixed-ids.md) | SQL-level prefixed IDs | `cus_550e8400...` generated by Postgres — single source of truth, no app-level utility |
+| [0004](docs/adr/0004-link-modules-for-cross-module-joins.md) | Link modules for cross-module joins | Cross-module relationships without cross-module imports |
+| [0005](docs/adr/0005-central-types-package.md) | Central types package | Public contracts in `core/types/` prevent circular imports |
+| [0006](docs/adr/0006-soft-delete-by-default.md) | Soft-delete by default | Every table has `deleted_at`; BaseRepository auto-filters |
+| [0007](docs/adr/0007-zero-dependency-web-standard-router.md) | Zero-dep Web Standard router | `fetch(Request) → Response` — runs on any platform, no framework lock-in |
+| [0008](docs/adr/0008-operator-based-filter-system.md) | Operator-based filter system | `$eq/$in/$like/$and/$or` filters translated to SQL in BaseRepository |
+| [0009](docs/adr/0009-workflow-engine-and-step-pattern.md) | Workflow engine + step pattern | Cross-module orchestration with compensation — standard async/await, no DAG infrastructure |
+| [0010](docs/adr/0010-payment-provider-driven-port.md) | Payment provider as driven port | `IPaymentProvider` interface + `AbstractPaymentProvider` base class — add providers without touching module logic |
+| [0011](docs/adr/0011-module-loaders-and-module-provider.md) | Module loaders + ModuleProvider | Runtime adapter registration at boot time — loaders run after DI setup, before the service is exposed |
+
+---
+
+## Getting started
+
+### Prerequisites
+
+- Node.js 20+
+- Docker (for Supabase local dev)
+
+### Setup
 
 ```bash
-npm run --workspace=backend start
+# Install dependencies
+npm install
+
+# Start local Supabase (Postgres)
+npm run --workspace=backend db:start:lean
+
+# Run database migrations
+npm run --workspace=backend db:migrate:dev
+
+# (Optional) Seed dev data
+npm run --workspace=backend db:seed:dev
+```
+
+### Running
+
+**Backend API:**
+
+```bash
+npm run --workspace=backend dev
 # API at http://localhost:3000
+# Swagger UI at http://localhost:3000/admin/docs/ and /store/docs/
 ```
 
-**Option B — Full stack with TanStack Start:**
+**Frontend:**
 
 ```bash
-# Terminal 1
-npm run --workspace=backend start
-
-# Terminal 2
 npm run --workspace=frontend dev
 # Frontend at http://localhost:3001
 ```
 
-**Option C — Frontend only (no backend server needed):**
+### Common tasks
 
 ```bash
-npm run --workspace=frontend dev
-# The /users page calls the backend service directly via createServerFn
+# Type-check everything
+npm run typecheck
+
+# Run backend tests
+npm run --workspace=backend test
+
+# Run frontend tests
+npm run --workspace=frontend test
+
+# Lint and format
+npm run check
+
+# Generate OpenAPI spec + frontend client
+npm run openapi:generate
+
+# Generate DB migration after schema change
+npm run --workspace=backend db:generate
+
+# Run dependency-cruiser rules
+npm run --workspace=backend check:deps
+
+# Generate dependency graph SVG
+npm run --workspace=backend check:deps:graph
 ```
 
-## Swapping adapters
+---
 
-### Swap ORM (Drizzle -> Prisma)
+## Documentation
 
-Change one import in a module's `index.ts`:
-
-```diff
--import { createDb, createUserRepository } from "./adapters/drizzle/index.js"
-+import { createDb, createUserRepository } from "./adapters/prisma/index.js"
-```
-
-The service, routes, and frontend all keep working unchanged.
-
-### Swap HTTP framework
-
-The route handlers in `api/` are framework-agnostic — they use `HttpRequest`/`HttpResult`, not Express `req`/`res`. The `App` port exposes a Web Standard `fetch(Request) -> Response` interface.
-
-See `backend/src/server/platforms.ts` for examples of plugging the same `App` into Node.js, Express, Vercel, Lambda, Cloudflare Workers, Bun, or Deno.
-
-## Key concepts
-
-### Ports & Adapters
-
-```
-                    ┌─────────────────────────────────┐
-  HTTP Request ───> │  Route Handler (driving adapter) │
-                    │         │                        │
-                    │         v                        │
-                    │  UserService (port)              │
-                    │         │                        │
-                    │         v                        │
-                    │  UserRepository (port)            │
-                    │         │                        │
-                    └─────────│────────────────────────┘
-                              v
-                    ┌─────────────────────┐
-                    │  Drizzle / Prisma    │  <- driven adapter (swappable)
-                    │  (implements repo)   │
-                    └─────────────────────┘
-```
-
-### Backend as a library
-
-The same business logic runs in two contexts without any code changes:
-
-```
-Standalone API:    Request -> fetch router -> container -> service -> DB
-TanStack Start:    createServerFn -> container -> service -> DB
-```
-
-The service layer doesn't know or care which entry point called it.
-
-## TODO
-
-- [x] Add a Supabase adapter to the user module (alongside Drizzle and Prisma)
-- [ ] Investigate how to handle circular dependencies between modules — how does DDD suggest resolving cross-module references? When is the event bus necessary? is awilix enough for my usecase? atomic workflow when data mutation happen across multiple modules, how to rollback on failure?.
-- [ ] Deploy the app and backend to different infrastructure targets:
-  - [ ] Serverless: Cloudflare Workers, AWS Lambda
-  - [ ] Server-based: regular VPS on AWS
-- [ ] Explore TanStack's different approaches to building and rendering (SPA vs SSR)
-- [ ] Atomic operations, how write transactions with drizzle.
+| Document | What it covers |
+|----------|---------------|
+| [`docs/adding-a-module.md`](docs/adding-a-module.md) | Step-by-step guide to creating a new module (with checklist) |
+| [`docs/error-handling.md`](docs/error-handling.md) | AppError, DB error mapping, validation, HTTP response shape |
+| [`docs/middleware-and-openapi.md`](docs/middleware-and-openapi.md) | Declarative middleware, HTTP schemas, OpenAPI generation |
+| [`docs/architecture-decisions.md`](docs/architecture-decisions.md) | Quick-reference map of all ADRs |
+| [`docs/research/`](docs/research/) | Deep-dive research notes (cross-module deps, payment module, event systems) |
