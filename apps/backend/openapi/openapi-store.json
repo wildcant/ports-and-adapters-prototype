@@ -18,7 +18,9 @@
       "post": {
         "operationId": "createStoreCart",
         "summary": "Create a cart",
-        "tags": ["Carts"],
+        "tags": [
+          "Carts"
+        ],
         "requestBody": {
           "content": {
             "application/json": {
@@ -63,11 +65,17 @@
                           "type": "string"
                         }
                       },
-                      "required": ["title", "quantity", "unitPrice"]
+                      "required": [
+                        "title",
+                        "quantity",
+                        "unitPrice"
+                      ]
                     }
                   }
                 },
-                "required": ["currencyCode"]
+                "required": [
+                  "currencyCode"
+                ]
               }
             }
           }
@@ -86,7 +94,9 @@
       "get": {
         "operationId": "getStoreCart",
         "summary": "Retrieve a cart with line items",
-        "tags": ["Carts"],
+        "tags": [
+          "Carts"
+        ],
         "parameters": [
           {
             "schema": {
@@ -113,7 +123,9 @@
       "post": {
         "operationId": "updateStoreCart",
         "summary": "Update a cart",
-        "tags": ["Carts"],
+        "tags": [
+          "Carts"
+        ],
         "parameters": [
           {
             "schema": {
@@ -161,7 +173,9 @@
       "post": {
         "operationId": "addStoreCartLineItem",
         "summary": "Add a line item to a cart",
-        "tags": ["Carts"],
+        "tags": [
+          "Carts"
+        ],
         "parameters": [
           {
             "schema": {
@@ -204,7 +218,11 @@
                     "type": "string"
                   }
                 },
-                "required": ["title", "quantity", "unitPrice"]
+                "required": [
+                  "title",
+                  "quantity",
+                  "unitPrice"
+                ]
               }
             }
           }
@@ -226,7 +244,9 @@
       "post": {
         "operationId": "updateStoreCartLineItem",
         "summary": "Update a cart line item",
-        "tags": ["Carts"],
+        "tags": [
+          "Carts"
+        ],
         "parameters": [
           {
             "schema": {
@@ -281,7 +301,9 @@
       "delete": {
         "operationId": "deleteStoreCartLineItem",
         "summary": "Remove a line item from a cart",
-        "tags": ["Carts"],
+        "tags": [
+          "Carts"
+        ],
         "parameters": [
           {
             "schema": {
@@ -319,7 +341,9 @@
       "post": {
         "operationId": "completeStoreCart",
         "summary": "Complete a cart (authorize payment and mark as completed)",
-        "tags": ["Carts"],
+        "tags": [
+          "Carts"
+        ],
         "parameters": [
           {
             "schema": {
@@ -348,7 +372,9 @@
       "post": {
         "operationId": "createStorePaymentCollection",
         "summary": "Create a payment collection for a cart",
-        "tags": ["Payment Collections"],
+        "tags": [
+          "Payment Collections"
+        ],
         "requestBody": {
           "content": {
             "application/json": {
@@ -360,7 +386,9 @@
                     "minLength": 1
                   }
                 },
-                "required": ["cartId"]
+                "required": [
+                  "cartId"
+                ]
               }
             }
           }
@@ -379,7 +407,9 @@
       "post": {
         "operationId": "createStorePaymentSession",
         "summary": "Create a payment session",
-        "tags": ["Payment Collections"],
+        "tags": [
+          "Payment Collections"
+        ],
         "parameters": [
           {
             "schema": {
@@ -410,7 +440,9 @@
                     "additionalProperties": {}
                   }
                 },
-                "required": ["providerId"]
+                "required": [
+                  "providerId"
+                ]
               }
             }
           }
@@ -432,7 +464,9 @@
       "get": {
         "operationId": "listStorePaymentProviders",
         "summary": "List enabled payment providers",
-        "tags": ["Payments"],
+        "tags": [
+          "Payments"
+        ],
         "responses": {
           "200": {
             "description": "Successful response"
@@ -447,7 +481,9 @@
       "get": {
         "operationId": "listStoreProducts",
         "summary": "List published products",
-        "tags": ["Products"],
+        "tags": [
+          "Products"
+        ],
         "responses": {
           "200": {
             "description": "Successful response"
@@ -462,7 +498,9 @@
       "get": {
         "operationId": "getStoreProduct",
         "summary": "Retrieve a product with variants",
-        "tags": ["Products"],
+        "tags": [
+          "Products"
+        ],
         "parameters": [
           {
             "schema": {

@@ -5,7 +5,7 @@ const pascal = (str: string) => str.charAt(0).toUpperCase() + str.slice(1)
 export default defineConfig({
   admin: {
     input: {
-      target: '../backend/openapi-admin.json',
+      target: '../backend/openapi/openapi-admin.json',
     },
     output: {
       target: 'src/api/generated/admin',
@@ -24,7 +24,7 @@ export default defineConfig({
   },
   store: {
     input: {
-      target: '../backend/openapi-store.json',
+      target: '../backend/openapi/openapi-store.json',
     },
     output: {
       target: 'src/api/generated/store',
