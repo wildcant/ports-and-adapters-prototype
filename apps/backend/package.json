@@ -23,7 +23,8 @@
     "db:seed:providers": "dotenvx run -f ../../.env -- tsx --dns-result-order=ipv4first scripts/seed-providers.ts",
     "openapi:dump": "curl -s http://localhost:3000/admin/openapi.json | python3 -m json.tool > openapi-admin.json && curl -s http://localhost:3000/store/openapi.json | python3 -m json.tool > openapi-store.json && echo 'Saved openapi-admin.json and openapi-store.json'",
     "openapi:dump:offline": "tsx scripts/openapi-dump.ts",
-    "check:circular": "npx madge --circular --extensions ts --ts-config tsconfig.json src/"
+    "check:deps": "depcruise src/ --config deps-analyzer/.dependency-cruiser.cjs",
+    "check:deps:graph": "depcruise src/ --config deps-analyzer/.dependency-cruiser.cjs --output-type archi --exclude '(node_modules|__tests__)' --collapse 3 | dot -T svg -o deps-analyzer/dependency-graph.svg && open deps-analyzer/dependency-graph.svg"
   },
   "dependencies": {
     "@asteasolutions/zod-to-openapi": "^8.5.0",
@@ -43,6 +44,7 @@
     "@faker-js/faker": "^10.5.0",
     "@types/express": "^5.0.0",
     "@types/swagger-ui-express": "^4.1.8",
+    "dependency-cruiser": "^18.1.0",
     "drizzle-kit": "^0.31.0",
     "supabase": "^2.109.1",
     "tsx": "^4.19.0",

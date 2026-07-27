@@ -9,7 +9,7 @@
     "setup": "npm install && npm run pull-keys",
     "lint": "biome lint .",
     "format": "biome format --write .",
-    "check": "biome check . && node apps/backend/scripts/check-module-boundaries.js",
+    "check": "biome check . && npm run --workspace=backend check:deps",
     "openapi:generate": "npm run --workspace=backend openapi:dump:offline && npm run --workspace=frontend openapi:client",
     "typecheck": "npm run --workspace=backend typecheck && npm run --workspace=frontend typecheck",
     "sync-secrets": "./scripts/sync-secrets.sh proteus",
