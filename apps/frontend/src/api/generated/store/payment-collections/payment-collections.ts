@@ -4,117 +4,42 @@
  * Store API
  * OpenAPI spec version: 0.1.0
  */
-import {
-  env
-} from '../../../../env';
-
 import type {
   CreateStorePaymentCollectionBody,
   CreateStorePaymentSessionBody
 } from '../model';
 
-
-export type CreateStorePaymentCollectionResponse200 = {
-  data: void
-  status: 200
-}
-
-export type CreateStorePaymentCollectionResponse400 = {
-  data: void
-  status: 400
-}
-
-export type CreateStorePaymentCollectionResponseSuccess = (CreateStorePaymentCollectionResponse200) & {
-  headers: Headers;
-};
-export type CreateStorePaymentCollectionResponseError = (CreateStorePaymentCollectionResponse400) & {
-  headers: Headers;
-};
-
-export type CreateStorePaymentCollectionResponse = (CreateStorePaymentCollectionResponseSuccess | CreateStorePaymentCollectionResponseError)
-
-export const getCreateStorePaymentCollectionUrl = () => {
+import { fetcher } from '../../../fetcher.ts';
+import type { BodyType } from '../../../fetcher.ts';
 
 
 
-
-  return `${env.VITE_BACKEND_URL}/store/payment-collections`
-}
-
-/**
+  /**
  * @summary Create a payment collection for a cart
  */
-export const createStorePaymentCollection = async (createStorePaymentCollectionBody?: CreateStorePaymentCollectionBody, options?: RequestInit): Promise<CreateStorePaymentCollectionResponse> => {
-
-  const res = await fetch(getCreateStorePaymentCollectionUrl(),
-  {
-    ...options,
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json', ...options?.headers },
-    body: JSON.stringify(createStorePaymentCollectionBody)
-  }
-)
-
-
-  const body = [204, 205, 304].includes(res.status) ? null : await res.text();
-
-  const data: CreateStorePaymentCollectionResponse['data'] = body ? JSON.parse(body) : undefined
-  return { data, status: res.status, headers: res.headers } as CreateStorePaymentCollectionResponse
-}
-
-
-export type CreateStorePaymentSessionResponse200 = {
-  data: void
-  status: 200
-}
-
-export type CreateStorePaymentSessionResponse400 = {
-  data: void
-  status: 400
-}
-
-export type CreateStorePaymentSessionResponse404 = {
-  data: void
-  status: 404
-}
-
-export type CreateStorePaymentSessionResponseSuccess = (CreateStorePaymentSessionResponse200) & {
-  headers: Headers;
-};
-export type CreateStorePaymentSessionResponseError = (CreateStorePaymentSessionResponse400 | CreateStorePaymentSessionResponse404) & {
-  headers: Headers;
-};
-
-export type CreateStorePaymentSessionResponse = (CreateStorePaymentSessionResponseSuccess | CreateStorePaymentSessionResponseError)
-
-export const getCreateStorePaymentSessionUrl = (id: string,) => {
-
-
-
-
-  return `${env.VITE_BACKEND_URL}/store/payment-collections/${id}/payment-sessions`
-}
-
-/**
+export const createStorePaymentCollection = (
+    createStorePaymentCollectionBody?: BodyType<CreateStorePaymentCollectionBody>,
+ ) => {
+      return fetcher<void>(
+      {url: `/store/payment-collections`, method: 'POST',
+      headers: {'Content-Type': 'application/json', },
+      data: createStorePaymentCollectionBody
+    },
+      );
+    }
+  /**
  * @summary Create a payment session
  */
-export const createStorePaymentSession = async (id: string,
-    createStorePaymentSessionBody?: CreateStorePaymentSessionBody, options?: RequestInit): Promise<CreateStorePaymentSessionResponse> => {
-
-  const res = await fetch(getCreateStorePaymentSessionUrl(id),
-  {
-    ...options,
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json', ...options?.headers },
-    body: JSON.stringify(createStorePaymentSessionBody)
-  }
-)
-
-
-  const body = [204, 205, 304].includes(res.status) ? null : await res.text();
-
-  const data: CreateStorePaymentSessionResponse['data'] = body ? JSON.parse(body) : undefined
-  return { data, status: res.status, headers: res.headers } as CreateStorePaymentSessionResponse
-}
-
-
+export const createStorePaymentSession = (
+    id: string,
+    createStorePaymentSessionBody?: BodyType<CreateStorePaymentSessionBody>,
+ ) => {
+      return fetcher<void>(
+      {url: `/store/payment-collections/${id}/payment-sessions`, method: 'POST',
+      headers: {'Content-Type': 'application/json', },
+      data: createStorePaymentSessionBody
+    },
+      );
+    }
+  export type CreateStorePaymentCollectionResult = NonNullable<Awaited<ReturnType<typeof createStorePaymentCollection>>>
+export type CreateStorePaymentSessionResult = NonNullable<Awaited<ReturnType<typeof createStorePaymentSession>>>

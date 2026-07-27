@@ -1,28 +1,26 @@
 import { createFileRoute } from '@tanstack/react-router'
 import { useState } from 'react'
+import type { Customer } from '#/api/generated/admin/model'
 import {
-  createCustomers,
-  deleteCustomer,
-  listCustomers,
-  updateCustomer,
-} from '#/api/generated/admin/customers/customers'
-import type { Customer, CustomerListResponse } from '#/api/generated/admin/model'
+  getCustomersQueryOptions,
+  useCreateCustomer,
+  useCustomers,
+  useDeleteCustomer,
+  useUpdateCustomer,
+} from '#/features/customers/api/customers'
 
 const PAGE_SIZE = 5
 
-function unwrap(res: { data: CustomerListResponse | void; status: number }): CustomerListResponse {
-  if (res.status !== 200 || !res.data) throw new Error(`Request failed with status ${res.status}`)
-  return res.data
-}
-
 export const Route = createFileRoute('/customers')({
   component: CustomersPage,
-  loader: () => listCustomers({ limit: PAGE_SIZE, offset: 0 }).then(unwrap),
+  loader: ({ context }) =>
+    context.queryClient.ensureQueryData(getCustomersQueryOptions({ limit: PAGE_SIZE, offset: 0 })),
 })
 
 function CustomersPage() {
-  const initialData = Route.useLoaderData()
-  const [{ customers, count, offset, limit }, setData] = useState(initialData)
+  const [offset, setOffset] = useState(0)
+  const { customers = [], count = 0, limit = PAGE_SIZE } = useCustomers({ limit: PAGE_SIZE, offset })
+
   const [firstName, setFirstName] = useState('')
   const [lastName, setLastName] = useState('')
   const [email, setEmail] = useState('')
@@ -31,21 +29,16 @@ function CustomersPage() {
   const [editLastName, setEditLastName] = useState('')
   const [editEmail, setEditEmail] = useState('')
 
-  async function fetchPage(newOffset: number) {
-    setData(unwrap(await listCustomers({ limit: PAGE_SIZE, offset: newOffset })))
-  }
+  const createMutation = useCreateCustomer()
+  const updateMutation = useUpdateCustomer()
+  const deleteMutation = useDeleteCustomer()
 
-  async function refresh() {
-    setData(unwrap(await listCustomers({ limit, offset })))
-  }
-
-  async function addCustomer(e: React.FormEvent) {
+  function addCustomer(e: React.FormEvent) {
     e.preventDefault()
-    await createCustomers([{ firstName, lastName, email }])
+    createMutation.mutate([{ firstName, lastName, email }])
     setFirstName('')
     setLastName('')
     setEmail('')
-    await refresh()
   }
 
   function startEditing(customer: Customer) {
@@ -55,17 +48,17 @@ function CustomersPage() {
     setEditEmail(customer.email)
   }
 
-  async function saveEdit(e: React.FormEvent) {
+  function saveEdit(e: React.FormEvent) {
     e.preventDefault()
     if (!editingId) return
-    await updateCustomer(editingId, { firstName: editFirstName, lastName: editLastName, email: editEmail })
-    setEditingId(null)
-    await refresh()
+    updateMutation.mutate(
+      { id: editingId, data: { firstName: editFirstName, lastName: editLastName, email: editEmail } },
+      { onSuccess: () => setEditingId(null) },
+    )
   }
 
-  async function handleDelete(id: string) {
-    await deleteCustomer(id)
-    await refresh()
+  function handleDelete(id: string) {
+    deleteMutation.mutate({ id })
   }
 
   return (
@@ -74,8 +67,8 @@ function CustomersPage() {
         <p className="island-kicker mb-3">Customer Module</p>
         <h1 className="display-title mb-5 text-4xl font-bold tracking-tight text-[var(--sea-ink)]">Customers</h1>
         <p className="mb-6 text-[var(--sea-ink-soft)]">
-          Using the generated <code className="rounded bg-black/5 px-1.5 py-0.5 text-sm">fetch</code> client — calls the
-          JSON API over HTTP
+          Using generated <code className="rounded bg-black/5 px-1.5 py-0.5 text-sm">React Query</code> hooks — calls
+          the JSON API over HTTP
         </p>
 
         <form onSubmit={addCustomer} className="mb-8 flex flex-wrap gap-3">
@@ -193,7 +186,7 @@ function CustomersPage() {
               <button
                 type="button"
                 disabled={offset === 0}
-                onClick={() => fetchPage(Math.max(0, offset - limit))}
+                onClick={() => setOffset(Math.max(0, offset - limit))}
                 className="rounded-full border border-[rgba(23,58,64,0.2)] px-4 py-1.5 text-xs font-semibold transition hover:bg-black/5 disabled:opacity-40 disabled:hover:bg-transparent"
               >
                 Previous
@@ -201,7 +194,7 @@ function CustomersPage() {
               <button
                 type="button"
                 disabled={offset + limit >= count}
-                onClick={() => fetchPage(offset + limit)}
+                onClick={() => setOffset(offset + limit)}
                 className="rounded-full border border-[rgba(23,58,64,0.2)] px-4 py-1.5 text-xs font-semibold transition hover:bg-black/5 disabled:opacity-40 disabled:hover:bg-transparent"
               >
                 Next

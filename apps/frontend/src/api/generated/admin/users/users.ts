@@ -4,10 +4,6 @@
  * Admin API
  * OpenAPI spec version: 0.1.0
  */
-import {
-  env
-} from '../../../../env';
-
 import type {
   CreateUser,
   ListUsersParams,
@@ -17,280 +13,74 @@ import type {
   UserResponse
 } from '../model';
 
+import { fetcher } from '../../../fetcher.ts';
+import type { BodyType } from '../../../fetcher.ts';
 
-export type ListUsersResponse200 = {
-  data: UserListResponse
-  status: 200
-}
 
-export type ListUsersResponse400 = {
-  data: void
-  status: 400
-}
 
-export type ListUsersResponseSuccess = (ListUsersResponse200) & {
-  headers: Headers;
-};
-export type ListUsersResponseError = (ListUsersResponse400) & {
-  headers: Headers;
-};
-
-export type ListUsersResponse = (ListUsersResponseSuccess | ListUsersResponseError)
-
-export const getListUsersUrl = (params?: ListUsersParams,) => {
-  const normalizedParams = new URLSearchParams();
-
-  Object.entries(params || {}).forEach(([key, value]) => {
-    const explodeParameters = ["id"];
-
-    if (Array.isArray(value) && explodeParameters.includes(key)) {
-      value.forEach((v) => {
-        normalizedParams.append(key, v === null ? 'null' : String(v));
-      });
-      return;
-    }
-
-    if (value !== undefined) {
-      normalizedParams.append(key, value === null ? 'null' : String(value))
-    }
-  });
-
-  const stringifiedParams = normalizedParams.toString();
-
-  return stringifiedParams.length > 0 ? `${env.VITE_BACKEND_URL}/admin/users?${stringifiedParams}` : `${env.VITE_BACKEND_URL}/admin/users`
-}
-
-/**
+  /**
  * @summary List users
  */
-export const listUsers = async (params?: ListUsersParams, options?: RequestInit): Promise<ListUsersResponse> => {
-
-  const res = await fetch(getListUsersUrl(params),
-  {
-    ...options,
-    method: 'GET'
-
-
-  }
-)
-
-
-  const body = [204, 205, 304].includes(res.status) ? null : await res.text();
-
-  const data: ListUsersResponse['data'] = body ? JSON.parse(body) : {}
-  return { data, status: res.status, headers: res.headers } as ListUsersResponse
-}
-
-
-export type CreateUserResponse200 = {
-  data: UserResponse
-  status: 200
-}
-
-export type CreateUserResponse400 = {
-  data: void
-  status: 400
-}
-
-export type CreateUserResponseSuccess = (CreateUserResponse200) & {
-  headers: Headers;
-};
-export type CreateUserResponseError = (CreateUserResponse400) & {
-  headers: Headers;
-};
-
-export type CreateUserResponse = (CreateUserResponseSuccess | CreateUserResponseError)
-
-export const getCreateUserUrl = () => {
-
-
-
-
-  return `${env.VITE_BACKEND_URL}/admin/users`
-}
-
-/**
+export const listUsers = (
+    params?: ListUsersParams,
+ ) => {
+      return fetcher<UserListResponse>(
+      {url: `/admin/users`, method: 'GET',
+        params
+    },
+      );
+    }
+  /**
  * @summary Create a user
  */
-export const createUser = async (createUser?: CreateUser, options?: RequestInit): Promise<CreateUserResponse> => {
-
-  const res = await fetch(getCreateUserUrl(),
-  {
-    ...options,
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json', ...options?.headers },
-    body: JSON.stringify(createUser)
-  }
-)
-
-
-  const body = [204, 205, 304].includes(res.status) ? null : await res.text();
-
-  const data: CreateUserResponse['data'] = body ? JSON.parse(body) : {}
-  return { data, status: res.status, headers: res.headers } as CreateUserResponse
-}
-
-
-export type GetUserResponse200 = {
-  data: UserResponse
-  status: 200
-}
-
-export type GetUserResponse400 = {
-  data: void
-  status: 400
-}
-
-export type GetUserResponse404 = {
-  data: void
-  status: 404
-}
-
-export type GetUserResponseSuccess = (GetUserResponse200) & {
-  headers: Headers;
-};
-export type GetUserResponseError = (GetUserResponse400 | GetUserResponse404) & {
-  headers: Headers;
-};
-
-export type GetUserResponse = (GetUserResponseSuccess | GetUserResponseError)
-
-export const getGetUserUrl = (id: string,) => {
-
-
-
-
-  return `${env.VITE_BACKEND_URL}/admin/users/${id}`
-}
-
-/**
+export const createUser = (
+    createUser?: BodyType<CreateUser>,
+ ) => {
+      return fetcher<UserResponse>(
+      {url: `/admin/users`, method: 'POST',
+      headers: {'Content-Type': 'application/json', },
+      data: createUser
+    },
+      );
+    }
+  /**
  * @summary Retrieve a user
  */
-export const getUser = async (id: string, options?: RequestInit): Promise<GetUserResponse> => {
-
-  const res = await fetch(getGetUserUrl(id),
-  {
-    ...options,
-    method: 'GET'
-
-
-  }
-)
-
-
-  const body = [204, 205, 304].includes(res.status) ? null : await res.text();
-
-  const data: GetUserResponse['data'] = body ? JSON.parse(body) : {}
-  return { data, status: res.status, headers: res.headers } as GetUserResponse
-}
-
-
-export type UpdateUserResponse200 = {
-  data: UserResponse
-  status: 200
-}
-
-export type UpdateUserResponse400 = {
-  data: void
-  status: 400
-}
-
-export type UpdateUserResponse404 = {
-  data: void
-  status: 404
-}
-
-export type UpdateUserResponseSuccess = (UpdateUserResponse200) & {
-  headers: Headers;
-};
-export type UpdateUserResponseError = (UpdateUserResponse400 | UpdateUserResponse404) & {
-  headers: Headers;
-};
-
-export type UpdateUserResponse = (UpdateUserResponseSuccess | UpdateUserResponseError)
-
-export const getUpdateUserUrl = (id: string,) => {
-
-
-
-
-  return `${env.VITE_BACKEND_URL}/admin/users/${id}`
-}
-
-/**
+export const getUser = (
+    id: string,
+ ) => {
+      return fetcher<UserResponse>(
+      {url: `/admin/users/${id}`, method: 'GET'
+    },
+      );
+    }
+  /**
  * @summary Update a user
  */
-export const updateUser = async (id: string,
-    updateUser?: UpdateUser, options?: RequestInit): Promise<UpdateUserResponse> => {
-
-  const res = await fetch(getUpdateUserUrl(id),
-  {
-    ...options,
-    method: 'PATCH',
-    headers: { 'Content-Type': 'application/json', ...options?.headers },
-    body: JSON.stringify(updateUser)
-  }
-)
-
-
-  const body = [204, 205, 304].includes(res.status) ? null : await res.text();
-
-  const data: UpdateUserResponse['data'] = body ? JSON.parse(body) : {}
-  return { data, status: res.status, headers: res.headers } as UpdateUserResponse
-}
-
-
-export type DeleteUserResponse200 = {
-  data: UserDeleteResponse
-  status: 200
-}
-
-export type DeleteUserResponse400 = {
-  data: void
-  status: 400
-}
-
-export type DeleteUserResponse404 = {
-  data: void
-  status: 404
-}
-
-export type DeleteUserResponseSuccess = (DeleteUserResponse200) & {
-  headers: Headers;
-};
-export type DeleteUserResponseError = (DeleteUserResponse400 | DeleteUserResponse404) & {
-  headers: Headers;
-};
-
-export type DeleteUserResponse = (DeleteUserResponseSuccess | DeleteUserResponseError)
-
-export const getDeleteUserUrl = (id: string,) => {
-
-
-
-
-  return `${env.VITE_BACKEND_URL}/admin/users/${id}`
-}
-
-/**
+export const updateUser = (
+    id: string,
+    updateUser?: BodyType<UpdateUser>,
+ ) => {
+      return fetcher<UserResponse>(
+      {url: `/admin/users/${id}`, method: 'PATCH',
+      headers: {'Content-Type': 'application/json', },
+      data: updateUser
+    },
+      );
+    }
+  /**
  * @summary Delete a user
  */
-export const deleteUser = async (id: string, options?: RequestInit): Promise<DeleteUserResponse> => {
-
-  const res = await fetch(getDeleteUserUrl(id),
-  {
-    ...options,
-    method: 'DELETE'
-
-
-  }
-)
-
-
-  const body = [204, 205, 304].includes(res.status) ? null : await res.text();
-
-  const data: DeleteUserResponse['data'] = body ? JSON.parse(body) : {}
-  return { data, status: res.status, headers: res.headers } as DeleteUserResponse
-}
-
-
+export const deleteUser = (
+    id: string,
+ ) => {
+      return fetcher<UserDeleteResponse>(
+      {url: `/admin/users/${id}`, method: 'DELETE'
+    },
+      );
+    }
+  export type ListUsersResult = NonNullable<Awaited<ReturnType<typeof listUsers>>>
+export type CreateUserResult = NonNullable<Awaited<ReturnType<typeof createUser>>>
+export type GetUserResult = NonNullable<Awaited<ReturnType<typeof getUser>>>
+export type UpdateUserResult = NonNullable<Awaited<ReturnType<typeof updateUser>>>
+export type DeleteUserResult = NonNullable<Awaited<ReturnType<typeof deleteUser>>>

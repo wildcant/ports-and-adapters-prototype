@@ -4,57 +4,19 @@
  * Store API
  * OpenAPI spec version: 0.1.0
  */
-import {
-  env
-} from '../../../../env';
-
-
-export type ListStorePaymentProvidersResponse200 = {
-  data: void
-  status: 200
-}
-
-export type ListStorePaymentProvidersResponse400 = {
-  data: void
-  status: 400
-}
-
-export type ListStorePaymentProvidersResponseSuccess = (ListStorePaymentProvidersResponse200) & {
-  headers: Headers;
-};
-export type ListStorePaymentProvidersResponseError = (ListStorePaymentProvidersResponse400) & {
-  headers: Headers;
-};
-
-export type ListStorePaymentProvidersResponse = (ListStorePaymentProvidersResponseSuccess | ListStorePaymentProvidersResponseError)
-
-export const getListStorePaymentProvidersUrl = () => {
+import { fetcher } from '../../../fetcher.ts';
 
 
 
-
-  return `${env.VITE_BACKEND_URL}/store/payment-providers`
-}
-
-/**
+  /**
  * @summary List enabled payment providers
  */
-export const listStorePaymentProviders = async ( options?: RequestInit): Promise<ListStorePaymentProvidersResponse> => {
+export const listStorePaymentProviders = (
 
-  const res = await fetch(getListStorePaymentProvidersUrl(),
-  {
-    ...options,
-    method: 'GET'
-
-
-  }
-)
-
-
-  const body = [204, 205, 304].includes(res.status) ? null : await res.text();
-
-  const data: ListStorePaymentProvidersResponse['data'] = body ? JSON.parse(body) : undefined
-  return { data, status: res.status, headers: res.headers } as ListStorePaymentProvidersResponse
-}
-
-
+ ) => {
+      return fetcher<void>(
+      {url: `/store/payment-providers`, method: 'GET'
+    },
+      );
+    }
+  export type ListStorePaymentProvidersResult = NonNullable<Awaited<ReturnType<typeof listStorePaymentProviders>>>

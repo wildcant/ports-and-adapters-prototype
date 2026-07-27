@@ -4,111 +4,31 @@
  * Store API
  * OpenAPI spec version: 0.1.0
  */
-import {
-  env
-} from '../../../../env';
-
-
-export type ListStoreProductsResponse200 = {
-  data: void
-  status: 200
-}
-
-export type ListStoreProductsResponse400 = {
-  data: void
-  status: 400
-}
-
-export type ListStoreProductsResponseSuccess = (ListStoreProductsResponse200) & {
-  headers: Headers;
-};
-export type ListStoreProductsResponseError = (ListStoreProductsResponse400) & {
-  headers: Headers;
-};
-
-export type ListStoreProductsResponse = (ListStoreProductsResponseSuccess | ListStoreProductsResponseError)
-
-export const getListStoreProductsUrl = () => {
+import { fetcher } from '../../../fetcher.ts';
 
 
 
-
-  return `${env.VITE_BACKEND_URL}/store/products`
-}
-
-/**
+  /**
  * @summary List published products
  */
-export const listStoreProducts = async ( options?: RequestInit): Promise<ListStoreProductsResponse> => {
+export const listStoreProducts = (
 
-  const res = await fetch(getListStoreProductsUrl(),
-  {
-    ...options,
-    method: 'GET'
-
-
-  }
-)
-
-
-  const body = [204, 205, 304].includes(res.status) ? null : await res.text();
-
-  const data: ListStoreProductsResponse['data'] = body ? JSON.parse(body) : undefined
-  return { data, status: res.status, headers: res.headers } as ListStoreProductsResponse
-}
-
-
-export type GetStoreProductResponse200 = {
-  data: void
-  status: 200
-}
-
-export type GetStoreProductResponse400 = {
-  data: void
-  status: 400
-}
-
-export type GetStoreProductResponse404 = {
-  data: void
-  status: 404
-}
-
-export type GetStoreProductResponseSuccess = (GetStoreProductResponse200) & {
-  headers: Headers;
-};
-export type GetStoreProductResponseError = (GetStoreProductResponse400 | GetStoreProductResponse404) & {
-  headers: Headers;
-};
-
-export type GetStoreProductResponse = (GetStoreProductResponseSuccess | GetStoreProductResponseError)
-
-export const getGetStoreProductUrl = (id: string,) => {
-
-
-
-
-  return `${env.VITE_BACKEND_URL}/store/products/${id}`
-}
-
-/**
+ ) => {
+      return fetcher<void>(
+      {url: `/store/products`, method: 'GET'
+    },
+      );
+    }
+  /**
  * @summary Retrieve a product with variants
  */
-export const getStoreProduct = async (id: string, options?: RequestInit): Promise<GetStoreProductResponse> => {
-
-  const res = await fetch(getGetStoreProductUrl(id),
-  {
-    ...options,
-    method: 'GET'
-
-
-  }
-)
-
-
-  const body = [204, 205, 304].includes(res.status) ? null : await res.text();
-
-  const data: GetStoreProductResponse['data'] = body ? JSON.parse(body) : undefined
-  return { data, status: res.status, headers: res.headers } as GetStoreProductResponse
-}
-
-
+export const getStoreProduct = (
+    id: string,
+ ) => {
+      return fetcher<void>(
+      {url: `/store/products/${id}`, method: 'GET'
+    },
+      );
+    }
+  export type ListStoreProductsResult = NonNullable<Awaited<ReturnType<typeof listStoreProducts>>>
+export type GetStoreProductResult = NonNullable<Awaited<ReturnType<typeof getStoreProduct>>>

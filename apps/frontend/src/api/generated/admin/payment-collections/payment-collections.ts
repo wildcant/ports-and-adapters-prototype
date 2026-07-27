@@ -4,116 +4,31 @@
  * Admin API
  * OpenAPI spec version: 0.1.0
  */
-import {
-  env
-} from '../../../../env';
-
-
-export type GetPaymentCollectionResponse200 = {
-  data: void
-  status: 200
-}
-
-export type GetPaymentCollectionResponse400 = {
-  data: void
-  status: 400
-}
-
-export type GetPaymentCollectionResponse404 = {
-  data: void
-  status: 404
-}
-
-export type GetPaymentCollectionResponseSuccess = (GetPaymentCollectionResponse200) & {
-  headers: Headers;
-};
-export type GetPaymentCollectionResponseError = (GetPaymentCollectionResponse400 | GetPaymentCollectionResponse404) & {
-  headers: Headers;
-};
-
-export type GetPaymentCollectionResponse = (GetPaymentCollectionResponseSuccess | GetPaymentCollectionResponseError)
-
-export const getGetPaymentCollectionUrl = (id: string,) => {
+import { fetcher } from '../../../fetcher.ts';
 
 
 
-
-  return `${env.VITE_BACKEND_URL}/admin/payment-collections/${id}`
-}
-
-/**
+  /**
  * @summary Retrieve a payment collection
  */
-export const getPaymentCollection = async (id: string, options?: RequestInit): Promise<GetPaymentCollectionResponse> => {
-
-  const res = await fetch(getGetPaymentCollectionUrl(id),
-  {
-    ...options,
-    method: 'GET'
-
-
-  }
-)
-
-
-  const body = [204, 205, 304].includes(res.status) ? null : await res.text();
-
-  const data: GetPaymentCollectionResponse['data'] = body ? JSON.parse(body) : undefined
-  return { data, status: res.status, headers: res.headers } as GetPaymentCollectionResponse
-}
-
-
-export type MarkPaymentCollectionAsPaidResponse200 = {
-  data: void
-  status: 200
-}
-
-export type MarkPaymentCollectionAsPaidResponse400 = {
-  data: void
-  status: 400
-}
-
-export type MarkPaymentCollectionAsPaidResponse404 = {
-  data: void
-  status: 404
-}
-
-export type MarkPaymentCollectionAsPaidResponseSuccess = (MarkPaymentCollectionAsPaidResponse200) & {
-  headers: Headers;
-};
-export type MarkPaymentCollectionAsPaidResponseError = (MarkPaymentCollectionAsPaidResponse400 | MarkPaymentCollectionAsPaidResponse404) & {
-  headers: Headers;
-};
-
-export type MarkPaymentCollectionAsPaidResponse = (MarkPaymentCollectionAsPaidResponseSuccess | MarkPaymentCollectionAsPaidResponseError)
-
-export const getMarkPaymentCollectionAsPaidUrl = (id: string,) => {
-
-
-
-
-  return `${env.VITE_BACKEND_URL}/admin/payment-collections/${id}/mark-as-paid`
-}
-
-/**
+export const getPaymentCollection = (
+    id: string,
+ ) => {
+      return fetcher<void>(
+      {url: `/admin/payment-collections/${id}`, method: 'GET'
+    },
+      );
+    }
+  /**
  * @summary Mark a payment collection as paid
  */
-export const markPaymentCollectionAsPaid = async (id: string, options?: RequestInit): Promise<MarkPaymentCollectionAsPaidResponse> => {
-
-  const res = await fetch(getMarkPaymentCollectionAsPaidUrl(id),
-  {
-    ...options,
-    method: 'POST'
-
-
-  }
-)
-
-
-  const body = [204, 205, 304].includes(res.status) ? null : await res.text();
-
-  const data: MarkPaymentCollectionAsPaidResponse['data'] = body ? JSON.parse(body) : undefined
-  return { data, status: res.status, headers: res.headers } as MarkPaymentCollectionAsPaidResponse
-}
-
-
+export const markPaymentCollectionAsPaid = (
+    id: string,
+ ) => {
+      return fetcher<void>(
+      {url: `/admin/payment-collections/${id}/mark-as-paid`, method: 'POST'
+    },
+      );
+    }
+  export type GetPaymentCollectionResult = NonNullable<Awaited<ReturnType<typeof getPaymentCollection>>>
+export type MarkPaymentCollectionAsPaidResult = NonNullable<Awaited<ReturnType<typeof markPaymentCollectionAsPaid>>>

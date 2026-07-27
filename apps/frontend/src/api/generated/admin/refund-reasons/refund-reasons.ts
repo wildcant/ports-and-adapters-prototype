@@ -4,164 +4,50 @@
  * Admin API
  * OpenAPI spec version: 0.1.0
  */
-import {
-  env
-} from '../../../../env';
-
 import type {
   CreateRefundReasonBody
 } from '../model';
 
-
-export type ListRefundReasonsResponse200 = {
-  data: void
-  status: 200
-}
-
-export type ListRefundReasonsResponse400 = {
-  data: void
-  status: 400
-}
-
-export type ListRefundReasonsResponseSuccess = (ListRefundReasonsResponse200) & {
-  headers: Headers;
-};
-export type ListRefundReasonsResponseError = (ListRefundReasonsResponse400) & {
-  headers: Headers;
-};
-
-export type ListRefundReasonsResponse = (ListRefundReasonsResponseSuccess | ListRefundReasonsResponseError)
-
-export const getListRefundReasonsUrl = () => {
+import { fetcher } from '../../../fetcher.ts';
+import type { BodyType } from '../../../fetcher.ts';
 
 
 
-
-  return `${env.VITE_BACKEND_URL}/admin/refund-reasons`
-}
-
-/**
+  /**
  * @summary List refund reasons
  */
-export const listRefundReasons = async ( options?: RequestInit): Promise<ListRefundReasonsResponse> => {
+export const listRefundReasons = (
 
-  const res = await fetch(getListRefundReasonsUrl(),
-  {
-    ...options,
-    method: 'GET'
-
-
-  }
-)
-
-
-  const body = [204, 205, 304].includes(res.status) ? null : await res.text();
-
-  const data: ListRefundReasonsResponse['data'] = body ? JSON.parse(body) : undefined
-  return { data, status: res.status, headers: res.headers } as ListRefundReasonsResponse
-}
-
-
-export type CreateRefundReasonResponse200 = {
-  data: void
-  status: 200
-}
-
-export type CreateRefundReasonResponse400 = {
-  data: void
-  status: 400
-}
-
-export type CreateRefundReasonResponseSuccess = (CreateRefundReasonResponse200) & {
-  headers: Headers;
-};
-export type CreateRefundReasonResponseError = (CreateRefundReasonResponse400) & {
-  headers: Headers;
-};
-
-export type CreateRefundReasonResponse = (CreateRefundReasonResponseSuccess | CreateRefundReasonResponseError)
-
-export const getCreateRefundReasonUrl = () => {
-
-
-
-
-  return `${env.VITE_BACKEND_URL}/admin/refund-reasons`
-}
-
-/**
+ ) => {
+      return fetcher<void>(
+      {url: `/admin/refund-reasons`, method: 'GET'
+    },
+      );
+    }
+  /**
  * @summary Create a refund reason
  */
-export const createRefundReason = async (createRefundReasonBody?: CreateRefundReasonBody, options?: RequestInit): Promise<CreateRefundReasonResponse> => {
-
-  const res = await fetch(getCreateRefundReasonUrl(),
-  {
-    ...options,
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json', ...options?.headers },
-    body: JSON.stringify(createRefundReasonBody)
-  }
-)
-
-
-  const body = [204, 205, 304].includes(res.status) ? null : await res.text();
-
-  const data: CreateRefundReasonResponse['data'] = body ? JSON.parse(body) : undefined
-  return { data, status: res.status, headers: res.headers } as CreateRefundReasonResponse
-}
-
-
-export type DeleteRefundReasonResponse200 = {
-  data: void
-  status: 200
-}
-
-export type DeleteRefundReasonResponse400 = {
-  data: void
-  status: 400
-}
-
-export type DeleteRefundReasonResponse404 = {
-  data: void
-  status: 404
-}
-
-export type DeleteRefundReasonResponseSuccess = (DeleteRefundReasonResponse200) & {
-  headers: Headers;
-};
-export type DeleteRefundReasonResponseError = (DeleteRefundReasonResponse400 | DeleteRefundReasonResponse404) & {
-  headers: Headers;
-};
-
-export type DeleteRefundReasonResponse = (DeleteRefundReasonResponseSuccess | DeleteRefundReasonResponseError)
-
-export const getDeleteRefundReasonUrl = (id: string,) => {
-
-
-
-
-  return `${env.VITE_BACKEND_URL}/admin/refund-reasons/${id}`
-}
-
-/**
+export const createRefundReason = (
+    createRefundReasonBody?: BodyType<CreateRefundReasonBody>,
+ ) => {
+      return fetcher<void>(
+      {url: `/admin/refund-reasons`, method: 'POST',
+      headers: {'Content-Type': 'application/json', },
+      data: createRefundReasonBody
+    },
+      );
+    }
+  /**
  * @summary Delete a refund reason
  */
-export const deleteRefundReason = async (id: string, options?: RequestInit): Promise<DeleteRefundReasonResponse> => {
-
-  const res = await fetch(getDeleteRefundReasonUrl(id),
-  {
-    ...options,
-    method: 'DELETE'
-
-
-  }
-)
-
-
-  const body = [204, 205, 304].includes(res.status) ? null : await res.text();
-
-  const data: DeleteRefundReasonResponse['data'] = body ? JSON.parse(body) : undefined
-  return { data, status: res.status, headers: res.headers } as DeleteRefundReasonResponse
-}
-
-
+export const deleteRefundReason = (
+    id: string,
+ ) => {
+      return fetcher<void>(
+      {url: `/admin/refund-reasons/${id}`, method: 'DELETE'
+    },
+      );
+    }
+  export type ListRefundReasonsResult = NonNullable<Awaited<ReturnType<typeof listRefundReasons>>>
+export type CreateRefundReasonResult = NonNullable<Awaited<ReturnType<typeof createRefundReason>>>
+export type DeleteRefundReasonResult = NonNullable<Awaited<ReturnType<typeof deleteRefundReason>>>

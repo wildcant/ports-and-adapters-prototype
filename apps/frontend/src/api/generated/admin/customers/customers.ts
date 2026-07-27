@@ -4,10 +4,6 @@
  * Admin API
  * OpenAPI spec version: 0.1.0
  */
-import {
-  env
-} from '../../../../env';
-
 import type {
   CreateCustomer,
   CustomerDeleteResponse,
@@ -17,280 +13,74 @@ import type {
   UpdateCustomer
 } from '../model';
 
+import { fetcher } from '../../../fetcher.ts';
+import type { BodyType } from '../../../fetcher.ts';
 
-export type ListCustomersResponse200 = {
-  data: CustomerListResponse
-  status: 200
-}
 
-export type ListCustomersResponse400 = {
-  data: void
-  status: 400
-}
 
-export type ListCustomersResponseSuccess = (ListCustomersResponse200) & {
-  headers: Headers;
-};
-export type ListCustomersResponseError = (ListCustomersResponse400) & {
-  headers: Headers;
-};
-
-export type ListCustomersResponse = (ListCustomersResponseSuccess | ListCustomersResponseError)
-
-export const getListCustomersUrl = (params?: ListCustomersParams,) => {
-  const normalizedParams = new URLSearchParams();
-
-  Object.entries(params || {}).forEach(([key, value]) => {
-    const explodeParameters = ["id"];
-
-    if (Array.isArray(value) && explodeParameters.includes(key)) {
-      value.forEach((v) => {
-        normalizedParams.append(key, v === null ? 'null' : String(v));
-      });
-      return;
-    }
-
-    if (value !== undefined) {
-      normalizedParams.append(key, value === null ? 'null' : String(value))
-    }
-  });
-
-  const stringifiedParams = normalizedParams.toString();
-
-  return stringifiedParams.length > 0 ? `${env.VITE_BACKEND_URL}/admin/customers?${stringifiedParams}` : `${env.VITE_BACKEND_URL}/admin/customers`
-}
-
-/**
+  /**
  * @summary List customers
  */
-export const listCustomers = async (params?: ListCustomersParams, options?: RequestInit): Promise<ListCustomersResponse> => {
-
-  const res = await fetch(getListCustomersUrl(params),
-  {
-    ...options,
-    method: 'GET'
-
-
-  }
-)
-
-
-  const body = [204, 205, 304].includes(res.status) ? null : await res.text();
-
-  const data: ListCustomersResponse['data'] = body ? JSON.parse(body) : {}
-  return { data, status: res.status, headers: res.headers } as ListCustomersResponse
-}
-
-
-export type CreateCustomersResponse200 = {
-  data: CustomerListResponse
-  status: 200
-}
-
-export type CreateCustomersResponse400 = {
-  data: void
-  status: 400
-}
-
-export type CreateCustomersResponseSuccess = (CreateCustomersResponse200) & {
-  headers: Headers;
-};
-export type CreateCustomersResponseError = (CreateCustomersResponse400) & {
-  headers: Headers;
-};
-
-export type CreateCustomersResponse = (CreateCustomersResponseSuccess | CreateCustomersResponseError)
-
-export const getCreateCustomersUrl = () => {
-
-
-
-
-  return `${env.VITE_BACKEND_URL}/admin/customers`
-}
-
-/**
+export const listCustomers = (
+    params?: ListCustomersParams,
+ ) => {
+      return fetcher<CustomerListResponse>(
+      {url: `/admin/customers`, method: 'GET',
+        params
+    },
+      );
+    }
+  /**
  * @summary Create customers
  */
-export const createCustomers = async (createCustomer?: CreateCustomer[], options?: RequestInit): Promise<CreateCustomersResponse> => {
-
-  const res = await fetch(getCreateCustomersUrl(),
-  {
-    ...options,
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json', ...options?.headers },
-    body: JSON.stringify(createCustomer)
-  }
-)
-
-
-  const body = [204, 205, 304].includes(res.status) ? null : await res.text();
-
-  const data: CreateCustomersResponse['data'] = body ? JSON.parse(body) : {}
-  return { data, status: res.status, headers: res.headers } as CreateCustomersResponse
-}
-
-
-export type GetCustomerResponse200 = {
-  data: CustomerResponse
-  status: 200
-}
-
-export type GetCustomerResponse400 = {
-  data: void
-  status: 400
-}
-
-export type GetCustomerResponse404 = {
-  data: void
-  status: 404
-}
-
-export type GetCustomerResponseSuccess = (GetCustomerResponse200) & {
-  headers: Headers;
-};
-export type GetCustomerResponseError = (GetCustomerResponse400 | GetCustomerResponse404) & {
-  headers: Headers;
-};
-
-export type GetCustomerResponse = (GetCustomerResponseSuccess | GetCustomerResponseError)
-
-export const getGetCustomerUrl = (id: string,) => {
-
-
-
-
-  return `${env.VITE_BACKEND_URL}/admin/customers/${id}`
-}
-
-/**
+export const createCustomers = (
+    createCustomer?: CreateCustomer[],
+ ) => {
+      return fetcher<CustomerListResponse>(
+      {url: `/admin/customers`, method: 'POST',
+      headers: {'Content-Type': 'application/json', },
+      data: createCustomer
+    },
+      );
+    }
+  /**
  * @summary Retrieve a customer
  */
-export const getCustomer = async (id: string, options?: RequestInit): Promise<GetCustomerResponse> => {
-
-  const res = await fetch(getGetCustomerUrl(id),
-  {
-    ...options,
-    method: 'GET'
-
-
-  }
-)
-
-
-  const body = [204, 205, 304].includes(res.status) ? null : await res.text();
-
-  const data: GetCustomerResponse['data'] = body ? JSON.parse(body) : {}
-  return { data, status: res.status, headers: res.headers } as GetCustomerResponse
-}
-
-
-export type UpdateCustomerResponse200 = {
-  data: CustomerResponse
-  status: 200
-}
-
-export type UpdateCustomerResponse400 = {
-  data: void
-  status: 400
-}
-
-export type UpdateCustomerResponse404 = {
-  data: void
-  status: 404
-}
-
-export type UpdateCustomerResponseSuccess = (UpdateCustomerResponse200) & {
-  headers: Headers;
-};
-export type UpdateCustomerResponseError = (UpdateCustomerResponse400 | UpdateCustomerResponse404) & {
-  headers: Headers;
-};
-
-export type UpdateCustomerResponse = (UpdateCustomerResponseSuccess | UpdateCustomerResponseError)
-
-export const getUpdateCustomerUrl = (id: string,) => {
-
-
-
-
-  return `${env.VITE_BACKEND_URL}/admin/customers/${id}`
-}
-
-/**
+export const getCustomer = (
+    id: string,
+ ) => {
+      return fetcher<CustomerResponse>(
+      {url: `/admin/customers/${id}`, method: 'GET'
+    },
+      );
+    }
+  /**
  * @summary Update a customer
  */
-export const updateCustomer = async (id: string,
-    updateCustomer?: UpdateCustomer, options?: RequestInit): Promise<UpdateCustomerResponse> => {
-
-  const res = await fetch(getUpdateCustomerUrl(id),
-  {
-    ...options,
-    method: 'PATCH',
-    headers: { 'Content-Type': 'application/json', ...options?.headers },
-    body: JSON.stringify(updateCustomer)
-  }
-)
-
-
-  const body = [204, 205, 304].includes(res.status) ? null : await res.text();
-
-  const data: UpdateCustomerResponse['data'] = body ? JSON.parse(body) : {}
-  return { data, status: res.status, headers: res.headers } as UpdateCustomerResponse
-}
-
-
-export type DeleteCustomerResponse200 = {
-  data: CustomerDeleteResponse
-  status: 200
-}
-
-export type DeleteCustomerResponse400 = {
-  data: void
-  status: 400
-}
-
-export type DeleteCustomerResponse404 = {
-  data: void
-  status: 404
-}
-
-export type DeleteCustomerResponseSuccess = (DeleteCustomerResponse200) & {
-  headers: Headers;
-};
-export type DeleteCustomerResponseError = (DeleteCustomerResponse400 | DeleteCustomerResponse404) & {
-  headers: Headers;
-};
-
-export type DeleteCustomerResponse = (DeleteCustomerResponseSuccess | DeleteCustomerResponseError)
-
-export const getDeleteCustomerUrl = (id: string,) => {
-
-
-
-
-  return `${env.VITE_BACKEND_URL}/admin/customers/${id}`
-}
-
-/**
+export const updateCustomer = (
+    id: string,
+    updateCustomer?: BodyType<UpdateCustomer>,
+ ) => {
+      return fetcher<CustomerResponse>(
+      {url: `/admin/customers/${id}`, method: 'PATCH',
+      headers: {'Content-Type': 'application/json', },
+      data: updateCustomer
+    },
+      );
+    }
+  /**
  * @summary Delete a customer
  */
-export const deleteCustomer = async (id: string, options?: RequestInit): Promise<DeleteCustomerResponse> => {
-
-  const res = await fetch(getDeleteCustomerUrl(id),
-  {
-    ...options,
-    method: 'DELETE'
-
-
-  }
-)
-
-
-  const body = [204, 205, 304].includes(res.status) ? null : await res.text();
-
-  const data: DeleteCustomerResponse['data'] = body ? JSON.parse(body) : {}
-  return { data, status: res.status, headers: res.headers } as DeleteCustomerResponse
-}
-
-
+export const deleteCustomer = (
+    id: string,
+ ) => {
+      return fetcher<CustomerDeleteResponse>(
+      {url: `/admin/customers/${id}`, method: 'DELETE'
+    },
+      );
+    }
+  export type ListCustomersResult = NonNullable<Awaited<ReturnType<typeof listCustomers>>>
+export type CreateCustomersResult = NonNullable<Awaited<ReturnType<typeof createCustomers>>>
+export type GetCustomerResult = NonNullable<Awaited<ReturnType<typeof getCustomer>>>
+export type UpdateCustomerResult = NonNullable<Awaited<ReturnType<typeof updateCustomer>>>
+export type DeleteCustomerResult = NonNullable<Awaited<ReturnType<typeof deleteCustomer>>>

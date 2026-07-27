@@ -4,10 +4,6 @@
  * Store API
  * OpenAPI spec version: 0.1.0
  */
-import {
-  env
-} from '../../../../env';
-
 import type {
   AddStoreCartLineItemBody,
   CreateStoreCartBody,
@@ -15,384 +11,105 @@ import type {
   UpdateStoreCartLineItemBody
 } from '../model';
 
-
-export type CreateStoreCartResponse200 = {
-  data: void
-  status: 200
-}
-
-export type CreateStoreCartResponse400 = {
-  data: void
-  status: 400
-}
-
-export type CreateStoreCartResponseSuccess = (CreateStoreCartResponse200) & {
-  headers: Headers;
-};
-export type CreateStoreCartResponseError = (CreateStoreCartResponse400) & {
-  headers: Headers;
-};
-
-export type CreateStoreCartResponse = (CreateStoreCartResponseSuccess | CreateStoreCartResponseError)
-
-export const getCreateStoreCartUrl = () => {
+import { fetcher } from '../../../fetcher.ts';
+import type { BodyType } from '../../../fetcher.ts';
 
 
 
-
-  return `${env.VITE_BACKEND_URL}/store/carts`
-}
-
-/**
+  /**
  * @summary Create a cart
  */
-export const createStoreCart = async (createStoreCartBody?: CreateStoreCartBody, options?: RequestInit): Promise<CreateStoreCartResponse> => {
-
-  const res = await fetch(getCreateStoreCartUrl(),
-  {
-    ...options,
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json', ...options?.headers },
-    body: JSON.stringify(createStoreCartBody)
-  }
-)
-
-
-  const body = [204, 205, 304].includes(res.status) ? null : await res.text();
-
-  const data: CreateStoreCartResponse['data'] = body ? JSON.parse(body) : undefined
-  return { data, status: res.status, headers: res.headers } as CreateStoreCartResponse
-}
-
-
-export type GetStoreCartResponse200 = {
-  data: void
-  status: 200
-}
-
-export type GetStoreCartResponse400 = {
-  data: void
-  status: 400
-}
-
-export type GetStoreCartResponse404 = {
-  data: void
-  status: 404
-}
-
-export type GetStoreCartResponseSuccess = (GetStoreCartResponse200) & {
-  headers: Headers;
-};
-export type GetStoreCartResponseError = (GetStoreCartResponse400 | GetStoreCartResponse404) & {
-  headers: Headers;
-};
-
-export type GetStoreCartResponse = (GetStoreCartResponseSuccess | GetStoreCartResponseError)
-
-export const getGetStoreCartUrl = (id: string,) => {
-
-
-
-
-  return `${env.VITE_BACKEND_URL}/store/carts/${id}`
-}
-
-/**
+export const createStoreCart = (
+    createStoreCartBody?: BodyType<CreateStoreCartBody>,
+ ) => {
+      return fetcher<void>(
+      {url: `/store/carts`, method: 'POST',
+      headers: {'Content-Type': 'application/json', },
+      data: createStoreCartBody
+    },
+      );
+    }
+  /**
  * @summary Retrieve a cart with line items
  */
-export const getStoreCart = async (id: string, options?: RequestInit): Promise<GetStoreCartResponse> => {
-
-  const res = await fetch(getGetStoreCartUrl(id),
-  {
-    ...options,
-    method: 'GET'
-
-
-  }
-)
-
-
-  const body = [204, 205, 304].includes(res.status) ? null : await res.text();
-
-  const data: GetStoreCartResponse['data'] = body ? JSON.parse(body) : undefined
-  return { data, status: res.status, headers: res.headers } as GetStoreCartResponse
-}
-
-
-export type UpdateStoreCartResponse200 = {
-  data: void
-  status: 200
-}
-
-export type UpdateStoreCartResponse400 = {
-  data: void
-  status: 400
-}
-
-export type UpdateStoreCartResponse404 = {
-  data: void
-  status: 404
-}
-
-export type UpdateStoreCartResponseSuccess = (UpdateStoreCartResponse200) & {
-  headers: Headers;
-};
-export type UpdateStoreCartResponseError = (UpdateStoreCartResponse400 | UpdateStoreCartResponse404) & {
-  headers: Headers;
-};
-
-export type UpdateStoreCartResponse = (UpdateStoreCartResponseSuccess | UpdateStoreCartResponseError)
-
-export const getUpdateStoreCartUrl = (id: string,) => {
-
-
-
-
-  return `${env.VITE_BACKEND_URL}/store/carts/${id}`
-}
-
-/**
+export const getStoreCart = (
+    id: string,
+ ) => {
+      return fetcher<void>(
+      {url: `/store/carts/${id}`, method: 'GET'
+    },
+      );
+    }
+  /**
  * @summary Update a cart
  */
-export const updateStoreCart = async (id: string,
-    updateStoreCartBody?: UpdateStoreCartBody, options?: RequestInit): Promise<UpdateStoreCartResponse> => {
-
-  const res = await fetch(getUpdateStoreCartUrl(id),
-  {
-    ...options,
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json', ...options?.headers },
-    body: JSON.stringify(updateStoreCartBody)
-  }
-)
-
-
-  const body = [204, 205, 304].includes(res.status) ? null : await res.text();
-
-  const data: UpdateStoreCartResponse['data'] = body ? JSON.parse(body) : undefined
-  return { data, status: res.status, headers: res.headers } as UpdateStoreCartResponse
-}
-
-
-export type AddStoreCartLineItemResponse200 = {
-  data: void
-  status: 200
-}
-
-export type AddStoreCartLineItemResponse400 = {
-  data: void
-  status: 400
-}
-
-export type AddStoreCartLineItemResponse404 = {
-  data: void
-  status: 404
-}
-
-export type AddStoreCartLineItemResponseSuccess = (AddStoreCartLineItemResponse200) & {
-  headers: Headers;
-};
-export type AddStoreCartLineItemResponseError = (AddStoreCartLineItemResponse400 | AddStoreCartLineItemResponse404) & {
-  headers: Headers;
-};
-
-export type AddStoreCartLineItemResponse = (AddStoreCartLineItemResponseSuccess | AddStoreCartLineItemResponseError)
-
-export const getAddStoreCartLineItemUrl = (id: string,) => {
-
-
-
-
-  return `${env.VITE_BACKEND_URL}/store/carts/${id}/line-items`
-}
-
-/**
+export const updateStoreCart = (
+    id: string,
+    updateStoreCartBody?: BodyType<UpdateStoreCartBody>,
+ ) => {
+      return fetcher<void>(
+      {url: `/store/carts/${id}`, method: 'POST',
+      headers: {'Content-Type': 'application/json', },
+      data: updateStoreCartBody
+    },
+      );
+    }
+  /**
  * @summary Add a line item to a cart
  */
-export const addStoreCartLineItem = async (id: string,
-    addStoreCartLineItemBody?: AddStoreCartLineItemBody, options?: RequestInit): Promise<AddStoreCartLineItemResponse> => {
-
-  const res = await fetch(getAddStoreCartLineItemUrl(id),
-  {
-    ...options,
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json', ...options?.headers },
-    body: JSON.stringify(addStoreCartLineItemBody)
-  }
-)
-
-
-  const body = [204, 205, 304].includes(res.status) ? null : await res.text();
-
-  const data: AddStoreCartLineItemResponse['data'] = body ? JSON.parse(body) : undefined
-  return { data, status: res.status, headers: res.headers } as AddStoreCartLineItemResponse
-}
-
-
-export type UpdateStoreCartLineItemResponse200 = {
-  data: void
-  status: 200
-}
-
-export type UpdateStoreCartLineItemResponse400 = {
-  data: void
-  status: 400
-}
-
-export type UpdateStoreCartLineItemResponse404 = {
-  data: void
-  status: 404
-}
-
-export type UpdateStoreCartLineItemResponseSuccess = (UpdateStoreCartLineItemResponse200) & {
-  headers: Headers;
-};
-export type UpdateStoreCartLineItemResponseError = (UpdateStoreCartLineItemResponse400 | UpdateStoreCartLineItemResponse404) & {
-  headers: Headers;
-};
-
-export type UpdateStoreCartLineItemResponse = (UpdateStoreCartLineItemResponseSuccess | UpdateStoreCartLineItemResponseError)
-
-export const getUpdateStoreCartLineItemUrl = (id: string,
-    lineId: string,) => {
-
-
-
-
-  return `${env.VITE_BACKEND_URL}/store/carts/${id}/line-items/${lineId}`
-}
-
-/**
+export const addStoreCartLineItem = (
+    id: string,
+    addStoreCartLineItemBody?: BodyType<AddStoreCartLineItemBody>,
+ ) => {
+      return fetcher<void>(
+      {url: `/store/carts/${id}/line-items`, method: 'POST',
+      headers: {'Content-Type': 'application/json', },
+      data: addStoreCartLineItemBody
+    },
+      );
+    }
+  /**
  * @summary Update a cart line item
  */
-export const updateStoreCartLineItem = async (id: string,
+export const updateStoreCartLineItem = (
+    id: string,
     lineId: string,
-    updateStoreCartLineItemBody?: UpdateStoreCartLineItemBody, options?: RequestInit): Promise<UpdateStoreCartLineItemResponse> => {
-
-  const res = await fetch(getUpdateStoreCartLineItemUrl(id,lineId),
-  {
-    ...options,
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json', ...options?.headers },
-    body: JSON.stringify(updateStoreCartLineItemBody)
-  }
-)
-
-
-  const body = [204, 205, 304].includes(res.status) ? null : await res.text();
-
-  const data: UpdateStoreCartLineItemResponse['data'] = body ? JSON.parse(body) : undefined
-  return { data, status: res.status, headers: res.headers } as UpdateStoreCartLineItemResponse
-}
-
-
-export type DeleteStoreCartLineItemResponse200 = {
-  data: void
-  status: 200
-}
-
-export type DeleteStoreCartLineItemResponse400 = {
-  data: void
-  status: 400
-}
-
-export type DeleteStoreCartLineItemResponse404 = {
-  data: void
-  status: 404
-}
-
-export type DeleteStoreCartLineItemResponseSuccess = (DeleteStoreCartLineItemResponse200) & {
-  headers: Headers;
-};
-export type DeleteStoreCartLineItemResponseError = (DeleteStoreCartLineItemResponse400 | DeleteStoreCartLineItemResponse404) & {
-  headers: Headers;
-};
-
-export type DeleteStoreCartLineItemResponse = (DeleteStoreCartLineItemResponseSuccess | DeleteStoreCartLineItemResponseError)
-
-export const getDeleteStoreCartLineItemUrl = (id: string,
-    lineId: string,) => {
-
-
-
-
-  return `${env.VITE_BACKEND_URL}/store/carts/${id}/line-items/${lineId}`
-}
-
-/**
+    updateStoreCartLineItemBody?: BodyType<UpdateStoreCartLineItemBody>,
+ ) => {
+      return fetcher<void>(
+      {url: `/store/carts/${id}/line-items/${lineId}`, method: 'POST',
+      headers: {'Content-Type': 'application/json', },
+      data: updateStoreCartLineItemBody
+    },
+      );
+    }
+  /**
  * @summary Remove a line item from a cart
  */
-export const deleteStoreCartLineItem = async (id: string,
-    lineId: string, options?: RequestInit): Promise<DeleteStoreCartLineItemResponse> => {
-
-  const res = await fetch(getDeleteStoreCartLineItemUrl(id,lineId),
-  {
-    ...options,
-    method: 'DELETE'
-
-
-  }
-)
-
-
-  const body = [204, 205, 304].includes(res.status) ? null : await res.text();
-
-  const data: DeleteStoreCartLineItemResponse['data'] = body ? JSON.parse(body) : undefined
-  return { data, status: res.status, headers: res.headers } as DeleteStoreCartLineItemResponse
-}
-
-
-export type CompleteStoreCartResponse200 = {
-  data: void
-  status: 200
-}
-
-export type CompleteStoreCartResponse400 = {
-  data: void
-  status: 400
-}
-
-export type CompleteStoreCartResponse404 = {
-  data: void
-  status: 404
-}
-
-export type CompleteStoreCartResponseSuccess = (CompleteStoreCartResponse200) & {
-  headers: Headers;
-};
-export type CompleteStoreCartResponseError = (CompleteStoreCartResponse400 | CompleteStoreCartResponse404) & {
-  headers: Headers;
-};
-
-export type CompleteStoreCartResponse = (CompleteStoreCartResponseSuccess | CompleteStoreCartResponseError)
-
-export const getCompleteStoreCartUrl = (id: string,) => {
-
-
-
-
-  return `${env.VITE_BACKEND_URL}/store/carts/${id}/complete`
-}
-
-/**
+export const deleteStoreCartLineItem = (
+    id: string,
+    lineId: string,
+ ) => {
+      return fetcher<void>(
+      {url: `/store/carts/${id}/line-items/${lineId}`, method: 'DELETE'
+    },
+      );
+    }
+  /**
  * @summary Complete a cart (authorize payment and mark as completed)
  */
-export const completeStoreCart = async (id: string, options?: RequestInit): Promise<CompleteStoreCartResponse> => {
-
-  const res = await fetch(getCompleteStoreCartUrl(id),
-  {
-    ...options,
-    method: 'POST'
-
-
-  }
-)
-
-
-  const body = [204, 205, 304].includes(res.status) ? null : await res.text();
-
-  const data: CompleteStoreCartResponse['data'] = body ? JSON.parse(body) : undefined
-  return { data, status: res.status, headers: res.headers } as CompleteStoreCartResponse
-}
-
-
+export const completeStoreCart = (
+    id: string,
+ ) => {
+      return fetcher<void>(
+      {url: `/store/carts/${id}/complete`, method: 'POST'
+    },
+      );
+    }
+  export type CreateStoreCartResult = NonNullable<Awaited<ReturnType<typeof createStoreCart>>>
+export type GetStoreCartResult = NonNullable<Awaited<ReturnType<typeof getStoreCart>>>
+export type UpdateStoreCartResult = NonNullable<Awaited<ReturnType<typeof updateStoreCart>>>
+export type AddStoreCartLineItemResult = NonNullable<Awaited<ReturnType<typeof addStoreCartLineItem>>>
+export type UpdateStoreCartLineItemResult = NonNullable<Awaited<ReturnType<typeof updateStoreCartLineItem>>>
+export type DeleteStoreCartLineItemResult = NonNullable<Awaited<ReturnType<typeof deleteStoreCartLineItem>>>
+export type CompleteStoreCartResult = NonNullable<Awaited<ReturnType<typeof completeStoreCart>>>
