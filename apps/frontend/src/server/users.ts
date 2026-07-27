@@ -1,6 +1,6 @@
+import { CreateUser, IdParams, UpdateUser, UserListParams } from '@proteus/http-schemas'
 import { createServerFn } from '@tanstack/react-start'
 import { apiCall, userByIdApi, usersApi } from 'backend/api'
-import { CreateUser, IdParams, UpdateUser, UserListParams } from 'backend/validators'
 
 export const listUsers = createServerFn({ method: 'GET' })
   .validator(UserListParams)

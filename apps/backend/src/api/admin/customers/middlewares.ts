@@ -1,11 +1,12 @@
-import { IdParams } from '../../../core/http-schemas/common.js'
-import { CreateCustomers, UpdateCustomer } from '../../../core/http-schemas/customer/payloads.js'
-import { CustomerListParams } from '../../../core/http-schemas/customer/queries.js'
 import {
+  CreateCustomers,
   CustomerDeleteResponse,
+  CustomerListParams,
   CustomerListResponse,
   CustomerResponse,
-} from '../../../core/http-schemas/customer/responses.js'
+  IdParams,
+  UpdateCustomer,
+} from '@proteus/http-schemas'
 import type { MiddlewareRoute } from '../../../core/middleware/types.js'
 import { Tags } from '../../../core/middleware/types.js'
 

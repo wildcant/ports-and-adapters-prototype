@@ -1,4 +1,4 @@
-import type { CreatePaymentCollectionBody } from '@core/http-schemas/payment/payloads.js'
+import type { CreatePaymentCollectionBody } from '@proteus/http-schemas'
 import { createPaymentCollectionForCartWorkflow } from '@workflows/payment/create-payment-collection-for-cart.js'
 import type { HttpRequest, HttpResult } from '../../../server/ports.js'
 

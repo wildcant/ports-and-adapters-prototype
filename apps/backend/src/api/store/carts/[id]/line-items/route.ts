@@ -1,7 +1,6 @@
-import type { AddLineItemBody } from '@core/http-schemas/cart/payloads.js'
-import type { IdParams } from '@core/http-schemas/common.js'
 import type { ICartModuleService } from '@core/types/index.js'
 import { Modules } from '@core/utils/index.js'
+import type { AddLineItemBody, IdParams } from '@proteus/http-schemas'
 import type { HttpRequest, HttpResult } from '../../../../../server/ports.js'
 
 type Input = { params: IdParams; body: AddLineItemBody }

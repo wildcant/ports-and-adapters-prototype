@@ -1,7 +1,6 @@
-import type { IdParams } from '@core/http-schemas/common.js'
-import type { UpdateCustomerBody } from '@core/http-schemas/customer/payloads.js'
 import type { ICustomerModuleService } from '@core/types/index.js'
 import { Modules } from '@core/utils/index.js'
+import type { IdParams, UpdateCustomerBody } from '@proteus/http-schemas'
 import type { HttpRequest, HttpResult } from '../../../../server/ports.js'
 
 type RetrieveCustomerInput = { params: IdParams }

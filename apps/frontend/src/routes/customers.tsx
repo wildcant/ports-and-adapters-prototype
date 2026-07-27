@@ -74,8 +74,8 @@ function CustomersPage() {
         <p className="island-kicker mb-3">Customer Module</p>
         <h1 className="display-title mb-5 text-4xl font-bold tracking-tight text-[var(--sea-ink)]">Customers</h1>
         <p className="mb-6 text-[var(--sea-ink-soft)]">
-          Using the generated <code className="rounded bg-black/5 px-1.5 py-0.5 text-sm">fetch</code> client — calls
-          the JSON API over HTTP
+          Using the generated <code className="rounded bg-black/5 px-1.5 py-0.5 text-sm">fetch</code> client — calls the
+          JSON API over HTTP
         </p>
 
         <form onSubmit={addCustomer} className="mb-8 flex flex-wrap gap-3">

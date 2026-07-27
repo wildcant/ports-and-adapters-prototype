@@ -6,6 +6,7 @@
     "module": "ESNext",
     "paths": {
       "#/*": ["./src/*"],
+      // Resolves @core/* in backend files reached via "backend/api" imports
       "@core/*": ["../backend/src/core/*"]
     },
     "lib": ["ES2022", "DOM", "DOM.Iterable"],

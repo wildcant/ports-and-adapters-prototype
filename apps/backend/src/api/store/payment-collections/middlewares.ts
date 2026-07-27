@@ -1,5 +1,4 @@
-import { IdParams } from '../../../core/http-schemas/common.js'
-import { CreatePaymentCollection, CreatePaymentSession } from '../../../core/http-schemas/payment/payloads.js'
+import { CreatePaymentCollection, CreatePaymentSession, IdParams } from '@proteus/http-schemas'
 import type { MiddlewareRoute } from '../../../core/middleware/types.js'
 import { Tags } from '../../../core/middleware/types.js'
 

@@ -1,6 +1,6 @@
-import type { LineIdParams, UpdateLineItemBody } from '@core/http-schemas/cart/payloads.js'
 import type { ICartModuleService } from '@core/types/index.js'
 import { Modules } from '@core/utils/index.js'
+import type { LineIdParams, UpdateLineItemBody } from '@proteus/http-schemas'
 import type { HttpRequest, HttpResult } from '../../../../../../server/ports.js'
 
 type PostInput = { params: LineIdParams; body: UpdateLineItemBody }

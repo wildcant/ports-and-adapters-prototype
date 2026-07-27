@@ -1,11 +1,4 @@
-import {
-  AddLineItem,
-  CreateCart,
-  LineIdParams,
-  UpdateCart,
-  UpdateLineItem,
-} from '../../../core/http-schemas/cart/payloads.js'
-import { IdParams } from '../../../core/http-schemas/common.js'
+import { AddLineItem, CreateCart, IdParams, LineIdParams, UpdateCart, UpdateLineItem } from '@proteus/http-schemas'
 import type { MiddlewareRoute } from '../../../core/middleware/types.js'
 import { Tags } from '../../../core/middleware/types.js'
 

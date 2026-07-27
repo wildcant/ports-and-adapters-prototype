@@ -1,7 +1,6 @@
-import type { IdParams } from '@core/http-schemas/common.js'
-import type { CapturePaymentBody } from '@core/http-schemas/payment/payloads.js'
 import type { IPaymentModuleService } from '@core/types/index.js'
 import { Modules } from '@core/utils/index.js'
+import type { CapturePaymentBody, IdParams } from '@proteus/http-schemas'
 import type { HttpRequest, HttpResult } from '../../../../../server/ports.js'
 
 type Input = { params: IdParams; body: CapturePaymentBody }

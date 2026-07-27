@@ -1,7 +1,6 @@
-import type { CreateUserBody } from '@core/http-schemas/user/payloads.js'
-import type { UserListQuery } from '@core/http-schemas/user/queries.js'
 import type { IUserModuleService } from '@core/types/index.js'
 import { Modules } from '@core/utils/index.js'
+import type { CreateUserBody, UserListQuery } from '@proteus/http-schemas'
 import type { HttpRequest, HttpResult } from '../../../server/ports.js'
 
 type ListUsersInput = { query: UserListQuery }

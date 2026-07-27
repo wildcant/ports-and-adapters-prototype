@@ -1,4 +1,3 @@
-import './setup.js'
 import { OpenAPIRegistry, OpenApiGeneratorV31 } from '@asteasolutions/zod-to-openapi'
 
 export function createRegistry() {

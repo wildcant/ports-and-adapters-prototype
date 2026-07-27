@@ -1,7 +1,6 @@
-import type { IdParams } from '@core/http-schemas/common.js'
-import type { UpdateUserBody } from '@core/http-schemas/user/payloads.js'
 import type { IUserModuleService } from '@core/types/index.js'
 import { Modules } from '@core/utils/index.js'
+import type { IdParams, UpdateUserBody } from '@proteus/http-schemas'
 import type { HttpRequest, HttpResult } from '../../../../server/ports.js'
 
 type RetrieveUserInput = { params: IdParams }

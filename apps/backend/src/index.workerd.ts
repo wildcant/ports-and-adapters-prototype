@@ -55,10 +55,10 @@ server.all('*', async (req, res) => {
   } as RequestInit)
 
   const handle = () => app.fetch(request)
-  const response = req.method === 'OPTIONS'
-    ? await handle()
-    : await dbProvider.withConnection(handle)
-  response.headers.forEach((value, key) => { res.setHeader(key, value) })
+  const response = req.method === 'OPTIONS' ? await handle() : await dbProvider.withConnection(handle)
+  response.headers.forEach((value, key) => {
+    res.setHeader(key, value)
+  })
 
   if (response.status === 204) {
     res.status(204).end()

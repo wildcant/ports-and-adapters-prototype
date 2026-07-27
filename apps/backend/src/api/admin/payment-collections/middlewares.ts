@@ -1,4 +1,4 @@
-import { IdParams } from '../../../core/http-schemas/common.js'
+import { IdParams } from '@proteus/http-schemas'
 import type { MiddlewareRoute } from '../../../core/middleware/types.js'
 import { Tags } from '../../../core/middleware/types.js'
 

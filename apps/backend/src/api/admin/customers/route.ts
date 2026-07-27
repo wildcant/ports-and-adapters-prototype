@@ -1,7 +1,6 @@
-import type { CreateCustomersBody } from '@core/http-schemas/customer/payloads.js'
-import type { CustomerListQuery } from '@core/http-schemas/customer/queries.js'
 import type { ICustomerModuleService } from '@core/types/index.js'
 import { Modules } from '@core/utils/index.js'
+import type { CreateCustomersBody, CustomerListQuery } from '@proteus/http-schemas'
 import type { HttpRequest, HttpResult } from '../../../server/ports.js'
 
 type ListCustomersInput = { query: CustomerListQuery }

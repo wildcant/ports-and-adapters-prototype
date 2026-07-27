@@ -1,0 +1,12 @@
+{
+  "name": "@proteus/http-schemas",
+  "private": true,
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "dependencies": {
+    "@asteasolutions/zod-to-openapi": "^8.5.0",
+    "zod": "^4.4.3"
+  }
+}

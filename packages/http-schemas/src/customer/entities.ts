@@ -1,4 +1,3 @@
-import '../../openapi/setup.js'
 import { z } from 'zod'
 
 export const Customer = z

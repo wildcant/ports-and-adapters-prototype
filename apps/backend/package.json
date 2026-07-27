@@ -3,8 +3,7 @@
   "private": true,
   "type": "module",
   "exports": {
-    "./api": "./src/api/index.ts",
-    "./validators": "./src/core/http-schemas/index.ts"
+    "./api": "./src/api/index.ts"
   },
   "scripts": {
     "dev": "dotenvx run -f ../../.env.local -- tsx src/index.ts",
@@ -30,6 +29,7 @@
   },
   "dependencies": {
     "@asteasolutions/zod-to-openapi": "^8.5.0",
+    "@proteus/http-schemas": "*",
     "@dotenvx/dotenvx": "^2.14.0",
     "@hono/node-server": "^2.0.0",
     "awilix": "^12.0.0",
