@@ -1,10 +1,15 @@
-- ci workflow to handle deployment!
+- move http schemas to a shared package so form can import them and use it for forms.
+- add react hook form and tanstack query
 - check script no process.env usage out of env.ts
 - fulfillment module (port) and providers (adapters)
-- migration order in prod (first modules and then link modules, are there edge cases?).
 - deploy to supabase and coudflare workers.
 - investigate how to supabase as event bus (supabase-event-bus.md) (cloudflare queues)
 ![event](./subscriber-example.png)
 - cron
 ![cron](./cron-example.png)
+
+Future TODOs
 - composing workflows
+- ci workflow to handle deployment!
+- migration order in prod (first modules and then link modules, are there edge cases?).
+- review the details on apps/backend/src/index.workerd.ts and apps/backend/src/index.workerd.ts

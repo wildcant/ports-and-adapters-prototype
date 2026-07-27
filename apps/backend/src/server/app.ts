@@ -9,6 +9,7 @@
 import { errorHandler } from '../core/errors/index.js'
 import type { Logger } from '../core/types/logger.js'
 import { ContainerRegistrationKeys } from '../core/utils/index.js'
+import { env } from '../env.js'
 import type { App, CreateApp, RouteHandler } from './ports.js'
 
 type Route = {
@@ -44,7 +45,7 @@ export const createApp: CreateApp = ({ container }) => {
       const url = new URL(request.url)
       const method = request.method.toUpperCase()
       const corsHeaders = {
-        'Access-Control-Allow-Origin': '*',
+        'Access-Control-Allow-Origin': env.CORS_ORIGIN,
         'Access-Control-Allow-Methods': 'GET, POST, PUT, PATCH, DELETE, OPTIONS',
         'Access-Control-Allow-Headers': 'Content-Type',
       }

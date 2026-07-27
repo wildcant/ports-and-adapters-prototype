@@ -4,6 +4,10 @@
  * Store API
  * OpenAPI spec version: 0.1.0
  */
+import {
+  env
+} from '../../../../env';
+
 import type {
   AddStoreCartLineItemBody,
   CreateStoreCartBody,
@@ -36,7 +40,7 @@ export const getCreateStoreCartUrl = () => {
 
 
 
-  return `http://localhost:3000/store/carts`
+  return `${env.VITE_BACKEND_URL}/store/carts`
 }
 
 /**
@@ -90,7 +94,7 @@ export const getGetStoreCartUrl = (id: string,) => {
 
 
 
-  return `http://localhost:3000/store/carts/${id}`
+  return `${env.VITE_BACKEND_URL}/store/carts/${id}`
 }
 
 /**
@@ -144,7 +148,7 @@ export const getUpdateStoreCartUrl = (id: string,) => {
 
 
 
-  return `http://localhost:3000/store/carts/${id}`
+  return `${env.VITE_BACKEND_URL}/store/carts/${id}`
 }
 
 /**
@@ -199,7 +203,7 @@ export const getAddStoreCartLineItemUrl = (id: string,) => {
 
 
 
-  return `http://localhost:3000/store/carts/${id}/line-items`
+  return `${env.VITE_BACKEND_URL}/store/carts/${id}/line-items`
 }
 
 /**
@@ -255,7 +259,7 @@ export const getUpdateStoreCartLineItemUrl = (id: string,
 
 
 
-  return `http://localhost:3000/store/carts/${id}/line-items/${lineId}`
+  return `${env.VITE_BACKEND_URL}/store/carts/${id}/line-items/${lineId}`
 }
 
 /**
@@ -312,7 +316,7 @@ export const getDeleteStoreCartLineItemUrl = (id: string,
 
 
 
-  return `http://localhost:3000/store/carts/${id}/line-items/${lineId}`
+  return `${env.VITE_BACKEND_URL}/store/carts/${id}/line-items/${lineId}`
 }
 
 /**
@@ -367,7 +371,7 @@ export const getCompleteStoreCartUrl = (id: string,) => {
 
 
 
-  return `http://localhost:3000/store/carts/${id}/complete`
+  return `${env.VITE_BACKEND_URL}/store/carts/${id}/complete`
 }
 
 /**

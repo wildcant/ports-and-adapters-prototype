@@ -6,13 +6,15 @@
     "apps/frontend"
   ],
   "scripts": {
-    "setup": "npm install && npm run pull-keys",
+    "setup": "npm install && npm run pull-keys && npm run gen:workerd-env",
+    "gen:workerd-env": "dotenvx get -f .env.local --format eval 2>/dev/null > apps/backend/.env.workerd",
     "lint": "biome lint .",
     "format": "biome format --write .",
     "check": "biome check . && npm run --workspace=backend check:deps",
     "openapi:generate": "npm run --workspace=backend openapi:dump:offline && npm run --workspace=frontend openapi:client",
     "typecheck": "npm run --workspace=backend typecheck && npm run --workspace=frontend typecheck",
-    "sync-secrets": "./scripts/sync-secrets.sh proteus",
+    "sync-secrets:backend": "./scripts/sync-secrets.sh proteus-backend",
+    "sync-secrets:frontend": "./scripts/sync-secrets.sh proteus",
     "pull-keys": "npx wrangler r2 object get dotenv-keys/.env.keys --file=.env.keys --remote"
   },
   "devDependencies": {

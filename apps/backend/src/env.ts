@@ -10,6 +10,7 @@ const envSchema = z.object({
   LOG_FILE: z.string().default(''),
   STRIPE_SECRET_KEY: z.string(),
   STRIPE_WEBHOOK_SECRET: z.string(),
+  CORS_ORIGIN: z.url(),
 })
 
 function createEnv() {

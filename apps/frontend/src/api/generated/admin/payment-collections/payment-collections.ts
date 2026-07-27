@@ -4,6 +4,10 @@
  * Admin API
  * OpenAPI spec version: 0.1.0
  */
+import {
+  env
+} from '../../../../env';
+
 
 export type GetPaymentCollectionResponse200 = {
   data: void
@@ -34,7 +38,7 @@ export const getGetPaymentCollectionUrl = (id: string,) => {
 
 
 
-  return `http://localhost:3000/admin/payment-collections/${id}`
+  return `${env.VITE_BACKEND_URL}/admin/payment-collections/${id}`
 }
 
 /**
@@ -88,7 +92,7 @@ export const getMarkPaymentCollectionAsPaidUrl = (id: string,) => {
 
 
 
-  return `http://localhost:3000/admin/payment-collections/${id}/mark-as-paid`
+  return `${env.VITE_BACKEND_URL}/admin/payment-collections/${id}/mark-as-paid`
 }
 
 /**

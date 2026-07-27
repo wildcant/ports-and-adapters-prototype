@@ -4,6 +4,10 @@
  * Store API
  * OpenAPI spec version: 0.1.0
  */
+import {
+  env
+} from '../../../../env';
+
 import type {
   CreateStorePaymentCollectionBody,
   CreateStorePaymentSessionBody
@@ -34,7 +38,7 @@ export const getCreateStorePaymentCollectionUrl = () => {
 
 
 
-  return `http://localhost:3000/store/payment-collections`
+  return `${env.VITE_BACKEND_URL}/store/payment-collections`
 }
 
 /**
@@ -88,7 +92,7 @@ export const getCreateStorePaymentSessionUrl = (id: string,) => {
 
 
 
-  return `http://localhost:3000/store/payment-collections/${id}/payment-sessions`
+  return `${env.VITE_BACKEND_URL}/store/payment-collections/${id}/payment-sessions`
 }
 
 /**

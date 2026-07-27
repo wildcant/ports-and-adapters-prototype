@@ -4,6 +4,10 @@
  * Admin API
  * OpenAPI spec version: 0.1.0
  */
+import {
+  env
+} from '../../../../env';
+
 import type {
   CreateRefundReasonBody
 } from '../model';
@@ -33,7 +37,7 @@ export const getListRefundReasonsUrl = () => {
 
 
 
-  return `http://localhost:3000/admin/refund-reasons`
+  return `${env.VITE_BACKEND_URL}/admin/refund-reasons`
 }
 
 /**
@@ -82,7 +86,7 @@ export const getCreateRefundReasonUrl = () => {
 
 
 
-  return `http://localhost:3000/admin/refund-reasons`
+  return `${env.VITE_BACKEND_URL}/admin/refund-reasons`
 }
 
 /**
@@ -136,7 +140,7 @@ export const getDeleteRefundReasonUrl = (id: string,) => {
 
 
 
-  return `http://localhost:3000/admin/refund-reasons/${id}`
+  return `${env.VITE_BACKEND_URL}/admin/refund-reasons/${id}`
 }
 
 /**

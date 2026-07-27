@@ -11,6 +11,7 @@ frontend/src/api/generated/
 
 tmp
 .wrangler
+.env.workerd
 
 # Supabase CLI local state
 **/supabase/.branches

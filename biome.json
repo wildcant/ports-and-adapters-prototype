@@ -11,7 +11,8 @@
       "**",
       "!apps/frontend/src/routeTree.gen.ts",
       "!apps/frontend/src/api/generated",
-      "!apps/backend/deps-analyzer/dependency-graph.svg"
+      "!apps/backend/deps-analyzer/dependency-graph.svg",
+      "!apps/backend/worker-configuration.d.ts"
     ]
   },
   "formatter": {

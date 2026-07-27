@@ -8,6 +8,8 @@
   },
   "scripts": {
     "dev": "dotenvx run -f ../../.env.local -- tsx src/index.ts",
+    "dev:workerd": "wrangler dev --config wrangler.jsonc --env-file .env.workerd",
+    "deploy": "wrangler deploy --config wrangler.jsonc",
     "start": "dotenvx run -f ../../.env -- tsx src/index.ts",
     "test": "dotenvx run -f ../../.env.test -- vitest run",
     "typecheck": "tsc --noEmit",
@@ -49,6 +51,7 @@
     "supabase": "^2.109.1",
     "tsx": "^4.19.0",
     "typescript": "^7.0.0",
-    "vitest": "^4.1.10"
+    "vitest": "^4.1.10",
+    "wrangler": "^4.114.0"
   }
 }

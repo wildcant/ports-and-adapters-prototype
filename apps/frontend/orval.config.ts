@@ -12,7 +12,10 @@ export default defineConfig({
       schemas: 'src/api/generated/admin/model',
       client: 'fetch',
       mode: 'tags-split',
-      baseUrl: 'http://localhost:3000',
+      baseUrl: {
+        runtime: 'env.VITE_BACKEND_URL',
+        imports: [{ name: 'env', importPath: '../../../env' }],
+      },
       clean: true,
       override: {
         operationName: (operation) => {
@@ -31,7 +34,10 @@ export default defineConfig({
       schemas: 'src/api/generated/store/model',
       client: 'fetch',
       mode: 'tags-split',
-      baseUrl: 'http://localhost:3000',
+      baseUrl: {
+        runtime: 'env.VITE_BACKEND_URL',
+        imports: [{ name: 'env', importPath: '../../../env' }],
+      },
       clean: true,
       override: {
         operationName: (operation) => {

@@ -4,6 +4,10 @@
  * Admin API
  * OpenAPI spec version: 0.1.0
  */
+import {
+  env
+} from '../../../../env';
+
 import type {
   CapturePaymentBody,
   RefundPaymentBody
@@ -39,7 +43,7 @@ export const getGetPaymentUrl = (id: string,) => {
 
 
 
-  return `http://localhost:3000/admin/payments/${id}`
+  return `${env.VITE_BACKEND_URL}/admin/payments/${id}`
 }
 
 /**
@@ -88,7 +92,7 @@ export const getListAdminPaymentProvidersUrl = () => {
 
 
 
-  return `http://localhost:3000/admin/payments/payment-providers`
+  return `${env.VITE_BACKEND_URL}/admin/payments/payment-providers`
 }
 
 /**
@@ -142,7 +146,7 @@ export const getCapturePaymentUrl = (id: string,) => {
 
 
 
-  return `http://localhost:3000/admin/payments/${id}/capture`
+  return `${env.VITE_BACKEND_URL}/admin/payments/${id}/capture`
 }
 
 /**
@@ -197,7 +201,7 @@ export const getRefundPaymentUrl = (id: string,) => {
 
 
 
-  return `http://localhost:3000/admin/payments/${id}/refund`
+  return `${env.VITE_BACKEND_URL}/admin/payments/${id}/refund`
 }
 
 /**

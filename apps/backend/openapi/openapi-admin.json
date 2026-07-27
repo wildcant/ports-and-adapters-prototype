@@ -30,12 +30,7 @@
             }
           }
         },
-        "required": [
-          "count",
-          "offset",
-          "limit",
-          "customers"
-        ]
+        "required": ["count", "offset", "limit", "customers"]
       },
       "Customer": {
         "type": "object",
@@ -59,21 +54,10 @@
             "type": "string"
           },
           "deletedAt": {
-            "type": [
-              "string",
-              "null"
-            ]
+            "type": ["string", "null"]
           }
         },
-        "required": [
-          "id",
-          "firstName",
-          "lastName",
-          "email",
-          "createdAt",
-          "updatedAt",
-          "deletedAt"
-        ]
+        "required": ["id", "firstName", "lastName", "email", "createdAt", "updatedAt", "deletedAt"]
       },
       "CreateCustomer": {
         "type": "object",
@@ -91,11 +75,7 @@
             "format": "email"
           }
         },
-        "required": [
-          "firstName",
-          "lastName",
-          "email"
-        ]
+        "required": ["firstName", "lastName", "email"]
       },
       "CustomerResponse": {
         "type": "object",
@@ -104,9 +84,7 @@
             "$ref": "#/components/schemas/Customer"
           }
         },
-        "required": [
-          "customer"
-        ]
+        "required": ["customer"]
       },
       "UpdateCustomer": {
         "type": "object",
@@ -135,10 +113,7 @@
             "type": "boolean"
           }
         },
-        "required": [
-          "id",
-          "deleted"
-        ]
+        "required": ["id", "deleted"]
       },
       "UserListResponse": {
         "type": "object",
@@ -159,12 +134,7 @@
             }
           }
         },
-        "required": [
-          "count",
-          "offset",
-          "limit",
-          "users"
-        ]
+        "required": ["count", "offset", "limit", "users"]
       },
       "User": {
         "type": "object",
@@ -185,20 +155,10 @@
             "type": "string"
           },
           "deletedAt": {
-            "type": [
-              "string",
-              "null"
-            ]
+            "type": ["string", "null"]
           }
         },
-        "required": [
-          "id",
-          "name",
-          "email",
-          "createdAt",
-          "updatedAt",
-          "deletedAt"
-        ]
+        "required": ["id", "name", "email", "createdAt", "updatedAt", "deletedAt"]
       },
       "UserResponse": {
         "type": "object",
@@ -207,9 +167,7 @@
             "$ref": "#/components/schemas/User"
           }
         },
-        "required": [
-          "user"
-        ]
+        "required": ["user"]
       },
       "CreateUser": {
         "type": "object",
@@ -223,10 +181,7 @@
             "format": "email"
           }
         },
-        "required": [
-          "name",
-          "email"
-        ]
+        "required": ["name", "email"]
       },
       "UpdateUser": {
         "type": "object",
@@ -251,10 +206,7 @@
             "type": "boolean"
           }
         },
-        "required": [
-          "id",
-          "deleted"
-        ]
+        "required": ["id", "deleted"]
       }
     },
     "parameters": {}
@@ -264,16 +216,11 @@
       "get": {
         "operationId": "listCustomers",
         "summary": "List customers",
-        "tags": [
-          "Customers"
-        ],
+        "tags": ["Customers"],
         "parameters": [
           {
             "schema": {
-              "type": [
-                "integer",
-                "null"
-              ],
+              "type": ["integer", "null"],
               "minimum": 0,
               "default": 0
             },
@@ -346,9 +293,7 @@
       "post": {
         "operationId": "createCustomers",
         "summary": "Create customers",
-        "tags": [
-          "Customers"
-        ],
+        "tags": ["Customers"],
         "requestBody": {
           "content": {
             "application/json": {
@@ -382,9 +327,7 @@
       "get": {
         "operationId": "getCustomer",
         "summary": "Retrieve a customer",
-        "tags": [
-          "Customers"
-        ],
+        "tags": ["Customers"],
         "parameters": [
           {
             "schema": {
@@ -418,9 +361,7 @@
       "patch": {
         "operationId": "updateCustomer",
         "summary": "Update a customer",
-        "tags": [
-          "Customers"
-        ],
+        "tags": ["Customers"],
         "parameters": [
           {
             "schema": {
@@ -463,9 +404,7 @@
       "delete": {
         "operationId": "deleteCustomer",
         "summary": "Delete a customer",
-        "tags": [
-          "Customers"
-        ],
+        "tags": ["Customers"],
         "parameters": [
           {
             "schema": {
@@ -501,9 +440,7 @@
       "get": {
         "operationId": "getPaymentCollection",
         "summary": "Retrieve a payment collection",
-        "tags": [
-          "Payment Collections"
-        ],
+        "tags": ["Payment Collections"],
         "parameters": [
           {
             "schema": {
@@ -532,9 +469,7 @@
       "post": {
         "operationId": "markPaymentCollectionAsPaid",
         "summary": "Mark a payment collection as paid",
-        "tags": [
-          "Payment Collections"
-        ],
+        "tags": ["Payment Collections"],
         "parameters": [
           {
             "schema": {
@@ -563,9 +498,7 @@
       "get": {
         "operationId": "getPayment",
         "summary": "Retrieve a payment",
-        "tags": [
-          "Payments"
-        ],
+        "tags": ["Payments"],
         "parameters": [
           {
             "schema": {
@@ -594,9 +527,7 @@
       "get": {
         "operationId": "listAdminPaymentProviders",
         "summary": "List payment providers",
-        "tags": [
-          "Payments"
-        ],
+        "tags": ["Payments"],
         "responses": {
           "200": {
             "description": "Successful response"
@@ -611,9 +542,7 @@
       "post": {
         "operationId": "capturePayment",
         "summary": "Capture a payment",
-        "tags": [
-          "Payments"
-        ],
+        "tags": ["Payments"],
         "parameters": [
           {
             "schema": {
@@ -657,9 +586,7 @@
       "post": {
         "operationId": "refundPayment",
         "summary": "Refund a payment",
-        "tags": [
-          "Payments"
-        ],
+        "tags": ["Payments"],
         "parameters": [
           {
             "schema": {
@@ -710,9 +637,7 @@
       "get": {
         "operationId": "listRefundReasons",
         "summary": "List refund reasons",
-        "tags": [
-          "Refund Reasons"
-        ],
+        "tags": ["Refund Reasons"],
         "responses": {
           "200": {
             "description": "Successful response"
@@ -725,9 +650,7 @@
       "post": {
         "operationId": "createRefundReason",
         "summary": "Create a refund reason",
-        "tags": [
-          "Refund Reasons"
-        ],
+        "tags": ["Refund Reasons"],
         "requestBody": {
           "content": {
             "application/json": {
@@ -746,10 +669,7 @@
                     "type": "string"
                   }
                 },
-                "required": [
-                  "label",
-                  "code"
-                ]
+                "required": ["label", "code"]
               }
             }
           }
@@ -768,9 +688,7 @@
       "delete": {
         "operationId": "deleteRefundReason",
         "summary": "Delete a refund reason",
-        "tags": [
-          "Refund Reasons"
-        ],
+        "tags": ["Refund Reasons"],
         "parameters": [
           {
             "schema": {
@@ -799,16 +717,11 @@
       "get": {
         "operationId": "listUsers",
         "summary": "List users",
-        "tags": [
-          "Users"
-        ],
+        "tags": ["Users"],
         "parameters": [
           {
             "schema": {
-              "type": [
-                "integer",
-                "null"
-              ],
+              "type": ["integer", "null"],
               "minimum": 0,
               "default": 0
             },
@@ -881,9 +794,7 @@
       "post": {
         "operationId": "createUser",
         "summary": "Create a user",
-        "tags": [
-          "Users"
-        ],
+        "tags": ["Users"],
         "requestBody": {
           "content": {
             "application/json": {
@@ -914,9 +825,7 @@
       "get": {
         "operationId": "getUser",
         "summary": "Retrieve a user",
-        "tags": [
-          "Users"
-        ],
+        "tags": ["Users"],
         "parameters": [
           {
             "schema": {
@@ -950,9 +859,7 @@
       "patch": {
         "operationId": "updateUser",
         "summary": "Update a user",
-        "tags": [
-          "Users"
-        ],
+        "tags": ["Users"],
         "parameters": [
           {
             "schema": {
@@ -995,9 +902,7 @@
       "delete": {
         "operationId": "deleteUser",
         "summary": "Delete a user",
-        "tags": [
-          "Users"
-        ],
+        "tags": ["Users"],
         "parameters": [
           {
             "schema": {

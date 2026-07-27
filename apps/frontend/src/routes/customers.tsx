@@ -1,0 +1,215 @@
+import { createFileRoute } from '@tanstack/react-router'
+import { useState } from 'react'
+import {
+  createCustomers,
+  deleteCustomer,
+  listCustomers,
+  updateCustomer,
+} from '#/api/generated/admin/customers/customers'
+import type { Customer, CustomerListResponse } from '#/api/generated/admin/model'
+
+const PAGE_SIZE = 5
+
+function unwrap(res: { data: CustomerListResponse | void; status: number }): CustomerListResponse {
+  if (res.status !== 200 || !res.data) throw new Error(`Request failed with status ${res.status}`)
+  return res.data
+}
+
+export const Route = createFileRoute('/customers')({
+  component: CustomersPage,
+  loader: () => listCustomers({ limit: PAGE_SIZE, offset: 0 }).then(unwrap),
+})
+
+function CustomersPage() {
+  const initialData = Route.useLoaderData()
+  const [{ customers, count, offset, limit }, setData] = useState(initialData)
+  const [firstName, setFirstName] = useState('')
+  const [lastName, setLastName] = useState('')
+  const [email, setEmail] = useState('')
+  const [editingId, setEditingId] = useState<string | null>(null)
+  const [editFirstName, setEditFirstName] = useState('')
+  const [editLastName, setEditLastName] = useState('')
+  const [editEmail, setEditEmail] = useState('')
+
+  async function fetchPage(newOffset: number) {
+    setData(unwrap(await listCustomers({ limit: PAGE_SIZE, offset: newOffset })))
+  }
+
+  async function refresh() {
+    setData(unwrap(await listCustomers({ limit, offset })))
+  }
+
+  async function addCustomer(e: React.FormEvent) {
+    e.preventDefault()
+    await createCustomers([{ firstName, lastName, email }])
+    setFirstName('')
+    setLastName('')
+    setEmail('')
+    await refresh()
+  }
+
+  function startEditing(customer: Customer) {
+    setEditingId(customer.id)
+    setEditFirstName(customer.firstName)
+    setEditLastName(customer.lastName)
+    setEditEmail(customer.email)
+  }
+
+  async function saveEdit(e: React.FormEvent) {
+    e.preventDefault()
+    if (!editingId) return
+    await updateCustomer(editingId, { firstName: editFirstName, lastName: editLastName, email: editEmail })
+    setEditingId(null)
+    await refresh()
+  }
+
+  async function handleDelete(id: string) {
+    await deleteCustomer(id)
+    await refresh()
+  }
+
+  return (
+    <main className="page-wrap px-4 pb-8 pt-14">
+      <section className="island-shell rise-in rounded-[2rem] px-6 py-10 sm:px-10 sm:py-14">
+        <p className="island-kicker mb-3">Customer Module</p>
+        <h1 className="display-title mb-5 text-4xl font-bold tracking-tight text-[var(--sea-ink)]">Customers</h1>
+        <p className="mb-6 text-[var(--sea-ink-soft)]">
+          Using the generated <code className="rounded bg-black/5 px-1.5 py-0.5 text-sm">fetch</code> client — calls
+          the JSON API over HTTP
+        </p>
+
+        <form onSubmit={addCustomer} className="mb-8 flex flex-wrap gap-3">
+          <input
+            type="text"
+            placeholder="First name"
+            value={firstName}
+            onChange={(e) => setFirstName(e.target.value)}
+            required
+            className="rounded-lg border border-[rgba(23,58,64,0.2)] bg-white/50 px-4 py-2 text-sm"
+          />
+          <input
+            type="text"
+            placeholder="Last name"
+            value={lastName}
+            onChange={(e) => setLastName(e.target.value)}
+            required
+            className="rounded-lg border border-[rgba(23,58,64,0.2)] bg-white/50 px-4 py-2 text-sm"
+          />
+          <input
+            type="email"
+            placeholder="Email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            required
+            className="rounded-lg border border-[rgba(23,58,64,0.2)] bg-white/50 px-4 py-2 text-sm"
+          />
+          <button
+            type="submit"
+            className="rounded-full border border-[rgba(50,143,151,0.3)] bg-[rgba(79,184,178,0.14)] px-5 py-2 text-sm font-semibold text-[var(--lagoon-deep)] transition hover:-translate-y-0.5 hover:bg-[rgba(79,184,178,0.24)]"
+          >
+            Add Customer
+          </button>
+        </form>
+
+        <div className="space-y-3">
+          {customers.map((customer) => (
+            <div key={customer.id} className="island-shell flex items-center justify-between rounded-xl p-4">
+              {editingId === customer.id ? (
+                <form onSubmit={saveEdit} className="flex flex-1 flex-wrap items-center gap-3">
+                  <input
+                    type="text"
+                    value={editFirstName}
+                    onChange={(e) => setEditFirstName(e.target.value)}
+                    required
+                    className="rounded-lg border border-[rgba(23,58,64,0.2)] bg-white/50 px-3 py-1.5 text-sm"
+                  />
+                  <input
+                    type="text"
+                    value={editLastName}
+                    onChange={(e) => setEditLastName(e.target.value)}
+                    required
+                    className="rounded-lg border border-[rgba(23,58,64,0.2)] bg-white/50 px-3 py-1.5 text-sm"
+                  />
+                  <input
+                    type="email"
+                    value={editEmail}
+                    onChange={(e) => setEditEmail(e.target.value)}
+                    required
+                    className="rounded-lg border border-[rgba(23,58,64,0.2)] bg-white/50 px-3 py-1.5 text-sm"
+                  />
+                  <button
+                    type="submit"
+                    className="rounded-full border border-[rgba(50,143,151,0.3)] bg-[rgba(79,184,178,0.14)] px-4 py-1.5 text-xs font-semibold text-[var(--lagoon-deep)] transition hover:bg-[rgba(79,184,178,0.24)]"
+                  >
+                    Save
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setEditingId(null)}
+                    className="rounded-full border border-gray-200 bg-gray-50 px-4 py-1.5 text-xs font-semibold text-gray-600 transition hover:bg-gray-100"
+                  >
+                    Cancel
+                  </button>
+                </form>
+              ) : (
+                <>
+                  <div>
+                    <p className="font-semibold text-[var(--sea-ink)]">
+                      {customer.firstName} {customer.lastName}
+                    </p>
+                    <p className="text-sm text-[var(--sea-ink-soft)]">{customer.email}</p>
+                  </div>
+                  <div className="flex gap-2">
+                    <button
+                      type="button"
+                      onClick={() => startEditing(customer)}
+                      className="rounded-full border border-[rgba(50,143,151,0.3)] bg-[rgba(79,184,178,0.14)] px-4 py-1.5 text-xs font-semibold text-[var(--lagoon-deep)] transition hover:bg-[rgba(79,184,178,0.24)]"
+                    >
+                      Edit
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => handleDelete(customer.id)}
+                      className="rounded-full border border-red-200 bg-red-50 px-4 py-1.5 text-xs font-semibold text-red-600 transition hover:bg-red-100"
+                    >
+                      Delete
+                    </button>
+                  </div>
+                </>
+              )}
+            </div>
+          ))}
+          {customers.length === 0 && (
+            <p className="text-center text-sm text-[var(--sea-ink-soft)]">No customers yet. Add one above.</p>
+          )}
+        </div>
+
+        {count > 0 && (
+          <div className="mt-6 flex items-center justify-between text-sm text-[var(--sea-ink-soft)]">
+            <span>
+              Showing {offset + 1}–{Math.min(offset + limit, count)} of {count}
+            </span>
+            <div className="flex gap-2">
+              <button
+                type="button"
+                disabled={offset === 0}
+                onClick={() => fetchPage(Math.max(0, offset - limit))}
+                className="rounded-full border border-[rgba(23,58,64,0.2)] px-4 py-1.5 text-xs font-semibold transition hover:bg-black/5 disabled:opacity-40 disabled:hover:bg-transparent"
+              >
+                Previous
+              </button>
+              <button
+                type="button"
+                disabled={offset + limit >= count}
+                onClick={() => fetchPage(offset + limit)}
+                className="rounded-full border border-[rgba(23,58,64,0.2)] px-4 py-1.5 text-xs font-semibold transition hover:bg-black/5 disabled:opacity-40 disabled:hover:bg-transparent"
+              >
+                Next
+              </button>
+            </div>
+          </div>
+        )}
+      </section>
+    </main>
+  )
+}

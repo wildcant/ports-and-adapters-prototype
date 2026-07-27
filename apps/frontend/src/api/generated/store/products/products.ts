@@ -4,6 +4,10 @@
  * Store API
  * OpenAPI spec version: 0.1.0
  */
+import {
+  env
+} from '../../../../env';
+
 
 export type ListStoreProductsResponse200 = {
   data: void
@@ -29,7 +33,7 @@ export const getListStoreProductsUrl = () => {
 
 
 
-  return `http://localhost:3000/store/products`
+  return `${env.VITE_BACKEND_URL}/store/products`
 }
 
 /**
@@ -83,7 +87,7 @@ export const getGetStoreProductUrl = (id: string,) => {
 
 
 
-  return `http://localhost:3000/store/products/${id}`
+  return `${env.VITE_BACKEND_URL}/store/products/${id}`
 }
 
 /**

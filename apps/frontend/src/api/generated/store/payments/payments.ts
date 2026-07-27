@@ -4,6 +4,10 @@
  * Store API
  * OpenAPI spec version: 0.1.0
  */
+import {
+  env
+} from '../../../../env';
+
 
 export type ListStorePaymentProvidersResponse200 = {
   data: void
@@ -29,7 +33,7 @@ export const getListStorePaymentProvidersUrl = () => {
 
 
 
-  return `http://localhost:3000/store/payment-providers`
+  return `${env.VITE_BACKEND_URL}/store/payment-providers`
 }
 
 /**

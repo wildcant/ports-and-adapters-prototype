@@ -1,0 +1,14 @@
+{
+  "$schema": "../../node_modules/wrangler/config-schema.json",
+  "name": "proteus-backend",
+  "compatibility_date": "2026-07-26",
+  "compatibility_flags": ["nodejs_compat"],
+  "main": "src/index.workerd.ts",
+  "vars": {
+    "RUNTIME": "workerd",
+    "LOG_LEVEL": "info"
+  },
+  "observability": {
+    "enabled": true
+  }
+}

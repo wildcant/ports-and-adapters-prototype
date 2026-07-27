@@ -4,6 +4,10 @@
  * Admin API
  * OpenAPI spec version: 0.1.0
  */
+import {
+  env
+} from '../../../../env';
+
 import type {
   CreateUser,
   ListUsersParams,
@@ -53,7 +57,7 @@ export const getListUsersUrl = (params?: ListUsersParams,) => {
 
   const stringifiedParams = normalizedParams.toString();
 
-  return stringifiedParams.length > 0 ? `http://localhost:3000/admin/users?${stringifiedParams}` : `http://localhost:3000/admin/users`
+  return stringifiedParams.length > 0 ? `${env.VITE_BACKEND_URL}/admin/users?${stringifiedParams}` : `${env.VITE_BACKEND_URL}/admin/users`
 }
 
 /**
@@ -102,7 +106,7 @@ export const getCreateUserUrl = () => {
 
 
 
-  return `http://localhost:3000/admin/users`
+  return `${env.VITE_BACKEND_URL}/admin/users`
 }
 
 /**
@@ -156,7 +160,7 @@ export const getGetUserUrl = (id: string,) => {
 
 
 
-  return `http://localhost:3000/admin/users/${id}`
+  return `${env.VITE_BACKEND_URL}/admin/users/${id}`
 }
 
 /**
@@ -210,7 +214,7 @@ export const getUpdateUserUrl = (id: string,) => {
 
 
 
-  return `http://localhost:3000/admin/users/${id}`
+  return `${env.VITE_BACKEND_URL}/admin/users/${id}`
 }
 
 /**
@@ -265,7 +269,7 @@ export const getDeleteUserUrl = (id: string,) => {
 
 
 
-  return `http://localhost:3000/admin/users/${id}`
+  return `${env.VITE_BACKEND_URL}/admin/users/${id}`
 }
 
 /**

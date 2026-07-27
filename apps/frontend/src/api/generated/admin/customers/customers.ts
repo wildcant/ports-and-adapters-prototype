@@ -4,6 +4,10 @@
  * Admin API
  * OpenAPI spec version: 0.1.0
  */
+import {
+  env
+} from '../../../../env';
+
 import type {
   CreateCustomer,
   CustomerDeleteResponse,
@@ -53,7 +57,7 @@ export const getListCustomersUrl = (params?: ListCustomersParams,) => {
 
   const stringifiedParams = normalizedParams.toString();
 
-  return stringifiedParams.length > 0 ? `http://localhost:3000/admin/customers?${stringifiedParams}` : `http://localhost:3000/admin/customers`
+  return stringifiedParams.length > 0 ? `${env.VITE_BACKEND_URL}/admin/customers?${stringifiedParams}` : `${env.VITE_BACKEND_URL}/admin/customers`
 }
 
 /**
@@ -102,7 +106,7 @@ export const getCreateCustomersUrl = () => {
 
 
 
-  return `http://localhost:3000/admin/customers`
+  return `${env.VITE_BACKEND_URL}/admin/customers`
 }
 
 /**
@@ -156,7 +160,7 @@ export const getGetCustomerUrl = (id: string,) => {
 
 
 
-  return `http://localhost:3000/admin/customers/${id}`
+  return `${env.VITE_BACKEND_URL}/admin/customers/${id}`
 }
 
 /**
@@ -210,7 +214,7 @@ export const getUpdateCustomerUrl = (id: string,) => {
 
 
 
-  return `http://localhost:3000/admin/customers/${id}`
+  return `${env.VITE_BACKEND_URL}/admin/customers/${id}`
 }
 
 /**
@@ -265,7 +269,7 @@ export const getDeleteCustomerUrl = (id: string,) => {
 
 
 
-  return `http://localhost:3000/admin/customers/${id}`
+  return `${env.VITE_BACKEND_URL}/admin/customers/${id}`
 }
 
 /**
