@@ -71,3 +71,4 @@ TanStack Start (React 19, Vite, TanStack Router). Uses `#/*` import alias for `.
 - Comments should explain *why*, not *what*. Don't restate the code — document the intent, business reason, or non-obvious constraint.
 - For best-effort async calls, use `.catch((e) => this.logger.error(e))` instead of wrapping in try/catch with an empty or comment-only catch block.
 - Use `Promise.all` with `.map()` instead of `for` loops with `await` inside when iterations are independent.
+- Use `type` instead of `interface`. Interfaces allow declaration merging on name overlap, which can cause subtle bugs. Composable `type` aliases with `&` intersections are safer and more predictable.

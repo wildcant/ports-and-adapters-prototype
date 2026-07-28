@@ -1,6 +1,3 @@
-- move http schemas to a shared package so form can import them and use it for forms.
-- add react hook form and tanstack query
-- check script no process.env usage out of env.ts
 - fulfillment module (port) and providers (adapters)
 - deploy to supabase and coudflare workers.
 - investigate how to supabase as event bus (supabase-event-bus.md) (cloudflare queues)
