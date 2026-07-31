@@ -32,9 +32,14 @@ export const createPaymentCollectionForCartWorkflow = createWorkflow<
         throw new WorkflowTerminalError(`Cart "${input.cartId}" already has a payment collection`)
       }
 
-      // Compute cart total from line items
-      const lineItems = await cartService.listLineItems({ cartId: input.cartId })
-      const amount = lineItems.reduce((sum, li) => sum + li.unitPrice * li.quantity, 0)
+      // Compute cart total from line items + shipping
+      const [lineItems, shippingMethods] = await Promise.all([
+        cartService.listLineItems({ cartId: input.cartId }),
+        cartService.listShippingMethods({ cartId: input.cartId }),
+      ])
+      const lineItemTotal = lineItems.reduce((sum, li) => sum + li.unitPrice * li.quantity, 0)
+      const shippingTotal = shippingMethods.reduce((sum, sm) => sum + sm.amount, 0)
+      const amount = lineItemTotal + shippingTotal
 
       if (amount <= 0) {
         throw new WorkflowTerminalError(`Cart "${input.cartId}" has no items or zero total`)

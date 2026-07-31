@@ -67,3 +67,24 @@ export interface FilterableCartLineItemProps extends BaseFilterable<FilterableCa
   productId?: string | string[]
   createdAt?: OperatorMap<Date>
 }
+
+export type CartShippingMethodDTO = {
+  id: string
+  cartId: string
+  name: string
+  description: string | null
+  amount: number
+  isTaxInclusive: boolean
+  shippingOptionId: string | null
+  data: string | null
+  metadata: string | null
+  createdAt: Date
+  updatedAt: Date
+  deletedAt: Date | null
+}
+
+export interface FilterableCartShippingMethodProps extends BaseFilterable<FilterableCartShippingMethodProps> {
+  id?: string | string[]
+  cartId?: string | string[]
+  shippingOptionId?: string | string[]
+}

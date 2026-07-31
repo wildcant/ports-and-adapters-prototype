@@ -2,11 +2,14 @@ import { AppError, ErrorTypes } from '../../../core/errors/app-error.js'
 import type {
   CartDTO,
   CartLineItemDTO,
+  CartShippingMethodDTO,
   Context,
   CreateCartDTO,
   CreateLineItemDTO,
+  CreateShippingMethodDTO,
   FilterableCartLineItemProps,
   FilterableCartProps,
+  FilterableCartShippingMethodProps,
   FindConfig,
   ICartModuleService,
   UpdateCartDTO,
@@ -16,10 +19,12 @@ import type { Logger } from '../../../core/types/logger.js'
 import type { WithTransaction } from '../../../core/utils/with-transaction.js'
 import type { CartRepository } from '../repositories/cart.js'
 import type { CartLineItemRepository } from '../repositories/cart-line-item.js'
+import type { CartShippingMethodRepository } from '../repositories/cart-shipping-method.js'
 
 type InjectedDependencies = {
   cartRepository: CartRepository
   cartLineItemRepository: CartLineItemRepository
+  cartShippingMethodRepository: CartShippingMethodRepository
   withTransaction: WithTransaction
   logger: Logger
 }
@@ -27,12 +32,20 @@ type InjectedDependencies = {
 export class CartModuleService implements ICartModuleService {
   private cartRepository: CartRepository
   private cartLineItemRepository: CartLineItemRepository
+  private cartShippingMethodRepository: CartShippingMethodRepository
   private withTransaction: WithTransaction
   private logger: Logger
 
-  constructor({ cartRepository, cartLineItemRepository, withTransaction, logger }: InjectedDependencies) {
+  constructor({
+    cartRepository,
+    cartLineItemRepository,
+    cartShippingMethodRepository,
+    withTransaction,
+    logger,
+  }: InjectedDependencies) {
     this.cartRepository = cartRepository
     this.cartLineItemRepository = cartLineItemRepository
+    this.cartShippingMethodRepository = cartShippingMethodRepository
     this.withTransaction = withTransaction
     this.logger = logger
   }
@@ -127,6 +140,40 @@ export class CartModuleService implements ICartModuleService {
   async deleteLineItems(lineItemIds: string[], context?: Context): Promise<void> {
     return this.withTransaction(context, async (ctx) => {
       await this.cartLineItemRepository.delete(lineItemIds, ctx)
+    })
+  }
+
+  async listShippingMethods(
+    filters?: FilterableCartShippingMethodProps,
+    config?: FindConfig<CartShippingMethodDTO>,
+    context?: Context,
+  ): Promise<CartShippingMethodDTO[]> {
+    return this.cartShippingMethodRepository.find(filters, config, context)
+  }
+
+  async addShippingMethods(
+    cartId: string,
+    methods: CreateShippingMethodDTO[],
+    context?: Context,
+  ): Promise<CartShippingMethodDTO[]> {
+    return this.withTransaction(context, async (ctx) => {
+      const cart = await this.cartRepository.findByIdOrFail(cartId, undefined, ctx)
+
+      if (cart.status !== 'active') {
+        throw new AppError({
+          type: ErrorTypes.NOT_ALLOWED,
+          message: `Cart ${cartId} is not active (current status: ${cart.status})`,
+        })
+      }
+
+      const inputs = methods.map((method) => ({ ...method, cartId }))
+      return this.cartShippingMethodRepository.createMany(inputs, ctx)
+    })
+  }
+
+  async deleteShippingMethods(shippingMethodIds: string[], context?: Context): Promise<void> {
+    return this.withTransaction(context, async (ctx) => {
+      await this.cartShippingMethodRepository.delete(shippingMethodIds, ctx)
     })
   }
 

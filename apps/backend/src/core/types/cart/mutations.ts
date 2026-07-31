@@ -41,6 +41,16 @@ export type CreateCartDTO = {
   items?: CreateLineItemDTO[] | undefined
 }
 
+export type CreateShippingMethodDTO = {
+  name: string
+  description?: string | null | undefined
+  amount: number
+  isTaxInclusive?: boolean | undefined
+  shippingOptionId?: string | null | undefined
+  data?: string | null | undefined
+  metadata?: string | null | undefined
+}
+
 export type UpdateCartDTO = {
   regionId?: string | null | undefined
   customerId?: string | null | undefined

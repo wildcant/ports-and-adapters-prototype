@@ -1,4 +1,5 @@
 export * from '../errors/index.js'
+export { AbstractFulfillmentProvider } from './abstract-fulfillment-provider.js'
 export { AbstractPaymentProvider } from './abstract-payment-provider.js'
 export { BaseRepository } from './base-repository.js'
 export { buildFilters } from './build-filters.js'

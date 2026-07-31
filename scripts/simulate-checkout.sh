@@ -121,6 +121,104 @@ UPDATED_CART=$(curl -sf -X POST "${BASE_URL}/store/carts/${CART_ID}" \
 EMAIL=$(echo "$UPDATED_CART" | jq -r '.cart.email')
 response "Set email to: ${EMAIL}"
 
+# ══════════════════════════════════════════
+# Shipping setup (admin) + selection (store)
+# ══════════════════════════════════════════
+
+# ──────────────────────────────────────────
+step "Create shipping profile (admin)"
+SP_BODY='{"name":"Default","type":"default"}'
+request POST /admin/shipping-profiles "$SP_BODY"
+
+SP_RESPONSE=$(curl -sf -X POST "${BASE_URL}/admin/shipping-profiles" \
+  -H "Content-Type: application/json" \
+  -d "$SP_BODY")
+SHIPPING_PROFILE_ID=$(echo "$SP_RESPONSE" | jq -r '.shippingProfile.id')
+response "Created shipping profile: ${SHIPPING_PROFILE_ID}"
+
+# ──────────────────────────────────────────
+step "Create fulfillment set + service zone + geo zone (admin)"
+FUSET_BODY='{"name":"Default Shipping","type":"shipping"}'
+request POST /admin/fulfillment-sets "$FUSET_BODY"
+
+FUSET_RESPONSE=$(curl -sf -X POST "${BASE_URL}/admin/fulfillment-sets" \
+  -H "Content-Type: application/json" \
+  -d "$FUSET_BODY")
+FUSET_ID=$(echo "$FUSET_RESPONSE" | jq -r '.fulfillmentSet.id')
+response "Created fulfillment set: ${FUSET_ID}"
+
+SZ_BODY='{"name":"US Domestic","geoZones":[{"type":"country","countryCode":"US"}]}'
+request POST "/admin/fulfillment-sets/${FUSET_ID}/service-zones" "$SZ_BODY"
+
+SZ_RESPONSE=$(curl -sf -X POST "${BASE_URL}/admin/fulfillment-sets/${FUSET_ID}/service-zones" \
+  -H "Content-Type: application/json" \
+  -d "$SZ_BODY")
+SERVICE_ZONE_ID=$(echo "$SZ_RESPONSE" | jq -r '.serviceZone.id')
+response "Created service zone: ${SERVICE_ZONE_ID} (with inline US geo zone)"
+
+# ──────────────────────────────────────────
+step "List fulfillment providers (admin)"
+request GET /admin/fulfillment-providers
+
+FP_RESPONSE=$(curl -sf "${BASE_URL}/admin/fulfillment-providers")
+FP_COUNT=$(echo "$FP_RESPONSE" | jq '.fulfillmentProviders | length')
+response "Available fulfillment providers: ${FP_COUNT}"
+echo "$FP_RESPONSE" | jq -r '.fulfillmentProviders[] | "  - \(.id)"'
+FP_ID=$(echo "$FP_RESPONSE" | jq -r '.fulfillmentProviders[0].id')
+
+# ──────────────────────────────────────────
+step "Create shipping option (admin)"
+SO_BODY=$(jq -n \
+  --arg szId "$SERVICE_ZONE_ID" \
+  --arg spId "$SHIPPING_PROFILE_ID" \
+  --arg fpId "$FP_ID" \
+  '{name: "Standard Shipping", priceType: "flat", amount: 599, serviceZoneId: $szId, shippingProfileId: $spId, providerId: $fpId}')
+request POST /admin/shipping-options "$SO_BODY"
+
+SO_RESPONSE=$(curl -sf -X POST "${BASE_URL}/admin/shipping-options" \
+  -H "Content-Type: application/json" \
+  -d "$SO_BODY")
+SHIPPING_OPTION_ID=$(echo "$SO_RESPONSE" | jq -r '.shippingOption.id')
+SO_AMOUNT=$(echo "$SO_RESPONSE" | jq -r '.shippingOption.amount')
+response "Created shipping option: ${SHIPPING_OPTION_ID} (amount: \$$(echo "scale=2; ${SO_AMOUNT}/100" | bc))"
+
+# ──────────────────────────────────────────
+step "List available shipping options for cart (store)"
+request GET "/store/carts/${CART_ID}/shipping-options?country_code=US"
+
+AVAILABLE_OPTIONS=$(curl -sf "${BASE_URL}/store/carts/${CART_ID}/shipping-options?country_code=US")
+OPTION_COUNT=$(echo "$AVAILABLE_OPTIONS" | jq '.shippingOptions | length')
+response "Available shipping options: ${OPTION_COUNT}"
+echo "$AVAILABLE_OPTIONS" | jq -r '.shippingOptions[] | "  - \(.name) @ $\(.amount / 100) (\(.id))"'
+
+# ──────────────────────────────────────────
+step "Select shipping method for cart (store)"
+SM_BODY=$(jq -n --arg optionId "$SHIPPING_OPTION_ID" '{shippingOptionId: $optionId}')
+request POST "/store/carts/${CART_ID}/shipping-methods" "$SM_BODY"
+
+SM_RESPONSE=$(curl -sf -X POST "${BASE_URL}/store/carts/${CART_ID}/shipping-methods" \
+  -H "Content-Type: application/json" \
+  -d "$SM_BODY")
+SM_ID=$(echo "$SM_RESPONSE" | jq -r '.shippingMethod.id')
+SM_NAME=$(echo "$SM_RESPONSE" | jq -r '.shippingMethod.name')
+SM_AMOUNT=$(echo "$SM_RESPONSE" | jq -r '.shippingMethod.amount')
+response "Selected shipping method: ${SM_NAME} - \$$(echo "scale=2; ${SM_AMOUNT}/100" | bc) (${SM_ID})"
+
+# ──────────────────────────────────────────
+step "View cart (with shipping)"
+request GET "/store/carts/${CART_ID}"
+
+CART=$(curl -sf "${BASE_URL}/store/carts/${CART_ID}")
+ITEM_COUNT=$(echo "$CART" | jq '.cart.items | length')
+SM_COUNT=$(echo "$CART" | jq '.cart.shippingMethods | length')
+response "Cart has ${ITEM_COUNT} item(s) and ${SM_COUNT} shipping method(s):"
+echo "$CART" | jq -r '.cart.items[] | "  - \(.title) x\(.quantity) @ $\(.unitPrice / 100)"'
+echo "$CART" | jq -r '.cart.shippingMethods[] | "  - [shipping] \(.name) @ $\(.amount / 100)"'
+
+# ══════════════════════════════════════════
+# Payment + complete
+# ══════════════════════════════════════════
+
 # ──────────────────────────────────────────
 step "Create payment collection for cart"
 PAY_COL_BODY=$(jq -n --arg cartId "$CART_ID" '{cartId: $cartId}')

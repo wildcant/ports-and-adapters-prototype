@@ -1,4 +1,12 @@
-import { AddLineItem, CreateCart, IdParams, LineIdParams, UpdateCart, UpdateLineItem } from '@proteus/http-schemas'
+import {
+  AddCartShippingMethod,
+  AddLineItem,
+  CreateCart,
+  IdParams,
+  LineIdParams,
+  UpdateCart,
+  UpdateLineItem,
+} from '@proteus/http-schemas'
 import type { MiddlewareRoute } from '../../../core/middleware/types.js'
 import { Tags } from '../../../core/middleware/types.js'
 
@@ -52,6 +60,23 @@ export default [
     paramsSchema: LineIdParams,
     operationId: 'deleteStoreCartLineItem',
     summary: 'Remove a line item from a cart',
+    tags: [Tags.CARTS],
+  },
+  {
+    method: 'GET',
+    matcher: '/store/carts/:id/shipping-options',
+    paramsSchema: IdParams,
+    operationId: 'listStoreCartShippingOptions',
+    summary: 'List available shipping options for a cart',
+    tags: [Tags.CARTS],
+  },
+  {
+    method: 'POST',
+    matcher: '/store/carts/:id/shipping-methods',
+    paramsSchema: IdParams,
+    bodySchema: AddCartShippingMethod,
+    operationId: 'addStoreCartShippingMethod',
+    summary: 'Select a shipping method for a cart',
     tags: [Tags.CARTS],
   },
   {

@@ -1,0 +1,560 @@
+Fulfillment Module - In-Depth Analysis
+
+1. Module Overview
+
+The fulfillment module (packages/modules/fulfillment) handles shipping configuration, geographic zones,
+fulfillment providers, and the actual creation/tracking of fulfillments. It's registered as
+Modules.FULFILLMENT and uses a provider-based architecture to delegate actual shipping logic to external
+providers.
+
+Entry point (src/index.ts): Exports a Module() with FulfillmentModuleService and a loadProviders loader.
+
+Linkable keys (for cross-module joins): fulfillment_id, fulfillment_set_id, shipping_option_id,
+shipping_option_rule_id, fulfillment_provider_id.
+
+---
+2. Data Model Architecture
+
+The module has 12 entities organized in a hierarchical structure:
+
+Entity Hierarchy
+
+ShippingProfile (grouping)
+    └── ShippingOption (a shipping method)
+            ├── ShippingOptionType (label, code, description)
+            ├── ShippingOptionRule[] (context-based filtering rules)
+            ├── ServiceZone (where it's available)
+            └── FulfillmentProvider (who fulfills it)
+
+FulfillmentSet (logical grouping tied to a location)
+    └── ServiceZone (geographic availability)
+            └── GeoZone[] (country/province/city/zip)
+
+Fulfillment (an actual shipment)
+    ├── FulfillmentAddress (delivery address)
+    ├── FulfillmentItem[] (what's being shipped)
+    ├── FulfillmentLabel[] (tracking numbers/labels)
+    ├── FulfillmentProvider
+    └── ShippingOption (optional reference)
+
+Key Entities
+
+┌─────────────────────┬──────────────────────┬───────────────────────────────────────────────────────┐
+│       Entity        │       Purpose        │                      Key Fields                       │
+├─────────────────────┼──────────────────────┼───────────────────────────────────────────────────────┤
+│ FulfillmentSet      │ Groups service zones │ name, type, service_zones[]                           │
+│                     │  for a location      │                                                       │
+├─────────────────────┼──────────────────────┼───────────────────────────────────────────────────────┤
+│                     │ Defines where        │ name, geo_zones[], shipping_options[],                │
+│ ServiceZone         │ shipping is          │ fulfillment_set_id                                    │
+│                     │ available            │                                                       │
+├─────────────────────┼──────────────────────┼───────────────────────────────────────────────────────┤
+│ GeoZone             │ Geographic boundary  │ type (country/province/city/zip), country_code,       │
+│                     │ (4 types)            │ province_code, city, postal_expression                │
+├─────────────────────┼──────────────────────┼───────────────────────────────────────────────────────┤
+│ ShippingOption      │ A shipping method    │ name, price_type (flat/calculated), service_zone_id,  │
+│                     │ customers can choose │ shipping_profile_id, provider_id, data, rules[]       │
+├─────────────────────┼──────────────────────┼───────────────────────────────────────────────────────┤
+│                     │ Context-based rule   │                                                       │
+│ ShippingOptionRule  │ for filtering        │ attribute, operator, value, shipping_option_id        │
+│                     │ options              │                                                       │
+├─────────────────────┼──────────────────────┼───────────────────────────────────────────────────────┤
+│ ShippingOptionType  │ Categorizes shipping │ label, description, code                              │
+│                     │  options             │                                                       │
+├─────────────────────┼──────────────────────┼───────────────────────────────────────────────────────┤
+│ ShippingProfile     │ Groups shipping      │ name, type                                            │
+│                     │ options              │                                                       │
+├─────────────────────┼──────────────────────┼───────────────────────────────────────────────────────┤
+│                     │ An actual shipment   │ location_id, packed_at, shipped_at, delivered_at,     │
+│ Fulfillment         │ instance             │ canceled_at, provider_id, data, requires_shipping,    │
+│                     │                      │ created_by, marked_shipped_by                         │
+├─────────────────────┼──────────────────────┼───────────────────────────────────────────────────────┤
+│ FulfillmentItem     │ Item in a            │ title, quantity, sku, barcode, line_item_id,          │
+│                     │ fulfillment          │ inventory_item_id                                     │
+├─────────────────────┼──────────────────────┼───────────────────────────────────────────────────────┤
+│ FulfillmentLabel    │ Tracking/label info  │ tracking_number, tracking_url, label_url              │
+├─────────────────────┼──────────────────────┼───────────────────────────────────────────────────────┤
+│ FulfillmentAddress  │ Delivery address     │ Standard address fields                               │
+├─────────────────────┼──────────────────────┼───────────────────────────────────────────────────────┤
+│ FulfillmentProvider │ A registered         │ id, is_enabled                                        │
+│                     │ provider             │                                                       │
+└─────────────────────┴──────────────────────┴───────────────────────────────────────────────────────┘
+
+---
+3. Service Layer
+
+FulfillmentModuleService (src/services/fulfillment-module-service.ts)
+
+The main service (~2200 lines) extends MedusaService with auto-generated CRUD for most entities except
+Fulfillment (explicitly excluded to control the exposed API).
+
+Key design decisions:
+- Uses the public/protected method pattern: public methods use @InjectManager() + @EmitEvents(),
+protected _ methods use @InjectTransactionManager()
+- Manually implements all Fulfillment CRUD (retrieve, list, listAndCount, create, update, delete, cancel)
+
+Important methods:
+
+┌──────────────────────────────────────────────┬──────────────────────────────────────────────────────┐
+│                    Method                    │                        Notes                         │
+├──────────────────────────────────────────────┼──────────────────────────────────────────────────────┤
+│                                              │ Automatically delegates to                           │
+│ listShippingOptions()                        │ listShippingOptionsForContext() if context or        │
+│                                              │ address filters are present                          │
+├──────────────────────────────────────────────┼──────────────────────────────────────────────────────┤
+│ listShippingOptionsForContext()              │ Filters shipping options by geographic and           │
+│                                              │ rule-based context                                   │
+├──────────────────────────────────────────────┼──────────────────────────────────────────────────────┤
+│                                              │ Creates in DB, calls provider's createFulfillment(), │
+│ createFulfillment()                          │  updates with provider result (labels, data). On     │
+│                                              │ failure, deletes the DB record                       │
+├──────────────────────────────────────────────┼──────────────────────────────────────────────────────┤
+│ createReturnFulfillment()                    │ Similar to create but calls provider's               │
+│                                              │ createReturnFulfillment()                            │
+├──────────────────────────────────────────────┼──────────────────────────────────────────────────────┤
+│ cancelFulfillment()                          │ Validates not shipped/delivered, calls provider's    │
+│                                              │ cancelFulfillment(), sets canceled_at. Idempotent    │
+├──────────────────────────────────────────────┼──────────────────────────────────────────────────────┤
+│ deleteFulfillment()                          │ Only allows deletion if canceled_at is set           │
+├──────────────────────────────────────────────┼──────────────────────────────────────────────────────┤
+│ updateFulfillmentSets()                      │ Complex - handles nested service zone upsert/delete  │
+│                                              │ with geo zone cascading                              │
+├──────────────────────────────────────────────┼──────────────────────────────────────────────────────┤
+│ updateServiceZones()                         │ Complex - handles nested geo zone upsert/delete      │
+├──────────────────────────────────────────────┼──────────────────────────────────────────────────────┤
+│ updateShippingOptions()                      │ Complex - handles nested rule upsert/delete          │
+├──────────────────────────────────────────────┼──────────────────────────────────────────────────────┤
+│ validateShippingOption()                     │ Validates an option against context rules            │
+├──────────────────────────────────────────────┼──────────────────────────────────────────────────────┤
+│ validateShippingOptionsForPriceCalculation() │ Verifies options are calculated type and providers   │
+│                                              │ can calculate                                        │
+├──────────────────────────────────────────────┼──────────────────────────────────────────────────────┤
+│ calculateShippingOptionsPrices()             │ Delegates to providers for price calculation         │
+├──────────────────────────────────────────────┼──────────────────────────────────────────────────────┤
+│ deleteShippingProfiles()                     │ Prevents deletion if shipping options are still      │
+│                                              │ associated                                           │
+└──────────────────────────────────────────────┴──────────────────────────────────────────────────────┘
+
+FulfillmentProviderService (src/services/fulfillment-provider.ts)
+
+Acts as a proxy/adapter between the module service and actual provider implementations. Providers are
+registered in the DI container with fp_ prefix.
+
+Methods: listFulfillmentOptions, getFulfillmentOptions, validateFulfillmentData, validateOption,
+canCalculate, calculatePrice, createFulfillment, cancelFulfillment, createReturn
+
+---
+4. Rule Engine (src/utils/utils.ts)
+
+The module contains a built-in rule engine for context-based shipping option filtering:
+
+Supported operators: in, nin, eq, ne, gt, gte, lt, lte
+
+Rules support date comparison and numeric comparison. The isContextValid() function evaluates a context
+object against rules, with an option for "all must match" (default) or "at least one must match".
+
+Rules are validated (validateRule) and normalized (normalizeRulesValue - converts booleans to strings).
+
+---
+5. Event System (src/utils/events.ts)
+
+The module emits events for all major operations across all entities:
+
+- Fulfillment: created, updated
+- FulfillmentAddress: created
+- FulfillmentItem: created
+- FulfillmentLabel: created, updated, deleted
+- ShippingProfile: created
+- ShippingOptionType: created, updated, deleted
+- ShippingOptionRule: created, updated, deleted
+- ShippingOption: created, updated
+- FulfillmentSet: created, updated, deleted
+- ServiceZone: created, updated, deleted
+- GeoZone: created, updated, deleted
+
+Events are emitted using moduleEventBuilderFactory and cascade - e.g., creating a fulfillment set also
+emits service zone and geo zone creation events.
+
+---
+6. Provider Loading (src/loaders/providers.ts)
+
+On startup:
+1. Registers each configured provider in the DI container as fp_<provider_id>
+2. Tracks provider identifiers in a shared registration
+3. Syncs with database: creates new providers, enables existing ones, disables removed ones
+4. Providers can have LIFE_TIME (default: SINGLETON)
+
+---
+7. GeoZone Validation
+
+Strict hierarchical validation by type:
+- country: requires country_code
+- province: requires country_code, province_code
+- city: requires country_code, province_code, city
+- zip: requires country_code, province_code, city, postal_expression
+
+---
+8. Key Architectural Patterns
+
+1. Provider pattern: Actual shipping logic is delegated to provider implementations; the module handles
+data management and orchestration
+2. Nested upsert/delete: Update operations on FulfillmentSets, ServiceZones, and ShippingOptions handle
+complex nested entity management (detecting additions, removals, and updates of children)
+3. Idempotent operations: cancelFulfillment checks canceled_at before executing
+4. Optimistic fulfillment creation: Creates the DB record first, then calls the provider. On provider
+failure, the DB record is cleaned up
+5. Explicit Fulfillment control: Fulfillment is excluded from auto-generated methods - all CRUD is
+manually implemented to enforce business rules (e.g., must cancel before delete, can't cancel if
+shipped/delivered)
+6. Context-based filtering: Shipping options can be filtered by geographic context and custom rules at
+query time
+
+✻ Cooked for 2m 1s
+
+⏺ Agent "Analyze fulfillment models" completed
+
+∴ Thinking…
+
+The models agent completed and confirmed what I already covered. Let me wait for the other agents to
+complete. The user seems to be reading through the files. Let me not add anything yet since I already
+provided a comprehensive analysis.
+
+Actually, I see the user hasn't said anything new. The system just notified me that the models agent
+completed. I should acknowledge this silently and wait for the other agents. But since the user hasn't
+asked anything new, I don't need to respond.
+
+Wait - I should mention that the models analysis agent confirmed and enriched my analysis with additional
+  detail. Let me add the extra details it found that I didn't cover.
+
+⏺ The models analysis agent completed and confirmed the structure above with some additional details worth
+noting:
+
+ID Prefixes:
+
+┌─────────────────────┬─────────┐
+│        Model        │ Prefix  │
+├─────────────────────┼─────────┤
+│ FulfillmentSet      │ fuset   │
+├─────────────────────┼─────────┤
+│ ServiceZone         │ serzo   │
+├─────────────────────┼─────────┤
+│ GeoZone             │ fgz     │
+├─────────────────────┼─────────┤
+│ ShippingProfile     │ sp      │
+├─────────────────────┼─────────┤
+│ FulfillmentProvider │ serpro  │
+├─────────────────────┼─────────┤
+│ ShippingOptionType  │ sotype  │
+├─────────────────────┼─────────┤
+│ ShippingOption      │ so      │
+├─────────────────────┼─────────┤
+│ ShippingOptionRule  │ sorul   │
+├─────────────────────┼─────────┤
+│ Fulfillment         │ ful     │
+├─────────────────────┼─────────┤
+│ FulfillmentItem     │ fulit   │
+├─────────────────────┼─────────┤
+│ FulfillmentLabel    │ fulla   │
+├─────────────────────┼─────────┤
+│ FulfillmentAddress  │ fuladdr │
+└─────────────────────┴─────────┘
+
+Translatable/Searchable fields:
+- ShippingOptionType.label and .description are both .searchable().translatable()
+- ShippingOption.name is .searchable().translatable()
+
+External references (no FK constraints, plain text):
+- Fulfillment.location_id -> stock location module
+- FulfillmentItem.line_item_id -> order module
+- FulfillmentItem.inventory_item_id -> inventory module
+- Fulfillment.marked_shipped_by / created_by -> user module
+
+FulfillmentItem.quantity uses bigNumber type (supports large/decimal quantities).
+
+The other 3 agents (service layer, workflows/API routes, types/interfaces) are still running in the
+background. I'll share their findings when they complete.
+
+⏺ Agent "Analyze fulfillment service layer" completed
+
+⏺ The service layer agent completed. A few notable details it found beyond what I already covered:
+
+Address-based geo zone filtering (normalizeListShippingOptionsForContextParams):
+- When an address filter is provided, it builds an $or array of geo zone constraints from narrowest to
+broadest granularity (postal -> city -> province -> country), matching against the service zone's geo
+zones.
+
+updateShippingOptions_ field mapping quirk:
+- type_id in the DTO is mapped to shipping_option_type_id on the entity (line 1305-1307), since the DB
+column name differs from the API field name.
+
+updateFulfillment_ label handling:
+- The ORM handles one-to-many label replacement automatically (delete/update/create). The code explicitly
+  notes this at lines 1843-1851 as a simplification over manual upsert logic.
+
+Exception patterns in FulfillmentProviderService:
+- retrieveProviderRegistration distinguishes AwilixResolutionError from other errors for targeted
+messaging
+- Provider errors throw plain Error (not MedusaError), which is unusual compared to the rest of the
+codebase
+
+Still waiting on the workflows/API routes and types/interfaces agents.
+
+⏺ Agent "Analyze fulfillment types/interface" completed
+
+⏺ The types/interfaces agent completed. Key additions to the analysis:
+
+9. Public API Surface (IFulfillmentModuleService)
+
+The interface at packages/core/types/src/fulfillment/service.ts (3077 lines) exposes a consistent CRUD
+surface for every entity, plus specialized methods:
+
+Standard CRUD per entity: retrieve, list, listAndCount, create, update, delete, softDelete, restore
+
+Specialized methods:
+- listShippingOptionsForContext() - context-aware filtering with rules + geo zones
+- createFulfillment() / createReturnFulfillment() - triggers provider
+- cancelFulfillment() - cancels via provider
+- validateShippingOption() / validateFulfillmentData() / validateFulfillmentOption()
+- validateShippingOptionsForPriceCalculation() / calculateShippingOptionsPrices()
+- retrieveFulfillmentOptions(providerId) - gets provider's available options
+- listFulfillmentProviders() - read-only (no create/update/delete on providers directly)
+
+10. IFulfillmentProvider Interface (what providers implement)
+
+Defined at packages/core/types/src/fulfillment/provider.ts:
+
+┌────────────────────────────────────────────────────────────────┬───────────────────────────────────┐
+│                             Method                             │              Returns              │
+├────────────────────────────────────────────────────────────────┼───────────────────────────────────┤
+│ getIdentifier()                                                │ string ID                         │
+├────────────────────────────────────────────────────────────────┼───────────────────────────────────┤
+│ getFulfillmentOptions()                                        │ FulfillmentOption[]               │
+├────────────────────────────────────────────────────────────────┼───────────────────────────────────┤
+│ validateFulfillmentData(optionData, data, context)             │ validated data                    │
+├────────────────────────────────────────────────────────────────┼───────────────────────────────────┤
+│ validateOption(data)                                           │ boolean                           │
+├────────────────────────────────────────────────────────────────┼───────────────────────────────────┤
+│ canCalculate(data)                                             │ boolean                           │
+├────────────────────────────────────────────────────────────────┼───────────────────────────────────┤
+│ calculatePrice(optionData, data, context)                      │ CalculatedShippingOptionPrice     │
+├────────────────────────────────────────────────────────────────┼───────────────────────────────────┤
+│ createFulfillment(data, items, order, fulfillment)             │ CreateFulfillmentResult (data +   │
+│                                                                │ labels)                           │
+├────────────────────────────────────────────────────────────────┼───────────────────────────────────┤
+│ cancelFulfillment(fulfillment)                                 │ void                              │
+├────────────────────────────────────────────────────────────────┼───────────────────────────────────┤
+│ createReturnFulfillment(fromData)                              │ CreateFulfillmentResult           │
+├────────────────────────────────────────────────────────────────┼───────────────────────────────────┤
+│ getFulfillmentDocuments(data) / retrieveDocuments() /          │ documents                         │
+│ getReturnDocuments() / getShipmentDocuments()                  │                                   │
+└────────────────────────────────────────────────────────────────┴───────────────────────────────────┘
+
+11. GeoZone Discriminated Union Types
+
+The mutation types use discriminated unions based on type:
+- CreateCountryGeoZoneDTO - type: "country", requires country_code
+- CreateProvinceGeoZoneDTO - adds required province_code
+- CreateCityGeoZoneDTO - adds required city
+- CreateZipGeoZoneDTO - adds required postal_expression
+
+12. Workflow Types (workflows.ts)
+
+Key workflow input/output types for cross-module operations:
+- ListShippingOptionsForCartWithPricingWorkflowInput - { cart_id, options?, is_return?, enabled_in_store?
+  }
+- ListShippingOptionsForCartWithPricingWorkflowOutput - enriched with computed amount, is_tax_inclusive,
+calculated_price, optional stock_location
+- ListShippingOptionsForOrderWorkflowInput - { order_id, is_return?, enabled_in_store? }
+
+13. Context Types for Provider Calls
+
+- CartPropsForFulfillment - cart slice with shipping_address, enriched items (variant dimensions/weight,
+product categories/tags)
+- FulfillmentOrderDTO - full order with totals, addresses, line items with detailed quantity states
+(fulfilled, shipped, delivered, returned)
+- CalculatedRMAShippingContext - discriminated union for returns, exchanges, and claims
+
+---
+Still waiting on the workflows/API routes agent for the final piece.
+
+⏺ Agent "Analyze fulfillment workflows/flows" completed
+
+⏺ All 4 agents have completed. Here's the final piece -- the workflows and API routes analysis:
+
+---
+14. Workflows & Steps
+
+All steps in packages/core/core-flows/src/fulfillment/steps/, all workflows in workflows/.
+
+Infrastructure Steps & Workflows
+
+┌───────────────────────────────┬──────────────────────────────────────┬──────────────────────────────┐
+│           Workflow            │                Steps                 │         Compensation         │
+├───────────────────────────────┼──────────────────────────────────────┼──────────────────────────────┤
+│ createServiceZonesWorkflow    │ createServiceZonesStep               │ deleteServiceZones           │
+├───────────────────────────────┼──────────────────────────────────────┼──────────────────────────────┤
+│ updateServiceZonesWorkflow    │ updateServiceZonesStep (fetches prev │ upsertServiceZones(prevData) │
+│                               │  state first)                        │                              │
+├───────────────────────────────┼──────────────────────────────────────┼──────────────────────────────┤
+│ deleteServiceZonesWorkflow    │ deleteServiceZonesStep (soft delete) │ restoreServiceZones          │
+├───────────────────────────────┼──────────────────────────────────────┼──────────────────────────────┤
+│ deleteFulfillmentSetsWorkflow │ deleteFulfillmentSetsStep +          │ restoreFulfillmentSets       │
+│                               │ removeRemoteLinkStep                 │                              │
+└───────────────────────────────┴──────────────────────────────────────┴──────────────────────────────┘
+
+Shipping Option Workflows (most complex)
+
+createShippingOptionsWorkflow -- the most compositionally complex:
+parallelize(
+  validateFulfillmentProvidersStep,      // provider exists in service zone's locations
+  validateShippingOptionPricesStep       // regions exist, provider can calculate
+)
+-> upsertShippingOptionsStep            // create options in fulfillment module
+-> createShippingOptionsPriceSetsStep   // create PriceSets in Pricing module
+-> parallelize(
+      setShippingOptionsPriceSetsStep,   // create ShippingOption <-> PriceSet links
+      emitEventStep(CREATED)
+    )
+
+updateShippingOptionsWorkflow -- similar but uses setShippingOptionsPricesStep (update prices) instead of
+  creating new price sets.
+
+deleteShippingOptionsWorkflow -- soft delete + removeRemoteLinkStep + emit event.
+
+batchShippingOptionRulesWorkflow -- splits input into create/update/delete, runs all 3 in parallel.
+
+Fulfillment Lifecycle Workflows
+
+┌────────────────────────────────────┬──────────────────────────────────────────┬────────────────────┐
+│              Workflow              │                  Steps                   │       Notes        │
+├────────────────────────────────────┼──────────────────────────────────────────┼────────────────────┤
+│ createFulfillmentWorkflow          │ Fetch stock location ->                  │ Compensation:      │
+│                                    │ createFulfillmentStep                    │ cancelFulfillment  │
+├────────────────────────────────────┼──────────────────────────────────────────┼────────────────────┤
+│ createReturnFulfillmentWorkflow    │ Same pattern but                         │ Compensation:      │
+│                                    │ createReturnFulfillmentStep              │ cancelFulfillment  │
+├────────────────────────────────────┼──────────────────────────────────────────┼────────────────────┤
+│ cancelFulfillmentWorkflow          │ cancelFulfillmentStep                    │ No compensation    │
+│                                    │                                          │ (terminal)         │
+├────────────────────────────────────┼──────────────────────────────────────────┼────────────────────┤
+│ updateFulfillmentWorkflow          │ updateFulfillmentStep                    │ Compensation:      │
+│                                    │                                          │ restore prev state │
+├────────────────────────────────────┼──────────────────────────────────────────┼────────────────────┤
+│                                    │ validateShipmentStep ->                  │ Validates not      │
+│ createShipmentWorkflow             │ updateFulfillmentWorkflow.runAsStep      │ shipped/canceled   │
+│                                    │ (sets shipped_at)                        │                    │
+├────────────────────────────────────┼──────────────────────────────────────────┼────────────────────┤
+│                                    │ acquireLock -> fetch -> validate ->      │ Distributed lock   │
+│ markFulfillmentAsDeliveredWorkflow │ updateFulfillmentWorkflow.runAsStep      │ on fulfillment ID  │
+│                                    │ (sets delivered_at) -> releaseLock       │                    │
+└────────────────────────────────────┴──────────────────────────────────────────┴────────────────────┘
+
+Cross-Module Integration Workflows
+
+createOrderFulfillmentWorkflow (in core-flows/src/order/workflows/):
+fetch order -> validate -> fetch shipping option -> fetch reservations
+-> prepareFulfillmentData (maps items to fulfillment items via inventory reservations)
+-> createFulfillmentWorkflow.runAsStep
+-> adjustInventoryLevelsStep (decrease stock)
+-> parallelize(
+      registerOrderFulfillmentStep,       // notify Order module
+      createRemoteLinkStep (Order <-> Fulfillment),
+      updateReservationsStep,
+      deleteReservationsStep,
+      emitEvent(FULFILLMENT_CREATED)
+    )
+-> createHook("fulfillmentCreated")
+
+cancelOrderFulfillmentWorkflow: Reverses inventory -- creates/updates reservations, increases stock
+levels. Calls cancelFulfillmentWorkflow.runAsStep last (no compensation, so it must be after all
+compensatable steps).
+
+markOrderFulfillmentAsDeliveredWorkflow: Validates fulfillment belongs to order, acquires lock on
+orderId, runs markFulfillmentAsDeliveredWorkflow (which acquires its own lock on fulfillmentId), then
+registerOrderDeliveryStep.
+
+listShippingOptionsForCartWorkflow (in core-flows/src/cart/workflows/):
+fetch cart -> validate required fields -> fetch sales channel stock locations
+-> extract fulfillment_set_ids
+-> hooks: setPricingContext, setShippingOptionsContext
+-> build query with address filters (country, province, city, postal)
+-> remoteQuery shipping_options with calculated_price context
+-> compute insufficient_inventory per option
+-> getTranslatedShippingOptionsStep
+
+Pricing Integration Detail
+
+The createShippingOptionsPriceSetsStep handles region-based prices by resolving region_id ->
+currency_code via the Region module. Both flat and calculated options get a PriceSet (calculated gets an
+empty prices array). Remote links ShippingOption <-> PriceSet are managed via
+setShippingOptionsPriceSetsStep.
+
+---
+15. API Routes
+
+Admin Routes
+
+┌───────────────┬────────────────────────────────────────────────┬───────────────────────────────────┐
+│    Method     │                      Path                      │              Handler              │
+├───────────────┼────────────────────────────────────────────────┼───────────────────────────────────┤
+│ POST          │ /admin/fulfillments                            │ createFulfillmentWorkflow (adds   │
+│               │                                                │ created_by)                       │
+├───────────────┼────────────────────────────────────────────────┼───────────────────────────────────┤
+│ POST          │ /admin/fulfillments/:id/cancel                 │ cancelFulfillmentWorkflow         │
+├───────────────┼────────────────────────────────────────────────┼───────────────────────────────────┤
+│ POST          │ /admin/fulfillments/:id/shipment               │ createShipmentWorkflow (adds      │
+│               │                                                │ marked_shipped_by)                │
+├───────────────┼────────────────────────────────────────────────┼───────────────────────────────────┤
+│ DELETE        │ /admin/fulfillment-sets/:id                    │ deleteFulfillmentSetsWorkflow     │
+├───────────────┼────────────────────────────────────────────────┼───────────────────────────────────┤
+│ POST          │ /admin/fulfillment-sets/:id/service-zones      │ createServiceZonesWorkflow        │
+├───────────────┼────────────────────────────────────────────────┼───────────────────────────────────┤
+│ GET           │ /admin/fulfillment-sets/:id/service-zones/:zon │ direct remoteQuery                │
+│               │ e_id                                           │                                   │
+├───────────────┼────────────────────────────────────────────────┼───────────────────────────────────┤
+│ POST          │ /admin/fulfillment-sets/:id/service-zones/:zon │ updateServiceZonesWorkflow        │
+│               │ e_id                                           │                                   │
+├───────────────┼────────────────────────────────────────────────┼───────────────────────────────────┤
+│ DELETE        │ /admin/fulfillment-sets/:id/service-zones/:zon │ deleteServiceZonesWorkflow        │
+│               │ e_id                                           │                                   │
+├───────────────┼────────────────────────────────────────────────┼───────────────────────────────────┤
+│ GET           │ /admin/fulfillment-providers                   │ direct remoteQuery                │
+├───────────────┼────────────────────────────────────────────────┼───────────────────────────────────┤
+│ GET/POST      │ /admin/shipping-options                        │ list /                            │
+│               │                                                │ createShippingOptionsWorkflow     │
+├───────────────┼────────────────────────────────────────────────┼───────────────────────────────────┤
+│ GET/POST/DELE │                                                │ retrieve /                        │
+│ TE            │ /admin/shipping-options/:id                    │ updateShippingOptionsWorkflow /   │
+│               │                                                │ deleteShippingOptionsWorkflow     │
+├───────────────┼────────────────────────────────────────────────┼───────────────────────────────────┤
+│ POST          │ /admin/shipping-options/:id/rules/batch        │ batchShippingOptionRulesWorkflow  │
+├───────────────┼────────────────────────────────────────────────┼───────────────────────────────────┤
+│ GET/POST      │ /admin/shipping-profiles                       │ list /                            │
+│               │                                                │ createShippingProfilesWorkflow    │
+├───────────────┼────────────────────────────────────────────────┼───────────────────────────────────┤
+│ GET/POST/DELE │ /admin/shipping-profiles/:id                   │ retrieve / update /               │
+│ TE            │                                                │ deleteShippingProfileWorkflow     │
+├───────────────┼────────────────────────────────────────────────┼───────────────────────────────────┤
+│ POST          │ /admin/stock-locations/:id/fulfillment-sets    │ createLocationFulfillmentSetWorkf │
+│               │                                                │ low                               │
+├───────────────┼────────────────────────────────────────────────┼───────────────────────────────────┤
+│ POST          │ /admin/stock-locations/:id/fulfillment-provide │ batchLinksWorkflow                │
+│               │ rs                                             │                                   │
+└───────────────┴────────────────────────────────────────────────┴───────────────────────────────────┘
+
+Store Routes
+
+┌────────┬───────────────────────────────────────┬────────────────────────────────────────────────────┐
+│ Method │                 Path                  │                      Handler                       │
+├────────┼───────────────────────────────────────┼────────────────────────────────────────────────────┤
+│ GET    │ /store/shipping-options               │ listShippingOptionsForCartWorkflow (requires       │
+│        │                                       │ cart_id)                                           │
+├────────┼───────────────────────────────────────┼────────────────────────────────────────────────────┤
+│ POST   │ /store/shipping-options/:id/calculate │ calculateShippingOptionsPricesWorkflow             │
+└────────┴───────────────────────────────────────┴────────────────────────────────────────────────────┘
+
+---
+That completes the full analysis. The fulfillment module is one of the more complex modules in Medusa,
+with deep integrations across Order, Pricing, Inventory, Reservation, Stock Location, and Region modules.
+  Its provider-based architecture, rule engine, and geographic zone system provide a flexible foundation
+for shipping configuration.

@@ -1,5 +1,6 @@
 import type { CartDTO } from '@core/types/cart/common.js'
 import type { ICartModuleService } from '@core/types/cart/service.js'
+import type { IFulfillmentModuleService } from '@core/types/fulfillment/service.js'
 import type { ILinkService } from '@core/types/link/service.js'
 import type { Logger } from '@core/types/logger.js'
 import type { IPaymentModuleService } from '@core/types/payment/service.js'
@@ -9,11 +10,29 @@ import { createWorkflow, WorkflowTerminalError } from '@core/workflows/types.js'
 type CompleteCartInput = { cartId: string }
 
 export const completeCartWorkflow = createWorkflow<CompleteCartInput, CartDTO>('complete-cart', async (ctx, input) => {
-  // TODO: [shipping] Validate shipping method is selected before completing
-  // When the fulfillment module is added, add a step here:
-  //   - Retrieve cart shipping methods
-  //   - Validate at least one shipping method is set
-  //   - Validate shipping options still exist and are valid
+  // Validate shipping method is selected and still valid
+  await ctx.step('validate-shipping', async ({ container }) => {
+    const cartService = container.resolve<ICartModuleService>(Modules.CART)
+    const fulfillmentService = container.resolve<IFulfillmentModuleService>(Modules.FULFILLMENT)
+
+    const shippingMethods = await cartService.listShippingMethods({ cartId: input.cartId })
+
+    if (shippingMethods.length === 0) {
+      throw new WorkflowTerminalError(
+        `Cart "${input.cartId}" has no shipping method — call POST /store/carts/:id/shipping-methods first`,
+      )
+    }
+
+    await Promise.all(
+      shippingMethods.map(async (sm) => {
+        if (!sm.shippingOptionId) return
+        const option = await fulfillmentService.retrieveShippingOption(sm.shippingOptionId)
+        if (!option.isEnabled) {
+          throw new WorkflowTerminalError(`Shipping option "${sm.shippingOptionId}" is no longer available`)
+        }
+      }),
+    )
+  })
 
   const cart = await ctx.step('authorize-and-complete', async ({ container }) => {
     const logger = container.resolve<Logger>(ContainerRegistrationKeys.LOGGER)

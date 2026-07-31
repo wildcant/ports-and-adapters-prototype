@@ -8,12 +8,13 @@ type GetInput = { params: IdParams }
 export const GET = async (req: HttpRequest<GetInput>) => {
   const cartService = req.scope.resolve<ICartModuleService>(Modules.CART)
 
-  const [cart, lineItems] = await Promise.all([
+  const [cart, lineItems, shippingMethods] = await Promise.all([
     cartService.retrieveCart(req.params.id),
     cartService.listLineItems({ cartId: req.params.id }),
+    cartService.listShippingMethods({ cartId: req.params.id }),
   ])
 
-  return { status: 200, json: { cart: { ...cart, items: lineItems } } } satisfies HttpResult
+  return { status: 200, json: { cart: { ...cart, items: lineItems, shippingMethods } } } satisfies HttpResult
 }
 
 type PostInput = { params: IdParams; body: UpdateCartBody }

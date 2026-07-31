@@ -1,7 +1,20 @@
 import type { FindConfig } from '../common.js'
 import type { Context } from '../context.js'
-import type { CartDTO, CartLineItemDTO, FilterableCartLineItemProps, FilterableCartProps } from './common.js'
-import type { CreateCartDTO, CreateLineItemDTO, UpdateCartDTO, UpdateLineItemDTO } from './mutations.js'
+import type {
+  CartDTO,
+  CartLineItemDTO,
+  CartShippingMethodDTO,
+  FilterableCartLineItemProps,
+  FilterableCartProps,
+  FilterableCartShippingMethodProps,
+} from './common.js'
+import type {
+  CreateCartDTO,
+  CreateLineItemDTO,
+  CreateShippingMethodDTO,
+  UpdateCartDTO,
+  UpdateLineItemDTO,
+} from './mutations.js'
 
 export type ICartModuleService = {
   retrieveCart(cartId: string, config?: FindConfig<CartDTO>, context?: Context): Promise<CartDTO>
@@ -25,4 +38,15 @@ export type ICartModuleService = {
   addLineItems(cartId: string, items: CreateLineItemDTO[], context?: Context): Promise<CartLineItemDTO[]>
   updateLineItems(lineItemIds: string[], data: UpdateLineItemDTO, context?: Context): Promise<CartLineItemDTO[]>
   deleteLineItems(lineItemIds: string[], context?: Context): Promise<void>
+  listShippingMethods(
+    filters?: FilterableCartShippingMethodProps,
+    config?: FindConfig<CartShippingMethodDTO>,
+    context?: Context,
+  ): Promise<CartShippingMethodDTO[]>
+  addShippingMethods(
+    cartId: string,
+    methods: CreateShippingMethodDTO[],
+    context?: Context,
+  ): Promise<CartShippingMethodDTO[]>
+  deleteShippingMethods(shippingMethodIds: string[], context?: Context): Promise<void>
 }

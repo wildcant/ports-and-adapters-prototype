@@ -5,8 +5,7 @@ import { CustomerList } from '#/features/customers/components/customer-list.tsx'
 
 export const Route = createFileRoute('/customers')({
   component: CustomersPage,
-  loader: ({ context }) =>
-    context.queryClient.ensureQueryData(getCustomersQueryOptions({ limit: 5, offset: 0 })),
+  loader: ({ context }) => context.queryClient.ensureQueryData(getCustomersQueryOptions({ limit: 5, offset: 0 })),
 })
 
 function CustomersPage() {
