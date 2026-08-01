@@ -6,10 +6,12 @@
  */
 import type {
   AdminCreateProduct,
-  AdminProductDeleteResponse,
+  AdminCreateProductResponse,
   AdminProductListResponse,
   AdminProductResponse,
   AdminUpdateProduct,
+  AdminUpdateProductResponse,
+  DeleteResponse,
   ListProductsParams
 } from '../model';
 
@@ -36,7 +38,7 @@ export const listProducts = (
 export const createProduct = (
     adminCreateProduct?: BodyType<AdminCreateProduct>,
  ) => {
-      return fetcher<AdminProductResponse>(
+      return fetcher<AdminCreateProductResponse>(
       {url: `/admin/products`, method: 'POST',
       headers: {'Content-Type': 'application/json', },
       data: adminCreateProduct
@@ -61,7 +63,7 @@ export const updateProduct = (
     id: string,
     adminUpdateProduct?: BodyType<AdminUpdateProduct>,
  ) => {
-      return fetcher<AdminProductResponse>(
+      return fetcher<AdminUpdateProductResponse>(
       {url: `/admin/products/${id}`, method: 'PATCH',
       headers: {'Content-Type': 'application/json', },
       data: adminUpdateProduct
@@ -74,7 +76,7 @@ export const updateProduct = (
 export const deleteProduct = (
     id: string,
  ) => {
-      return fetcher<AdminProductDeleteResponse>(
+      return fetcher<DeleteResponse>(
       {url: `/admin/products/${id}`, method: 'DELETE'
     },
       );

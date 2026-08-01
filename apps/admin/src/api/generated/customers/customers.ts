@@ -5,11 +5,13 @@
  * OpenAPI spec version: 0.1.0
  */
 import type {
-  AdminCreateCustomer,
-  AdminCustomerDeleteResponse,
+  AdminCreateCustomers,
+  AdminCreateCustomersResponse,
   AdminCustomerListResponse,
   AdminCustomerResponse,
   AdminUpdateCustomer,
+  AdminUpdateCustomerResponse,
+  DeleteResponse,
   ListCustomersParams
 } from '../model';
 
@@ -34,12 +36,12 @@ export const listCustomers = (
  * @summary Create customers
  */
 export const createCustomers = (
-    adminCreateCustomer?: AdminCreateCustomer[],
+    adminCreateCustomers?: BodyType<AdminCreateCustomers>,
  ) => {
-      return fetcher<AdminCustomerListResponse>(
+      return fetcher<AdminCreateCustomersResponse>(
       {url: `/admin/customers`, method: 'POST',
       headers: {'Content-Type': 'application/json', },
-      data: adminCreateCustomer
+      data: adminCreateCustomers
     },
       );
     }
@@ -61,7 +63,7 @@ export const updateCustomer = (
     id: string,
     adminUpdateCustomer?: BodyType<AdminUpdateCustomer>,
  ) => {
-      return fetcher<AdminCustomerResponse>(
+      return fetcher<AdminUpdateCustomerResponse>(
       {url: `/admin/customers/${id}`, method: 'PATCH',
       headers: {'Content-Type': 'application/json', },
       data: adminUpdateCustomer
@@ -74,7 +76,7 @@ export const updateCustomer = (
 export const deleteCustomer = (
     id: string,
  ) => {
-      return fetcher<AdminCustomerDeleteResponse>(
+      return fetcher<DeleteResponse>(
       {url: `/admin/customers/${id}`, method: 'DELETE'
     },
       );

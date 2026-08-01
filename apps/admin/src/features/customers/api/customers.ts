@@ -9,10 +9,10 @@ import {
 } from '#/api/generated/customers/customers'
 import type {
   AdminCreateCustomer,
-  AdminCustomerDeleteResponse,
   AdminCustomerListResponse,
   AdminCustomerResponse,
   AdminUpdateCustomer,
+  DeleteResponse,
   ListCustomersParams,
 } from '#/api/generated/model'
 import { queryClient } from '#/lib/query-client'
@@ -86,7 +86,7 @@ export const useUpdateCustomer = (
   })
 }
 
-export const useDeleteCustomer = (options?: UseMutationOptions<AdminCustomerDeleteResponse, Error, { id: string }>) => {
+export const useDeleteCustomer = (options?: UseMutationOptions<DeleteResponse, Error, { id: string }>) => {
   const { onSuccess, ...rest } = options ?? {}
   return useMutation({
     ...rest,

@@ -1,11 +1,14 @@
+import { AppError, ErrorTypes } from '@core/errors/app-error.js'
 import type { ICartModuleService, IFulfillmentModuleService } from '@core/types/index.js'
 import { Modules } from '@core/utils/index.js'
-import type { AddCartShippingMethodBody, IdParams } from '@proteus/http-schemas'
+import type { AddCartShippingMethodBody, IdParams, StoreCreateCartShippingMethodResponse } from '@proteus/http-schemas'
 import type { HttpRequest, HttpResult } from '../../../../../server/ports.js'
 
 type PostInput = { params: IdParams; body: AddCartShippingMethodBody }
 
-export const POST = async (req: HttpRequest<PostInput>) => {
+export const POST = async (
+  req: HttpRequest<PostInput>,
+): Promise<HttpResult<StoreCreateCartShippingMethodResponse | { message: string }>> => {
   const cartService = req.scope.resolve<ICartModuleService>(Modules.CART)
   const fulfillmentService = req.scope.resolve<IFulfillmentModuleService>(Modules.FULFILLMENT)
 
@@ -16,7 +19,7 @@ export const POST = async (req: HttpRequest<PostInput>) => {
     return {
       status: 400,
       json: { message: `Shipping option "${req.body.shippingOptionId}" is not available` },
-    } satisfies HttpResult
+    }
   }
 
   const amount = shippingOption.amount ?? 0
@@ -36,6 +39,9 @@ export const POST = async (req: HttpRequest<PostInput>) => {
       data: req.body.data ? JSON.stringify(req.body.data) : null,
     },
   ])
+  if (!shippingMethod) {
+    throw new AppError({ type: ErrorTypes.UNEXPECTED_STATE, message: 'Shipping method not returned after create' })
+  }
 
-  return { status: 201, json: { shippingMethod } } satisfies HttpResult
+  return { status: 201, json: { shippingMethod } }
 }

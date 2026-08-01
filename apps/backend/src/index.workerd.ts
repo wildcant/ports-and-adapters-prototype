@@ -9,6 +9,7 @@ import type { Logger } from './core/types/logger.js'
 import { ContainerRegistrationKeys } from './core/utils/index.js'
 import { registerStaticRoutes } from './routes-static.js'
 import { createApp } from './server/app.js'
+import type { RouteHandler } from './server/ports.js'
 
 const logger: Logger = container.resolve(ContainerRegistrationKeys.LOGGER)
 
@@ -30,15 +31,15 @@ registerStaticRoutes(app, logger, (routePath) => {
 
 // ---- OpenAPI ----
 
-app.addRoute('GET', '/admin/openapi.json', async () => ({
+app.addRoute('GET', '/admin/openapi.json', (async () => ({
   status: 200,
   json: generateDocument(adminRegistry, 'Admin API'),
-}))
+})) as RouteHandler)
 
-app.addRoute('GET', '/store/openapi.json', async () => ({
+app.addRoute('GET', '/store/openapi.json', (async () => ({
   status: 200,
   json: generateDocument(storeRegistry, 'Store API'),
-}))
+})) as RouteHandler)
 
 // ---- Platform: Express on Workers ----
 

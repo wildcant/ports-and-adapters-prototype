@@ -16,9 +16,7 @@ export function ProductList() {
         {products?.map((product) => (
           <div key={product.id} className="rounded-xl border border-[var(--line)] bg-[var(--card-bg)] px-4 py-3">
             <span className="font-medium text-[var(--sea-ink)]">{product.title}</span>
-            {product.description && (
-              <p className="mt-1 text-sm text-[var(--sea-ink-soft)]">{product.description}</p>
-            )}
+            {product.description && <p className="mt-1 text-sm text-[var(--sea-ink-soft)]">{product.description}</p>}
           </div>
         ))}
         {(!products || products.length === 0) && (

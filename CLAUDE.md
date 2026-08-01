@@ -26,6 +26,9 @@ npm run --workspace=backend db:generate
 # Drizzle: run migrations
 npm run --workspace=backend db:migrate
 
+# Regenerate OpenAPI specs + Orval clients (admin & frontend)
+npm run openapi:generate
+
 ```
 
 ## Architecture

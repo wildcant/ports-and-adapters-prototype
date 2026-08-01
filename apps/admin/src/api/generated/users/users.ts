@@ -7,9 +7,9 @@
 import type {
   AdminCreateUser,
   AdminUpdateUser,
-  AdminUserDeleteResponse,
   AdminUserListResponse,
   AdminUserResponse,
+  DeleteResponse,
   ListUsersParams
 } from '../model';
 
@@ -74,7 +74,7 @@ export const updateUser = (
 export const deleteUser = (
     id: string,
  ) => {
-      return fetcher<AdminUserDeleteResponse>(
+      return fetcher<DeleteResponse>(
       {url: `/admin/users/${id}`, method: 'DELETE'
     },
       );

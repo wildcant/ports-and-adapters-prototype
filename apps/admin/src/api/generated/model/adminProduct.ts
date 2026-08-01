@@ -40,6 +40,7 @@ export interface AdminProduct {
   /** @nullable */
   metadata: string | null;
   createdAt: string;
+  updatedAt: string;
   /** @nullable */
   deletedAt: string | null;
 }

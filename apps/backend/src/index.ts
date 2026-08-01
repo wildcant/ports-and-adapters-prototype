@@ -6,6 +6,7 @@ import { ContainerRegistrationKeys } from './core/utils/index.js'
 import { loadRoutes } from './routes-loader.js'
 import { createApp } from './server/app.js'
 import { serveExpress } from './server/platforms.js'
+import type { RouteHandler } from './server/ports.js'
 
 const logger: Logger = container.resolve(ContainerRegistrationKeys.LOGGER)
 
@@ -27,15 +28,15 @@ await loadRoutes(app, join(import.meta.dirname, 'api'), logger, (routePath) => {
 
 // ---- OpenAPI ----
 
-app.addRoute('GET', '/admin/openapi.json', async () => ({
+app.addRoute('GET', '/admin/openapi.json', (async () => ({
   status: 200,
   json: generateDocument(adminRegistry, 'Admin API'),
-}))
+})) as RouteHandler)
 
-app.addRoute('GET', '/store/openapi.json', async () => ({
+app.addRoute('GET', '/store/openapi.json', (async () => ({
   status: 200,
   json: generateDocument(storeRegistry, 'Store API'),
-}))
+})) as RouteHandler)
 
 // ---- Platform: Node.js ----
 

@@ -1,10 +1,12 @@
 import {
   AdminCreateCustomers,
-  AdminCustomerDeleteResponse,
+  AdminCreateCustomersResponse,
   AdminCustomerListParams,
   AdminCustomerListResponse,
   AdminCustomerResponse,
   AdminUpdateCustomer,
+  AdminUpdateCustomerResponse,
+  DeleteResponse,
   IdParams,
 } from '@proteus/http-schemas'
 import type { MiddlewareRoute } from '../../../core/middleware/types.js'
@@ -27,7 +29,7 @@ export default [
     operationId: 'createCustomers',
     summary: 'Create customers',
     tags: [Tags.CUSTOMERS],
-    responseSchema: AdminCustomerListResponse,
+    responseSchema: AdminCreateCustomersResponse,
   },
   {
     method: 'GET',
@@ -46,7 +48,7 @@ export default [
     operationId: 'updateCustomer',
     summary: 'Update a customer',
     tags: [Tags.CUSTOMERS],
-    responseSchema: AdminCustomerResponse,
+    responseSchema: AdminUpdateCustomerResponse,
   },
   {
     method: 'DELETE',
@@ -55,6 +57,6 @@ export default [
     operationId: 'deleteCustomer',
     summary: 'Delete a customer',
     tags: [Tags.CUSTOMERS],
-    responseSchema: AdminCustomerDeleteResponse,
+    responseSchema: DeleteResponse,
   },
 ] satisfies MiddlewareRoute[]

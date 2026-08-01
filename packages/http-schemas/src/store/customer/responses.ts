@@ -9,8 +9,3 @@ export const CustomerListResponse = PaginatedResponse.extend({ customers: z.arra
   'CustomerListResponse',
 )
 export type CustomerListResponse = z.infer<typeof CustomerListResponse>
-
-export const CustomerDeleteResponse = z
-  .object({ id: z.string(), deleted: z.boolean() })
-  .openapi('CustomerDeleteResponse')
-export type CustomerDeleteResponse = z.infer<typeof CustomerDeleteResponse>

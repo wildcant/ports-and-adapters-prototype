@@ -27,12 +27,12 @@ export type HttpRequest<
   headers: Record<string, string>
 }
 
-export type HttpResult<T = unknown> = {
+export type HttpResult<T> = {
   status: number
   json: T
 }
 
-export type RouteHandler = (req: HttpRequest) => Promise<HttpResult>
+export type RouteHandler = <T>(req: HttpRequest) => Promise<HttpResult<T>>
 
 // ---- App port (framework-agnostic) ----
 

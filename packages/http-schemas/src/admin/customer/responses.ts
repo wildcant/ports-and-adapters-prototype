@@ -10,7 +10,10 @@ export const AdminCustomerListResponse = PaginatedResponse.extend({
 }).openapi('AdminCustomerListResponse')
 export type AdminCustomerListResponse = z.infer<typeof AdminCustomerListResponse>
 
-export const AdminCustomerDeleteResponse = z
-  .object({ id: z.string(), deleted: z.boolean() })
-  .openapi('AdminCustomerDeleteResponse')
-export type AdminCustomerDeleteResponse = z.infer<typeof AdminCustomerDeleteResponse>
+export const AdminCreateCustomersResponse = z
+  .object({ customers: z.array(AdminCustomer) })
+  .openapi('AdminCreateCustomersResponse')
+export type AdminCreateCustomersResponse = z.infer<typeof AdminCreateCustomersResponse>
+
+export const AdminUpdateCustomerResponse = z.object({ customer: AdminCustomer }).openapi('AdminUpdateCustomerResponse')
+export type AdminUpdateCustomerResponse = z.infer<typeof AdminUpdateCustomerResponse>

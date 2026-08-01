@@ -9,8 +9,3 @@ export const AdminUserListResponse = PaginatedResponse.extend({ users: z.array(A
   'AdminUserListResponse',
 )
 export type AdminUserListResponse = z.infer<typeof AdminUserListResponse>
-
-export const AdminUserDeleteResponse = z
-  .object({ id: z.string(), deleted: z.boolean() })
-  .openapi('AdminUserDeleteResponse')
-export type AdminUserDeleteResponse = z.infer<typeof AdminUserDeleteResponse>

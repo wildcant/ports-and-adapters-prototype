@@ -52,3 +52,9 @@ export type FindParams<TParams extends z.ZodType = z.ZodTypeAny> = {
   }
   filters: Omit<z.infer<TParams>, 'offset' | 'limit' | 'order' | 'q'>
 }
+
+export const DeleteResponse = z.object({ id: z.string(), deleted: z.boolean() }).openapi('DeleteResponse')
+export type DeleteResponse = z.infer<typeof DeleteResponse>
+
+export const WebhookReceivedResponse = z.object({ received: z.boolean() }).openapi('WebhookReceivedResponse')
+export type WebhookReceivedResponse = z.infer<typeof WebhookReceivedResponse>

@@ -1,10 +1,10 @@
 import {
   AdminCreateUser,
   AdminUpdateUser,
-  AdminUserDeleteResponse,
   AdminUserListParams,
   AdminUserListResponse,
   AdminUserResponse,
+  DeleteResponse,
   IdParams,
 } from '@proteus/http-schemas'
 import type { MiddlewareRoute } from '../../../core/middleware/types.js'
@@ -55,6 +55,6 @@ export default [
     operationId: 'deleteUser',
     summary: 'Delete a user',
     tags: [Tags.USERS],
-    responseSchema: AdminUserDeleteResponse,
+    responseSchema: DeleteResponse,
   },
 ] satisfies MiddlewareRoute[]

@@ -1,11 +1,11 @@
 import type { IPaymentModuleService } from '@core/types/index.js'
 import { Modules } from '@core/utils/index.js'
-import type { CreatePaymentSessionBody, IdParams } from '@proteus/http-schemas'
+import type { CreatePaymentSessionBody, IdParams, StoreCreatePaymentSessionResponse } from '@proteus/http-schemas'
 import type { HttpRequest, HttpResult } from '../../../../../server/ports.js'
 
 type Input = { params: IdParams; body: CreatePaymentSessionBody }
 
-export const POST = async (req: HttpRequest<Input>) => {
+export const POST = async (req: HttpRequest<Input>): Promise<HttpResult<StoreCreatePaymentSessionResponse>> => {
   const paymentService = req.scope.resolve<IPaymentModuleService>(Modules.PAYMENT)
   const collection = await paymentService.retrievePaymentCollection(req.params.id)
 
@@ -17,5 +17,5 @@ export const POST = async (req: HttpRequest<Input>) => {
     context: req.body.context,
   })
 
-  return { status: 201, json: { paymentSession: session } } satisfies HttpResult
+  return { status: 201, json: { paymentSession: session } }
 }

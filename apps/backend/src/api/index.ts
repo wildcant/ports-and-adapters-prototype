@@ -9,7 +9,6 @@
 
 import { applyMiddleware } from '../core/middleware/apply-middleware.js'
 import type { MiddlewareRoute } from '../core/middleware/types.js'
-import type { RouteHandler } from '../server/ports.js'
 import * as _customerByIdApi from './admin/customers/[id]/route.js'
 import customerMiddlewares from './admin/customers/middlewares.js'
 import * as _customersApi from './admin/customers/route.js'
@@ -20,12 +19,10 @@ import * as _usersApi from './admin/users/route.js'
 export { apiCall } from '../server/api-caller.js'
 
 /** Wrap each handler (keyed by HTTP method) with the matching middleware config. */
-function withMiddleware<T extends Record<string, RouteHandler>>(
-  handlers: T,
-  matcher: string,
-  middlewares: MiddlewareRoute[],
-): T {
-  const wrapped = { ...handlers } as Record<string, RouteHandler>
+// biome-ignore lint/complexity/noUselessTypeConstraint: tmp
+function withMiddleware<T extends any>(handlers: T, matcher: string, middlewares: MiddlewareRoute[]): T {
+  // biome-ignore lint/suspicious/noExplicitAny: tmp
+  const wrapped = { ...(handlers as any) }
   for (const config of middlewares) {
     const handler = wrapped[config.method]
     if (config.matcher === matcher && handler) {

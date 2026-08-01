@@ -6,7 +6,7 @@ import { parseOrder, validateQuery } from '../utils/validate-query.js'
 import type { MiddlewareRoute } from './types.js'
 
 export function applyMiddleware(config: MiddlewareRoute, handler: RouteHandler): RouteHandler {
-  return async (req) => {
+  return (async (req) => {
     if (config.paramsSchema) {
       const result = config.paramsSchema.safeParse(req.params)
       if (!result.success) {
@@ -50,5 +50,5 @@ export function applyMiddleware(config: MiddlewareRoute, handler: RouteHandler):
     }
 
     return result
-  }
+  }) as RouteHandler
 }

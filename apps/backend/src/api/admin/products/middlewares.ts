@@ -1,10 +1,12 @@
 import {
   AdminCreateProduct,
-  AdminProductDeleteResponse,
+  AdminCreateProductResponse,
   AdminProductListParams,
   AdminProductListResponse,
   AdminProductResponse,
   AdminUpdateProduct,
+  AdminUpdateProductResponse,
+  DeleteResponse,
   IdParams,
 } from '@proteus/http-schemas'
 import type { MiddlewareRoute } from '../../../core/middleware/types.js'
@@ -29,7 +31,7 @@ export default [
     operationId: 'createProduct',
     summary: 'Create a product',
     tags: [Tags.PRODUCTS],
-    responseSchema: AdminProductResponse,
+    responseSchema: AdminCreateProductResponse,
   },
   {
     method: 'GET',
@@ -48,7 +50,7 @@ export default [
     operationId: 'updateProduct',
     summary: 'Update a product',
     tags: [Tags.PRODUCTS],
-    responseSchema: AdminProductResponse,
+    responseSchema: AdminUpdateProductResponse,
   },
   {
     method: 'DELETE',
@@ -57,6 +59,6 @@ export default [
     operationId: 'deleteProduct',
     summary: 'Delete a product',
     tags: [Tags.PRODUCTS],
-    responseSchema: AdminProductDeleteResponse,
+    responseSchema: DeleteResponse,
   },
 ] satisfies MiddlewareRoute[]
