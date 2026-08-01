@@ -7,9 +7,9 @@ import {
   AdminUpdateProduct,
   IdParams,
 } from '@proteus/http-schemas'
-import type { ProductDTO } from '../../../core/types/product/common.js'
 import type { MiddlewareRoute } from '../../../core/middleware/types.js'
-import { Tags, searchable } from '../../../core/middleware/types.js'
+import { searchable, Tags } from '../../../core/middleware/types.js'
+import type { ProductDTO } from '../../../core/types/product/common.js'
 
 export default [
   {

@@ -177,12 +177,8 @@
           "name": "capture_payment_id_payment_id_fk",
           "tableFrom": "capture",
           "tableTo": "payment",
-          "columnsFrom": [
-            "payment_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["payment_id"],
+          "columnsTo": ["id"],
           "onDelete": "no action",
           "onUpdate": "no action"
         }
@@ -459,12 +455,8 @@
           "name": "payment_session_payment_collection_id_payment_collection_id_fk",
           "tableFrom": "payment_session",
           "tableTo": "payment_collection",
-          "columnsFrom": [
-            "payment_collection_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["payment_collection_id"],
+          "columnsTo": ["id"],
           "onDelete": "no action",
           "onUpdate": "no action"
         }
@@ -616,12 +608,8 @@
           "name": "payment_payment_collection_id_payment_collection_id_fk",
           "tableFrom": "payment",
           "tableTo": "payment_collection",
-          "columnsFrom": [
-            "payment_collection_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["payment_collection_id"],
+          "columnsTo": ["id"],
           "onDelete": "no action",
           "onUpdate": "no action"
         },
@@ -629,12 +617,8 @@
           "name": "payment_payment_session_id_payment_session_id_fk",
           "tableFrom": "payment",
           "tableTo": "payment_session",
-          "columnsFrom": [
-            "payment_session_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["payment_session_id"],
+          "columnsTo": ["id"],
           "onDelete": "no action",
           "onUpdate": "no action"
         }
@@ -800,12 +784,8 @@
           "name": "refund_payment_id_payment_id_fk",
           "tableFrom": "refund",
           "tableTo": "payment",
-          "columnsFrom": [
-            "payment_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["payment_id"],
+          "columnsTo": ["id"],
           "onDelete": "no action",
           "onUpdate": "no action"
         },
@@ -813,12 +793,8 @@
           "name": "refund_refund_reason_id_refund_reason_id_fk",
           "tableFrom": "refund",
           "tableTo": "refund_reason",
-          "columnsFrom": [
-            "refund_reason_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["refund_reason_id"],
+          "columnsTo": ["id"],
           "onDelete": "no action",
           "onUpdate": "no action"
         }
@@ -834,26 +810,12 @@
     "public.payment_collection_status": {
       "name": "payment_collection_status",
       "schema": "public",
-      "values": [
-        "not_paid",
-        "awaiting",
-        "authorized",
-        "partially_authorized",
-        "completed"
-      ]
+      "values": ["not_paid", "awaiting", "authorized", "partially_authorized", "completed"]
     },
     "public.payment_session_status": {
       "name": "payment_session_status",
       "schema": "public",
-      "values": [
-        "pending",
-        "authorized",
-        "captured",
-        "requires_more",
-        "error",
-        "canceled",
-        "pending_authorization"
-      ]
+      "values": ["pending", "authorized", "captured", "requires_more", "error", "canceled", "pending_authorization"]
     }
   },
   "schemas": {},

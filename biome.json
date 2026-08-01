@@ -42,12 +42,7 @@
                 "selector": {
                   "kind": "objectLiteralProperty"
                 },
-                "match": "^\\$"
-              },
-              {
-                "selector": {
-                  "kind": "objectLiteralProperty"
-                },
+                "match": "(?:\\$)?(.*)",
                 "formats": ["camelCase", "PascalCase", "CONSTANT_CASE"]
               },
               {

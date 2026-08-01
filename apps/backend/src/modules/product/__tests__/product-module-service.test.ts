@@ -46,11 +46,7 @@ describe('ProductModuleService', () => {
   })
 
   test('listAndCountProducts with single-word q search', async ({ expect }) => {
-    await service.createProducts([
-      { title: 'Blue Widget' },
-      { title: 'Red Gadget' },
-      { title: 'Blue Gadget' },
-    ])
+    await service.createProducts([{ title: 'Blue Widget' }, { title: 'Red Gadget' }, { title: 'Blue Gadget' }])
 
     const searchFilter = buildSearchFilter('blue', ['title', 'handle'])
     const [rows, count] = await service.listAndCountProducts(searchFilter)
@@ -60,11 +56,7 @@ describe('ProductModuleService', () => {
   })
 
   test('listAndCountProducts with multi-word q search', async ({ expect }) => {
-    await service.createProducts([
-      { title: 'Blue Widget' },
-      { title: 'Red Widget' },
-      { title: 'Blue Gadget' },
-    ])
+    await service.createProducts([{ title: 'Blue Widget' }, { title: 'Red Widget' }, { title: 'Blue Gadget' }])
 
     // "blue widget" should match only items where both "blue" AND "widget" match
     const searchFilter = buildSearchFilter('blue widget', ['title', 'handle'])
@@ -89,10 +81,7 @@ describe('ProductModuleService', () => {
 
   test('listAndCountProducts with created_at range filter', async ({ expect, dto }) => {
     const oneMinuteAgo = new Date(Date.now() - 60_000).toISOString()
-    await service.createProducts([
-      dto.generate.createProduct(),
-      dto.generate.createProduct(),
-    ])
+    await service.createProducts([dto.generate.createProduct(), dto.generate.createProduct()])
 
     const [rows, count] = await service.listAndCountProducts({
       createdAt: { $gte: oneMinuteAgo },

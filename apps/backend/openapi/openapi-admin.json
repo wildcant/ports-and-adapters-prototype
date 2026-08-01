@@ -30,12 +30,7 @@
             }
           }
         },
-        "required": [
-          "count",
-          "offset",
-          "limit",
-          "customers"
-        ]
+        "required": ["count", "offset", "limit", "customers"]
       },
       "AdminCustomer": {
         "type": "object",
@@ -61,22 +56,11 @@
             "format": "date-time"
           },
           "deletedAt": {
-            "type": [
-              "string",
-              "null"
-            ],
+            "type": ["string", "null"],
             "format": "date-time"
           }
         },
-        "required": [
-          "id",
-          "firstName",
-          "lastName",
-          "email",
-          "createdAt",
-          "updatedAt",
-          "deletedAt"
-        ]
+        "required": ["id", "firstName", "lastName", "email", "createdAt", "updatedAt", "deletedAt"]
       },
       "AdminCreateCustomer": {
         "type": "object",
@@ -94,11 +78,7 @@
             "format": "email"
           }
         },
-        "required": [
-          "firstName",
-          "lastName",
-          "email"
-        ]
+        "required": ["firstName", "lastName", "email"]
       },
       "AdminCustomerResponse": {
         "type": "object",
@@ -107,9 +87,7 @@
             "$ref": "#/components/schemas/AdminCustomer"
           }
         },
-        "required": [
-          "customer"
-        ]
+        "required": ["customer"]
       },
       "AdminUpdateCustomer": {
         "type": "object",
@@ -138,10 +116,7 @@
             "type": "boolean"
           }
         },
-        "required": [
-          "id",
-          "deleted"
-        ]
+        "required": ["id", "deleted"]
       },
       "AdminCreateFulfillmentSet": {
         "type": "object",
@@ -155,10 +130,7 @@
             "minLength": 1
           }
         },
-        "required": [
-          "name",
-          "type"
-        ]
+        "required": ["name", "type"]
       },
       "AdminUpdateFulfillmentSet": {
         "type": "object",
@@ -187,12 +159,7 @@
               "properties": {
                 "type": {
                   "type": "string",
-                  "enum": [
-                    "country",
-                    "province",
-                    "city",
-                    "zip"
-                  ]
+                  "enum": ["country", "province", "city", "zip"]
                 },
                 "countryCode": {
                   "type": "string",
@@ -209,16 +176,11 @@
                   "type": "string"
                 }
               },
-              "required": [
-                "type",
-                "countryCode"
-              ]
+              "required": ["type", "countryCode"]
             }
           }
         },
-        "required": [
-          "name"
-        ]
+        "required": ["name"]
       },
       "AdminUpdateServiceZone": {
         "type": "object",
@@ -234,12 +196,7 @@
         "properties": {
           "type": {
             "type": "string",
-            "enum": [
-              "country",
-              "province",
-              "city",
-              "zip"
-            ]
+            "enum": ["country", "province", "city", "zip"]
           },
           "countryCode": {
             "type": "string",
@@ -256,10 +213,7 @@
             "type": "string"
           }
         },
-        "required": [
-          "type",
-          "countryCode"
-        ]
+        "required": ["type", "countryCode"]
       },
       "AdminCapturePayment": {
         "type": "object",
@@ -305,12 +259,7 @@
             }
           }
         },
-        "required": [
-          "count",
-          "offset",
-          "limit",
-          "products"
-        ]
+        "required": ["count", "offset", "limit", "products"]
       },
       "AdminProduct": {
         "type": "object",
@@ -325,107 +274,60 @@
             "type": "string"
           },
           "subtitle": {
-            "type": [
-              "string",
-              "null"
-            ]
+            "type": ["string", "null"]
           },
           "description": {
-            "type": [
-              "string",
-              "null"
-            ]
+            "type": ["string", "null"]
           },
           "isGiftcard": {
             "type": "boolean"
           },
           "status": {
             "type": "string",
-            "enum": [
-              "draft",
-              "proposed",
-              "published",
-              "rejected"
-            ]
+            "enum": ["draft", "proposed", "published", "rejected"]
           },
           "thumbnail": {
-            "type": [
-              "string",
-              "null"
-            ]
+            "type": ["string", "null"]
           },
           "weight": {
-            "type": [
-              "number",
-              "null"
-            ]
+            "type": ["number", "null"]
           },
           "length": {
-            "type": [
-              "number",
-              "null"
-            ]
+            "type": ["number", "null"]
           },
           "height": {
-            "type": [
-              "number",
-              "null"
-            ]
+            "type": ["number", "null"]
           },
           "width": {
-            "type": [
-              "number",
-              "null"
-            ]
+            "type": ["number", "null"]
           },
           "originCountry": {
-            "type": [
-              "string",
-              "null"
-            ]
+            "type": ["string", "null"]
           },
           "hsCode": {
-            "type": [
-              "string",
-              "null"
-            ]
+            "type": ["string", "null"]
           },
           "midCode": {
-            "type": [
-              "string",
-              "null"
-            ]
+            "type": ["string", "null"]
           },
           "material": {
-            "type": [
-              "string",
-              "null"
-            ]
+            "type": ["string", "null"]
           },
           "discountable": {
             "type": "boolean"
           },
           "externalId": {
-            "type": [
-              "string",
-              "null"
-            ]
+            "type": ["string", "null"]
           },
           "metadata": {
-            "type": [
-              "string",
-              "null"
-            ]
+            "type": ["string", "null"]
           },
           "createdAt": {
             "type": "string",
             "format": "date-time"
           },
           "deletedAt": {
-            "type": [
-              "string",
-              "null"
-            ],
+            "type": ["string", "null"],
             "format": "date-time"
           }
         },
@@ -460,9 +362,7 @@
             "$ref": "#/components/schemas/AdminProduct"
           }
         },
-        "required": [
-          "product"
-        ]
+        "required": ["product"]
       },
       "AdminCreateProduct": {
         "type": "object",
@@ -472,9 +372,7 @@
             "minLength": 1
           }
         },
-        "required": [
-          "title"
-        ]
+        "required": ["title"]
       },
       "AdminUpdateProduct": {
         "type": "object",
@@ -495,10 +393,7 @@
             "type": "boolean"
           }
         },
-        "required": [
-          "id",
-          "deleted"
-        ]
+        "required": ["id", "deleted"]
       },
       "AdminCreateRefundReason": {
         "type": "object",
@@ -515,10 +410,7 @@
             "type": "string"
           }
         },
-        "required": [
-          "label",
-          "code"
-        ]
+        "required": ["label", "code"]
       },
       "AdminCreateShippingOption": {
         "type": "object",
@@ -529,10 +421,7 @@
           },
           "priceType": {
             "type": "string",
-            "enum": [
-              "flat",
-              "calculated"
-            ]
+            "enum": ["flat", "calculated"]
           },
           "amount": {
             "type": "integer",
@@ -558,13 +447,7 @@
             "additionalProperties": {}
           }
         },
-        "required": [
-          "name",
-          "priceType",
-          "serviceZoneId",
-          "shippingProfileId",
-          "providerId"
-        ]
+        "required": ["name", "priceType", "serviceZoneId", "shippingProfileId", "providerId"]
       },
       "AdminUpdateShippingOption": {
         "type": "object",
@@ -598,10 +481,7 @@
             "minLength": 1
           }
         },
-        "required": [
-          "name",
-          "type"
-        ]
+        "required": ["name", "type"]
       },
       "AdminUpdateShippingProfile": {
         "type": "object",
@@ -635,12 +515,7 @@
             }
           }
         },
-        "required": [
-          "count",
-          "offset",
-          "limit",
-          "users"
-        ]
+        "required": ["count", "offset", "limit", "users"]
       },
       "AdminUser": {
         "type": "object",
@@ -663,21 +538,11 @@
             "format": "date-time"
           },
           "deletedAt": {
-            "type": [
-              "string",
-              "null"
-            ],
+            "type": ["string", "null"],
             "format": "date-time"
           }
         },
-        "required": [
-          "id",
-          "name",
-          "email",
-          "createdAt",
-          "updatedAt",
-          "deletedAt"
-        ]
+        "required": ["id", "name", "email", "createdAt", "updatedAt", "deletedAt"]
       },
       "AdminUserResponse": {
         "type": "object",
@@ -686,9 +551,7 @@
             "$ref": "#/components/schemas/AdminUser"
           }
         },
-        "required": [
-          "user"
-        ]
+        "required": ["user"]
       },
       "AdminCreateUser": {
         "type": "object",
@@ -702,10 +565,7 @@
             "format": "email"
           }
         },
-        "required": [
-          "name",
-          "email"
-        ]
+        "required": ["name", "email"]
       },
       "AdminUpdateUser": {
         "type": "object",
@@ -730,10 +590,7 @@
             "type": "boolean"
           }
         },
-        "required": [
-          "id",
-          "deleted"
-        ]
+        "required": ["id", "deleted"]
       }
     },
     "parameters": {}
@@ -743,16 +600,11 @@
       "get": {
         "operationId": "listCustomers",
         "summary": "List customers",
-        "tags": [
-          "Customers"
-        ],
+        "tags": ["Customers"],
         "parameters": [
           {
             "schema": {
-              "type": [
-                "integer",
-                "null"
-              ],
+              "type": ["integer", "null"],
               "minimum": 0,
               "default": 0
             },
@@ -825,9 +677,7 @@
       "post": {
         "operationId": "createCustomers",
         "summary": "Create customers",
-        "tags": [
-          "Customers"
-        ],
+        "tags": ["Customers"],
         "requestBody": {
           "content": {
             "application/json": {
@@ -861,9 +711,7 @@
       "get": {
         "operationId": "getCustomer",
         "summary": "Retrieve a customer",
-        "tags": [
-          "Customers"
-        ],
+        "tags": ["Customers"],
         "parameters": [
           {
             "schema": {
@@ -897,9 +745,7 @@
       "patch": {
         "operationId": "updateCustomer",
         "summary": "Update a customer",
-        "tags": [
-          "Customers"
-        ],
+        "tags": ["Customers"],
         "parameters": [
           {
             "schema": {
@@ -942,9 +788,7 @@
       "delete": {
         "operationId": "deleteCustomer",
         "summary": "Delete a customer",
-        "tags": [
-          "Customers"
-        ],
+        "tags": ["Customers"],
         "parameters": [
           {
             "schema": {
@@ -980,9 +824,7 @@
       "get": {
         "operationId": "listAdminFulfillmentProviders",
         "summary": "List fulfillment providers",
-        "tags": [
-          "Fulfillment Providers"
-        ],
+        "tags": ["Fulfillment Providers"],
         "responses": {
           "200": {
             "description": "Successful response"
@@ -997,9 +839,7 @@
       "get": {
         "operationId": "listAdminFulfillmentSets",
         "summary": "List fulfillment sets",
-        "tags": [
-          "Fulfillment Sets"
-        ],
+        "tags": ["Fulfillment Sets"],
         "responses": {
           "200": {
             "description": "Successful response"
@@ -1012,9 +852,7 @@
       "post": {
         "operationId": "createAdminFulfillmentSet",
         "summary": "Create a fulfillment set",
-        "tags": [
-          "Fulfillment Sets"
-        ],
+        "tags": ["Fulfillment Sets"],
         "requestBody": {
           "content": {
             "application/json": {
@@ -1038,9 +876,7 @@
       "get": {
         "operationId": "getAdminFulfillmentSet",
         "summary": "Retrieve a fulfillment set with service zones",
-        "tags": [
-          "Fulfillment Sets"
-        ],
+        "tags": ["Fulfillment Sets"],
         "parameters": [
           {
             "schema": {
@@ -1067,9 +903,7 @@
       "post": {
         "operationId": "updateAdminFulfillmentSet",
         "summary": "Update a fulfillment set",
-        "tags": [
-          "Fulfillment Sets"
-        ],
+        "tags": ["Fulfillment Sets"],
         "parameters": [
           {
             "schema": {
@@ -1105,9 +939,7 @@
       "delete": {
         "operationId": "deleteAdminFulfillmentSet",
         "summary": "Delete a fulfillment set",
-        "tags": [
-          "Fulfillment Sets"
-        ],
+        "tags": ["Fulfillment Sets"],
         "parameters": [
           {
             "schema": {
@@ -1136,9 +968,7 @@
       "post": {
         "operationId": "createAdminServiceZone",
         "summary": "Create a service zone in a fulfillment set",
-        "tags": [
-          "Fulfillment Sets"
-        ],
+        "tags": ["Fulfillment Sets"],
         "parameters": [
           {
             "schema": {
@@ -1176,9 +1006,7 @@
       "get": {
         "operationId": "getAdminServiceZone",
         "summary": "Retrieve a service zone with geo zones",
-        "tags": [
-          "Fulfillment Sets"
-        ],
+        "tags": ["Fulfillment Sets"],
         "parameters": [
           {
             "schema": {
@@ -1214,9 +1042,7 @@
       "post": {
         "operationId": "updateAdminServiceZone",
         "summary": "Update a service zone",
-        "tags": [
-          "Fulfillment Sets"
-        ],
+        "tags": ["Fulfillment Sets"],
         "parameters": [
           {
             "schema": {
@@ -1261,9 +1087,7 @@
       "delete": {
         "operationId": "deleteAdminServiceZone",
         "summary": "Delete a service zone",
-        "tags": [
-          "Fulfillment Sets"
-        ],
+        "tags": ["Fulfillment Sets"],
         "parameters": [
           {
             "schema": {
@@ -1301,9 +1125,7 @@
       "post": {
         "operationId": "createAdminGeoZone",
         "summary": "Add a geo zone to a service zone",
-        "tags": [
-          "Fulfillment Sets"
-        ],
+        "tags": ["Fulfillment Sets"],
         "parameters": [
           {
             "schema": {
@@ -1350,9 +1172,7 @@
       "get": {
         "operationId": "getPaymentCollection",
         "summary": "Retrieve a payment collection",
-        "tags": [
-          "Payment Collections"
-        ],
+        "tags": ["Payment Collections"],
         "parameters": [
           {
             "schema": {
@@ -1381,9 +1201,7 @@
       "post": {
         "operationId": "markPaymentCollectionAsPaid",
         "summary": "Mark a payment collection as paid",
-        "tags": [
-          "Payment Collections"
-        ],
+        "tags": ["Payment Collections"],
         "parameters": [
           {
             "schema": {
@@ -1412,9 +1230,7 @@
       "get": {
         "operationId": "getPayment",
         "summary": "Retrieve a payment",
-        "tags": [
-          "Payments"
-        ],
+        "tags": ["Payments"],
         "parameters": [
           {
             "schema": {
@@ -1443,9 +1259,7 @@
       "get": {
         "operationId": "listAdminPaymentProviders",
         "summary": "List payment providers",
-        "tags": [
-          "Payments"
-        ],
+        "tags": ["Payments"],
         "responses": {
           "200": {
             "description": "Successful response"
@@ -1460,9 +1274,7 @@
       "post": {
         "operationId": "capturePayment",
         "summary": "Capture a payment",
-        "tags": [
-          "Payments"
-        ],
+        "tags": ["Payments"],
         "parameters": [
           {
             "schema": {
@@ -1500,9 +1312,7 @@
       "post": {
         "operationId": "refundPayment",
         "summary": "Refund a payment",
-        "tags": [
-          "Payments"
-        ],
+        "tags": ["Payments"],
         "parameters": [
           {
             "schema": {
@@ -1540,16 +1350,11 @@
       "get": {
         "operationId": "listProducts",
         "summary": "List products",
-        "tags": [
-          "Products"
-        ],
+        "tags": ["Products"],
         "parameters": [
           {
             "schema": {
-              "type": [
-                "integer",
-                "null"
-              ],
+              "type": ["integer", "null"],
               "minimum": 0,
               "default": 0
             },
@@ -1589,23 +1394,13 @@
               "anyOf": [
                 {
                   "type": "string",
-                  "enum": [
-                    "draft",
-                    "proposed",
-                    "published",
-                    "rejected"
-                  ]
+                  "enum": ["draft", "proposed", "published", "rejected"]
                 },
                 {
                   "type": "array",
                   "items": {
                     "type": "string",
-                    "enum": [
-                      "draft",
-                      "proposed",
-                      "published",
-                      "rejected"
-                    ]
+                    "enum": ["draft", "proposed", "published", "rejected"]
                   }
                 }
               ]
@@ -1680,9 +1475,7 @@
       "post": {
         "operationId": "createProduct",
         "summary": "Create a product",
-        "tags": [
-          "Products"
-        ],
+        "tags": ["Products"],
         "requestBody": {
           "content": {
             "application/json": {
@@ -1713,9 +1506,7 @@
       "get": {
         "operationId": "getProduct",
         "summary": "Retrieve a product",
-        "tags": [
-          "Products"
-        ],
+        "tags": ["Products"],
         "parameters": [
           {
             "schema": {
@@ -1749,9 +1540,7 @@
       "patch": {
         "operationId": "updateProduct",
         "summary": "Update a product",
-        "tags": [
-          "Products"
-        ],
+        "tags": ["Products"],
         "parameters": [
           {
             "schema": {
@@ -1794,9 +1583,7 @@
       "delete": {
         "operationId": "deleteProduct",
         "summary": "Delete a product",
-        "tags": [
-          "Products"
-        ],
+        "tags": ["Products"],
         "parameters": [
           {
             "schema": {
@@ -1832,9 +1619,7 @@
       "get": {
         "operationId": "listRefundReasons",
         "summary": "List refund reasons",
-        "tags": [
-          "Refund Reasons"
-        ],
+        "tags": ["Refund Reasons"],
         "responses": {
           "200": {
             "description": "Successful response"
@@ -1847,9 +1632,7 @@
       "post": {
         "operationId": "createRefundReason",
         "summary": "Create a refund reason",
-        "tags": [
-          "Refund Reasons"
-        ],
+        "tags": ["Refund Reasons"],
         "requestBody": {
           "content": {
             "application/json": {
@@ -1873,9 +1656,7 @@
       "delete": {
         "operationId": "deleteRefundReason",
         "summary": "Delete a refund reason",
-        "tags": [
-          "Refund Reasons"
-        ],
+        "tags": ["Refund Reasons"],
         "parameters": [
           {
             "schema": {
@@ -1904,9 +1685,7 @@
       "get": {
         "operationId": "listAdminShippingOptions",
         "summary": "List shipping options",
-        "tags": [
-          "Shipping Options"
-        ],
+        "tags": ["Shipping Options"],
         "responses": {
           "200": {
             "description": "Successful response"
@@ -1919,9 +1698,7 @@
       "post": {
         "operationId": "createAdminShippingOption",
         "summary": "Create a shipping option",
-        "tags": [
-          "Shipping Options"
-        ],
+        "tags": ["Shipping Options"],
         "requestBody": {
           "content": {
             "application/json": {
@@ -1945,9 +1722,7 @@
       "get": {
         "operationId": "getAdminShippingOption",
         "summary": "Retrieve a shipping option",
-        "tags": [
-          "Shipping Options"
-        ],
+        "tags": ["Shipping Options"],
         "parameters": [
           {
             "schema": {
@@ -1974,9 +1749,7 @@
       "post": {
         "operationId": "updateAdminShippingOption",
         "summary": "Update a shipping option",
-        "tags": [
-          "Shipping Options"
-        ],
+        "tags": ["Shipping Options"],
         "parameters": [
           {
             "schema": {
@@ -2012,9 +1785,7 @@
       "delete": {
         "operationId": "deleteAdminShippingOption",
         "summary": "Delete a shipping option",
-        "tags": [
-          "Shipping Options"
-        ],
+        "tags": ["Shipping Options"],
         "parameters": [
           {
             "schema": {
@@ -2043,9 +1814,7 @@
       "get": {
         "operationId": "listAdminShippingProfiles",
         "summary": "List shipping profiles",
-        "tags": [
-          "Shipping Profiles"
-        ],
+        "tags": ["Shipping Profiles"],
         "responses": {
           "200": {
             "description": "Successful response"
@@ -2058,9 +1827,7 @@
       "post": {
         "operationId": "createAdminShippingProfile",
         "summary": "Create a shipping profile",
-        "tags": [
-          "Shipping Profiles"
-        ],
+        "tags": ["Shipping Profiles"],
         "requestBody": {
           "content": {
             "application/json": {
@@ -2084,9 +1851,7 @@
       "post": {
         "operationId": "updateAdminShippingProfile",
         "summary": "Update a shipping profile",
-        "tags": [
-          "Shipping Profiles"
-        ],
+        "tags": ["Shipping Profiles"],
         "parameters": [
           {
             "schema": {
@@ -2122,9 +1887,7 @@
       "delete": {
         "operationId": "deleteAdminShippingProfile",
         "summary": "Delete a shipping profile",
-        "tags": [
-          "Shipping Profiles"
-        ],
+        "tags": ["Shipping Profiles"],
         "parameters": [
           {
             "schema": {
@@ -2153,16 +1916,11 @@
       "get": {
         "operationId": "listUsers",
         "summary": "List users",
-        "tags": [
-          "Users"
-        ],
+        "tags": ["Users"],
         "parameters": [
           {
             "schema": {
-              "type": [
-                "integer",
-                "null"
-              ],
+              "type": ["integer", "null"],
               "minimum": 0,
               "default": 0
             },
@@ -2235,9 +1993,7 @@
       "post": {
         "operationId": "createUser",
         "summary": "Create a user",
-        "tags": [
-          "Users"
-        ],
+        "tags": ["Users"],
         "requestBody": {
           "content": {
             "application/json": {
@@ -2268,9 +2024,7 @@
       "get": {
         "operationId": "getUser",
         "summary": "Retrieve a user",
-        "tags": [
-          "Users"
-        ],
+        "tags": ["Users"],
         "parameters": [
           {
             "schema": {
@@ -2304,9 +2058,7 @@
       "patch": {
         "operationId": "updateUser",
         "summary": "Update a user",
-        "tags": [
-          "Users"
-        ],
+        "tags": ["Users"],
         "parameters": [
           {
             "schema": {
@@ -2349,9 +2101,7 @@
       "delete": {
         "operationId": "deleteUser",
         "summary": "Delete a user",
-        "tags": [
-          "Users"
-        ],
+        "tags": ["Users"],
         "parameters": [
           {
             "schema": {
