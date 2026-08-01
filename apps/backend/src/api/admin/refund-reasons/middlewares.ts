@@ -1,4 +1,4 @@
-import { CreateRefundReason, IdParams } from '@proteus/http-schemas'
+import { AdminCreateRefundReason, IdParams } from '@proteus/http-schemas'
 import type { MiddlewareRoute } from '../../../core/middleware/types.js'
 import { Tags } from '../../../core/middleware/types.js'
 
@@ -13,7 +13,7 @@ export default [
   {
     method: 'POST',
     matcher: '/admin/refund-reasons',
-    bodySchema: CreateRefundReason,
+    bodySchema: AdminCreateRefundReason,
     operationId: 'createRefundReason',
     summary: 'Create a refund reason',
     tags: [Tags.REFUND_REASONS],

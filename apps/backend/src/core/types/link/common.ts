@@ -5,8 +5,8 @@ export type ProductVariantInventoryItemDTO = {
   variantId: string
   inventoryItemId: string
   requiredQuantity: number
-  createdAt: Date
-  deletedAt: Date | null
+  createdAt: string
+  deletedAt: string | null
 }
 
 export type VariantInventoryAvailabilityDTO = {
@@ -76,8 +76,8 @@ export type CartPaymentCollectionDTO = {
   id: string
   cartId: string
   paymentCollectionId: string
-  createdAt: Date
-  deletedAt: Date | null
+  createdAt: string
+  deletedAt: string | null
 }
 
 export type ICartPaymentCollectionRepository = {

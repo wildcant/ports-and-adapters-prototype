@@ -1,4 +1,4 @@
-import { CreateShippingOption, IdParams, UpdateShippingOption } from '@proteus/http-schemas'
+import { AdminCreateShippingOption, AdminUpdateShippingOption, IdParams } from '@proteus/http-schemas'
 import type { MiddlewareRoute } from '../../../core/middleware/types.js'
 import { Tags } from '../../../core/middleware/types.js'
 
@@ -13,7 +13,7 @@ export default [
   {
     method: 'POST',
     matcher: '/admin/shipping-options',
-    bodySchema: CreateShippingOption,
+    bodySchema: AdminCreateShippingOption,
     operationId: 'createAdminShippingOption',
     summary: 'Create a shipping option',
     tags: [Tags.SHIPPING_OPTIONS],
@@ -30,7 +30,7 @@ export default [
     method: 'POST',
     matcher: '/admin/shipping-options/:id',
     paramsSchema: IdParams,
-    bodySchema: UpdateShippingOption,
+    bodySchema: AdminUpdateShippingOption,
     operationId: 'updateAdminShippingOption',
     summary: 'Update a shipping option',
     tags: [Tags.SHIPPING_OPTIONS],

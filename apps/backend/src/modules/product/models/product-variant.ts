@@ -1,5 +1,6 @@
 import { sql } from 'drizzle-orm'
-import { boolean, doublePrecision, index, integer, pgTable, text, timestamp, uniqueIndex } from 'drizzle-orm/pg-core'
+import { boolean, doublePrecision, index, integer, pgTable, text, uniqueIndex } from 'drizzle-orm/pg-core'
+import { timestamps } from '../../../core/db/columns.js'
 import { productTable } from './product.js'
 
 export const productVariantTable = pgTable(
@@ -26,8 +27,7 @@ export const productVariantTable = pgTable(
     width: doublePrecision(),
     variantRank: integer().default(0),
     metadata: text(),
-    createdAt: timestamp().defaultNow().notNull(),
-    deletedAt: timestamp(),
+    ...timestamps,
   },
   (table) => [
     index('idx_product_variant_product_id').on(table.productId),

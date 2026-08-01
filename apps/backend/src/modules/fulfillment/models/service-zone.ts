@@ -1,5 +1,6 @@
 import { sql } from 'drizzle-orm'
-import { index, pgTable, text, timestamp } from 'drizzle-orm/pg-core'
+import { index, pgTable, text } from 'drizzle-orm/pg-core'
+import { timestamps } from '../../../core/db/columns.js'
 import { fulfillmentSetTable } from './fulfillment-set.js'
 
 export const serviceZoneTable = pgTable(
@@ -11,9 +12,7 @@ export const serviceZoneTable = pgTable(
       .notNull()
       .references(() => fulfillmentSetTable.id, { onDelete: 'cascade' }),
     metadata: text(),
-    createdAt: timestamp().defaultNow().notNull(),
-    updatedAt: timestamp().defaultNow().notNull(),
-    deletedAt: timestamp(),
+    ...timestamps,
   },
   (table) => [index('idx_service_zone_fulfillment_set_id').on(table.fulfillmentSetId).where(sql`deleted_at IS NULL`)],
 )

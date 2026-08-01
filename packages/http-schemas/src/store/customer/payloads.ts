@@ -9,7 +9,7 @@ export const CreateCustomer = z
   .openapi('CreateCustomer')
 export type CreateCustomerBody = z.infer<typeof CreateCustomer>
 
-export const CreateCustomers = z.array(CreateCustomer)
+export const CreateCustomers = z.array(CreateCustomer).openapi('CreateCustomers')
 export type CreateCustomersBody = z.infer<typeof CreateCustomers>
 
 export const UpdateCustomer = z

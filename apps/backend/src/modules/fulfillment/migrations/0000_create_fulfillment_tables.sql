@@ -13,6 +13,7 @@ CREATE TABLE "fulfillment_address" (
 	"phone" text,
 	"metadata" text,
 	"created_at" timestamp DEFAULT now() NOT NULL,
+	"updated_at" timestamp DEFAULT now() NOT NULL,
 	"deleted_at" timestamp
 );
 --> statement-breakpoint
@@ -27,12 +28,15 @@ CREATE TABLE "fulfillment_item" (
 	"inventory_item_id" text,
 	"metadata" text,
 	"created_at" timestamp DEFAULT now() NOT NULL,
+	"updated_at" timestamp DEFAULT now() NOT NULL,
 	"deleted_at" timestamp
 );
 --> statement-breakpoint
 CREATE TABLE "fulfillment_provider" (
 	"id" text PRIMARY KEY NOT NULL,
 	"is_enabled" boolean DEFAULT true NOT NULL,
+	"created_at" timestamp DEFAULT now() NOT NULL,
+	"updated_at" timestamp DEFAULT now() NOT NULL,
 	"deleted_at" timestamp
 );
 --> statement-breakpoint

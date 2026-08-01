@@ -5,9 +5,9 @@ export const User = z
     id: z.string(),
     name: z.string(),
     email: z.string(),
-    createdAt: z.string(),
-    updatedAt: z.string(),
-    deletedAt: z.string().nullable(),
+    createdAt: z.iso.datetime(),
+    updatedAt: z.iso.datetime(),
+    deletedAt: z.iso.datetime().nullable(),
   })
   .openapi('User')
 export type User = z.infer<typeof User>

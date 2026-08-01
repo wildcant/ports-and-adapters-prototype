@@ -24,10 +24,10 @@ export function registerOpenApiRoute(registry: OpenAPIRegistry, routePath: strin
   if (config.paramsSchema) {
     request.params = config.paramsSchema as unknown as NonNullable<RouteConfig['request']>['params']
   }
-  if (config.querySchema) {
+  if (config.method === 'GET' && config.querySchema) {
     request.query = config.querySchema as unknown as NonNullable<RouteConfig['request']>['query']
   }
-  if (config.bodySchema) {
+  if ((config.method === 'POST' || config.method === 'PUT' || config.method === 'PATCH') && config.bodySchema) {
     request.body = {
       content: { 'application/json': { schema: config.bodySchema } },
     }

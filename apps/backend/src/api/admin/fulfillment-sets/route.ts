@@ -1,6 +1,6 @@
 import type { IFulfillmentModuleService } from '@core/types/index.js'
 import { Modules } from '@core/utils/index.js'
-import type { CreateFulfillmentSetBody } from '@proteus/http-schemas'
+import type { AdminCreateFulfillmentSetBody } from '@proteus/http-schemas'
 import type { HttpRequest, HttpResult } from '../../../server/ports.js'
 
 export const GET = async (req: HttpRequest) => {
@@ -9,7 +9,7 @@ export const GET = async (req: HttpRequest) => {
   return { status: 200, json: { fulfillmentSets } } satisfies HttpResult
 }
 
-type PostInput = { body: CreateFulfillmentSetBody }
+type PostInput = { body: AdminCreateFulfillmentSetBody }
 
 export const POST = async (req: HttpRequest<PostInput>) => {
   const service = req.scope.resolve<IFulfillmentModuleService>(Modules.FULFILLMENT)

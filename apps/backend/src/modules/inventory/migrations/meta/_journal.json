@@ -5,8 +5,8 @@
     {
       "idx": 0,
       "version": "7",
-      "when": 1784766792370,
-      "tag": "0000_create-inventory-tables",
+      "when": 1785559881477,
+      "tag": "0000_create_inventory_tables",
       "breakpoints": true
     }
   ]

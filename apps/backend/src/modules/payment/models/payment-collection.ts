@@ -1,5 +1,6 @@
 import { sql } from 'drizzle-orm'
 import { index, integer, jsonb, pgEnum, pgTable, text, timestamp } from 'drizzle-orm/pg-core'
+import { timestamps } from '../../../core/db/columns.js'
 
 export const paymentCollectionStatusEnum = pgEnum('payment_collection_status', [
   'not_paid',
@@ -16,15 +17,13 @@ export const paymentCollectionTable = pgTable(
     amount: integer().notNull(),
     authorizedAmount: integer(),
     capturedAmount: integer(),
-    completedAt: timestamp(),
+    completedAt: timestamp({ mode: 'string' }),
     currencyCode: text().notNull().default('usd'),
     metadata: jsonb().$type<Record<string, unknown> | null>(),
     refundedAmount: integer(),
     status: paymentCollectionStatusEnum().notNull().default('not_paid'),
 
-    deletedAt: timestamp(),
-    createdAt: timestamp().defaultNow().notNull(),
-    updatedAt: timestamp().defaultNow().notNull(),
+    ...timestamps,
   },
   (table) => [index('idx_payment_collection_status').on(table.status).where(sql`deleted_at IS NULL`)],
 )

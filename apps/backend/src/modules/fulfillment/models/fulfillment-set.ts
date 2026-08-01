@@ -1,5 +1,6 @@
 import { sql } from 'drizzle-orm'
-import { index, pgTable, text, timestamp } from 'drizzle-orm/pg-core'
+import { index, pgTable, text } from 'drizzle-orm/pg-core'
+import { timestamps } from '../../../core/db/columns.js'
 
 export const fulfillmentSetTable = pgTable(
   'fulfillment_set',
@@ -8,9 +9,7 @@ export const fulfillmentSetTable = pgTable(
     name: text().notNull(),
     type: text().notNull(),
     metadata: text(),
-    createdAt: timestamp().defaultNow().notNull(),
-    updatedAt: timestamp().defaultNow().notNull(),
-    deletedAt: timestamp(),
+    ...timestamps,
   },
   (table) => [index('idx_fulfillment_set_type').on(table.type).where(sql`deleted_at IS NULL`)],
 )

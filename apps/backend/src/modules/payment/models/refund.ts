@@ -1,5 +1,6 @@
 import { sql } from 'drizzle-orm'
-import { index, integer, jsonb, pgTable, text, timestamp } from 'drizzle-orm/pg-core'
+import { index, integer, jsonb, pgTable, text } from 'drizzle-orm/pg-core'
+import { timestamps } from '../../../core/db/columns.js'
 import { paymentTable } from './payment.js'
 import { refundReasonTable } from './refund-reason.js'
 
@@ -16,8 +17,7 @@ export const refundTable = pgTable(
       .references(() => paymentTable.id),
     refundReasonId: text().references(() => refundReasonTable.id),
 
-    createdAt: timestamp().defaultNow().notNull(),
-    deletedAt: timestamp(),
+    ...timestamps,
   },
   (table) => [index('idx_refund_payment_id').on(table.paymentId).where(sql`deleted_at IS NULL`)],
 )

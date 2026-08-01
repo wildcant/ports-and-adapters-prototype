@@ -17,6 +17,7 @@ import type {
   UpdateProductDTO,
 } from '../../../core/types/index.js'
 import type { Logger } from '../../../core/types/logger.js'
+import { toHandle } from '../../../core/utils/to-handle.js'
 import type { WithTransaction } from '../../../core/utils/with-transaction.js'
 import type { ProductRepository } from '../repositories/product.js'
 import type { ProductImageRepository } from '../repositories/product-image.js'
@@ -69,14 +70,26 @@ export class ProductModuleService implements IProductModuleService {
     return this.productRepository.find(filters, config, context)
   }
 
+  async listAndCountProducts(
+    filters?: FilterableProductProps,
+    config?: FindConfig<ProductDTO>,
+    context?: Context,
+  ): Promise<[ProductDTO[], number]> {
+    return this.productRepository.findAndCount(filters, config, context)
+  }
+
   async retrieveProduct(productId: string, config?: FindConfig<ProductDTO>, context?: Context): Promise<ProductDTO> {
     return this.productRepository.findByIdOrFail(productId, config, context)
   }
 
   async createProducts(data: CreateProductDTO[], context?: Context): Promise<ProductDTO[]> {
     this.logger.debug(`Creating ${data.length} product(s)`)
+    const withHandles = data.map((d) => ({
+      ...d,
+      handle: d.handle ?? toHandle(d.title),
+    }))
     return this.withTransaction(context, async (ctx) => {
-      return this.productRepository.createMany(data, ctx)
+      return this.productRepository.createMany(withHandles, ctx)
     })
   }
 

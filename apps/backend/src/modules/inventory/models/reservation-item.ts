@@ -1,5 +1,6 @@
 import { sql } from 'drizzle-orm'
-import { boolean, index, integer, pgTable, text, timestamp } from 'drizzle-orm/pg-core'
+import { boolean, index, integer, pgTable, text } from 'drizzle-orm/pg-core'
+import { timestamps } from '../../../core/db/columns.js'
 import { inventoryItemTable } from './inventory-item.js'
 
 export const reservationItemTable = pgTable(
@@ -17,8 +18,7 @@ export const reservationItemTable = pgTable(
     description: text(),
     createdBy: text(),
     metadata: text(),
-    createdAt: timestamp().defaultNow().notNull(),
-    deletedAt: timestamp(),
+    ...timestamps,
   },
   (table) => [
     index('idx_reservation_item_inventory_item_id').on(table.inventoryItemId),

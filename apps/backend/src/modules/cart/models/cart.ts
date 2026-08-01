@@ -1,5 +1,6 @@
 import { sql } from 'drizzle-orm'
 import { index, pgEnum, pgTable, text, timestamp } from 'drizzle-orm/pg-core'
+import { timestamps } from '../../../core/db/columns.js'
 import { cartAddressTable } from './address.js'
 
 export const cartStatusEnum = pgEnum('cart_status', ['active', 'completed', 'abandoned'])
@@ -17,10 +18,8 @@ export const cartTable = pgTable(
     shippingAddressId: text().references(() => cartAddressTable.id),
     billingAddressId: text().references(() => cartAddressTable.id),
     metadata: text(),
-    completedAt: timestamp(),
-    createdAt: timestamp().defaultNow().notNull(),
-    updatedAt: timestamp().defaultNow().notNull(),
-    deletedAt: timestamp(),
+    completedAt: timestamp({ mode: 'string' }),
+    ...timestamps,
   },
   (table) => [
     index('idx_cart_customer_id').on(table.customerId).where(sql`deleted_at IS NULL AND customer_id IS NOT NULL`),

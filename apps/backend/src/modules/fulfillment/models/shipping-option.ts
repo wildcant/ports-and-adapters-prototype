@@ -1,5 +1,6 @@
 import { sql } from 'drizzle-orm'
-import { boolean, index, integer, jsonb, pgTable, text, timestamp } from 'drizzle-orm/pg-core'
+import { boolean, index, integer, jsonb, pgTable, text } from 'drizzle-orm/pg-core'
+import { timestamps } from '../../../core/db/columns.js'
 import { serviceZoneTable } from './service-zone.js'
 import { shippingOptionTypeTable } from './shipping-option-type.js'
 import { shippingProfileTable } from './shipping-profile.js'
@@ -22,9 +23,7 @@ export const shippingOptionTable = pgTable(
     data: jsonb(),
     metadata: text(),
     isEnabled: boolean().default(true).notNull(),
-    createdAt: timestamp().defaultNow().notNull(),
-    updatedAt: timestamp().defaultNow().notNull(),
-    deletedAt: timestamp(),
+    ...timestamps,
   },
   (table) => [
     index('idx_shipping_option_service_zone_id').on(table.serviceZoneId).where(sql`deleted_at IS NULL`),

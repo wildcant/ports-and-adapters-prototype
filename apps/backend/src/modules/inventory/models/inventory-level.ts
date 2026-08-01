@@ -1,5 +1,6 @@
 import { sql } from 'drizzle-orm'
-import { index, integer, pgTable, text, timestamp, uniqueIndex } from 'drizzle-orm/pg-core'
+import { index, integer, pgTable, text, uniqueIndex } from 'drizzle-orm/pg-core'
+import { timestamps } from '../../../core/db/columns.js'
 import { inventoryItemTable } from './inventory-item.js'
 
 export const inventoryLevelTable = pgTable(
@@ -14,8 +15,7 @@ export const inventoryLevelTable = pgTable(
     reservedQuantity: integer().notNull().default(0),
     incomingQuantity: integer().notNull().default(0),
     metadata: text(),
-    createdAt: timestamp().defaultNow().notNull(),
-    deletedAt: timestamp(),
+    ...timestamps,
   },
   (table) => [
     uniqueIndex('idx_inventory_level_item_location')

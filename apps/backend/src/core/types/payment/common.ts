@@ -36,12 +36,12 @@ export type PaymentCollectionDTO = {
   authorizedAmount: number | null
   capturedAmount: number | null
   refundedAmount: number | null
-  completedAt: Date | null
+  completedAt: string | null
   status: PaymentCollectionStatus
   metadata: Record<string, unknown> | null
-  createdAt: Date
-  updatedAt: Date
-  deletedAt: Date | null
+  createdAt: string
+  updatedAt: string
+  deletedAt: string | null
   paymentSessions?: PaymentSessionDTO[]
   payments?: PaymentDTO[]
 }
@@ -55,11 +55,11 @@ export type PaymentSessionDTO = {
   status: PaymentSessionStatus
   data: Record<string, unknown>
   context: Record<string, unknown> | null
-  authorizedAt: Date | null
+  authorizedAt: string | null
   metadata: Record<string, unknown> | null
-  createdAt: Date
-  updatedAt: Date
-  deletedAt: Date | null
+  createdAt: string
+  updatedAt: string
+  deletedAt: string | null
   payment?: PaymentDTO
 }
 
@@ -72,11 +72,11 @@ export type PaymentDTO = {
   providerId: string
   data: Record<string, unknown> | null
   metadata: Record<string, unknown> | null
-  capturedAt: Date | null
-  canceledAt: Date | null
-  createdAt: Date
-  updatedAt: Date
-  deletedAt: Date | null
+  capturedAt: string | null
+  canceledAt: string | null
+  createdAt: string
+  updatedAt: string
+  deletedAt: string | null
   captures?: CaptureDTO[]
   refunds?: RefundDTO[]
 }
@@ -87,7 +87,7 @@ export type CaptureDTO = {
   amount: number
   createdBy: string | null
   metadata: Record<string, unknown> | null
-  createdAt: Date
+  createdAt: string
 }
 
 export type RefundDTO = {
@@ -98,7 +98,7 @@ export type RefundDTO = {
   note: string | null
   createdBy: string | null
   metadata: Record<string, unknown> | null
-  createdAt: Date
+  createdAt: string
 }
 
 export type RefundReasonDTO = {
@@ -107,9 +107,9 @@ export type RefundReasonDTO = {
   code: string
   description: string | null
   metadata: Record<string, unknown> | null
-  createdAt: Date
-  updatedAt: Date
-  deletedAt: Date | null
+  createdAt: string
+  updatedAt: string
+  deletedAt: string | null
 }
 
 export type PaymentProviderDTO = {
@@ -124,9 +124,9 @@ export type AccountHolderDTO = {
   email: string | null
   data: Record<string, unknown>
   metadata: Record<string, unknown> | null
-  createdAt: Date
-  updatedAt: Date
-  deletedAt: Date | null
+  createdAt: string
+  updatedAt: string
+  deletedAt: string | null
 }
 
 export type PaymentMethodDTO = {
@@ -142,8 +142,8 @@ export type PaymentMethodDTO = {
 export interface FilterablePaymentCollectionProps extends BaseFilterable<FilterablePaymentCollectionProps> {
   id?: string | string[]
   status?: PaymentCollectionStatus | PaymentCollectionStatus[]
-  createdAt?: OperatorMap<Date>
-  updatedAt?: OperatorMap<Date>
+  createdAt?: OperatorMap<string>
+  updatedAt?: OperatorMap<string>
 }
 
 export interface FilterablePaymentSessionProps extends BaseFilterable<FilterablePaymentSessionProps> {
@@ -151,7 +151,7 @@ export interface FilterablePaymentSessionProps extends BaseFilterable<Filterable
   paymentCollectionId?: string | string[]
   providerId?: string | string[]
   status?: PaymentSessionStatus | PaymentSessionStatus[]
-  createdAt?: OperatorMap<Date>
+  createdAt?: OperatorMap<string>
 }
 
 export interface FilterablePaymentProps extends BaseFilterable<FilterablePaymentProps> {
@@ -159,19 +159,19 @@ export interface FilterablePaymentProps extends BaseFilterable<FilterablePayment
   paymentCollectionId?: string | string[]
   paymentSessionId?: string | string[]
   providerId?: string | string[]
-  createdAt?: OperatorMap<Date>
+  createdAt?: OperatorMap<string>
 }
 
 export interface FilterableCaptureProps extends BaseFilterable<FilterableCaptureProps> {
   id?: string | string[]
   paymentId?: string | string[]
-  createdAt?: OperatorMap<Date>
+  createdAt?: OperatorMap<string>
 }
 
 export interface FilterableRefundProps extends BaseFilterable<FilterableRefundProps> {
   id?: string | string[]
   paymentId?: string | string[]
-  createdAt?: OperatorMap<Date>
+  createdAt?: OperatorMap<string>
 }
 
 export interface FilterableRefundReasonProps extends BaseFilterable<FilterableRefundReasonProps> {

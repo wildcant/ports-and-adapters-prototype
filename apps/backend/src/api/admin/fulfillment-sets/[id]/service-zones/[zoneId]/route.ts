@@ -1,9 +1,9 @@
 import type { IFulfillmentModuleService } from '@core/types/index.js'
 import { Modules } from '@core/utils/index.js'
-import type { UpdateServiceZoneBody, ZoneIdParams } from '@proteus/http-schemas'
+import type { AdminUpdateServiceZoneBody, AdminZoneIdParams } from '@proteus/http-schemas'
 import type { HttpRequest, HttpResult } from '../../../../../../server/ports.js'
 
-type GetInput = { params: ZoneIdParams }
+type GetInput = { params: AdminZoneIdParams }
 
 export const GET = async (req: HttpRequest<GetInput>) => {
   const service = req.scope.resolve<IFulfillmentModuleService>(Modules.FULFILLMENT)
@@ -16,7 +16,7 @@ export const GET = async (req: HttpRequest<GetInput>) => {
   return { status: 200, json: { serviceZone: { ...serviceZone, geoZones } } } satisfies HttpResult
 }
 
-type PostInput = { params: ZoneIdParams; body: UpdateServiceZoneBody }
+type PostInput = { params: AdminZoneIdParams; body: AdminUpdateServiceZoneBody }
 
 export const POST = async (req: HttpRequest<PostInput>) => {
   const service = req.scope.resolve<IFulfillmentModuleService>(Modules.FULFILLMENT)
@@ -24,7 +24,7 @@ export const POST = async (req: HttpRequest<PostInput>) => {
   return { status: 200, json: { serviceZone } } satisfies HttpResult
 }
 
-type DeleteInput = { params: ZoneIdParams }
+type DeleteInput = { params: AdminZoneIdParams }
 
 export const DELETE = async (req: HttpRequest<DeleteInput>) => {
   const service = req.scope.resolve<IFulfillmentModuleService>(Modules.FULFILLMENT)

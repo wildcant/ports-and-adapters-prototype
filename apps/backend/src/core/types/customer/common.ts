@@ -5,9 +5,9 @@ export type CustomerDTO = {
   firstName: string
   lastName: string
   email: string
-  createdAt: Date
-  updatedAt: Date
-  deletedAt: Date | null
+  createdAt: string
+  updatedAt: string
+  deletedAt: string | null
 }
 
 export interface FilterableCustomerProps extends BaseFilterable<FilterableCustomerProps> {
@@ -15,8 +15,8 @@ export interface FilterableCustomerProps extends BaseFilterable<FilterableCustom
   email?: string | string[] | OperatorMap<string> | undefined
   firstName?: string | OperatorMap<string> | undefined
   lastName?: string | OperatorMap<string> | undefined
-  createdAt?: OperatorMap<Date> | undefined
-  updatedAt?: OperatorMap<Date> | undefined
+  createdAt?: OperatorMap<string> | undefined
+  updatedAt?: OperatorMap<string> | undefined
 }
 
 export interface FilterableCustomerAddressProps extends BaseFilterable<FilterableCustomerAddressProps> {
@@ -41,7 +41,7 @@ export type CustomerAddressDTO = {
   postalCode: string | null
   phone: string | null
   metadata: string | null
-  createdAt: Date
-  updatedAt: Date
-  deletedAt: Date | null
+  createdAt: string
+  updatedAt: string
+  deletedAt: string | null
 }

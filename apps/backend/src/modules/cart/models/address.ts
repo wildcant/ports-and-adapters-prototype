@@ -1,5 +1,6 @@
 import { sql } from 'drizzle-orm'
-import { pgTable, text, timestamp } from 'drizzle-orm/pg-core'
+import { pgTable, text } from 'drizzle-orm/pg-core'
+import { timestamps } from '../../../core/db/columns.js'
 
 export const cartAddressTable = pgTable('cart_address', {
   id: text().primaryKey().default(sql`CONCAT('caaddr_', REPLACE(gen_random_uuid()::text, '-', ''))`),
@@ -15,9 +16,7 @@ export const cartAddressTable = pgTable('cart_address', {
   postalCode: text(),
   phone: text(),
   metadata: text(),
-  createdAt: timestamp().defaultNow().notNull(),
-  updatedAt: timestamp().defaultNow().notNull(),
-  deletedAt: timestamp(),
+  ...timestamps,
 })
 
 export type CartAddress = typeof cartAddressTable.$inferSelect

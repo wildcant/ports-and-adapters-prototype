@@ -1,9 +1,9 @@
 import type { IUserModuleService } from '@core/types/index.js'
 import { Modules } from '@core/utils/index.js'
-import type { CreateUserBody, UserListQuery } from '@proteus/http-schemas'
+import type { AdminCreateUserBody, AdminUserListQuery } from '@proteus/http-schemas'
 import type { HttpRequest, HttpResult } from '../../../server/ports.js'
 
-type ListUsersInput = { query: UserListQuery }
+type ListUsersInput = { query: AdminUserListQuery }
 export const GET = async (req: HttpRequest<ListUsersInput>) => {
   const userService = req.scope.resolve<IUserModuleService>(Modules.USER)
   const { pagination, filters } = req.validatedQuery
@@ -12,7 +12,7 @@ export const GET = async (req: HttpRequest<ListUsersInput>) => {
   return { status: 200, json: { users, count, offset, limit } } satisfies HttpResult
 }
 
-type CreateUserInput = { body: CreateUserBody }
+type CreateUserInput = { body: AdminCreateUserBody }
 export const POST = async (req: HttpRequest<CreateUserInput>) => {
   const userService = req.scope.resolve<IUserModuleService>(Modules.USER)
   const users = await userService.createUsers([req.body])

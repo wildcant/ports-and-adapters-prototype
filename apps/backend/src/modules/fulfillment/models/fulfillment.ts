@@ -1,5 +1,6 @@
 import { sql } from 'drizzle-orm'
 import { boolean, index, jsonb, pgTable, text, timestamp } from 'drizzle-orm/pg-core'
+import { timestamps } from '../../../core/db/columns.js'
 import { shippingOptionTable } from './shipping-option.js'
 
 export const fulfillmentTable = pgTable(
@@ -11,14 +12,12 @@ export const fulfillmentTable = pgTable(
     shippingOptionId: text().references(() => shippingOptionTable.id),
     data: jsonb(),
     requiresShipping: boolean().default(true).notNull(),
-    packedAt: timestamp(),
-    shippedAt: timestamp(),
-    deliveredAt: timestamp(),
-    canceledAt: timestamp(),
+    packedAt: timestamp({ mode: 'string' }),
+    shippedAt: timestamp({ mode: 'string' }),
+    deliveredAt: timestamp({ mode: 'string' }),
+    canceledAt: timestamp({ mode: 'string' }),
     metadata: text(),
-    createdAt: timestamp().defaultNow().notNull(),
-    updatedAt: timestamp().defaultNow().notNull(),
-    deletedAt: timestamp(),
+    ...timestamps,
   },
   (table) => [
     index('idx_fulfillment_provider_id').on(table.providerId).where(sql`deleted_at IS NULL`),

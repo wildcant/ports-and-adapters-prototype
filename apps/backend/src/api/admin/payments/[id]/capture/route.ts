@@ -1,9 +1,9 @@
 import type { IPaymentModuleService } from '@core/types/index.js'
 import { Modules } from '@core/utils/index.js'
-import type { CapturePaymentBody, IdParams } from '@proteus/http-schemas'
+import type { AdminCapturePaymentBody, IdParams } from '@proteus/http-schemas'
 import type { HttpRequest, HttpResult } from '../../../../../server/ports.js'
 
-type Input = { params: IdParams; body: CapturePaymentBody }
+type Input = { params: IdParams; body: AdminCapturePaymentBody }
 
 export const POST = async (req: HttpRequest<Input>) => {
   const paymentService = req.scope.resolve<IPaymentModuleService>(Modules.PAYMENT)

@@ -1,9 +1,9 @@
 import type { ICustomerModuleService } from '@core/types/index.js'
 import { Modules } from '@core/utils/index.js'
-import type { CreateCustomersBody, CustomerListQuery } from '@proteus/http-schemas'
+import type { AdminCreateCustomersBody, AdminCustomerListQuery } from '@proteus/http-schemas'
 import type { HttpRequest, HttpResult } from '../../../server/ports.js'
 
-type ListCustomersInput = { query: CustomerListQuery }
+type ListCustomersInput = { query: AdminCustomerListQuery }
 export const GET = async (req: HttpRequest<ListCustomersInput>) => {
   const customerService = req.scope.resolve<ICustomerModuleService>(Modules.CUSTOMER)
   const { pagination, filters } = req.validatedQuery
@@ -12,7 +12,7 @@ export const GET = async (req: HttpRequest<ListCustomersInput>) => {
   return { status: 200, json: { customers, count, offset, limit } } satisfies HttpResult
 }
 
-type CreateCustomersInput = { body: CreateCustomersBody }
+type CreateCustomersInput = { body: AdminCreateCustomersBody }
 export const POST = async (req: HttpRequest<CreateCustomersInput>) => {
   const customerService = req.scope.resolve<ICustomerModuleService>(Modules.CUSTOMER)
   const customers = await customerService.createCustomers(req.body)

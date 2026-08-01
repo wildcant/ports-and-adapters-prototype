@@ -1,5 +1,6 @@
 import { sql } from 'drizzle-orm'
-import { boolean, index, pgTable, text, timestamp, uniqueIndex } from 'drizzle-orm/pg-core'
+import { boolean, index, pgTable, text, uniqueIndex } from 'drizzle-orm/pg-core'
+import { timestamps } from '../../../core/db/columns.js'
 import { customerTable } from './customer.js'
 
 export const customerAddressTable = pgTable(
@@ -23,9 +24,7 @@ export const customerAddressTable = pgTable(
     postalCode: text(),
     phone: text(),
     metadata: text(),
-    createdAt: timestamp().defaultNow().notNull(),
-    updatedAt: timestamp().defaultNow().notNull(),
-    deletedAt: timestamp(),
+    ...timestamps,
   },
   (table) => [
     index('idx_customer_address_customer_id').on(table.customerId),

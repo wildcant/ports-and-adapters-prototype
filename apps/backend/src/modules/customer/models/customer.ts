@@ -1,5 +1,6 @@
 import { sql } from 'drizzle-orm'
-import { pgEnum, pgTable, text, timestamp } from 'drizzle-orm/pg-core'
+import { pgEnum, pgTable, text } from 'drizzle-orm/pg-core'
+import { timestamps } from '../../../core/db/columns.js'
 
 export const customerStatusEnum = pgEnum('customer_status', ['active', 'inactive'])
 
@@ -9,9 +10,7 @@ export const customerTable = pgTable('customer', {
   lastName: text().notNull(),
   email: text().notNull().unique(),
   status: customerStatusEnum().default('active').notNull(),
-  createdAt: timestamp().defaultNow().notNull(),
-  updatedAt: timestamp().defaultNow().notNull(),
-  deletedAt: timestamp(),
+  ...timestamps,
 })
 
 export type Customer = typeof customerTable.$inferSelect

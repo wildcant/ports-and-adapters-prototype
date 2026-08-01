@@ -24,6 +24,11 @@ export type IProductModuleService = {
     config?: FindConfig<ProductDTO>,
     context?: Context,
   ): Promise<ProductDTO[]>
+  listAndCountProducts(
+    filters?: FilterableProductProps,
+    config?: FindConfig<ProductDTO>,
+    context?: Context,
+  ): Promise<[ProductDTO[], number]>
   retrieveProduct(productId: string, config?: FindConfig<ProductDTO>, context?: Context): Promise<ProductDTO>
   createProducts(data: CreateProductDTO[], context?: Context): Promise<ProductDTO[]>
   updateProducts(productIds: string[], data: UpdateProductDTO, context?: Context): Promise<ProductDTO[]>

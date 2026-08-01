@@ -1,5 +1,6 @@
 import { sql } from 'drizzle-orm'
-import { boolean, doublePrecision, pgTable, text, timestamp, uniqueIndex } from 'drizzle-orm/pg-core'
+import { boolean, doublePrecision, pgTable, text, uniqueIndex } from 'drizzle-orm/pg-core'
+import { timestamps } from '../../../core/db/columns.js'
 
 export const ProductStatus = {
   DRAFT: 'draft',
@@ -32,8 +33,7 @@ export const productTable = pgTable(
     discountable: boolean().default(true).notNull(),
     externalId: text(),
     metadata: text(),
-    createdAt: timestamp().defaultNow().notNull(),
-    deletedAt: timestamp(),
+    ...timestamps,
   },
   (table) => [uniqueIndex('idx_product_handle').on(table.handle).where(sql`deleted_at IS NULL`)],
 )

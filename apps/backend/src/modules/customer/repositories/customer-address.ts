@@ -9,7 +9,7 @@ export class CustomerAddressRepository extends BaseRepository(customerAddressTab
     const client = this.getClient(context)
     await client
       .update(this.table)
-      .set({ deletedAt: new Date() })
+      .set({ deletedAt: new Date().toISOString() })
       .where(and(inArray(this.table.customerId, customerIds), isNull(this.table.deletedAt)))
   }
 

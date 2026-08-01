@@ -190,7 +190,7 @@ export class CartModuleService implements ICartModuleService {
 
       const [updated] = await this.cartRepository.update(
         [cartId],
-        { status: 'completed', completedAt: new Date() },
+        { status: 'completed', completedAt: new Date().toISOString() },
         ctx,
       )
       if (!updated) throw new AppError({ type: ErrorTypes.NOT_FOUND, message: `Cart "${cartId}" not found` })

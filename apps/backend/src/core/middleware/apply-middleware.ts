@@ -1,6 +1,7 @@
 import type { RouteHandler } from '../../server/ports.js'
 import { AppError, ErrorTypes } from '../errors/app-error.js'
 import { formatZodIssues } from '../errors/format-zod-issues.js'
+import { buildSearchFilter } from '../utils/build-search-filter.js'
 import { parseOrder, validateQuery } from '../utils/validate-query.js'
 import type { MiddlewareRoute } from './types.js'
 
@@ -17,19 +18,21 @@ export function applyMiddleware(config: MiddlewareRoute, handler: RouteHandler):
       req = { ...req, params: result.data as typeof req.params }
     }
 
-    if (config.querySchema) {
+    if (config.method === 'GET' && config.querySchema) {
       const validated = validateQuery(config.querySchema, req.query)
-      const { offset, limit, order, ...filters } = validated as Record<string, unknown>
+      const { offset, limit, order, q, ...filters } = validated as Record<string, unknown>
+      const searchFilter =
+        typeof q === 'string' && config.searchableColumns ? buildSearchFilter(q, config.searchableColumns) : {}
       req = {
         ...req,
         validatedQuery: {
           pagination: { offset, limit, order: parseOrder(order as string | undefined) },
-          filters,
+          filters: { ...filters, ...searchFilter },
         },
       }
     }
 
-    if (config.bodySchema) {
+    if ((config.method === 'POST' || config.method === 'PUT' || config.method === 'PATCH') && config.bodySchema) {
       const result = config.bodySchema.safeParse(req.body)
       if (!result.success) {
         throw new AppError({

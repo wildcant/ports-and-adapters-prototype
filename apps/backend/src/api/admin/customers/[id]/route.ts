@@ -1,6 +1,6 @@
 import type { ICustomerModuleService } from '@core/types/index.js'
 import { Modules } from '@core/utils/index.js'
-import type { IdParams, UpdateCustomerBody } from '@proteus/http-schemas'
+import type { AdminUpdateCustomerBody, IdParams } from '@proteus/http-schemas'
 import type { HttpRequest, HttpResult } from '../../../../server/ports.js'
 
 type RetrieveCustomerInput = { params: IdParams }
@@ -10,7 +10,7 @@ export const GET = async (req: HttpRequest<RetrieveCustomerInput>) => {
   return { status: 200, json: { customer } } satisfies HttpResult
 }
 
-type UpdateCustomerInput = { params: IdParams; body: UpdateCustomerBody }
+type UpdateCustomerInput = { params: IdParams; body: AdminUpdateCustomerBody }
 export const PATCH = async (req: HttpRequest<UpdateCustomerInput>) => {
   const customerService = req.scope.resolve<ICustomerModuleService>(Modules.CUSTOMER)
   const [customer] = await customerService.updateCustomers([req.params.id], req.body)

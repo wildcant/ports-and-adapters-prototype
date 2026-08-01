@@ -1,5 +1,6 @@
 import { sql } from 'drizzle-orm'
-import { boolean, index, integer, pgTable, text, timestamp } from 'drizzle-orm/pg-core'
+import { boolean, index, integer, pgTable, text } from 'drizzle-orm/pg-core'
+import { timestamps } from '../../../core/db/columns.js'
 import { cartTable } from './cart.js'
 
 export const cartShippingMethodTable = pgTable(
@@ -16,9 +17,7 @@ export const cartShippingMethodTable = pgTable(
     shippingOptionId: text(),
     data: text(),
     metadata: text(),
-    createdAt: timestamp().defaultNow().notNull(),
-    updatedAt: timestamp().defaultNow().notNull(),
-    deletedAt: timestamp(),
+    ...timestamps,
   },
   (table) => [
     index('idx_cart_shipping_method_cart_id').on(table.cartId).where(sql`deleted_at IS NULL`),

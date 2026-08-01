@@ -1,11 +1,11 @@
 import {
-  CreateUser,
+  AdminCreateUser,
+  AdminUpdateUser,
+  AdminUserDeleteResponse,
+  AdminUserListParams,
+  AdminUserListResponse,
+  AdminUserResponse,
   IdParams,
-  UpdateUser,
-  UserDeleteResponse,
-  UserListParams,
-  UserListResponse,
-  UserResponse,
 } from '@proteus/http-schemas'
 import type { MiddlewareRoute } from '../../../core/middleware/types.js'
 import { Tags } from '../../../core/middleware/types.js'
@@ -14,20 +14,20 @@ export default [
   {
     method: 'GET',
     matcher: '/admin/users',
-    querySchema: UserListParams,
+    querySchema: AdminUserListParams,
     operationId: 'listUsers',
     summary: 'List users',
     tags: [Tags.USERS],
-    responseSchema: UserListResponse,
+    responseSchema: AdminUserListResponse,
   },
   {
     method: 'POST',
     matcher: '/admin/users',
-    bodySchema: CreateUser,
+    bodySchema: AdminCreateUser,
     operationId: 'createUser',
     summary: 'Create a user',
     tags: [Tags.USERS],
-    responseSchema: UserResponse,
+    responseSchema: AdminUserResponse,
   },
   {
     method: 'GET',
@@ -36,17 +36,17 @@ export default [
     operationId: 'getUser',
     summary: 'Retrieve a user',
     tags: [Tags.USERS],
-    responseSchema: UserResponse,
+    responseSchema: AdminUserResponse,
   },
   {
     method: 'PATCH',
     matcher: '/admin/users/:id',
     paramsSchema: IdParams,
-    bodySchema: UpdateUser,
+    bodySchema: AdminUpdateUser,
     operationId: 'updateUser',
     summary: 'Update a user',
     tags: [Tags.USERS],
-    responseSchema: UserResponse,
+    responseSchema: AdminUserResponse,
   },
   {
     method: 'DELETE',
@@ -55,6 +55,6 @@ export default [
     operationId: 'deleteUser',
     summary: 'Delete a user',
     tags: [Tags.USERS],
-    responseSchema: UserDeleteResponse,
+    responseSchema: AdminUserDeleteResponse,
   },
 ] satisfies MiddlewareRoute[]

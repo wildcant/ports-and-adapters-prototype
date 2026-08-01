@@ -19,6 +19,7 @@ CREATE TABLE "capture" (
 	"metadata" jsonb,
 	"payment_id" text NOT NULL,
 	"created_at" timestamp DEFAULT now() NOT NULL,
+	"updated_at" timestamp DEFAULT now() NOT NULL,
 	"deleted_at" timestamp
 );
 --> statement-breakpoint
@@ -32,14 +33,16 @@ CREATE TABLE "payment_collection" (
 	"metadata" jsonb,
 	"refunded_amount" integer,
 	"status" "payment_collection_status" DEFAULT 'not_paid' NOT NULL,
-	"deleted_at" timestamp,
 	"created_at" timestamp DEFAULT now() NOT NULL,
-	"updated_at" timestamp DEFAULT now() NOT NULL
+	"updated_at" timestamp DEFAULT now() NOT NULL,
+	"deleted_at" timestamp
 );
 --> statement-breakpoint
 CREATE TABLE "payment_provider" (
 	"id" text PRIMARY KEY NOT NULL,
 	"is_enabled" boolean DEFAULT true NOT NULL,
+	"created_at" timestamp DEFAULT now() NOT NULL,
+	"updated_at" timestamp DEFAULT now() NOT NULL,
 	"deleted_at" timestamp
 );
 --> statement-breakpoint
@@ -95,6 +98,7 @@ CREATE TABLE "refund" (
 	"payment_id" text NOT NULL,
 	"refund_reason_id" text,
 	"created_at" timestamp DEFAULT now() NOT NULL,
+	"updated_at" timestamp DEFAULT now() NOT NULL,
 	"deleted_at" timestamp
 );
 --> statement-breakpoint

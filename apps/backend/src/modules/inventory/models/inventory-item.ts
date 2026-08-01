@@ -1,5 +1,6 @@
 import { sql } from 'drizzle-orm'
-import { boolean, integer, pgTable, text, timestamp, uniqueIndex } from 'drizzle-orm/pg-core'
+import { boolean, integer, pgTable, text, uniqueIndex } from 'drizzle-orm/pg-core'
+import { timestamps } from '../../../core/db/columns.js'
 
 export const inventoryItemTable = pgTable(
   'inventory_item',
@@ -19,8 +20,7 @@ export const inventoryItemTable = pgTable(
     title: text(),
     thumbnail: text(),
     metadata: text(),
-    createdAt: timestamp().defaultNow().notNull(),
-    deletedAt: timestamp(),
+    ...timestamps,
   },
   (table) => [uniqueIndex('idx_inventory_item_sku').on(table.sku).where(sql`deleted_at IS NULL`)],
 )

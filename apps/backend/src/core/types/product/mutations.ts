@@ -2,7 +2,7 @@ import type { ProductStatusType } from './common.js'
 
 export type CreateProductDTO = {
   title: string
-  handle: string
+  handle?: string
   subtitle?: string | null
   description?: string | null
   isGiftcard?: boolean

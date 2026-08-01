@@ -1,4 +1,4 @@
-import { CapturePayment, IdParams, RefundPayment } from '@proteus/http-schemas'
+import { AdminCapturePayment, AdminRefundPayment, IdParams } from '@proteus/http-schemas'
 import type { MiddlewareRoute } from '../../../core/middleware/types.js'
 import { Tags } from '../../../core/middleware/types.js'
 
@@ -22,7 +22,7 @@ export default [
     method: 'POST',
     matcher: '/admin/payments/:id/capture',
     paramsSchema: IdParams,
-    bodySchema: CapturePayment,
+    bodySchema: AdminCapturePayment,
     operationId: 'capturePayment',
     summary: 'Capture a payment',
     tags: [Tags.PAYMENTS],
@@ -31,7 +31,7 @@ export default [
     method: 'POST',
     matcher: '/admin/payments/:id/refund',
     paramsSchema: IdParams,
-    bodySchema: RefundPayment,
+    bodySchema: AdminRefundPayment,
     operationId: 'refundPayment',
     summary: 'Refund a payment',
     tags: [Tags.PAYMENTS],

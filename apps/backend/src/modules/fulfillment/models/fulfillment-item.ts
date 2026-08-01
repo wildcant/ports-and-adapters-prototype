@@ -1,5 +1,6 @@
 import { sql } from 'drizzle-orm'
-import { index, integer, pgTable, text, timestamp } from 'drizzle-orm/pg-core'
+import { index, integer, pgTable, text } from 'drizzle-orm/pg-core'
+import { timestamps } from '../../../core/db/columns.js'
 import { fulfillmentTable } from './fulfillment.js'
 
 export const fulfillmentItemTable = pgTable(
@@ -16,8 +17,7 @@ export const fulfillmentItemTable = pgTable(
     lineItemId: text(),
     inventoryItemId: text(),
     metadata: text(),
-    createdAt: timestamp().defaultNow().notNull(),
-    deletedAt: timestamp(),
+    ...timestamps,
   },
   (table) => [index('idx_fulfillment_item_fulfillment_id').on(table.fulfillmentId).where(sql`deleted_at IS NULL`)],
 )

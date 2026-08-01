@@ -193,7 +193,7 @@ export function BaseRepository<TTable extends PgTable & BaseColumns>(table: TTab
       const client = this.getClient_(context)
       await client
         .update(this.table)
-        .set({ deletedAt: new Date() })
+        .set({ deletedAt: new Date().toISOString() })
         .where(and(inArray(this.table.id, ids), isNull(this.table.deletedAt)))
     }
 

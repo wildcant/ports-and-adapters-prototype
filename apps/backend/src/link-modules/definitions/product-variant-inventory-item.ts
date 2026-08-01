@@ -1,5 +1,6 @@
 import { relations, sql } from 'drizzle-orm'
-import { index, integer, pgTable, text, timestamp, uniqueIndex } from 'drizzle-orm/pg-core'
+import { index, integer, pgTable, text, uniqueIndex } from 'drizzle-orm/pg-core'
+import { timestamps } from '../../core/db/columns.js'
 import { inventoryItemTable, productVariantTable } from '../modules-definitions.js'
 
 export const productVariantInventoryItemTable = pgTable(
@@ -9,8 +10,7 @@ export const productVariantInventoryItemTable = pgTable(
     variantId: text().notNull(),
     inventoryItemId: text().notNull(),
     requiredQuantity: integer().notNull().default(1),
-    createdAt: timestamp().defaultNow().notNull(),
-    deletedAt: timestamp(),
+    ...timestamps,
   },
   (table) => [
     uniqueIndex('idx_pvitem_variant_inventory')

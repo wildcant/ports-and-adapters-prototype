@@ -1,9 +1,10 @@
-import { boolean, pgTable, text, timestamp } from 'drizzle-orm/pg-core'
+import { boolean, pgTable, text } from 'drizzle-orm/pg-core'
+import { timestamps } from '../../../core/db/columns.js'
 
 export const paymentProviderTable = pgTable('payment_provider', {
   id: text().primaryKey(),
   isEnabled: boolean().notNull().default(true),
-  deletedAt: timestamp(),
+  ...timestamps,
 })
 
 export type PaymentProvider = typeof paymentProviderTable.$inferSelect

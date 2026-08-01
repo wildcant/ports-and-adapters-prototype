@@ -1,11 +1,11 @@
 import {
-  CreateCustomers,
-  CustomerDeleteResponse,
-  CustomerListParams,
-  CustomerListResponse,
-  CustomerResponse,
+  AdminCreateCustomers,
+  AdminCustomerDeleteResponse,
+  AdminCustomerListParams,
+  AdminCustomerListResponse,
+  AdminCustomerResponse,
+  AdminUpdateCustomer,
   IdParams,
-  UpdateCustomer,
 } from '@proteus/http-schemas'
 import type { MiddlewareRoute } from '../../../core/middleware/types.js'
 import { Tags } from '../../../core/middleware/types.js'
@@ -14,20 +14,20 @@ export default [
   {
     method: 'GET',
     matcher: '/admin/customers',
-    querySchema: CustomerListParams,
+    querySchema: AdminCustomerListParams,
     operationId: 'listCustomers',
     summary: 'List customers',
     tags: [Tags.CUSTOMERS],
-    responseSchema: CustomerListResponse,
+    responseSchema: AdminCustomerListResponse,
   },
   {
     method: 'POST',
     matcher: '/admin/customers',
-    bodySchema: CreateCustomers,
+    bodySchema: AdminCreateCustomers,
     operationId: 'createCustomers',
     summary: 'Create customers',
     tags: [Tags.CUSTOMERS],
-    responseSchema: CustomerListResponse,
+    responseSchema: AdminCustomerListResponse,
   },
   {
     method: 'GET',
@@ -36,17 +36,17 @@ export default [
     operationId: 'getCustomer',
     summary: 'Retrieve a customer',
     tags: [Tags.CUSTOMERS],
-    responseSchema: CustomerResponse,
+    responseSchema: AdminCustomerResponse,
   },
   {
     method: 'PATCH',
     matcher: '/admin/customers/:id',
     paramsSchema: IdParams,
-    bodySchema: UpdateCustomer,
+    bodySchema: AdminUpdateCustomer,
     operationId: 'updateCustomer',
     summary: 'Update a customer',
     tags: [Tags.CUSTOMERS],
-    responseSchema: CustomerResponse,
+    responseSchema: AdminCustomerResponse,
   },
   {
     method: 'DELETE',
@@ -55,6 +55,6 @@ export default [
     operationId: 'deleteCustomer',
     summary: 'Delete a customer',
     tags: [Tags.CUSTOMERS],
-    responseSchema: CustomerDeleteResponse,
+    responseSchema: AdminCustomerDeleteResponse,
   },
 ] satisfies MiddlewareRoute[]

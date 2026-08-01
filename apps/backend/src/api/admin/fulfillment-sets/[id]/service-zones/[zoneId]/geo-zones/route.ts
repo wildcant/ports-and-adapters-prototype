@@ -1,9 +1,9 @@
 import type { IFulfillmentModuleService } from '@core/types/index.js'
 import { Modules } from '@core/utils/index.js'
-import type { CreateGeoZoneBody, ZoneIdParams } from '@proteus/http-schemas'
+import type { AdminCreateGeoZoneBody, AdminZoneIdParams } from '@proteus/http-schemas'
 import type { HttpRequest, HttpResult } from '../../../../../../../server/ports.js'
 
-type PostInput = { params: ZoneIdParams; body: CreateGeoZoneBody }
+type PostInput = { params: AdminZoneIdParams; body: AdminCreateGeoZoneBody }
 
 export const POST = async (req: HttpRequest<PostInput>) => {
   const service = req.scope.resolve<IFulfillmentModuleService>(Modules.FULFILLMENT)

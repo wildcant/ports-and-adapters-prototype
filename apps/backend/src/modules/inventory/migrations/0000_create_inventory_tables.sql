@@ -15,6 +15,7 @@ CREATE TABLE "inventory_item" (
 	"thumbnail" text,
 	"metadata" text,
 	"created_at" timestamp DEFAULT now() NOT NULL,
+	"updated_at" timestamp DEFAULT now() NOT NULL,
 	"deleted_at" timestamp
 );
 --> statement-breakpoint
@@ -27,6 +28,7 @@ CREATE TABLE "inventory_level" (
 	"incoming_quantity" integer DEFAULT 0 NOT NULL,
 	"metadata" text,
 	"created_at" timestamp DEFAULT now() NOT NULL,
+	"updated_at" timestamp DEFAULT now() NOT NULL,
 	"deleted_at" timestamp
 );
 --> statement-breakpoint
@@ -42,6 +44,7 @@ CREATE TABLE "reservation_item" (
 	"created_by" text,
 	"metadata" text,
 	"created_at" timestamp DEFAULT now() NOT NULL,
+	"updated_at" timestamp DEFAULT now() NOT NULL,
 	"deleted_at" timestamp
 );
 --> statement-breakpoint

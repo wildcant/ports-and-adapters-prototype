@@ -3,6 +3,22 @@ import { z } from 'zod'
 export const IdParams = z.object({ id: z.string().min(1) })
 export type IdParams = z.infer<typeof IdParams>
 
+export function createOperatorMap() {
+  const t = z.string().optional()
+  return z.object({
+    $eq: t,
+    $ne: t,
+    $gt: t,
+    $gte: t,
+    $lt: t,
+    $lte: t,
+    $like: t,
+    $ilike: t,
+    $in: z.array(z.string()).optional(),
+    $nin: z.array(z.string()).optional(),
+  })
+}
+
 const defaultPagination = { offset: 0, limit: 20 }
 
 export function createFindParams(defaults?: { limit?: number; offset?: number }) {
@@ -34,5 +50,5 @@ export type FindParams<TParams extends z.ZodType = z.ZodTypeAny> = {
     limit: number
     order?: Record<string, 'ASC' | 'DESC'>
   }
-  filters: Omit<z.infer<TParams>, 'offset' | 'limit' | 'order'>
+  filters: Omit<z.infer<TParams>, 'offset' | 'limit' | 'order' | 'q'>
 }

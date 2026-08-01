@@ -1,11 +1,11 @@
 import {
-  CreateFulfillmentSet,
-  CreateGeoZone,
-  CreateServiceZone,
+  AdminCreateFulfillmentSet,
+  AdminCreateGeoZone,
+  AdminCreateServiceZone,
+  AdminUpdateFulfillmentSet,
+  AdminUpdateServiceZone,
+  AdminZoneIdParams,
   IdParams,
-  UpdateFulfillmentSet,
-  UpdateServiceZone,
-  ZoneIdParams,
 } from '@proteus/http-schemas'
 import type { MiddlewareRoute } from '../../../core/middleware/types.js'
 import { Tags } from '../../../core/middleware/types.js'
@@ -21,7 +21,7 @@ export default [
   {
     method: 'POST',
     matcher: '/admin/fulfillment-sets',
-    bodySchema: CreateFulfillmentSet,
+    bodySchema: AdminCreateFulfillmentSet,
     operationId: 'createAdminFulfillmentSet',
     summary: 'Create a fulfillment set',
     tags: [Tags.FULFILLMENT_SETS],
@@ -38,7 +38,7 @@ export default [
     method: 'POST',
     matcher: '/admin/fulfillment-sets/:id',
     paramsSchema: IdParams,
-    bodySchema: UpdateFulfillmentSet,
+    bodySchema: AdminUpdateFulfillmentSet,
     operationId: 'updateAdminFulfillmentSet',
     summary: 'Update a fulfillment set',
     tags: [Tags.FULFILLMENT_SETS],
@@ -55,7 +55,7 @@ export default [
     method: 'POST',
     matcher: '/admin/fulfillment-sets/:id/service-zones',
     paramsSchema: IdParams,
-    bodySchema: CreateServiceZone,
+    bodySchema: AdminCreateServiceZone,
     operationId: 'createAdminServiceZone',
     summary: 'Create a service zone in a fulfillment set',
     tags: [Tags.FULFILLMENT_SETS],
@@ -63,7 +63,7 @@ export default [
   {
     method: 'GET',
     matcher: '/admin/fulfillment-sets/:id/service-zones/:zoneId',
-    paramsSchema: ZoneIdParams,
+    paramsSchema: AdminZoneIdParams,
     operationId: 'getAdminServiceZone',
     summary: 'Retrieve a service zone with geo zones',
     tags: [Tags.FULFILLMENT_SETS],
@@ -71,8 +71,8 @@ export default [
   {
     method: 'POST',
     matcher: '/admin/fulfillment-sets/:id/service-zones/:zoneId',
-    paramsSchema: ZoneIdParams,
-    bodySchema: UpdateServiceZone,
+    paramsSchema: AdminZoneIdParams,
+    bodySchema: AdminUpdateServiceZone,
     operationId: 'updateAdminServiceZone',
     summary: 'Update a service zone',
     tags: [Tags.FULFILLMENT_SETS],
@@ -80,7 +80,7 @@ export default [
   {
     method: 'DELETE',
     matcher: '/admin/fulfillment-sets/:id/service-zones/:zoneId',
-    paramsSchema: ZoneIdParams,
+    paramsSchema: AdminZoneIdParams,
     operationId: 'deleteAdminServiceZone',
     summary: 'Delete a service zone',
     tags: [Tags.FULFILLMENT_SETS],
@@ -88,8 +88,8 @@ export default [
   {
     method: 'POST',
     matcher: '/admin/fulfillment-sets/:id/service-zones/:zoneId/geo-zones',
-    paramsSchema: ZoneIdParams,
-    bodySchema: CreateGeoZone,
+    paramsSchema: AdminZoneIdParams,
+    bodySchema: AdminCreateGeoZone,
     operationId: 'createAdminGeoZone',
     summary: 'Add a geo zone to a service zone',
     tags: [Tags.FULFILLMENT_SETS],

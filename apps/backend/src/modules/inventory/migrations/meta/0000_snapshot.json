@@ -1,5 +1,5 @@
 {
-  "id": "010be31d-c291-4382-bd5e-c888c2749444",
+  "id": "83bbda9c-ac20-4c95-b849-e0d22e727533",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "version": "7",
   "dialect": "postgresql",
@@ -107,6 +107,13 @@
           "notNull": true,
           "default": "now()"
         },
+        "updated_at": {
+          "name": "updated_at",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        },
         "deleted_at": {
           "name": "deleted_at",
           "type": "timestamp",
@@ -196,6 +203,13 @@
           "notNull": true,
           "default": "now()"
         },
+        "updated_at": {
+          "name": "updated_at",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        },
         "deleted_at": {
           "name": "deleted_at",
           "type": "timestamp",
@@ -262,8 +276,12 @@
           "name": "inventory_level_inventory_item_id_inventory_item_id_fk",
           "tableFrom": "inventory_level",
           "tableTo": "inventory_item",
-          "columnsFrom": ["inventory_item_id"],
-          "columnsTo": ["id"],
+          "columnsFrom": [
+            "inventory_item_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
           "onDelete": "cascade",
           "onUpdate": "no action"
         }
@@ -347,6 +365,13 @@
           "notNull": true,
           "default": "now()"
         },
+        "updated_at": {
+          "name": "updated_at",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        },
         "deleted_at": {
           "name": "deleted_at",
           "type": "timestamp",
@@ -406,8 +431,12 @@
           "name": "reservation_item_inventory_item_id_inventory_item_id_fk",
           "tableFrom": "reservation_item",
           "tableTo": "inventory_item",
-          "columnsFrom": ["inventory_item_id"],
-          "columnsTo": ["id"],
+          "columnsFrom": [
+            "inventory_item_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
           "onDelete": "cascade",
           "onUpdate": "no action"
         }

@@ -5,6 +5,7 @@ CREATE TABLE "product_image" (
 	"rank" integer DEFAULT 0 NOT NULL,
 	"metadata" text,
 	"created_at" timestamp DEFAULT now() NOT NULL,
+	"updated_at" timestamp DEFAULT now() NOT NULL,
 	"deleted_at" timestamp
 );
 --> statement-breakpoint
@@ -14,6 +15,7 @@ CREATE TABLE "product_option" (
 	"title" text NOT NULL,
 	"metadata" text,
 	"created_at" timestamp DEFAULT now() NOT NULL,
+	"updated_at" timestamp DEFAULT now() NOT NULL,
 	"deleted_at" timestamp
 );
 --> statement-breakpoint
@@ -24,6 +26,7 @@ CREATE TABLE "product_option_value" (
 	"rank" integer DEFAULT 0,
 	"metadata" text,
 	"created_at" timestamp DEFAULT now() NOT NULL,
+	"updated_at" timestamp DEFAULT now() NOT NULL,
 	"deleted_at" timestamp
 );
 --> statement-breakpoint
@@ -48,6 +51,7 @@ CREATE TABLE "product" (
 	"external_id" text,
 	"metadata" text,
 	"created_at" timestamp DEFAULT now() NOT NULL,
+	"updated_at" timestamp DEFAULT now() NOT NULL,
 	"deleted_at" timestamp
 );
 --> statement-breakpoint
@@ -72,6 +76,7 @@ CREATE TABLE "product_variant" (
 	"variant_rank" integer DEFAULT 0,
 	"metadata" text,
 	"created_at" timestamp DEFAULT now() NOT NULL,
+	"updated_at" timestamp DEFAULT now() NOT NULL,
 	"deleted_at" timestamp
 );
 --> statement-breakpoint

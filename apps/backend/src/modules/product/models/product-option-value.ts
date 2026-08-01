@@ -1,5 +1,6 @@
 import { sql } from 'drizzle-orm'
-import { index, integer, pgTable, text, timestamp, uniqueIndex } from 'drizzle-orm/pg-core'
+import { index, integer, pgTable, text, uniqueIndex } from 'drizzle-orm/pg-core'
+import { timestamps } from '../../../core/db/columns.js'
 import { productOptionTable } from './product-option.js'
 
 export const productOptionValueTable = pgTable(
@@ -12,8 +13,7 @@ export const productOptionValueTable = pgTable(
     value: text().notNull(),
     rank: integer().default(0),
     metadata: text(),
-    createdAt: timestamp().defaultNow().notNull(),
-    deletedAt: timestamp(),
+    ...timestamps,
   },
   (table) => [
     index('idx_product_option_value_option_id').on(table.optionId),

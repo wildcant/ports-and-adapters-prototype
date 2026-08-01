@@ -1,5 +1,6 @@
 import { sql } from 'drizzle-orm'
-import { jsonb, pgTable, text, timestamp, uniqueIndex } from 'drizzle-orm/pg-core'
+import { jsonb, pgTable, text, uniqueIndex } from 'drizzle-orm/pg-core'
+import { timestamps } from '../../../core/db/columns.js'
 
 export const accountHolderTable = pgTable(
   'account_holder',
@@ -11,9 +12,7 @@ export const accountHolderTable = pgTable(
     metadata: jsonb().$type<Record<string, unknown> | null>(),
     providerId: text().notNull(),
 
-    createdAt: timestamp().defaultNow().notNull(),
-    updatedAt: timestamp().defaultNow().notNull(),
-    deletedAt: timestamp(),
+    ...timestamps,
   },
   (table) => [
     uniqueIndex('idx_account_holder_provider_external')

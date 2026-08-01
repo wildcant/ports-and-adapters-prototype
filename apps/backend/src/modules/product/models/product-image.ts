@@ -1,5 +1,6 @@
 import { sql } from 'drizzle-orm'
-import { index, integer, pgTable, text, timestamp } from 'drizzle-orm/pg-core'
+import { index, integer, pgTable, text } from 'drizzle-orm/pg-core'
+import { timestamps } from '../../../core/db/columns.js'
 import { productTable } from './product.js'
 
 export const productImageTable = pgTable(
@@ -12,8 +13,7 @@ export const productImageTable = pgTable(
     url: text().notNull(),
     rank: integer().default(0).notNull(),
     metadata: text(),
-    createdAt: timestamp().defaultNow().notNull(),
-    deletedAt: timestamp(),
+    ...timestamps,
   },
   (table) => [
     index('idx_product_image_product_id').on(table.productId),

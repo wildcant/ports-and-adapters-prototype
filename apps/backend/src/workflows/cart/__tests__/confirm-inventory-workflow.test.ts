@@ -36,8 +36,8 @@ function makeLineItem(overrides: Partial<CartLineItemDTO> & { id: string; cartId
     compareAtUnitPrice: null,
     unitPrice: 1000,
     metadata: null,
-    createdAt: new Date(),
-    updatedAt: new Date(),
+    createdAt: new Date().toISOString(),
+    updatedAt: new Date().toISOString(),
     deletedAt: null,
     ...overrides,
   }
@@ -50,7 +50,7 @@ function makeMapping(
   return {
     id: `pvitem_${overrides.variantId}_${overrides.inventoryItemId}`,
     requiredQuantity: 1,
-    createdAt: new Date(),
+    createdAt: new Date().toISOString(),
     deletedAt: null,
     ...overrides,
   }
@@ -65,7 +65,7 @@ function makeLevel(
     reservedQuantity: 0,
     incomingQuantity: 0,
     metadata: null,
-    createdAt: new Date(),
+    createdAt: new Date().toISOString(),
     deletedAt: null,
     ...overrides,
   }

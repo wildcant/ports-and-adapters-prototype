@@ -1,5 +1,6 @@
 import { sql } from 'drizzle-orm'
-import { pgTable, text, timestamp, uniqueIndex } from 'drizzle-orm/pg-core'
+import { pgTable, text, uniqueIndex } from 'drizzle-orm/pg-core'
+import { timestamps } from '../../core/db/columns.js'
 
 export const cartPaymentCollectionTable = pgTable(
   'cart_payment_collection',
@@ -7,8 +8,7 @@ export const cartPaymentCollectionTable = pgTable(
     id: text().primaryKey().default(sql`CONCAT('cartpaycol_', REPLACE(gen_random_uuid()::text, '-', ''))`),
     cartId: text().notNull(),
     paymentCollectionId: text().notNull(),
-    createdAt: timestamp().defaultNow().notNull(),
-    deletedAt: timestamp(),
+    ...timestamps,
   },
   (table) => [
     uniqueIndex('idx_cart_payment_collection')

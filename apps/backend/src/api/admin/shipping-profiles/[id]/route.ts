@@ -1,9 +1,9 @@
 import type { IFulfillmentModuleService } from '@core/types/index.js'
 import { Modules } from '@core/utils/index.js'
-import type { IdParams, UpdateShippingProfileBody } from '@proteus/http-schemas'
+import type { AdminUpdateShippingProfileBody, IdParams } from '@proteus/http-schemas'
 import type { HttpRequest, HttpResult } from '../../../../server/ports.js'
 
-type PostInput = { params: IdParams; body: UpdateShippingProfileBody }
+type PostInput = { params: IdParams; body: AdminUpdateShippingProfileBody }
 
 export const POST = async (req: HttpRequest<PostInput>) => {
   const service = req.scope.resolve<IFulfillmentModuleService>(Modules.FULFILLMENT)

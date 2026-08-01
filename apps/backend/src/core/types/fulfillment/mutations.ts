@@ -119,10 +119,10 @@ export type CreateFulfillmentDTO = {
 
 export type UpdateFulfillmentDTO = {
   data?: unknown | undefined
-  packedAt?: Date | null | undefined
-  shippedAt?: Date | null | undefined
-  deliveredAt?: Date | null | undefined
-  canceledAt?: Date | null | undefined
+  packedAt?: string | null | undefined
+  shippedAt?: string | null | undefined
+  deliveredAt?: string | null | undefined
+  canceledAt?: string | null | undefined
   metadata?: string | null | undefined
 }
 
