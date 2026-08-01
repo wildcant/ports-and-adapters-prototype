@@ -1,4 +1,4 @@
-import type { IdParams, StoreCartResponse } from '@proteus/http-schemas'
+import type { IdParams, StoreCartResponse } from '@proteus/http-schemas/store'
 import { completeCartWorkflow } from '@workflows/cart/complete-cart.js'
 import type { HttpRequest, HttpResult } from '../../../../../server/ports.js'
 

@@ -1,7 +1,7 @@
 import { AppError, ErrorTypes } from '@core/errors/app-error.js'
 import type { IFulfillmentModuleService } from '@core/types/index.js'
 import { Modules } from '@core/utils/index.js'
-import type { AdminCreateServiceZoneBody, AdminCreateServiceZoneResponse, IdParams } from '@proteus/http-schemas'
+import type { AdminCreateServiceZoneBody, AdminCreateServiceZoneResponse, IdParams } from '@proteus/http-schemas/admin'
 import type { HttpRequest, HttpResult } from '../../../../../server/ports.js'
 
 type PostInput = { params: IdParams; body: AdminCreateServiceZoneBody }

@@ -1,4 +1,9 @@
-import { IdParams, StoreProductListParams, StoreProductListResponse, StoreProductResponse } from '@proteus/http-schemas'
+import {
+  IdParams,
+  StoreProductListParams,
+  StoreProductListResponse,
+  StoreProductResponse,
+} from '@proteus/http-schemas/store'
 import type { MiddlewareRoute } from '../../../core/middleware/types.js'
 import { searchable, Tags } from '../../../core/middleware/types.js'
 import type { ProductDTO } from '../../../core/types/product/common.js'

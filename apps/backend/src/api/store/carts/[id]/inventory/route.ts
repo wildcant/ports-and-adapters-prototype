@@ -1,4 +1,4 @@
-import type { StoreCartInventoryResponse } from '@proteus/http-schemas'
+import type { StoreCartInventoryResponse } from '@proteus/http-schemas/store'
 import { confirmInventoryWorkflow } from '@workflows/cart/confirm-inventory-workflow.js'
 import type { HttpRequest, HttpResult } from '../../../../../server/ports.js'
 

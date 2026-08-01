@@ -1,7 +1,12 @@
 import { AppError, ErrorTypes } from '@core/errors/app-error.js'
 import type { ICartModuleService } from '@core/types/index.js'
 import { Modules } from '@core/utils/index.js'
-import type { IdParams, StoreCartDetailResponse, StoreUpdateCartResponse, UpdateCartBody } from '@proteus/http-schemas'
+import type {
+  IdParams,
+  StoreCartDetailResponse,
+  StoreUpdateCartResponse,
+  UpdateCartBody,
+} from '@proteus/http-schemas/store'
 import type { HttpRequest, HttpResult } from '../../../../server/ports.js'
 
 type GetInput = { params: IdParams }

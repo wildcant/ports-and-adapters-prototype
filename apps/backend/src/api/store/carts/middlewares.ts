@@ -15,7 +15,7 @@ import {
   StoreUpdateCartResponse,
   UpdateCart,
   UpdateLineItem,
-} from '@proteus/http-schemas'
+} from '@proteus/http-schemas/store'
 import type { MiddlewareRoute } from '../../../core/middleware/types.js'
 import { Tags } from '../../../core/middleware/types.js'
 

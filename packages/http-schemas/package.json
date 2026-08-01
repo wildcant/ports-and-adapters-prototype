@@ -6,7 +6,8 @@
     "typecheck": "tsc --noEmit"
   },
   "exports": {
-    ".": "./src/index.ts"
+    "./admin": "./src/admin/index.ts",
+    "./store": "./src/store/index.ts"
   },
   "dependencies": {
     "@asteasolutions/zod-to-openapi": "^8.5.0",

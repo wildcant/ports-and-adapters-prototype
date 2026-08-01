@@ -1,4 +1,4 @@
-import { CreateUser, IdParams, UpdateUser, UserListParams } from '@proteus/http-schemas'
+import { CreateUser, IdParams, UpdateUser, UserListParams } from '@proteus/http-schemas/store'
 import { createServerFn } from '@tanstack/react-start'
 import { apiCall, userByIdApi, usersApi } from 'backend/api'
 

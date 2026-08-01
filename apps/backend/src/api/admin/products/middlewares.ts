@@ -8,7 +8,7 @@ import {
   AdminUpdateProductResponse,
   DeleteResponse,
   IdParams,
-} from '@proteus/http-schemas'
+} from '@proteus/http-schemas/admin'
 import type { MiddlewareRoute } from '../../../core/middleware/types.js'
 import { searchable, Tags } from '../../../core/middleware/types.js'
 import type { ProductDTO } from '../../../core/types/product/common.js'

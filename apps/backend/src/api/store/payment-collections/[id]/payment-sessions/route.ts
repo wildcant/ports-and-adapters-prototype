@@ -1,6 +1,6 @@
 import type { IPaymentModuleService } from '@core/types/index.js'
 import { Modules } from '@core/utils/index.js'
-import type { CreatePaymentSessionBody, IdParams, StoreCreatePaymentSessionResponse } from '@proteus/http-schemas'
+import type { CreatePaymentSessionBody, IdParams, StoreCreatePaymentSessionResponse } from '@proteus/http-schemas/store'
 import type { HttpRequest, HttpResult } from '../../../../../server/ports.js'
 
 type Input = { params: IdParams; body: CreatePaymentSessionBody }

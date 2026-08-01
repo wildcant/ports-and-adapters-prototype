@@ -1,6 +1,6 @@
 import type { IFulfillmentModuleService } from '@core/types/index.js'
 import { Modules } from '@core/utils/index.js'
-import type { AdminFulfillmentProviderListResponse } from '@proteus/http-schemas'
+import type { AdminFulfillmentProviderListResponse } from '@proteus/http-schemas/admin'
 import type { HttpRequest, HttpResult } from '../../../server/ports.js'
 
 export const GET = async (req: HttpRequest): Promise<HttpResult<AdminFulfillmentProviderListResponse>> => {

@@ -6,7 +6,7 @@ import type {
   AdminUserListQuery,
   AdminUserListResponse,
   AdminUserResponse,
-} from '@proteus/http-schemas'
+} from '@proteus/http-schemas/admin'
 import type { HttpRequest, HttpResult } from '../../../server/ports.js'
 
 type ListUsersInput = { query: AdminUserListQuery }

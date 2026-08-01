@@ -1,4 +1,4 @@
-import { AdminCreateCustomer, type AdminCustomerListResponse } from '@proteus/http-schemas'
+import { AdminCreateCustomer, type AdminCustomerListResponse } from '@proteus/http-schemas/admin'
 import { useCreateCustomer } from '#/features/customers/api/customers'
 import type { SubmitFormParams } from '#/lib/form.ts'
 import { useAppForm } from '#/lib/form-hook.ts'

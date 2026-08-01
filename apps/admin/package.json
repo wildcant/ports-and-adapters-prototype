@@ -14,7 +14,8 @@
     "format": "biome format",
     "lint": "biome lint",
     "check": "biome check",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "check:deps": "depcruise src/ --config deps-analyzer/.dependency-cruiser.cjs"
   },
   "dependencies": {
     "@proteus/http-schemas": "*",

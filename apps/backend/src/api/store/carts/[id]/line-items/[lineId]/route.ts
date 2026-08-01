@@ -6,7 +6,7 @@ import type {
   LineIdParams,
   StoreUpdateCartLineItemResponse,
   UpdateLineItemBody,
-} from '@proteus/http-schemas'
+} from '@proteus/http-schemas/store'
 import type { HttpRequest, HttpResult } from '../../../../../../server/ports.js'
 
 type PostInput = { params: LineIdParams; body: UpdateLineItemBody }

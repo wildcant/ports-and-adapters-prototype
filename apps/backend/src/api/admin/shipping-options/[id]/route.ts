@@ -7,7 +7,7 @@ import type {
   AdminUpdateShippingOptionResponse,
   DeleteResponse,
   IdParams,
-} from '@proteus/http-schemas'
+} from '@proteus/http-schemas/admin'
 import type { HttpRequest, HttpResult } from '../../../../server/ports.js'
 
 type GetInput = { params: IdParams }

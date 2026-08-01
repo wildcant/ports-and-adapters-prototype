@@ -24,7 +24,7 @@ Export named HTTP methods (`GET`, `POST`, `PATCH`, `DELETE`). Each handler:
 3. Resolves services from `req.scope` (Awilix scoped container)
 
 ```ts
-import type { AdminCustomerResponse, AdminUpdateCustomerBody, IdParams } from '@proteus/http-schemas'
+import type { AdminCustomerResponse, AdminUpdateCustomerBody, IdParams } from '@proteus/http-schemas/admin'
 import type { HttpRequest, HttpResult } from '../../../../server/ports.js'
 
 type UpdateInput = { params: IdParams; body: AdminUpdateCustomerBody }
@@ -56,7 +56,7 @@ export const PATCH = async (req: HttpRequest<UpdateInput>): Promise<HttpResult<A
 Each domain has a `middlewares.ts` that exports a `MiddlewareRoute[]` array. This wires validation schemas and OpenAPI metadata:
 
 ```ts
-import { AdminCreateCustomers, AdminCustomerResponse, DeleteResponse, IdParams } from '@proteus/http-schemas'
+import { AdminCreateCustomers, AdminCustomerResponse, DeleteResponse, IdParams } from '@proteus/http-schemas/admin'
 
 export default [
   {

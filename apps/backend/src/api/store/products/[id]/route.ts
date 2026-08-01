@@ -1,6 +1,6 @@
 import type { IProductModuleService } from '@core/types/index.js'
 import { Modules } from '@core/utils/index.js'
-import type { IdParams, StoreProductResponse } from '@proteus/http-schemas'
+import type { IdParams, StoreProductResponse } from '@proteus/http-schemas/store'
 import type { HttpRequest, HttpResult } from '../../../../server/ports.js'
 
 type Input = { params: IdParams }

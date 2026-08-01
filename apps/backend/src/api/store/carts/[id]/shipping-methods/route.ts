@@ -1,7 +1,11 @@
 import { AppError, ErrorTypes } from '@core/errors/app-error.js'
 import type { ICartModuleService, IFulfillmentModuleService } from '@core/types/index.js'
 import { Modules } from '@core/utils/index.js'
-import type { AddCartShippingMethodBody, IdParams, StoreCreateCartShippingMethodResponse } from '@proteus/http-schemas'
+import type {
+  AddCartShippingMethodBody,
+  IdParams,
+  StoreCreateCartShippingMethodResponse,
+} from '@proteus/http-schemas/store'
 import type { HttpRequest, HttpResult } from '../../../../../server/ports.js'
 
 type PostInput = { params: IdParams; body: AddCartShippingMethodBody }

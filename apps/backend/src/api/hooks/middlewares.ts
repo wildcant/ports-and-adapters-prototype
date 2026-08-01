@@ -1,4 +1,4 @@
-import { ProviderParams, WebhookReceivedResponse } from '@proteus/http-schemas'
+import { ProviderParams, WebhookReceivedResponse } from '@proteus/http-schemas/store'
 import type { MiddlewareRoute } from '../../core/middleware/types.js'
 import { Tags } from '../../core/middleware/types.js'
 

@@ -13,7 +13,7 @@
     "lint": "biome lint .",
     "format": "biome format --write .",
     "check": "biome check .",
-    "check:all": "./scripts/check-env-usage.sh; e1=$?; npm run check; e2=$?; npm run --workspace=backend check:deps; e3=$?; exit $((e1 + e2 + e3))",
+    "check:all": "./scripts/check-env-usage.sh; e1=$?; npm run check; e2=$?; npm run --workspace=backend check:deps; e3=$?; npm run --workspace=admin check:deps; e4=$?; npm run --workspace=frontend check:deps; e5=$?; exit $((e1 + e2 + e3 + e4 + e5))",
     "openapi:generate": "npm run --workspace=backend openapi:dump:offline && npm run --workspace=admin openapi:client && npm run --workspace=frontend openapi:client",
     "typecheck": "npm run --workspace=backend typecheck && npm run --workspace=frontend typecheck",
     "sync-secrets:backend": "./scripts/sync-secrets.sh proteus-backend",

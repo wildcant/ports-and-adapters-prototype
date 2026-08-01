@@ -15,7 +15,7 @@ import {
   AdminZoneIdParams,
   DeleteResponse,
   IdParams,
-} from '@proteus/http-schemas'
+} from '@proteus/http-schemas/admin'
 import type { MiddlewareRoute } from '../../../core/middleware/types.js'
 import { Tags } from '../../../core/middleware/types.js'
 

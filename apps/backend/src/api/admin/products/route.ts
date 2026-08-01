@@ -6,7 +6,7 @@ import type {
   AdminCreateProductResponse,
   AdminProductListQuery,
   AdminProductListResponse,
-} from '@proteus/http-schemas'
+} from '@proteus/http-schemas/admin'
 import type { HttpRequest, HttpResult } from '../../../server/ports.js'
 
 type ListProductsInput = { query: AdminProductListQuery }

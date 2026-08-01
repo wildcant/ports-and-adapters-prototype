@@ -14,7 +14,8 @@
     "cf-typegen": "wrangler types",
     "test": "dotenvx run -f ../../.env.test -- vitest run",
     "typecheck": "tsc --noEmit",
-    "openapi:client": "orval"
+    "openapi:client": "orval",
+    "check:deps": "depcruise src/ --config deps-analyzer/.dependency-cruiser.cjs"
   },
   "dependencies": {
     "@proteus/http-schemas": "*",

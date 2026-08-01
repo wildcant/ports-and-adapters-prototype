@@ -5,7 +5,7 @@ import type {
   AdminCreateFulfillmentSetBody,
   AdminCreateFulfillmentSetResponse,
   AdminFulfillmentSetListResponse,
-} from '@proteus/http-schemas'
+} from '@proteus/http-schemas/admin'
 import type { HttpRequest, HttpResult } from '../../../server/ports.js'
 
 export const GET = async (req: HttpRequest): Promise<HttpResult<AdminFulfillmentSetListResponse>> => {

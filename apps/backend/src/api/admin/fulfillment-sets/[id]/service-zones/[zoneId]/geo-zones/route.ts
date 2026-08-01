@@ -1,7 +1,7 @@
 import { AppError, ErrorTypes } from '@core/errors/app-error.js'
 import type { IFulfillmentModuleService } from '@core/types/index.js'
 import { Modules } from '@core/utils/index.js'
-import type { AdminCreateGeoZoneBody, AdminCreateGeoZoneResponse, AdminZoneIdParams } from '@proteus/http-schemas'
+import type { AdminCreateGeoZoneBody, AdminCreateGeoZoneResponse, AdminZoneIdParams } from '@proteus/http-schemas/admin'
 import type { HttpRequest, HttpResult } from '../../../../../../../server/ports.js'
 
 type PostInput = { params: AdminZoneIdParams; body: AdminCreateGeoZoneBody }

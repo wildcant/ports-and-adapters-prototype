@@ -1,6 +1,6 @@
 import type { IPaymentModuleService } from '@core/types/index.js'
 import { Modules } from '@core/utils/index.js'
-import type { AdminPaymentResponse, AdminRefundPaymentBody, IdParams } from '@proteus/http-schemas'
+import type { AdminPaymentResponse, AdminRefundPaymentBody, IdParams } from '@proteus/http-schemas/admin'
 import type { HttpRequest, HttpResult } from '../../../../../server/ports.js'
 
 type Input = { params: IdParams; body: AdminRefundPaymentBody }
