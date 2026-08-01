@@ -1,6 +1,6 @@
 # 06 — Admin: Product detail page
 
-**What to build:** Navigating to `/products/:id` shows a two-column detail page inside the shell. A `TwoColumnPage` compound layout component (with `.Main` and `.Sidebar` children) provides the page structure. The main column shows a `ProductGeneralSection` with `SectionRow` entries for title, handle, status, and description. An `ActionMenu` component (wrapping shadcn DropdownMenu with a discriminated union action type) offers Edit and Delete actions. The `$id/route.tsx` layout route prefetches product data via `ensureQueryData` in its `loader` and injects the product title as a dynamic breadcrumb via `beforeLoad` context. A `pendingComponent` renders a skeleton while the loader runs. The breadcrumb bar shows "Products / Product Title". Delete triggers the mutation and navigates back to the list.
+**What to build:** Navigating to `/products/:id` shows a two-column detail page inside the shell. A `TwoColumnPage` compound layout component (with `.Main` and `.Sidebar` children) provides the page structure. The main column shows a `ProductGeneralSection` with `SectionRow` entries for title, handle, status, and description. An `ActionMenu` component (wrapping `DropdownMenu` from `@proteus/ui` with a discriminated union action type) offers Edit and Delete actions. The `$id/route.tsx` layout route prefetches product data via `ensureQueryData` in its `loader` and injects the product title as a dynamic breadcrumb via `beforeLoad` context. A `pendingComponent` renders a skeleton while the loader runs. The breadcrumb bar shows "Products / Product Title". Delete triggers the mutation and navigates back to the list.
 
 **Blocked by:** 03 — Shell layout with layout groups
 
@@ -25,7 +25,7 @@
 - [ ] `TwoColumnPage` compound component with `.Main` and `.Sidebar` children (reusable across domains)
 - [ ] `ProductGeneralSection` component in `src/features/products/components/` with section header (title + ActionMenu) and SectionRow entries
 - [ ] `SectionRow` component: two-column grid with title (label) and value (text or ReactNode), reusable across domains
-- [ ] `ActionMenu` component in `src/components/common/`: wraps shadcn DropdownMenu, accepts `groups` prop with discriminated union actions (`{ to, label, icon }` for links, `{ onClick, label, icon }` for handlers), renders groups separated by dividers
+- [ ] `ActionMenu` component in `src/components/common/`: wraps `DropdownMenu` from `@proteus/ui`, accepts `groups` prop with discriminated union actions (`{ to, label, icon }` for links, `{ onClick, label, icon }` for handlers), renders groups separated by dividers
 - [ ] Edit action navigates to `./edit`
 - [ ] Delete action calls `useDeleteProduct` mutation, navigates to `/products` on success
 - [ ] Breadcrumb shows "Products / {product.title}" — static "Products" from the products layout route, dynamic title from `beforeLoad` context
