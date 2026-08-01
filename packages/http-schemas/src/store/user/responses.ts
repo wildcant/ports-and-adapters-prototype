@@ -1,5 +1,5 @@
 import { z } from 'zod'
-import { PaginatedResponse } from '../common.js'
+import { PaginatedResponse } from '../../common.js'
 import { User } from './entities.js'
 
 export const UserResponse = z.object({ user: User }).openapi('UserResponse')
