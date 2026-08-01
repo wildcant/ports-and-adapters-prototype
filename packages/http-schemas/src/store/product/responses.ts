@@ -1,0 +1,13 @@
+import { z } from 'zod'
+import { PaginatedResponse } from '../../common.js'
+import { StoreProduct, StoreProductVariant } from './entities.js'
+
+export const StoreProductResponse = z
+  .object({ product: StoreProduct.extend({ variants: z.array(StoreProductVariant) }) })
+  .openapi('StoreProductResponse')
+export type StoreProductResponse = z.infer<typeof StoreProductResponse>
+
+export const StoreProductListResponse = PaginatedResponse.extend({
+  products: z.array(StoreProduct),
+}).openapi('StoreProductListResponse')
+export type StoreProductListResponse = z.infer<typeof StoreProductListResponse>

@@ -44,10 +44,14 @@ export const createApp: CreateApp = ({ container }) => {
     async fetch(request) {
       const url = new URL(request.url)
       const method = request.method.toUpperCase()
-      const corsHeaders = {
-        'Access-Control-Allow-Origin': env.CORS_ORIGIN,
+      const origin = request.headers.get('Origin') ?? ''
+      const corsHeaders: Record<string, string> = {
         'Access-Control-Allow-Methods': 'GET, POST, PUT, PATCH, DELETE, OPTIONS',
         'Access-Control-Allow-Headers': 'Content-Type',
+        Vary: 'Origin',
+      }
+      if (env.CORS_ORIGIN.includes(origin)) {
+        corsHeaders['Access-Control-Allow-Origin'] = origin
       }
 
       // Handle CORS preflight

@@ -10,7 +10,145 @@
     }
   ],
   "components": {
-    "schemas": {},
+    "schemas": {
+      "StoreProductListResponse": {
+        "type": "object",
+        "properties": {
+          "count": {
+            "type": "number"
+          },
+          "offset": {
+            "type": "number"
+          },
+          "limit": {
+            "type": "number"
+          },
+          "products": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/StoreProduct"
+            }
+          }
+        },
+        "required": ["count", "offset", "limit", "products"]
+      },
+      "StoreProduct": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "title": {
+            "type": "string"
+          },
+          "handle": {
+            "type": "string"
+          },
+          "subtitle": {
+            "type": ["string", "null"]
+          },
+          "description": {
+            "type": ["string", "null"]
+          },
+          "thumbnail": {
+            "type": ["string", "null"]
+          },
+          "weight": {
+            "type": ["number", "null"]
+          },
+          "length": {
+            "type": ["number", "null"]
+          },
+          "height": {
+            "type": ["number", "null"]
+          },
+          "width": {
+            "type": ["number", "null"]
+          },
+          "originCountry": {
+            "type": ["string", "null"]
+          },
+          "material": {
+            "type": ["string", "null"]
+          }
+        },
+        "required": [
+          "id",
+          "title",
+          "handle",
+          "subtitle",
+          "description",
+          "thumbnail",
+          "weight",
+          "length",
+          "height",
+          "width",
+          "originCountry",
+          "material"
+        ]
+      },
+      "StoreProductResponse": {
+        "type": "object",
+        "properties": {
+          "product": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/StoreProduct"
+              },
+              {
+                "type": "object",
+                "properties": {
+                  "variants": {
+                    "type": "array",
+                    "items": {
+                      "$ref": "#/components/schemas/StoreProductVariant"
+                    }
+                  }
+                },
+                "required": ["variants"]
+              }
+            ]
+          }
+        },
+        "required": ["product"]
+      },
+      "StoreProductVariant": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "productId": {
+            "type": "string"
+          },
+          "title": {
+            "type": "string"
+          },
+          "sku": {
+            "type": ["string", "null"]
+          },
+          "barcode": {
+            "type": ["string", "null"]
+          },
+          "material": {
+            "type": ["string", "null"]
+          },
+          "weight": {
+            "type": ["number", "null"]
+          },
+          "length": {
+            "type": ["number", "null"]
+          },
+          "height": {
+            "type": ["number", "null"]
+          },
+          "width": {
+            "type": ["number", "null"]
+          }
+        },
+        "required": ["id", "productId", "title", "sku", "barcode", "material", "weight", "length", "height", "width"]
+      }
+    },
     "parameters": {}
   },
   "paths": {
@@ -526,9 +664,55 @@
         "operationId": "listStoreProducts",
         "summary": "List published products",
         "tags": ["Products"],
+        "parameters": [
+          {
+            "schema": {
+              "type": ["integer", "null"],
+              "minimum": 0,
+              "default": 0
+            },
+            "required": false,
+            "name": "offset",
+            "in": "query"
+          },
+          {
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 100,
+              "default": 20
+            },
+            "required": false,
+            "name": "limit",
+            "in": "query"
+          },
+          {
+            "schema": {
+              "type": "string"
+            },
+            "required": false,
+            "name": "order",
+            "in": "query"
+          },
+          {
+            "schema": {
+              "type": "string"
+            },
+            "required": false,
+            "name": "q",
+            "in": "query"
+          }
+        ],
         "responses": {
           "200": {
-            "description": "Successful response"
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/StoreProductListResponse"
+                }
+              }
+            }
           },
           "400": {
             "description": "Validation error"
@@ -554,7 +738,14 @@
         ],
         "responses": {
           "200": {
-            "description": "Successful response"
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/StoreProductResponse"
+                }
+              }
+            }
           },
           "400": {
             "description": "Validation error"

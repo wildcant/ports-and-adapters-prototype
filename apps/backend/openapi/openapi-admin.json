@@ -62,6 +62,12 @@
         },
         "required": ["id", "firstName", "lastName", "email", "createdAt", "updatedAt", "deletedAt"]
       },
+      "AdminCreateCustomers": {
+        "type": "array",
+        "items": {
+          "$ref": "#/components/schemas/AdminCreateCustomer"
+        }
+      },
       "AdminCreateCustomer": {
         "type": "object",
         "properties": {
@@ -326,6 +332,10 @@
             "type": "string",
             "format": "date-time"
           },
+          "updatedAt": {
+            "type": "string",
+            "format": "date-time"
+          },
           "deletedAt": {
             "type": ["string", "null"],
             "format": "date-time"
@@ -352,6 +362,7 @@
           "externalId",
           "metadata",
           "createdAt",
+          "updatedAt",
           "deletedAt"
         ]
       },
@@ -380,6 +391,10 @@
           "title": {
             "type": "string",
             "minLength": 1
+          },
+          "status": {
+            "type": "string",
+            "enum": ["draft", "proposed", "published", "rejected"]
           }
         }
       },
@@ -682,10 +697,7 @@
           "content": {
             "application/json": {
               "schema": {
-                "type": "array",
-                "items": {
-                  "$ref": "#/components/schemas/AdminCreateCustomer"
-                }
+                "$ref": "#/components/schemas/AdminCreateCustomers"
               }
             }
           }

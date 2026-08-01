@@ -27,9 +27,9 @@ export type HttpRequest<
   headers: Record<string, string>
 }
 
-export type HttpResult = {
+export type HttpResult<T = unknown> = {
   status: number
-  json: unknown
+  json: T
 }
 
 export type RouteHandler = (req: HttpRequest) => Promise<HttpResult>

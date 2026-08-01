@@ -43,6 +43,12 @@ export function applyMiddleware(config: MiddlewareRoute, handler: RouteHandler):
       req = { ...req, body: result.data }
     }
 
-    return handler(req)
+    const result = await handler(req)
+
+    if (config.responseSchema) {
+      return { ...result, json: config.responseSchema.parse(result.json) }
+    }
+
+    return result
   }
 }

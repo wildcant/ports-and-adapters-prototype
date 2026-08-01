@@ -37,4 +37,3 @@
 - [ ] `src/features/products/api/products.ts` exports `productQueryOptions(id)`, `productsListQueryOptions(params)`, `useProducts()`, `useProduct()`, `useCreateProduct()`, `useUpdateProduct()`, `useDeleteProduct()`
 - [ ] Mutation hooks auto-invalidate relevant query keys on success (lists after create/delete, detail + lists after update)
 - [ ] `npm run dev` starts the admin app and renders the root route without errors
-- [ ] zod and `@tanstack/zod-adapter` added as dependencies (needed for `validateSearch` in later tickets)

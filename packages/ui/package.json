@@ -2,6 +2,9 @@
   "name": "@proteus/ui",
   "private": true,
   "type": "module",
+  "scripts": {
+    "typecheck": "tsc --noEmit"
+  },
   "imports": {
     "#/*": "./src/*"
   },

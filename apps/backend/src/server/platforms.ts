@@ -42,6 +42,9 @@ export async function serveExpress(
     } as RequestInit)
 
     const response = await app.fetch(request)
+    response.headers.forEach((value, key) => {
+      res.setHeader(key, value)
+    })
     const body = await response.json()
     res.status(response.status).json(body)
   })
