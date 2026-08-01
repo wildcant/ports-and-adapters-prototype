@@ -72,7 +72,7 @@
   },
   "overrides": [
     {
-      "includes": ["apps/frontend/src/components/ui/**"],
+      "includes": ["packages/ui/**"],
       "linter": {
         "rules": {
           "style": {

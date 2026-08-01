@@ -1,6 +1,5 @@
+import { Field, FieldError, FieldLabel, Input } from '@proteus/ui'
 import { useId } from 'react'
-import { Field, FieldError, FieldLabel } from '#/components/ui/field.tsx'
-import { Input } from '#/components/ui/input.tsx'
 import { useFieldContext } from '#/lib/form-context.ts'
 
 type TextFieldProps = Pick<

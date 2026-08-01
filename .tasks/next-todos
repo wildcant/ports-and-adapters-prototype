@@ -1,3 +1,4 @@
+- admin
 - fulfillment module (port) and providers (adapters)
 - deploy to supabase and coudflare workers.
 - investigate how to supabase as event bus (supabase-event-bus.md) (cloudflare queues)

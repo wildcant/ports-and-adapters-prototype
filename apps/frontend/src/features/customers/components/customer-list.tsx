@@ -1,4 +1,4 @@
-import { Button } from '#/components/ui/button.tsx'
+import { Button } from '@proteus/ui'
 import { UpdateCustomerForm } from '#/features/customers/components/update-customer-form.tsx'
 import { useCustomerList } from '#/features/customers/hooks/use-customer-list.ts'
 import { useDeleteCustomer } from '../api/customers'
