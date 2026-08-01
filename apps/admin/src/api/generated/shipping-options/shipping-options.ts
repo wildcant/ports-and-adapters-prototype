@@ -6,7 +6,12 @@
  */
 import type {
   AdminCreateShippingOption,
-  AdminUpdateShippingOption
+  AdminCreateShippingOptionResponse,
+  AdminShippingOptionListResponse,
+  AdminShippingOptionResponse,
+  AdminUpdateShippingOption,
+  AdminUpdateShippingOptionResponse,
+  DeleteResponse
 } from '../model';
 
 import { fetcher } from '../../../lib/fetcher.ts';
@@ -20,7 +25,7 @@ import type { BodyType } from '../../../lib/fetcher.ts';
 export const listAdminShippingOptions = (
 
  ) => {
-      return fetcher<void>(
+      return fetcher<AdminShippingOptionListResponse>(
       {url: `/admin/shipping-options`, method: 'GET'
     },
       );
@@ -31,7 +36,7 @@ export const listAdminShippingOptions = (
 export const createAdminShippingOption = (
     adminCreateShippingOption?: BodyType<AdminCreateShippingOption>,
  ) => {
-      return fetcher<void>(
+      return fetcher<AdminCreateShippingOptionResponse>(
       {url: `/admin/shipping-options`, method: 'POST',
       headers: {'Content-Type': 'application/json', },
       data: adminCreateShippingOption
@@ -44,7 +49,7 @@ export const createAdminShippingOption = (
 export const getAdminShippingOption = (
     id: string,
  ) => {
-      return fetcher<void>(
+      return fetcher<AdminShippingOptionResponse>(
       {url: `/admin/shipping-options/${id}`, method: 'GET'
     },
       );
@@ -56,7 +61,7 @@ export const updateAdminShippingOption = (
     id: string,
     adminUpdateShippingOption?: BodyType<AdminUpdateShippingOption>,
  ) => {
-      return fetcher<void>(
+      return fetcher<AdminUpdateShippingOptionResponse>(
       {url: `/admin/shipping-options/${id}`, method: 'POST',
       headers: {'Content-Type': 'application/json', },
       data: adminUpdateShippingOption
@@ -69,7 +74,7 @@ export const updateAdminShippingOption = (
 export const deleteAdminShippingOption = (
     id: string,
  ) => {
-      return fetcher<void>(
+      return fetcher<DeleteResponse>(
       {url: `/admin/shipping-options/${id}`, method: 'DELETE'
     },
       );

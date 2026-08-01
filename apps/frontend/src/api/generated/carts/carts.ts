@@ -8,6 +8,15 @@ import type {
   AddStoreCartLineItemBody,
   AddStoreCartShippingMethodBody,
   CreateStoreCartBody,
+  DeleteResponse,
+  StoreCartDetailResponse,
+  StoreCartResponse,
+  StoreCreateCartLineItemResponse,
+  StoreCreateCartResponse,
+  StoreCreateCartShippingMethodResponse,
+  StoreShippingOptionListResponse,
+  StoreUpdateCartLineItemResponse,
+  StoreUpdateCartResponse,
   UpdateStoreCartBody,
   UpdateStoreCartLineItemBody
 } from '../model';
@@ -23,7 +32,7 @@ import type { BodyType } from '../../fetcher.ts';
 export const createStoreCart = (
     createStoreCartBody?: BodyType<CreateStoreCartBody>,
  ) => {
-      return fetcher<void>(
+      return fetcher<StoreCreateCartResponse>(
       {url: `/store/carts`, method: 'POST',
       headers: {'Content-Type': 'application/json', },
       data: createStoreCartBody
@@ -36,7 +45,7 @@ export const createStoreCart = (
 export const getStoreCart = (
     id: string,
  ) => {
-      return fetcher<void>(
+      return fetcher<StoreCartDetailResponse>(
       {url: `/store/carts/${id}`, method: 'GET'
     },
       );
@@ -48,7 +57,7 @@ export const updateStoreCart = (
     id: string,
     updateStoreCartBody?: BodyType<UpdateStoreCartBody>,
  ) => {
-      return fetcher<void>(
+      return fetcher<StoreUpdateCartResponse>(
       {url: `/store/carts/${id}`, method: 'POST',
       headers: {'Content-Type': 'application/json', },
       data: updateStoreCartBody
@@ -62,7 +71,7 @@ export const addStoreCartLineItem = (
     id: string,
     addStoreCartLineItemBody?: BodyType<AddStoreCartLineItemBody>,
  ) => {
-      return fetcher<void>(
+      return fetcher<StoreCreateCartLineItemResponse>(
       {url: `/store/carts/${id}/line-items`, method: 'POST',
       headers: {'Content-Type': 'application/json', },
       data: addStoreCartLineItemBody
@@ -77,7 +86,7 @@ export const updateStoreCartLineItem = (
     lineId: string,
     updateStoreCartLineItemBody?: BodyType<UpdateStoreCartLineItemBody>,
  ) => {
-      return fetcher<void>(
+      return fetcher<StoreUpdateCartLineItemResponse>(
       {url: `/store/carts/${id}/line-items/${lineId}`, method: 'POST',
       headers: {'Content-Type': 'application/json', },
       data: updateStoreCartLineItemBody
@@ -91,7 +100,7 @@ export const deleteStoreCartLineItem = (
     id: string,
     lineId: string,
  ) => {
-      return fetcher<void>(
+      return fetcher<DeleteResponse>(
       {url: `/store/carts/${id}/line-items/${lineId}`, method: 'DELETE'
     },
       );
@@ -102,7 +111,7 @@ export const deleteStoreCartLineItem = (
 export const listStoreCartShippingOptions = (
     id: string,
  ) => {
-      return fetcher<void>(
+      return fetcher<StoreShippingOptionListResponse>(
       {url: `/store/carts/${id}/shipping-options`, method: 'GET'
     },
       );
@@ -114,7 +123,7 @@ export const addStoreCartShippingMethod = (
     id: string,
     addStoreCartShippingMethodBody?: BodyType<AddStoreCartShippingMethodBody>,
  ) => {
-      return fetcher<void>(
+      return fetcher<StoreCreateCartShippingMethodResponse>(
       {url: `/store/carts/${id}/shipping-methods`, method: 'POST',
       headers: {'Content-Type': 'application/json', },
       data: addStoreCartShippingMethodBody
@@ -127,7 +136,7 @@ export const addStoreCartShippingMethod = (
 export const completeStoreCart = (
     id: string,
  ) => {
-      return fetcher<void>(
+      return fetcher<StoreCartResponse>(
       {url: `/store/carts/${id}/complete`, method: 'POST'
     },
       );

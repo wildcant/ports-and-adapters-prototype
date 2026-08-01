@@ -11,6 +11,772 @@
   ],
   "components": {
     "schemas": {
+      "StoreCreateCartResponse": {
+        "type": "object",
+        "properties": {
+          "cart": {
+            "$ref": "#/components/schemas/StoreCart"
+          }
+        },
+        "required": [
+          "cart"
+        ]
+      },
+      "StoreCart": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "regionId": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "customerId": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "salesChannelId": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "email": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "currencyCode": {
+            "type": "string"
+          },
+          "status": {
+            "type": "string"
+          },
+          "shippingAddressId": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "billingAddressId": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "metadata": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "completedAt": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "format": "date-time"
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "updatedAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "deletedAt": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "format": "date-time"
+          }
+        },
+        "required": [
+          "id",
+          "regionId",
+          "customerId",
+          "salesChannelId",
+          "email",
+          "currencyCode",
+          "status",
+          "shippingAddressId",
+          "billingAddressId",
+          "metadata",
+          "completedAt",
+          "createdAt",
+          "updatedAt",
+          "deletedAt"
+        ]
+      },
+      "StoreCartDetailResponse": {
+        "type": "object",
+        "properties": {
+          "cart": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/StoreCart"
+              },
+              {
+                "type": "object",
+                "properties": {
+                  "items": {
+                    "type": "array",
+                    "items": {
+                      "$ref": "#/components/schemas/StoreCartLineItem"
+                    }
+                  },
+                  "shippingMethods": {
+                    "type": "array",
+                    "items": {
+                      "$ref": "#/components/schemas/StoreCartShippingMethod"
+                    }
+                  }
+                },
+                "required": [
+                  "items",
+                  "shippingMethods"
+                ]
+              }
+            ]
+          }
+        },
+        "required": [
+          "cart"
+        ]
+      },
+      "StoreCartLineItem": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "cartId": {
+            "type": "string"
+          },
+          "title": {
+            "type": "string"
+          },
+          "subtitle": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "thumbnail": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "quantity": {
+            "type": "number"
+          },
+          "variantId": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "productId": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "productTitle": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "productDescription": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "productSubtitle": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "productType": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "productHandle": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "variantSku": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "variantBarcode": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "variantTitle": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "variantOptionValues": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "requiresShipping": {
+            "type": "boolean"
+          },
+          "isDiscountable": {
+            "type": "boolean"
+          },
+          "isGiftcard": {
+            "type": "boolean"
+          },
+          "isTaxInclusive": {
+            "type": "boolean"
+          },
+          "compareAtUnitPrice": {
+            "type": [
+              "number",
+              "null"
+            ]
+          },
+          "unitPrice": {
+            "type": "number"
+          },
+          "metadata": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "updatedAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "deletedAt": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "format": "date-time"
+          }
+        },
+        "required": [
+          "id",
+          "cartId",
+          "title",
+          "subtitle",
+          "thumbnail",
+          "quantity",
+          "variantId",
+          "productId",
+          "productTitle",
+          "productDescription",
+          "productSubtitle",
+          "productType",
+          "productHandle",
+          "variantSku",
+          "variantBarcode",
+          "variantTitle",
+          "variantOptionValues",
+          "requiresShipping",
+          "isDiscountable",
+          "isGiftcard",
+          "isTaxInclusive",
+          "compareAtUnitPrice",
+          "unitPrice",
+          "metadata",
+          "createdAt",
+          "updatedAt",
+          "deletedAt"
+        ]
+      },
+      "StoreCartShippingMethod": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "cartId": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "description": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "amount": {
+            "type": "number"
+          },
+          "isTaxInclusive": {
+            "type": "boolean"
+          },
+          "shippingOptionId": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "data": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "metadata": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "updatedAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "deletedAt": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "format": "date-time"
+          }
+        },
+        "required": [
+          "id",
+          "cartId",
+          "name",
+          "description",
+          "amount",
+          "isTaxInclusive",
+          "shippingOptionId",
+          "data",
+          "metadata",
+          "createdAt",
+          "updatedAt",
+          "deletedAt"
+        ]
+      },
+      "StoreUpdateCartResponse": {
+        "type": "object",
+        "properties": {
+          "cart": {
+            "$ref": "#/components/schemas/StoreCart"
+          }
+        },
+        "required": [
+          "cart"
+        ]
+      },
+      "StoreCreateCartLineItemResponse": {
+        "type": "object",
+        "properties": {
+          "lineItem": {
+            "$ref": "#/components/schemas/StoreCartLineItem"
+          }
+        },
+        "required": [
+          "lineItem"
+        ]
+      },
+      "StoreUpdateCartLineItemResponse": {
+        "type": "object",
+        "properties": {
+          "lineItem": {
+            "$ref": "#/components/schemas/StoreCartLineItem"
+          }
+        },
+        "required": [
+          "lineItem"
+        ]
+      },
+      "DeleteResponse": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "deleted": {
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "id",
+          "deleted"
+        ]
+      },
+      "StoreShippingOptionListResponse": {
+        "type": "object",
+        "properties": {
+          "shippingOptions": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/StoreShippingOption"
+            }
+          }
+        },
+        "required": [
+          "shippingOptions"
+        ]
+      },
+      "StoreShippingOption": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "priceType": {
+            "type": "string",
+            "enum": [
+              "flat",
+              "calculated"
+            ]
+          },
+          "amount": {
+            "type": [
+              "number",
+              "null"
+            ]
+          },
+          "serviceZoneId": {
+            "type": "string"
+          },
+          "shippingProfileId": {
+            "type": "string"
+          },
+          "shippingOptionTypeId": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "providerId": {
+            "type": "string"
+          },
+          "data": {},
+          "metadata": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "isEnabled": {
+            "type": "boolean"
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "updatedAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "deletedAt": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "format": "date-time"
+          }
+        },
+        "required": [
+          "id",
+          "name",
+          "priceType",
+          "amount",
+          "serviceZoneId",
+          "shippingProfileId",
+          "shippingOptionTypeId",
+          "providerId",
+          "metadata",
+          "isEnabled",
+          "createdAt",
+          "updatedAt",
+          "deletedAt"
+        ]
+      },
+      "StoreCreateCartShippingMethodResponse": {
+        "type": "object",
+        "properties": {
+          "shippingMethod": {
+            "$ref": "#/components/schemas/StoreCartShippingMethod"
+          }
+        },
+        "required": [
+          "shippingMethod"
+        ]
+      },
+      "StoreCartResponse": {
+        "type": "object",
+        "properties": {
+          "cart": {
+            "$ref": "#/components/schemas/StoreCart"
+          }
+        },
+        "required": [
+          "cart"
+        ]
+      },
+      "StoreCreatePaymentCollectionResponse": {
+        "type": "object",
+        "properties": {
+          "paymentCollection": {
+            "$ref": "#/components/schemas/StorePaymentCollection"
+          }
+        },
+        "required": [
+          "paymentCollection"
+        ]
+      },
+      "StorePaymentCollection": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "currencyCode": {
+            "type": "string"
+          },
+          "amount": {
+            "type": "number"
+          },
+          "authorizedAmount": {
+            "type": [
+              "number",
+              "null"
+            ]
+          },
+          "capturedAmount": {
+            "type": [
+              "number",
+              "null"
+            ]
+          },
+          "refundedAmount": {
+            "type": [
+              "number",
+              "null"
+            ]
+          },
+          "completedAt": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "format": "date-time"
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "not_paid",
+              "awaiting",
+              "authorized",
+              "partially_authorized",
+              "completed"
+            ]
+          },
+          "metadata": {
+            "type": [
+              "object",
+              "null"
+            ],
+            "additionalProperties": {}
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "updatedAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "deletedAt": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "format": "date-time"
+          }
+        },
+        "required": [
+          "id",
+          "currencyCode",
+          "amount",
+          "authorizedAmount",
+          "capturedAmount",
+          "refundedAmount",
+          "completedAt",
+          "status",
+          "metadata",
+          "createdAt",
+          "updatedAt",
+          "deletedAt"
+        ]
+      },
+      "StoreCreatePaymentSessionResponse": {
+        "type": "object",
+        "properties": {
+          "paymentSession": {
+            "$ref": "#/components/schemas/StorePaymentSession"
+          }
+        },
+        "required": [
+          "paymentSession"
+        ]
+      },
+      "StorePaymentSession": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "paymentCollectionId": {
+            "type": "string"
+          },
+          "providerId": {
+            "type": "string"
+          },
+          "currencyCode": {
+            "type": "string"
+          },
+          "amount": {
+            "type": "number"
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "pending",
+              "authorized",
+              "captured",
+              "requires_more",
+              "error",
+              "canceled",
+              "pending_authorization"
+            ]
+          },
+          "data": {
+            "type": "object",
+            "additionalProperties": {}
+          },
+          "context": {
+            "type": [
+              "object",
+              "null"
+            ],
+            "additionalProperties": {}
+          },
+          "authorizedAt": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "format": "date-time"
+          },
+          "metadata": {
+            "type": [
+              "object",
+              "null"
+            ],
+            "additionalProperties": {}
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "updatedAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "deletedAt": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "format": "date-time"
+          }
+        },
+        "required": [
+          "id",
+          "paymentCollectionId",
+          "providerId",
+          "currencyCode",
+          "amount",
+          "status",
+          "data",
+          "context",
+          "authorizedAt",
+          "metadata",
+          "createdAt",
+          "updatedAt",
+          "deletedAt"
+        ]
+      },
+      "StorePaymentProviderListResponse": {
+        "type": "object",
+        "properties": {
+          "paymentProviders": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/StorePaymentProvider"
+            }
+          }
+        },
+        "required": [
+          "paymentProviders"
+        ]
+      },
+      "StorePaymentProvider": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "isEnabled": {
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "id",
+          "isEnabled"
+        ]
+      },
       "StoreProductListResponse": {
         "type": "object",
         "properties": {
@@ -288,7 +1054,14 @@
         },
         "responses": {
           "200": {
-            "description": "Successful response"
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/StoreCreateCartResponse"
+                }
+              }
+            }
           },
           "400": {
             "description": "Validation error"
@@ -316,7 +1089,14 @@
         ],
         "responses": {
           "200": {
-            "description": "Successful response"
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/StoreCartDetailResponse"
+                }
+              }
+            }
           },
           "400": {
             "description": "Validation error"
@@ -364,7 +1144,14 @@
         },
         "responses": {
           "200": {
-            "description": "Successful response"
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/StoreUpdateCartResponse"
+                }
+              }
+            }
           },
           "400": {
             "description": "Validation error"
@@ -435,7 +1222,14 @@
         },
         "responses": {
           "200": {
-            "description": "Successful response"
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/StoreCreateCartLineItemResponse"
+                }
+              }
+            }
           },
           "400": {
             "description": "Validation error"
@@ -494,7 +1288,14 @@
         },
         "responses": {
           "200": {
-            "description": "Successful response"
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/StoreUpdateCartLineItemResponse"
+                }
+              }
+            }
           },
           "400": {
             "description": "Validation error"
@@ -532,7 +1333,14 @@
         ],
         "responses": {
           "200": {
-            "description": "Successful response"
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DeleteResponse"
+                }
+              }
+            }
           },
           "400": {
             "description": "Validation error"
@@ -563,7 +1371,14 @@
         ],
         "responses": {
           "200": {
-            "description": "Successful response"
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/StoreShippingOptionListResponse"
+                }
+              }
+            }
           },
           "400": {
             "description": "Validation error"
@@ -616,7 +1431,14 @@
         },
         "responses": {
           "200": {
-            "description": "Successful response"
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/StoreCreateCartShippingMethodResponse"
+                }
+              }
+            }
           },
           "400": {
             "description": "Validation error"
@@ -647,7 +1469,14 @@
         ],
         "responses": {
           "200": {
-            "description": "Successful response"
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/StoreCartResponse"
+                }
+              }
+            }
           },
           "400": {
             "description": "Validation error"
@@ -685,7 +1514,14 @@
         },
         "responses": {
           "200": {
-            "description": "Successful response"
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/StoreCreatePaymentCollectionResponse"
+                }
+              }
+            }
           },
           "400": {
             "description": "Validation error"
@@ -739,7 +1575,14 @@
         },
         "responses": {
           "200": {
-            "description": "Successful response"
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/StoreCreatePaymentSessionResponse"
+                }
+              }
+            }
           },
           "400": {
             "description": "Validation error"
@@ -759,7 +1602,14 @@
         ],
         "responses": {
           "200": {
-            "description": "Successful response"
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/StorePaymentProviderListResponse"
+                }
+              }
+            }
           },
           "400": {
             "description": "Validation error"

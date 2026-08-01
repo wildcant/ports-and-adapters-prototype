@@ -1,4 +1,12 @@
-import { AdminCreateShippingProfile, AdminUpdateShippingProfile, IdParams } from '@proteus/http-schemas'
+import {
+  AdminCreateShippingProfile,
+  AdminCreateShippingProfileResponse,
+  AdminShippingProfileListResponse,
+  AdminUpdateShippingProfile,
+  AdminUpdateShippingProfileResponse,
+  DeleteResponse,
+  IdParams,
+} from '@proteus/http-schemas'
 import type { MiddlewareRoute } from '../../../core/middleware/types.js'
 import { Tags } from '../../../core/middleware/types.js'
 
@@ -9,6 +17,7 @@ export default [
     operationId: 'listAdminShippingProfiles',
     summary: 'List shipping profiles',
     tags: [Tags.SHIPPING_PROFILES],
+    responseSchema: AdminShippingProfileListResponse,
   },
   {
     method: 'POST',
@@ -17,6 +26,7 @@ export default [
     operationId: 'createAdminShippingProfile',
     summary: 'Create a shipping profile',
     tags: [Tags.SHIPPING_PROFILES],
+    responseSchema: AdminCreateShippingProfileResponse,
   },
   {
     method: 'POST',
@@ -26,6 +36,7 @@ export default [
     operationId: 'updateAdminShippingProfile',
     summary: 'Update a shipping profile',
     tags: [Tags.SHIPPING_PROFILES],
+    responseSchema: AdminUpdateShippingProfileResponse,
   },
   {
     method: 'DELETE',
@@ -34,5 +45,6 @@ export default [
     operationId: 'deleteAdminShippingProfile',
     summary: 'Delete a shipping profile',
     tags: [Tags.SHIPPING_PROFILES],
+    responseSchema: DeleteResponse,
   },
 ] satisfies MiddlewareRoute[]

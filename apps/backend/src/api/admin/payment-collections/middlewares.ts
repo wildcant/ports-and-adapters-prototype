@@ -1,4 +1,4 @@
-import { IdParams } from '@proteus/http-schemas'
+import { AdminPaymentCollectionResponse, IdParams } from '@proteus/http-schemas'
 import type { MiddlewareRoute } from '../../../core/middleware/types.js'
 import { Tags } from '../../../core/middleware/types.js'
 
@@ -10,6 +10,7 @@ export default [
     operationId: 'getPaymentCollection',
     summary: 'Retrieve a payment collection',
     tags: [Tags.PAYMENT_COLLECTIONS],
+    responseSchema: AdminPaymentCollectionResponse,
   },
   {
     method: 'POST',
@@ -18,5 +19,6 @@ export default [
     operationId: 'markPaymentCollectionAsPaid',
     summary: 'Mark a payment collection as paid',
     tags: [Tags.PAYMENT_COLLECTIONS],
+    responseSchema: AdminPaymentCollectionResponse,
   },
 ] satisfies MiddlewareRoute[]

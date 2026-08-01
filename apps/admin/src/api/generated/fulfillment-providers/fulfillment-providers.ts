@@ -4,6 +4,10 @@
  * Admin API
  * OpenAPI spec version: 0.1.0
  */
+import type {
+  AdminFulfillmentProviderListResponse
+} from '../model';
+
 import { fetcher } from '../../../lib/fetcher.ts';
 
 
@@ -14,7 +18,7 @@ import { fetcher } from '../../../lib/fetcher.ts';
 export const listAdminFulfillmentProviders = (
 
  ) => {
-      return fetcher<void>(
+      return fetcher<AdminFulfillmentProviderListResponse>(
       {url: `/admin/fulfillment-providers`, method: 'GET'
     },
       );

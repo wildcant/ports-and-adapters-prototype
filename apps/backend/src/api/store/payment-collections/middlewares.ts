@@ -1,4 +1,10 @@
-import { CreatePaymentCollection, CreatePaymentSession, IdParams } from '@proteus/http-schemas'
+import {
+  CreatePaymentCollection,
+  CreatePaymentSession,
+  IdParams,
+  StoreCreatePaymentCollectionResponse,
+  StoreCreatePaymentSessionResponse,
+} from '@proteus/http-schemas'
 import type { MiddlewareRoute } from '../../../core/middleware/types.js'
 import { Tags } from '../../../core/middleware/types.js'
 
@@ -10,6 +16,7 @@ export default [
     operationId: 'createStorePaymentCollection',
     summary: 'Create a payment collection for a cart',
     tags: [Tags.PAYMENT_COLLECTIONS],
+    responseSchema: StoreCreatePaymentCollectionResponse,
   },
   {
     method: 'POST',
@@ -19,5 +26,6 @@ export default [
     operationId: 'createStorePaymentSession',
     summary: 'Create a payment session',
     tags: [Tags.PAYMENT_COLLECTIONS],
+    responseSchema: StoreCreatePaymentSessionResponse,
   },
 ] satisfies MiddlewareRoute[]

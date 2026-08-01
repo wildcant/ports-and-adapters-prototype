@@ -1,4 +1,13 @@
-import { AdminCreateShippingOption, AdminUpdateShippingOption, IdParams } from '@proteus/http-schemas'
+import {
+  AdminCreateShippingOption,
+  AdminCreateShippingOptionResponse,
+  AdminShippingOptionListResponse,
+  AdminShippingOptionResponse,
+  AdminUpdateShippingOption,
+  AdminUpdateShippingOptionResponse,
+  DeleteResponse,
+  IdParams,
+} from '@proteus/http-schemas'
 import type { MiddlewareRoute } from '../../../core/middleware/types.js'
 import { Tags } from '../../../core/middleware/types.js'
 
@@ -9,6 +18,7 @@ export default [
     operationId: 'listAdminShippingOptions',
     summary: 'List shipping options',
     tags: [Tags.SHIPPING_OPTIONS],
+    responseSchema: AdminShippingOptionListResponse,
   },
   {
     method: 'POST',
@@ -17,6 +27,7 @@ export default [
     operationId: 'createAdminShippingOption',
     summary: 'Create a shipping option',
     tags: [Tags.SHIPPING_OPTIONS],
+    responseSchema: AdminCreateShippingOptionResponse,
   },
   {
     method: 'GET',
@@ -25,6 +36,7 @@ export default [
     operationId: 'getAdminShippingOption',
     summary: 'Retrieve a shipping option',
     tags: [Tags.SHIPPING_OPTIONS],
+    responseSchema: AdminShippingOptionResponse,
   },
   {
     method: 'POST',
@@ -34,6 +46,7 @@ export default [
     operationId: 'updateAdminShippingOption',
     summary: 'Update a shipping option',
     tags: [Tags.SHIPPING_OPTIONS],
+    responseSchema: AdminUpdateShippingOptionResponse,
   },
   {
     method: 'DELETE',
@@ -42,5 +55,6 @@ export default [
     operationId: 'deleteAdminShippingOption',
     summary: 'Delete a shipping option',
     tags: [Tags.SHIPPING_OPTIONS],
+    responseSchema: DeleteResponse,
   },
 ] satisfies MiddlewareRoute[]

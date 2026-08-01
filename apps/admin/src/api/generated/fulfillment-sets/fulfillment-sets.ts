@@ -6,10 +6,19 @@
  */
 import type {
   AdminCreateFulfillmentSet,
+  AdminCreateFulfillmentSetResponse,
   AdminCreateGeoZone,
+  AdminCreateGeoZoneResponse,
   AdminCreateServiceZone,
+  AdminCreateServiceZoneResponse,
+  AdminFulfillmentSetDetailResponse,
+  AdminFulfillmentSetListResponse,
+  AdminServiceZoneDetailResponse,
   AdminUpdateFulfillmentSet,
-  AdminUpdateServiceZone
+  AdminUpdateFulfillmentSetResponse,
+  AdminUpdateServiceZone,
+  AdminUpdateServiceZoneResponse,
+  DeleteResponse
 } from '../model';
 
 import { fetcher } from '../../../lib/fetcher.ts';
@@ -23,7 +32,7 @@ import type { BodyType } from '../../../lib/fetcher.ts';
 export const listAdminFulfillmentSets = (
 
  ) => {
-      return fetcher<void>(
+      return fetcher<AdminFulfillmentSetListResponse>(
       {url: `/admin/fulfillment-sets`, method: 'GET'
     },
       );
@@ -34,7 +43,7 @@ export const listAdminFulfillmentSets = (
 export const createAdminFulfillmentSet = (
     adminCreateFulfillmentSet?: BodyType<AdminCreateFulfillmentSet>,
  ) => {
-      return fetcher<void>(
+      return fetcher<AdminCreateFulfillmentSetResponse>(
       {url: `/admin/fulfillment-sets`, method: 'POST',
       headers: {'Content-Type': 'application/json', },
       data: adminCreateFulfillmentSet
@@ -47,7 +56,7 @@ export const createAdminFulfillmentSet = (
 export const getAdminFulfillmentSet = (
     id: string,
  ) => {
-      return fetcher<void>(
+      return fetcher<AdminFulfillmentSetDetailResponse>(
       {url: `/admin/fulfillment-sets/${id}`, method: 'GET'
     },
       );
@@ -59,7 +68,7 @@ export const updateAdminFulfillmentSet = (
     id: string,
     adminUpdateFulfillmentSet?: BodyType<AdminUpdateFulfillmentSet>,
  ) => {
-      return fetcher<void>(
+      return fetcher<AdminUpdateFulfillmentSetResponse>(
       {url: `/admin/fulfillment-sets/${id}`, method: 'POST',
       headers: {'Content-Type': 'application/json', },
       data: adminUpdateFulfillmentSet
@@ -72,7 +81,7 @@ export const updateAdminFulfillmentSet = (
 export const deleteAdminFulfillmentSet = (
     id: string,
  ) => {
-      return fetcher<void>(
+      return fetcher<DeleteResponse>(
       {url: `/admin/fulfillment-sets/${id}`, method: 'DELETE'
     },
       );
@@ -84,7 +93,7 @@ export const createAdminServiceZone = (
     id: string,
     adminCreateServiceZone?: BodyType<AdminCreateServiceZone>,
  ) => {
-      return fetcher<void>(
+      return fetcher<AdminCreateServiceZoneResponse>(
       {url: `/admin/fulfillment-sets/${id}/service-zones`, method: 'POST',
       headers: {'Content-Type': 'application/json', },
       data: adminCreateServiceZone
@@ -98,7 +107,7 @@ export const getAdminServiceZone = (
     id: string,
     zoneId: string,
  ) => {
-      return fetcher<void>(
+      return fetcher<AdminServiceZoneDetailResponse>(
       {url: `/admin/fulfillment-sets/${id}/service-zones/${zoneId}`, method: 'GET'
     },
       );
@@ -111,7 +120,7 @@ export const updateAdminServiceZone = (
     zoneId: string,
     adminUpdateServiceZone?: BodyType<AdminUpdateServiceZone>,
  ) => {
-      return fetcher<void>(
+      return fetcher<AdminUpdateServiceZoneResponse>(
       {url: `/admin/fulfillment-sets/${id}/service-zones/${zoneId}`, method: 'POST',
       headers: {'Content-Type': 'application/json', },
       data: adminUpdateServiceZone
@@ -125,7 +134,7 @@ export const deleteAdminServiceZone = (
     id: string,
     zoneId: string,
  ) => {
-      return fetcher<void>(
+      return fetcher<DeleteResponse>(
       {url: `/admin/fulfillment-sets/${id}/service-zones/${zoneId}`, method: 'DELETE'
     },
       );
@@ -138,7 +147,7 @@ export const createAdminGeoZone = (
     zoneId: string,
     adminCreateGeoZone?: BodyType<AdminCreateGeoZone>,
  ) => {
-      return fetcher<void>(
+      return fetcher<AdminCreateGeoZoneResponse>(
       {url: `/admin/fulfillment-sets/${id}/service-zones/${zoneId}/geo-zones`, method: 'POST',
       headers: {'Content-Type': 'application/json', },
       data: adminCreateGeoZone

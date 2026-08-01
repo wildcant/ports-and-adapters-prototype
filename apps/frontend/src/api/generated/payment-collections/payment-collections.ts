@@ -6,7 +6,9 @@
  */
 import type {
   CreateStorePaymentCollectionBody,
-  CreateStorePaymentSessionBody
+  CreateStorePaymentSessionBody,
+  StoreCreatePaymentCollectionResponse,
+  StoreCreatePaymentSessionResponse
 } from '../model';
 
 import { fetcher } from '../../fetcher.ts';
@@ -20,7 +22,7 @@ import type { BodyType } from '../../fetcher.ts';
 export const createStorePaymentCollection = (
     createStorePaymentCollectionBody?: BodyType<CreateStorePaymentCollectionBody>,
  ) => {
-      return fetcher<void>(
+      return fetcher<StoreCreatePaymentCollectionResponse>(
       {url: `/store/payment-collections`, method: 'POST',
       headers: {'Content-Type': 'application/json', },
       data: createStorePaymentCollectionBody
@@ -34,7 +36,7 @@ export const createStorePaymentSession = (
     id: string,
     createStorePaymentSessionBody?: BodyType<CreateStorePaymentSessionBody>,
  ) => {
-      return fetcher<void>(
+      return fetcher<StoreCreatePaymentSessionResponse>(
       {url: `/store/payment-collections/${id}/payment-sessions`, method: 'POST',
       headers: {'Content-Type': 'application/json', },
       data: createStorePaymentSessionBody

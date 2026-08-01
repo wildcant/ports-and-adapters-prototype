@@ -1,4 +1,10 @@
-import { AdminCapturePayment, AdminRefundPayment, IdParams } from '@proteus/http-schemas'
+import {
+  AdminCapturePayment,
+  AdminPaymentProviderListResponse,
+  AdminPaymentResponse,
+  AdminRefundPayment,
+  IdParams,
+} from '@proteus/http-schemas'
 import type { MiddlewareRoute } from '../../../core/middleware/types.js'
 import { Tags } from '../../../core/middleware/types.js'
 
@@ -10,6 +16,7 @@ export default [
     operationId: 'getPayment',
     summary: 'Retrieve a payment',
     tags: [Tags.PAYMENTS],
+    responseSchema: AdminPaymentResponse,
   },
   {
     method: 'GET',
@@ -17,6 +24,7 @@ export default [
     operationId: 'listAdminPaymentProviders',
     summary: 'List payment providers',
     tags: [Tags.PAYMENTS],
+    responseSchema: AdminPaymentProviderListResponse,
   },
   {
     method: 'POST',
@@ -26,6 +34,7 @@ export default [
     operationId: 'capturePayment',
     summary: 'Capture a payment',
     tags: [Tags.PAYMENTS],
+    responseSchema: AdminPaymentResponse,
   },
   {
     method: 'POST',
@@ -35,5 +44,6 @@ export default [
     operationId: 'refundPayment',
     summary: 'Refund a payment',
     tags: [Tags.PAYMENTS],
+    responseSchema: AdminPaymentResponse,
   },
 ] satisfies MiddlewareRoute[]

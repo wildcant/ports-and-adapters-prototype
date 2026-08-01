@@ -1,4 +1,10 @@
-import { AdminCreateRefundReason, IdParams } from '@proteus/http-schemas'
+import {
+  AdminCreateRefundReason,
+  AdminCreateRefundReasonResponse,
+  AdminRefundReasonListResponse,
+  DeleteResponse,
+  IdParams,
+} from '@proteus/http-schemas'
 import type { MiddlewareRoute } from '../../../core/middleware/types.js'
 import { Tags } from '../../../core/middleware/types.js'
 
@@ -9,6 +15,7 @@ export default [
     operationId: 'listRefundReasons',
     summary: 'List refund reasons',
     tags: [Tags.REFUND_REASONS],
+    responseSchema: AdminRefundReasonListResponse,
   },
   {
     method: 'POST',
@@ -17,6 +24,7 @@ export default [
     operationId: 'createRefundReason',
     summary: 'Create a refund reason',
     tags: [Tags.REFUND_REASONS],
+    responseSchema: AdminCreateRefundReasonResponse,
   },
   {
     method: 'DELETE',
@@ -25,5 +33,6 @@ export default [
     operationId: 'deleteRefundReason',
     summary: 'Delete a refund reason',
     tags: [Tags.REFUND_REASONS],
+    responseSchema: DeleteResponse,
   },
 ] satisfies MiddlewareRoute[]

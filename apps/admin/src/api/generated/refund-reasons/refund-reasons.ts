@@ -5,7 +5,10 @@
  * OpenAPI spec version: 0.1.0
  */
 import type {
-  AdminCreateRefundReason
+  AdminCreateRefundReason,
+  AdminCreateRefundReasonResponse,
+  AdminRefundReasonListResponse,
+  DeleteResponse
 } from '../model';
 
 import { fetcher } from '../../../lib/fetcher.ts';
@@ -19,7 +22,7 @@ import type { BodyType } from '../../../lib/fetcher.ts';
 export const listRefundReasons = (
 
  ) => {
-      return fetcher<void>(
+      return fetcher<AdminRefundReasonListResponse>(
       {url: `/admin/refund-reasons`, method: 'GET'
     },
       );
@@ -30,7 +33,7 @@ export const listRefundReasons = (
 export const createRefundReason = (
     adminCreateRefundReason?: BodyType<AdminCreateRefundReason>,
  ) => {
-      return fetcher<void>(
+      return fetcher<AdminCreateRefundReasonResponse>(
       {url: `/admin/refund-reasons`, method: 'POST',
       headers: {'Content-Type': 'application/json', },
       data: adminCreateRefundReason
@@ -43,7 +46,7 @@ export const createRefundReason = (
 export const deleteRefundReason = (
     id: string,
  ) => {
-      return fetcher<void>(
+      return fetcher<DeleteResponse>(
       {url: `/admin/refund-reasons/${id}`, method: 'DELETE'
     },
       );

@@ -6,7 +6,11 @@
  */
 import type {
   AdminCreateShippingProfile,
-  AdminUpdateShippingProfile
+  AdminCreateShippingProfileResponse,
+  AdminShippingProfileListResponse,
+  AdminUpdateShippingProfile,
+  AdminUpdateShippingProfileResponse,
+  DeleteResponse
 } from '../model';
 
 import { fetcher } from '../../../lib/fetcher.ts';
@@ -20,7 +24,7 @@ import type { BodyType } from '../../../lib/fetcher.ts';
 export const listAdminShippingProfiles = (
 
  ) => {
-      return fetcher<void>(
+      return fetcher<AdminShippingProfileListResponse>(
       {url: `/admin/shipping-profiles`, method: 'GET'
     },
       );
@@ -31,7 +35,7 @@ export const listAdminShippingProfiles = (
 export const createAdminShippingProfile = (
     adminCreateShippingProfile?: BodyType<AdminCreateShippingProfile>,
  ) => {
-      return fetcher<void>(
+      return fetcher<AdminCreateShippingProfileResponse>(
       {url: `/admin/shipping-profiles`, method: 'POST',
       headers: {'Content-Type': 'application/json', },
       data: adminCreateShippingProfile
@@ -45,7 +49,7 @@ export const updateAdminShippingProfile = (
     id: string,
     adminUpdateShippingProfile?: BodyType<AdminUpdateShippingProfile>,
  ) => {
-      return fetcher<void>(
+      return fetcher<AdminUpdateShippingProfileResponse>(
       {url: `/admin/shipping-profiles/${id}`, method: 'POST',
       headers: {'Content-Type': 'application/json', },
       data: adminUpdateShippingProfile
@@ -58,7 +62,7 @@ export const updateAdminShippingProfile = (
 export const deleteAdminShippingProfile = (
     id: string,
  ) => {
-      return fetcher<void>(
+      return fetcher<DeleteResponse>(
       {url: `/admin/shipping-profiles/${id}`, method: 'DELETE'
     },
       );

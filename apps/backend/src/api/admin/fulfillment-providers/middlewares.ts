@@ -1,3 +1,4 @@
+import { AdminFulfillmentProviderListResponse } from '@proteus/http-schemas'
 import type { MiddlewareRoute } from '../../../core/middleware/types.js'
 import { Tags } from '../../../core/middleware/types.js'
 
@@ -8,5 +9,6 @@ export default [
     operationId: 'listAdminFulfillmentProviders',
     summary: 'List fulfillment providers',
     tags: [Tags.FULFILLMENT_PROVIDERS],
+    responseSchema: AdminFulfillmentProviderListResponse,
   },
 ] satisfies MiddlewareRoute[]

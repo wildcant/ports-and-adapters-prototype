@@ -6,6 +6,8 @@
  */
 import type {
   AdminCapturePayment,
+  AdminPaymentProviderListResponse,
+  AdminPaymentResponse,
   AdminRefundPayment
 } from '../model';
 
@@ -20,7 +22,7 @@ import type { BodyType } from '../../../lib/fetcher.ts';
 export const getPayment = (
     id: string,
  ) => {
-      return fetcher<void>(
+      return fetcher<AdminPaymentResponse>(
       {url: `/admin/payments/${id}`, method: 'GET'
     },
       );
@@ -31,7 +33,7 @@ export const getPayment = (
 export const listAdminPaymentProviders = (
 
  ) => {
-      return fetcher<void>(
+      return fetcher<AdminPaymentProviderListResponse>(
       {url: `/admin/payments/payment-providers`, method: 'GET'
     },
       );
@@ -43,7 +45,7 @@ export const capturePayment = (
     id: string,
     adminCapturePayment?: BodyType<AdminCapturePayment>,
  ) => {
-      return fetcher<void>(
+      return fetcher<AdminPaymentResponse>(
       {url: `/admin/payments/${id}/capture`, method: 'POST',
       headers: {'Content-Type': 'application/json', },
       data: adminCapturePayment
@@ -57,7 +59,7 @@ export const refundPayment = (
     id: string,
     adminRefundPayment?: BodyType<AdminRefundPayment>,
  ) => {
-      return fetcher<void>(
+      return fetcher<AdminPaymentResponse>(
       {url: `/admin/payments/${id}/refund`, method: 'POST',
       headers: {'Content-Type': 'application/json', },
       data: adminRefundPayment

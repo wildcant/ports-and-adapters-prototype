@@ -174,6 +174,112 @@
           "deleted"
         ]
       },
+      "AdminFulfillmentProviderListResponse": {
+        "type": "object",
+        "properties": {
+          "fulfillmentProviders": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/AdminFulfillmentProvider"
+            }
+          }
+        },
+        "required": [
+          "fulfillmentProviders"
+        ]
+      },
+      "AdminFulfillmentProvider": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "isEnabled": {
+            "type": "boolean"
+          },
+          "deletedAt": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "format": "date-time"
+          }
+        },
+        "required": [
+          "id",
+          "isEnabled",
+          "deletedAt"
+        ]
+      },
+      "AdminFulfillmentSetListResponse": {
+        "type": "object",
+        "properties": {
+          "fulfillmentSets": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/AdminFulfillmentSet"
+            }
+          }
+        },
+        "required": [
+          "fulfillmentSets"
+        ]
+      },
+      "AdminFulfillmentSet": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "type": {
+            "type": "string"
+          },
+          "metadata": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "updatedAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "deletedAt": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "format": "date-time"
+          }
+        },
+        "required": [
+          "id",
+          "name",
+          "type",
+          "metadata",
+          "createdAt",
+          "updatedAt",
+          "deletedAt"
+        ]
+      },
+      "AdminCreateFulfillmentSetResponse": {
+        "type": "object",
+        "properties": {
+          "fulfillmentSet": {
+            "$ref": "#/components/schemas/AdminFulfillmentSet"
+          }
+        },
+        "required": [
+          "fulfillmentSet"
+        ]
+      },
       "AdminCreateFulfillmentSet": {
         "type": "object",
         "properties": {
@@ -191,6 +297,90 @@
           "type"
         ]
       },
+      "AdminFulfillmentSetDetailResponse": {
+        "type": "object",
+        "properties": {
+          "fulfillmentSet": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/AdminFulfillmentSet"
+              },
+              {
+                "type": "object",
+                "properties": {
+                  "serviceZones": {
+                    "type": "array",
+                    "items": {
+                      "$ref": "#/components/schemas/AdminServiceZone"
+                    }
+                  }
+                },
+                "required": [
+                  "serviceZones"
+                ]
+              }
+            ]
+          }
+        },
+        "required": [
+          "fulfillmentSet"
+        ]
+      },
+      "AdminServiceZone": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "fulfillmentSetId": {
+            "type": "string"
+          },
+          "metadata": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "updatedAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "deletedAt": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "format": "date-time"
+          }
+        },
+        "required": [
+          "id",
+          "name",
+          "fulfillmentSetId",
+          "metadata",
+          "createdAt",
+          "updatedAt",
+          "deletedAt"
+        ]
+      },
+      "AdminUpdateFulfillmentSetResponse": {
+        "type": "object",
+        "properties": {
+          "fulfillmentSet": {
+            "$ref": "#/components/schemas/AdminFulfillmentSet"
+          }
+        },
+        "required": [
+          "fulfillmentSet"
+        ]
+      },
       "AdminUpdateFulfillmentSet": {
         "type": "object",
         "properties": {
@@ -203,6 +393,17 @@
             "minLength": 1
           }
         }
+      },
+      "AdminCreateServiceZoneResponse": {
+        "type": "object",
+        "properties": {
+          "serviceZone": {
+            "$ref": "#/components/schemas/AdminServiceZone"
+          }
+        },
+        "required": [
+          "serviceZone"
+        ]
       },
       "AdminCreateServiceZone": {
         "type": "object",
@@ -251,6 +452,121 @@
           "name"
         ]
       },
+      "AdminServiceZoneDetailResponse": {
+        "type": "object",
+        "properties": {
+          "serviceZone": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/AdminServiceZone"
+              },
+              {
+                "type": "object",
+                "properties": {
+                  "geoZones": {
+                    "type": "array",
+                    "items": {
+                      "$ref": "#/components/schemas/AdminGeoZone"
+                    }
+                  }
+                },
+                "required": [
+                  "geoZones"
+                ]
+              }
+            ]
+          }
+        },
+        "required": [
+          "serviceZone"
+        ]
+      },
+      "AdminGeoZone": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "type": {
+            "type": "string",
+            "enum": [
+              "country",
+              "province",
+              "city",
+              "zip"
+            ]
+          },
+          "countryCode": {
+            "type": "string"
+          },
+          "provinceCode": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "city": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "postalExpression": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "serviceZoneId": {
+            "type": "string"
+          },
+          "metadata": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "updatedAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "deletedAt": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "format": "date-time"
+          }
+        },
+        "required": [
+          "id",
+          "type",
+          "countryCode",
+          "provinceCode",
+          "city",
+          "postalExpression",
+          "serviceZoneId",
+          "metadata",
+          "createdAt",
+          "updatedAt",
+          "deletedAt"
+        ]
+      },
+      "AdminUpdateServiceZoneResponse": {
+        "type": "object",
+        "properties": {
+          "serviceZone": {
+            "$ref": "#/components/schemas/AdminServiceZone"
+          }
+        },
+        "required": [
+          "serviceZone"
+        ]
+      },
       "AdminUpdateServiceZone": {
         "type": "object",
         "properties": {
@@ -259,6 +575,17 @@
             "minLength": 1
           }
         }
+      },
+      "AdminCreateGeoZoneResponse": {
+        "type": "object",
+        "properties": {
+          "geoZone": {
+            "$ref": "#/components/schemas/AdminGeoZone"
+          }
+        },
+        "required": [
+          "geoZone"
+        ]
       },
       "AdminCreateGeoZone": {
         "type": "object",
@@ -290,6 +617,429 @@
         "required": [
           "type",
           "countryCode"
+        ]
+      },
+      "AdminPaymentCollectionResponse": {
+        "type": "object",
+        "properties": {
+          "paymentCollection": {
+            "$ref": "#/components/schemas/AdminPaymentCollection"
+          }
+        },
+        "required": [
+          "paymentCollection"
+        ]
+      },
+      "AdminPaymentCollection": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "currencyCode": {
+            "type": "string"
+          },
+          "amount": {
+            "type": "number"
+          },
+          "authorizedAmount": {
+            "type": [
+              "number",
+              "null"
+            ]
+          },
+          "capturedAmount": {
+            "type": [
+              "number",
+              "null"
+            ]
+          },
+          "refundedAmount": {
+            "type": [
+              "number",
+              "null"
+            ]
+          },
+          "completedAt": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "format": "date-time"
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "not_paid",
+              "awaiting",
+              "authorized",
+              "partially_authorized",
+              "completed"
+            ]
+          },
+          "metadata": {
+            "type": [
+              "object",
+              "null"
+            ],
+            "additionalProperties": {}
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "updatedAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "deletedAt": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "format": "date-time"
+          },
+          "paymentSessions": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/AdminPaymentSession"
+            }
+          },
+          "payments": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/AdminPayment"
+            }
+          }
+        },
+        "required": [
+          "id",
+          "currencyCode",
+          "amount",
+          "authorizedAmount",
+          "capturedAmount",
+          "refundedAmount",
+          "completedAt",
+          "status",
+          "metadata",
+          "createdAt",
+          "updatedAt",
+          "deletedAt"
+        ]
+      },
+      "AdminPaymentSession": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "paymentCollectionId": {
+            "type": "string"
+          },
+          "providerId": {
+            "type": "string"
+          },
+          "currencyCode": {
+            "type": "string"
+          },
+          "amount": {
+            "type": "number"
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "pending",
+              "authorized",
+              "captured",
+              "requires_more",
+              "error",
+              "canceled",
+              "pending_authorization"
+            ]
+          },
+          "data": {
+            "type": "object",
+            "additionalProperties": {}
+          },
+          "context": {
+            "type": [
+              "object",
+              "null"
+            ],
+            "additionalProperties": {}
+          },
+          "authorizedAt": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "format": "date-time"
+          },
+          "metadata": {
+            "type": [
+              "object",
+              "null"
+            ],
+            "additionalProperties": {}
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "updatedAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "deletedAt": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "format": "date-time"
+          },
+          "payment": {
+            "$ref": "#/components/schemas/AdminPayment"
+          }
+        },
+        "required": [
+          "id",
+          "paymentCollectionId",
+          "providerId",
+          "currencyCode",
+          "amount",
+          "status",
+          "data",
+          "context",
+          "authorizedAt",
+          "metadata",
+          "createdAt",
+          "updatedAt",
+          "deletedAt"
+        ]
+      },
+      "AdminPayment": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "paymentCollectionId": {
+            "type": "string"
+          },
+          "paymentSessionId": {
+            "type": "string"
+          },
+          "amount": {
+            "type": "number"
+          },
+          "currencyCode": {
+            "type": "string"
+          },
+          "providerId": {
+            "type": "string"
+          },
+          "data": {
+            "type": [
+              "object",
+              "null"
+            ],
+            "additionalProperties": {}
+          },
+          "metadata": {
+            "type": [
+              "object",
+              "null"
+            ],
+            "additionalProperties": {}
+          },
+          "capturedAt": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "format": "date-time"
+          },
+          "canceledAt": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "format": "date-time"
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "updatedAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "deletedAt": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "format": "date-time"
+          },
+          "captures": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/AdminCapture"
+            }
+          },
+          "refunds": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/AdminRefund"
+            }
+          }
+        },
+        "required": [
+          "id",
+          "paymentCollectionId",
+          "paymentSessionId",
+          "amount",
+          "currencyCode",
+          "providerId",
+          "data",
+          "metadata",
+          "capturedAt",
+          "canceledAt",
+          "createdAt",
+          "updatedAt",
+          "deletedAt"
+        ]
+      },
+      "AdminCapture": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "paymentId": {
+            "type": "string"
+          },
+          "amount": {
+            "type": "number"
+          },
+          "createdBy": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "metadata": {
+            "type": [
+              "object",
+              "null"
+            ],
+            "additionalProperties": {}
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
+          }
+        },
+        "required": [
+          "id",
+          "paymentId",
+          "amount",
+          "createdBy",
+          "metadata",
+          "createdAt"
+        ]
+      },
+      "AdminRefund": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "paymentId": {
+            "type": "string"
+          },
+          "refundReasonId": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "amount": {
+            "type": "number"
+          },
+          "note": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "createdBy": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "metadata": {
+            "type": [
+              "object",
+              "null"
+            ],
+            "additionalProperties": {}
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
+          }
+        },
+        "required": [
+          "id",
+          "paymentId",
+          "refundReasonId",
+          "amount",
+          "note",
+          "createdBy",
+          "metadata",
+          "createdAt"
+        ]
+      },
+      "AdminPaymentResponse": {
+        "type": "object",
+        "properties": {
+          "payment": {
+            "$ref": "#/components/schemas/AdminPayment"
+          }
+        },
+        "required": [
+          "payment"
+        ]
+      },
+      "AdminPaymentProviderListResponse": {
+        "type": "object",
+        "properties": {
+          "paymentProviders": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/AdminPaymentProvider"
+            }
+          }
+        },
+        "required": [
+          "paymentProviders"
+        ]
+      },
+      "AdminPaymentProvider": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "isEnabled": {
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "id",
+          "isEnabled"
         ]
       },
       "AdminCapturePayment": {
@@ -552,6 +1302,83 @@
           }
         }
       },
+      "AdminRefundReasonListResponse": {
+        "type": "object",
+        "properties": {
+          "refundReasons": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/AdminRefundReason"
+            }
+          }
+        },
+        "required": [
+          "refundReasons"
+        ]
+      },
+      "AdminRefundReason": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "label": {
+            "type": "string"
+          },
+          "code": {
+            "type": "string"
+          },
+          "description": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "metadata": {
+            "type": [
+              "object",
+              "null"
+            ],
+            "additionalProperties": {}
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "updatedAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "deletedAt": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "format": "date-time"
+          }
+        },
+        "required": [
+          "id",
+          "label",
+          "code",
+          "description",
+          "metadata",
+          "createdAt",
+          "updatedAt",
+          "deletedAt"
+        ]
+      },
+      "AdminCreateRefundReasonResponse": {
+        "type": "object",
+        "properties": {
+          "refundReason": {
+            "$ref": "#/components/schemas/AdminRefundReason"
+          }
+        },
+        "required": [
+          "refundReason"
+        ]
+      },
       "AdminCreateRefundReason": {
         "type": "object",
         "properties": {
@@ -570,6 +1397,110 @@
         "required": [
           "label",
           "code"
+        ]
+      },
+      "AdminShippingOptionListResponse": {
+        "type": "object",
+        "properties": {
+          "shippingOptions": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/AdminShippingOption"
+            }
+          }
+        },
+        "required": [
+          "shippingOptions"
+        ]
+      },
+      "AdminShippingOption": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "priceType": {
+            "type": "string",
+            "enum": [
+              "flat",
+              "calculated"
+            ]
+          },
+          "amount": {
+            "type": [
+              "number",
+              "null"
+            ]
+          },
+          "serviceZoneId": {
+            "type": "string"
+          },
+          "shippingProfileId": {
+            "type": "string"
+          },
+          "shippingOptionTypeId": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "providerId": {
+            "type": "string"
+          },
+          "data": {},
+          "metadata": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "isEnabled": {
+            "type": "boolean"
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "updatedAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "deletedAt": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "format": "date-time"
+          }
+        },
+        "required": [
+          "id",
+          "name",
+          "priceType",
+          "amount",
+          "serviceZoneId",
+          "shippingProfileId",
+          "shippingOptionTypeId",
+          "providerId",
+          "metadata",
+          "isEnabled",
+          "createdAt",
+          "updatedAt",
+          "deletedAt"
+        ]
+      },
+      "AdminCreateShippingOptionResponse": {
+        "type": "object",
+        "properties": {
+          "shippingOption": {
+            "$ref": "#/components/schemas/AdminShippingOption"
+          }
+        },
+        "required": [
+          "shippingOption"
         ]
       },
       "AdminCreateShippingOption": {
@@ -618,6 +1549,28 @@
           "providerId"
         ]
       },
+      "AdminShippingOptionResponse": {
+        "type": "object",
+        "properties": {
+          "shippingOption": {
+            "$ref": "#/components/schemas/AdminShippingOption"
+          }
+        },
+        "required": [
+          "shippingOption"
+        ]
+      },
+      "AdminUpdateShippingOptionResponse": {
+        "type": "object",
+        "properties": {
+          "shippingOption": {
+            "$ref": "#/components/schemas/AdminShippingOption"
+          }
+        },
+        "required": [
+          "shippingOption"
+        ]
+      },
       "AdminUpdateShippingOption": {
         "type": "object",
         "properties": {
@@ -638,6 +1591,75 @@
           }
         }
       },
+      "AdminShippingProfileListResponse": {
+        "type": "object",
+        "properties": {
+          "shippingProfiles": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/AdminShippingProfile"
+            }
+          }
+        },
+        "required": [
+          "shippingProfiles"
+        ]
+      },
+      "AdminShippingProfile": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "type": {
+            "type": "string"
+          },
+          "metadata": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "updatedAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "deletedAt": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "format": "date-time"
+          }
+        },
+        "required": [
+          "id",
+          "name",
+          "type",
+          "metadata",
+          "createdAt",
+          "updatedAt",
+          "deletedAt"
+        ]
+      },
+      "AdminCreateShippingProfileResponse": {
+        "type": "object",
+        "properties": {
+          "shippingProfile": {
+            "$ref": "#/components/schemas/AdminShippingProfile"
+          }
+        },
+        "required": [
+          "shippingProfile"
+        ]
+      },
       "AdminCreateShippingProfile": {
         "type": "object",
         "properties": {
@@ -653,6 +1675,17 @@
         "required": [
           "name",
           "type"
+        ]
+      },
+      "AdminUpdateShippingProfileResponse": {
+        "type": "object",
+        "properties": {
+          "shippingProfile": {
+            "$ref": "#/components/schemas/AdminShippingProfile"
+          }
+        },
+        "required": [
+          "shippingProfile"
         ]
       },
       "AdminUpdateShippingProfile": {
@@ -1019,7 +2052,14 @@
         ],
         "responses": {
           "200": {
-            "description": "Successful response"
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AdminFulfillmentProviderListResponse"
+                }
+              }
+            }
           },
           "400": {
             "description": "Validation error"
@@ -1036,7 +2076,14 @@
         ],
         "responses": {
           "200": {
-            "description": "Successful response"
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AdminFulfillmentSetListResponse"
+                }
+              }
+            }
           },
           "400": {
             "description": "Validation error"
@@ -1060,7 +2107,14 @@
         },
         "responses": {
           "200": {
-            "description": "Successful response"
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AdminCreateFulfillmentSetResponse"
+                }
+              }
+            }
           },
           "400": {
             "description": "Validation error"
@@ -1088,7 +2142,14 @@
         ],
         "responses": {
           "200": {
-            "description": "Successful response"
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AdminFulfillmentSetDetailResponse"
+                }
+              }
+            }
           },
           "400": {
             "description": "Validation error"
@@ -1126,7 +2187,14 @@
         },
         "responses": {
           "200": {
-            "description": "Successful response"
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AdminUpdateFulfillmentSetResponse"
+                }
+              }
+            }
           },
           "400": {
             "description": "Validation error"
@@ -1155,7 +2223,14 @@
         ],
         "responses": {
           "200": {
-            "description": "Successful response"
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DeleteResponse"
+                }
+              }
+            }
           },
           "400": {
             "description": "Validation error"
@@ -1195,7 +2270,14 @@
         },
         "responses": {
           "200": {
-            "description": "Successful response"
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AdminCreateServiceZoneResponse"
+                }
+              }
+            }
           },
           "400": {
             "description": "Validation error"
@@ -1235,7 +2317,14 @@
         ],
         "responses": {
           "200": {
-            "description": "Successful response"
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AdminServiceZoneDetailResponse"
+                }
+              }
+            }
           },
           "400": {
             "description": "Validation error"
@@ -1282,7 +2371,14 @@
         },
         "responses": {
           "200": {
-            "description": "Successful response"
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AdminUpdateServiceZoneResponse"
+                }
+              }
+            }
           },
           "400": {
             "description": "Validation error"
@@ -1320,7 +2416,14 @@
         ],
         "responses": {
           "200": {
-            "description": "Successful response"
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DeleteResponse"
+                }
+              }
+            }
           },
           "400": {
             "description": "Validation error"
@@ -1369,7 +2472,14 @@
         },
         "responses": {
           "200": {
-            "description": "Successful response"
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AdminCreateGeoZoneResponse"
+                }
+              }
+            }
           },
           "400": {
             "description": "Validation error"
@@ -1400,7 +2510,14 @@
         ],
         "responses": {
           "200": {
-            "description": "Successful response"
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AdminPaymentCollectionResponse"
+                }
+              }
+            }
           },
           "400": {
             "description": "Validation error"
@@ -1431,7 +2548,14 @@
         ],
         "responses": {
           "200": {
-            "description": "Successful response"
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AdminPaymentCollectionResponse"
+                }
+              }
+            }
           },
           "400": {
             "description": "Validation error"
@@ -1462,7 +2586,14 @@
         ],
         "responses": {
           "200": {
-            "description": "Successful response"
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AdminPaymentResponse"
+                }
+              }
+            }
           },
           "400": {
             "description": "Validation error"
@@ -1482,7 +2613,14 @@
         ],
         "responses": {
           "200": {
-            "description": "Successful response"
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AdminPaymentProviderListResponse"
+                }
+              }
+            }
           },
           "400": {
             "description": "Validation error"
@@ -1519,7 +2657,14 @@
         },
         "responses": {
           "200": {
-            "description": "Successful response"
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AdminPaymentResponse"
+                }
+              }
+            }
           },
           "400": {
             "description": "Validation error"
@@ -1559,7 +2704,14 @@
         },
         "responses": {
           "200": {
-            "description": "Successful response"
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AdminPaymentResponse"
+                }
+              }
+            }
           },
           "400": {
             "description": "Validation error"
@@ -1871,7 +3023,14 @@
         ],
         "responses": {
           "200": {
-            "description": "Successful response"
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AdminRefundReasonListResponse"
+                }
+              }
+            }
           },
           "400": {
             "description": "Validation error"
@@ -1895,7 +3054,14 @@
         },
         "responses": {
           "200": {
-            "description": "Successful response"
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AdminCreateRefundReasonResponse"
+                }
+              }
+            }
           },
           "400": {
             "description": "Validation error"
@@ -1923,7 +3089,14 @@
         ],
         "responses": {
           "200": {
-            "description": "Successful response"
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DeleteResponse"
+                }
+              }
+            }
           },
           "400": {
             "description": "Validation error"
@@ -1943,7 +3116,14 @@
         ],
         "responses": {
           "200": {
-            "description": "Successful response"
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AdminShippingOptionListResponse"
+                }
+              }
+            }
           },
           "400": {
             "description": "Validation error"
@@ -1967,7 +3147,14 @@
         },
         "responses": {
           "200": {
-            "description": "Successful response"
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AdminCreateShippingOptionResponse"
+                }
+              }
+            }
           },
           "400": {
             "description": "Validation error"
@@ -1995,7 +3182,14 @@
         ],
         "responses": {
           "200": {
-            "description": "Successful response"
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AdminShippingOptionResponse"
+                }
+              }
+            }
           },
           "400": {
             "description": "Validation error"
@@ -2033,7 +3227,14 @@
         },
         "responses": {
           "200": {
-            "description": "Successful response"
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AdminUpdateShippingOptionResponse"
+                }
+              }
+            }
           },
           "400": {
             "description": "Validation error"
@@ -2062,7 +3263,14 @@
         ],
         "responses": {
           "200": {
-            "description": "Successful response"
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DeleteResponse"
+                }
+              }
+            }
           },
           "400": {
             "description": "Validation error"
@@ -2082,7 +3290,14 @@
         ],
         "responses": {
           "200": {
-            "description": "Successful response"
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AdminShippingProfileListResponse"
+                }
+              }
+            }
           },
           "400": {
             "description": "Validation error"
@@ -2106,7 +3321,14 @@
         },
         "responses": {
           "200": {
-            "description": "Successful response"
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AdminCreateShippingProfileResponse"
+                }
+              }
+            }
           },
           "400": {
             "description": "Validation error"
@@ -2143,7 +3365,14 @@
         },
         "responses": {
           "200": {
-            "description": "Successful response"
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AdminUpdateShippingProfileResponse"
+                }
+              }
+            }
           },
           "400": {
             "description": "Validation error"
@@ -2172,7 +3401,14 @@
         ],
         "responses": {
           "200": {
-            "description": "Successful response"
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DeleteResponse"
+                }
+              }
+            }
           },
           "400": {
             "description": "Validation error"

@@ -4,6 +4,10 @@
  * Admin API
  * OpenAPI spec version: 0.1.0
  */
+import type {
+  AdminPaymentCollectionResponse
+} from '../model';
+
 import { fetcher } from '../../../lib/fetcher.ts';
 
 
@@ -14,7 +18,7 @@ import { fetcher } from '../../../lib/fetcher.ts';
 export const getPaymentCollection = (
     id: string,
  ) => {
-      return fetcher<void>(
+      return fetcher<AdminPaymentCollectionResponse>(
       {url: `/admin/payment-collections/${id}`, method: 'GET'
     },
       );
@@ -25,7 +29,7 @@ export const getPaymentCollection = (
 export const markPaymentCollectionAsPaid = (
     id: string,
  ) => {
-      return fetcher<void>(
+      return fetcher<AdminPaymentCollectionResponse>(
       {url: `/admin/payment-collections/${id}/mark-as-paid`, method: 'POST'
     },
       );

@@ -27,7 +27,7 @@ type BaseRoute = {
   matcher: string
   operationId: string
   paramsSchema?: z.ZodType
-  responseSchema?: z.ZodType
+  responseSchema: z.ZodType
   summary?: string
   tags: Tag[]
 }

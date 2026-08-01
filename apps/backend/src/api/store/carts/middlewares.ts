@@ -2,8 +2,17 @@ import {
   AddCartShippingMethod,
   AddLineItem,
   CreateCart,
+  DeleteResponse,
   IdParams,
   LineIdParams,
+  StoreCartDetailResponse,
+  StoreCartResponse,
+  StoreCreateCartLineItemResponse,
+  StoreCreateCartResponse,
+  StoreCreateCartShippingMethodResponse,
+  StoreShippingOptionListResponse,
+  StoreUpdateCartLineItemResponse,
+  StoreUpdateCartResponse,
   UpdateCart,
   UpdateLineItem,
 } from '@proteus/http-schemas'
@@ -18,6 +27,7 @@ export default [
     operationId: 'createStoreCart',
     summary: 'Create a cart',
     tags: [Tags.CARTS],
+    responseSchema: StoreCreateCartResponse,
   },
   {
     method: 'GET',
@@ -26,6 +36,7 @@ export default [
     operationId: 'getStoreCart',
     summary: 'Retrieve a cart with line items',
     tags: [Tags.CARTS],
+    responseSchema: StoreCartDetailResponse,
   },
   {
     method: 'POST',
@@ -35,6 +46,7 @@ export default [
     operationId: 'updateStoreCart',
     summary: 'Update a cart',
     tags: [Tags.CARTS],
+    responseSchema: StoreUpdateCartResponse,
   },
   {
     method: 'POST',
@@ -44,6 +56,7 @@ export default [
     operationId: 'addStoreCartLineItem',
     summary: 'Add a line item to a cart',
     tags: [Tags.CARTS],
+    responseSchema: StoreCreateCartLineItemResponse,
   },
   {
     method: 'POST',
@@ -53,6 +66,7 @@ export default [
     operationId: 'updateStoreCartLineItem',
     summary: 'Update a cart line item',
     tags: [Tags.CARTS],
+    responseSchema: StoreUpdateCartLineItemResponse,
   },
   {
     method: 'DELETE',
@@ -61,6 +75,7 @@ export default [
     operationId: 'deleteStoreCartLineItem',
     summary: 'Remove a line item from a cart',
     tags: [Tags.CARTS],
+    responseSchema: DeleteResponse,
   },
   {
     method: 'GET',
@@ -69,6 +84,7 @@ export default [
     operationId: 'listStoreCartShippingOptions',
     summary: 'List available shipping options for a cart',
     tags: [Tags.CARTS],
+    responseSchema: StoreShippingOptionListResponse,
   },
   {
     method: 'POST',
@@ -78,6 +94,7 @@ export default [
     operationId: 'addStoreCartShippingMethod',
     summary: 'Select a shipping method for a cart',
     tags: [Tags.CARTS],
+    responseSchema: StoreCreateCartShippingMethodResponse,
   },
   {
     method: 'POST',
@@ -86,5 +103,6 @@ export default [
     operationId: 'completeStoreCart',
     summary: 'Complete a cart (authorize payment and mark as completed)',
     tags: [Tags.CARTS],
+    responseSchema: StoreCartResponse,
   },
 ] satisfies MiddlewareRoute[]

@@ -1,4 +1,4 @@
-import { ProviderParams } from '@proteus/http-schemas'
+import { ProviderParams, WebhookReceivedResponse } from '@proteus/http-schemas'
 import type { MiddlewareRoute } from '../../core/middleware/types.js'
 import { Tags } from '../../core/middleware/types.js'
 
@@ -10,5 +10,6 @@ export default [
     operationId: 'paymentWebhook',
     summary: 'Handle payment provider webhook',
     tags: [Tags.WEBHOOKS],
+    responseSchema: WebhookReceivedResponse,
   },
 ] satisfies MiddlewareRoute[]

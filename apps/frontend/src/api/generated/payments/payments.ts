@@ -4,6 +4,10 @@
  * Store API
  * OpenAPI spec version: 0.1.0
  */
+import type {
+  StorePaymentProviderListResponse
+} from '../model';
+
 import { fetcher } from '../../fetcher.ts';
 
 
@@ -14,7 +18,7 @@ import { fetcher } from '../../fetcher.ts';
 export const listStorePaymentProviders = (
 
  ) => {
-      return fetcher<void>(
+      return fetcher<StorePaymentProviderListResponse>(
       {url: `/store/payment-providers`, method: 'GET'
     },
       );

@@ -1,10 +1,19 @@
 import {
   AdminCreateFulfillmentSet,
+  AdminCreateFulfillmentSetResponse,
   AdminCreateGeoZone,
+  AdminCreateGeoZoneResponse,
   AdminCreateServiceZone,
+  AdminCreateServiceZoneResponse,
+  AdminFulfillmentSetDetailResponse,
+  AdminFulfillmentSetListResponse,
+  AdminServiceZoneDetailResponse,
   AdminUpdateFulfillmentSet,
+  AdminUpdateFulfillmentSetResponse,
   AdminUpdateServiceZone,
+  AdminUpdateServiceZoneResponse,
   AdminZoneIdParams,
+  DeleteResponse,
   IdParams,
 } from '@proteus/http-schemas'
 import type { MiddlewareRoute } from '../../../core/middleware/types.js'
@@ -17,6 +26,7 @@ export default [
     operationId: 'listAdminFulfillmentSets',
     summary: 'List fulfillment sets',
     tags: [Tags.FULFILLMENT_SETS],
+    responseSchema: AdminFulfillmentSetListResponse,
   },
   {
     method: 'POST',
@@ -25,6 +35,7 @@ export default [
     operationId: 'createAdminFulfillmentSet',
     summary: 'Create a fulfillment set',
     tags: [Tags.FULFILLMENT_SETS],
+    responseSchema: AdminCreateFulfillmentSetResponse,
   },
   {
     method: 'GET',
@@ -33,6 +44,7 @@ export default [
     operationId: 'getAdminFulfillmentSet',
     summary: 'Retrieve a fulfillment set with service zones',
     tags: [Tags.FULFILLMENT_SETS],
+    responseSchema: AdminFulfillmentSetDetailResponse,
   },
   {
     method: 'POST',
@@ -42,6 +54,7 @@ export default [
     operationId: 'updateAdminFulfillmentSet',
     summary: 'Update a fulfillment set',
     tags: [Tags.FULFILLMENT_SETS],
+    responseSchema: AdminUpdateFulfillmentSetResponse,
   },
   {
     method: 'DELETE',
@@ -50,6 +63,7 @@ export default [
     operationId: 'deleteAdminFulfillmentSet',
     summary: 'Delete a fulfillment set',
     tags: [Tags.FULFILLMENT_SETS],
+    responseSchema: DeleteResponse,
   },
   {
     method: 'POST',
@@ -59,6 +73,7 @@ export default [
     operationId: 'createAdminServiceZone',
     summary: 'Create a service zone in a fulfillment set',
     tags: [Tags.FULFILLMENT_SETS],
+    responseSchema: AdminCreateServiceZoneResponse,
   },
   {
     method: 'GET',
@@ -67,6 +82,7 @@ export default [
     operationId: 'getAdminServiceZone',
     summary: 'Retrieve a service zone with geo zones',
     tags: [Tags.FULFILLMENT_SETS],
+    responseSchema: AdminServiceZoneDetailResponse,
   },
   {
     method: 'POST',
@@ -76,6 +92,7 @@ export default [
     operationId: 'updateAdminServiceZone',
     summary: 'Update a service zone',
     tags: [Tags.FULFILLMENT_SETS],
+    responseSchema: AdminUpdateServiceZoneResponse,
   },
   {
     method: 'DELETE',
@@ -84,6 +101,7 @@ export default [
     operationId: 'deleteAdminServiceZone',
     summary: 'Delete a service zone',
     tags: [Tags.FULFILLMENT_SETS],
+    responseSchema: DeleteResponse,
   },
   {
     method: 'POST',
@@ -93,5 +111,6 @@ export default [
     operationId: 'createAdminGeoZone',
     summary: 'Add a geo zone to a service zone',
     tags: [Tags.FULFILLMENT_SETS],
+    responseSchema: AdminCreateGeoZoneResponse,
   },
 ] satisfies MiddlewareRoute[]

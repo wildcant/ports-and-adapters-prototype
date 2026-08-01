@@ -1,3 +1,4 @@
+import { StorePaymentProviderListResponse } from '@proteus/http-schemas'
 import type { MiddlewareRoute } from '../../../core/middleware/types.js'
 import { Tags } from '../../../core/middleware/types.js'
 
@@ -8,5 +9,6 @@ export default [
     operationId: 'listStorePaymentProviders',
     summary: 'List enabled payment providers',
     tags: [Tags.PAYMENTS],
+    responseSchema: StorePaymentProviderListResponse,
   },
 ] satisfies MiddlewareRoute[]
