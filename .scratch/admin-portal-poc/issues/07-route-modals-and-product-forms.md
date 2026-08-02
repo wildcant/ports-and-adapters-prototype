@@ -2,7 +2,7 @@
 
 **What to build:** Navigating to `/products/create` opens a full-screen Drawer overlay with a title-only product create form. Navigating to `/products/:id/edit` opens a slide-in Drawer panel with a title-only product edit form. Both modal types are built on `Drawer` from `@proteus/ui`: `RouteFocusModal` uses the full-screen variant, `RouteDrawer` uses `swipeDirection="right"` for the slide-in panel. A `RouteModalForm` wrapper integrates TanStack Router's `useBlocker` for dirty-form blocking — if the form has unsaved changes and the user tries to navigate away, a confirmation dialog appears with proceed/cancel options. Forms use TanStack Form with zod validation (schemas from `@proteus/http-schemas`). The `TextField` component follows the frontend's established pattern (`useFieldContext` + `Input` from `@proteus/ui` + `FieldError`). Submitting the create form creates the product and navigates to the new product's detail page. Submitting the edit form updates the product, closes the drawer, and refreshes the detail page data via query invalidation.
 
-**Blocked by:** 05 — Product list page, 06 — Product detail page
+**Blocked by:** 04 — DataTable system + Product list page, 06 — Product detail page
 
 **Status:** ready-for-agent
 

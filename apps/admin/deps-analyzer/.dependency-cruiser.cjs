@@ -9,6 +9,13 @@ module.exports = {
       to: { path: 'packages/http-schemas/src/store/' },
     },
     {
+      name: 'no-tanstack-table-outside-data-table',
+      comment: '@tanstack/react-table must only be imported from within the data-table component.',
+      severity: 'error',
+      from: { pathNot: '^src/components/data-table/' },
+      to: { path: '@tanstack/react-table' },
+    },
+    {
       name: 'no-circular',
       comment: 'No circular dependencies allowed.',
       severity: 'error',

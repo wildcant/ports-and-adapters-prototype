@@ -23,9 +23,6 @@ export const AdminProduct = z
     discountable: z.boolean(),
     externalId: z.string().nullable(),
     metadata: z.string().nullable(),
-    createdAt: z.iso.datetime(),
-    updatedAt: z.iso.datetime(),
-    deletedAt: z.iso.datetime().nullable(),
   })
   .openapi('AdminProduct')
 export type AdminProduct = z.infer<typeof AdminProduct>

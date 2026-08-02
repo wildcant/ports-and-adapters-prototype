@@ -89,6 +89,26 @@
       }
     },
     {
+      "includes": ["**/*skeleton*"],
+      "linter": {
+        "rules": {
+          "suspicious": {
+            "noArrayIndexKey": "off"
+          }
+        }
+      }
+    },
+    {
+      "includes": ["**/use-*-table.tsx"],
+      "linter": {
+        "rules": {
+          "correctness": {
+            "useHookAtTopLevel": "off"
+          }
+        }
+      }
+    },
+    {
       "includes": [
         "apps/frontend/**",
         "!apps/frontend/src/api/generated/**",

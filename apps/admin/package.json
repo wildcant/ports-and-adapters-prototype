@@ -20,6 +20,7 @@
   "dependencies": {
     "@proteus/http-schemas": "*",
     "@proteus/ui": "*",
+    "@proteus/utils": "*",
     "@tailwindcss/vite": "^4.1.18",
     "@tanstack/react-devtools": "latest",
     "@tanstack/react-form": "^1.33.2",

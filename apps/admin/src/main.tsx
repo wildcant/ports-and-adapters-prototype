@@ -1,6 +1,9 @@
 import { RouterProvider } from '@tanstack/react-router'
 import ReactDOM from 'react-dom/client'
+import { setupDataTable } from './lib/data-table-config'
 import { getRouter } from './router'
+
+setupDataTable()
 
 const router = getRouter()
 

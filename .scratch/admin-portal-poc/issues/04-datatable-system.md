@@ -1,60 +1,110 @@
-# 04 — Admin: DataTable system
+# 04 — Admin: DataTable system + Product list page
 
-**What to build:** A reusable, URL-driven DataTable component system built on `@proteus/ui` components, inspired by Medusa's three-layer DataTable architecture. Layer 1: `useDataTable` hook wrapping TanStack Table with manual sorting/pagination/filtering, state bridging between TanStack Table internals and flat app-level state, search debounce, auto page reset on filter/sort/search changes, and empty state derivation (POPULATED / FILTERED_EMPTY / EMPTY). Compound components: `DataTable` root, `DataTable.Toolbar`, `DataTable.Search`, `DataTable.FilterMenu`, `DataTable.FilterBar`, `DataTable.SortingMenu`, `DataTable.Table`, `DataTable.Pagination`. Layer 2: URL state management coupled to TanStack Router — reads `Route.useSearch()` and writes via `navigate({ search })`, handles parsing/serializing pagination (offset to pageIndex), sorting (`-field` for desc), search (`q`), and filtering (JSON stringified values), with prefix namespacing for multi-table pages. Type-safe builders: `createDataTableColumnHelper<T>()` adding `.action()` for per-row kebab menus, `createDataTableFilterHelper<T>()` with `DeepKeys<T>` type safety. Three filter types: select (multi-select checkbox list), date (presets + custom range), radio (single-select). Shared reusable helpers: `useDataTableDateColumns<T>()` and `useDataTableDateFilters()`. Verifiable by rendering a DataTable with hardcoded mock data on a test route.
+**What to build:** A reusable, URL-driven DataTable following the spec at `.scratch/admin-portal-poc/table-spec.md` — proven end-to-end by a real product list page backed by live API data.
 
-**Blocked by:** 02 — Admin: App foundation and orval pipeline
+The consumer API is `useDefineTable<T>(config)` + `<DataTable use={table} />`. One config object defines data fetching, columns, filters, row actions, and empty states. The DataTable handles URL state internally via TanStack Router (`useSearch({ strict: false })` + `navigate({ search })`), TanStack Table with `manual*` flags, search debounce, auto page reset, and empty state derivation.
+
+**Product list page (the proof):** Navigating to `/products` shows a fully functional table with real backend data — search, sorting, filtering, pagination all round-tripping through the URL and producing correct API calls.
+
+**Blocked by:** 02 — Admin: App foundation and orval pipeline, 03 — Shell layout with layout groups
 
 **Status:** ready-for-agent
 
-**Reference files to study:**
+## Primary reference
 
-- Architecture docs (read these first):
-  - `medusa-source/DATATABLE-DEEP-DIVE.md` — comprehensive breakdown of Medusa's three-layer DataTable architecture
-  - `medusa-source/MVP-TABLES.md` — simplified scope decisions for the POC
-  - `medusa-source/ADMIN-ARCHITECTURE-TANSTACK.md` — how DataTable integrates with TanStack Router URL state
-- Medusa source — Layer 1: `useDataTable` hook and compound components (port structure, swap Radix for `@proteus/ui` components):
-  - `medusa-source/packages/design-system/ui/src/blocks/data-table/use-data-table.tsx` — core hook (state bridging, debounce, pagination, empty state)
-  - `medusa-source/packages/design-system/ui/src/blocks/data-table/data-table.tsx` — compound component root
-  - `medusa-source/packages/design-system/ui/src/blocks/data-table/components/data-table-toolbar.tsx` — toolbar layout
-  - `medusa-source/packages/design-system/ui/src/blocks/data-table/components/data-table-search.tsx` — search input
-  - `medusa-source/packages/design-system/ui/src/blocks/data-table/components/data-table-filter.tsx` — filter rendering
-  - `medusa-source/packages/design-system/ui/src/blocks/data-table/components/data-table-filter-menu.tsx` — filter picker menu
-  - `medusa-source/packages/design-system/ui/src/blocks/data-table/components/data-table-filter-bar.tsx` — active filter chips
-  - `medusa-source/packages/design-system/ui/src/blocks/data-table/components/data-table-sorting-menu.tsx` — sort column/direction picker
-  - `medusa-source/packages/design-system/ui/src/blocks/data-table/components/data-table-table.tsx` — table rendering
-  - `medusa-source/packages/design-system/ui/src/blocks/data-table/components/data-table-pagination.tsx` — pagination controls
-  - `medusa-source/packages/design-system/ui/src/blocks/data-table/context/` — DataTable context provider
-- Medusa source — type-safe builders:
-  - `medusa-source/packages/design-system/ui/src/blocks/data-table/utils/create-data-table-column-helper.tsx` — column helper with `.action()` extension
-  - `medusa-source/packages/design-system/ui/src/blocks/data-table/utils/create-data-table-filter-helper.ts` — filter helper with `DeepKeys<T>`
-- Medusa source — Layer 2: dashboard-level DataTable wrapper with URL state:
-  - `medusa-source/packages/admin/dashboard/src/components/data-table/data-table.tsx` — URL-coupled wrapper
-  - `medusa-source/packages/admin/dashboard/src/hooks/use-data-table.tsx` — dashboard useDataTable hook
-  - `medusa-source/packages/admin/dashboard/src/lib/table/filter-utils.ts` — filter parsing utilities
-- Medusa source — shared helpers:
-  - `medusa-source/packages/admin/dashboard/src/components/data-table/helpers/general/use-data-table-date-columns.tsx`
-  - `medusa-source/packages/admin/dashboard/src/components/data-table/helpers/general/use-data-table-date-filters.tsx`
+**`.scratch/admin-portal-poc/table-spec.md`** — the canonical spec. Covers the full consumer API, internal architecture, URL state encoding, filter rendering, toolbar/search/sorting, renderer system, and file structure. Read this first; it replaces the Medusa source files as the primary guide.
 
-- [ ] `useDataTable` hook creates a TanStack Table instance with `manualSorting`, `manualPagination`, `manualFiltering`
-- [ ] State bridging: TanStack Table's `SortingState` (array) mapped to single `{ id, desc }` object; `ColumnFiltersState` mapped to flat `{ [id]: value }` record
-- [ ] Search debounce: local state mirrors search, fires `onSearchChange` after configurable timeout (default 300ms)
-- [ ] Auto page reset: filter/search/sort changes reset pagination to page 0
-- [ ] Empty state derivation: `POPULATED` if rows exist, `FILTERED_EMPTY` if search/filters active, `EMPTY` otherwise
-- [ ] `DataTable` root component provides context to all compound children
-- [ ] `DataTable.Toolbar` renders search, filter menu, sorting menu, and optional action slots
-- [ ] `DataTable.Search` bound to `useDataTable`'s search state with debounce
-- [ ] `DataTable.FilterMenu` lists available filters not yet active; clicking one adds it with a type-appropriate default
-- [ ] `DataTable.FilterBar` renders active filter chips with remove capability
-- [ ] `DataTable.SortingMenu` allows picking sort column and direction
-- [ ] `DataTable.Table` renders `<table>` with headers and rows from TanStack Table instance
-- [ ] `DataTable.Pagination` shows page controls with page index, page count, and row count
-- [ ] URL state: pagination stored as `offset` (pageIndex * pageSize), sorting as `field` or `-field`, search as `q`, filters as JSON-stringified values per filter key
+## Prerequisites — UI components to add to `@proteus/ui`
+
+These components are needed by the DataTable but don't exist in `@proteus/ui` yet. Install via `npx shadcn@latest add <name>` into `packages/ui`, then export from `packages/ui/src/index.ts`.
+
+- [ ] `DropdownMenu` — used by SortingMenu, FilterMenu, per-row action menu (kebab)
+- [ ] `Popover` — used by FilterPill to host filter content popovers
+- [ ] `Badge` — used by status column renderer and filter display values
+- [ ] `Checkbox` — used by multiselect filter content and row selection
+
+Already available in `@proteus/ui`: `Table` (+ TableHeader, TableBody, TableRow, TableHead, TableCell), `Skeleton`, `Tooltip`, `Input`, `Button`, `Separator`.
+
+## Acceptance criteria
+
+### `useDefineTable<T>(config)` hook
+
+- [ ] Accepts `useData`, `columns`, `filters`, `prefix`, `pageSize`, `paramMap`, `getRowId`, `rowHref`, `rowActions`, `empty`, `filtered`, `defaultSort`, `defaultFilters` — per spec
+- [ ] Returns a memoized `TableDefinition<T>` consumed by `<DataTable>`
+- [ ] `useData(params)` is called during render with computed `DataParams` (offset, limit, order, q, plus active filter values with `paramMap` remapping applied)
+- [ ] `columns(col)` builder provides `col.accessor(key, opts)` with `DeepKeys<T>` type safety and `col.display(id, opts)` for computed columns
+- [ ] `filters(filter)` builder provides `filter.accessor(key, opts)` with `DeepKeys<T>` type safety
+
+### `<DataTable use={table} />` component
+
+- [ ] Renders toolbar (heading, search, filter menu, sorting menu, action buttons), filter bar, table, and pagination
+- [ ] Toolbar layout: heading left, controls right — matches spec diagram
+- [ ] `heading` and `actions` props on `<DataTable>` for title text and action buttons
+
+### URL state (via TanStack Router)
+
+- [ ] `useUrlState` hook reads via `useSearch({ strict: false })`, writes via `navigate({ to: ".", search: (prev) => ... })` — uses TanStack Router natively, no `URLSearchParams`
+- [ ] Each route using DataTable defines a `validateSearch` schema (reuse API query schemas from `@proteus/http-schemas` where possible, e.g. `AdminProductListParams`)
+- [ ] Pagination as `offset` (integer), sorting as `field` or `-field`, search as `q`
+- [ ] Filter values use TanStack Router's native JSON-first serialization — no custom string encoding
 - [ ] Prefix namespacing: all URL keys can be prefixed as `{prefix}_{key}`
-- [ ] `createDataTableColumnHelper<T>()` wraps TanStack's `createColumnHelper`, adds `.action({ actions })` for per-row kebab menu rendering
-- [ ] `createDataTableFilterHelper<T>()` returns `.accessor(key, props)` with `DeepKeys<T>` type safety
-- [ ] Select filter: multi-select checkbox list in a popover, stores comma-separated values or JSON array
-- [ ] Date filter: preset options (Today, Last 7/30/90 days, Last 12 months) plus custom date range, stores `{ $gte, $lte }` as JSON
-- [ ] Radio filter: single-select list, stores raw string value
-- [ ] `useDataTableDateColumns<T>()` returns `created_at` and `updated_at` columns with sorting enabled
-- [ ] `useDataTableDateFilters()` returns `created_at` and `updated_at` date filters with standard presets
-- [ ] DataTable renders correctly with mock data on a test route (pagination, sorting, search, filtering all functional via URL)
+- [ ] Auto page reset: sort/filter/search changes reset offset to 0
+
+### Search
+
+- [ ] Debounced input (default 300ms), writes `q` to URL
+- [ ] Syncs back when URL changes externally (browser back)
+
+### Sorting menu
+
+- [ ] Dropdown with two sections: sortable columns (from `sortable: true` on column defs), then direction (asc/desc)
+- [ ] Labels from `sortLabel`, `sortAscLabel`, `sortDescLabel` on column defs with sensible defaults
+
+### Filters
+
+- [ ] `select` filter: single-select option list in a popover
+- [ ] `multiselect` filter: searchable checkbox list in a popover
+- [ ] `date` filter: preset buttons (if configured) + custom start/end date pickers
+- [ ] `radio` filter: single-select list with dot indicator
+- [ ] FilterPill: shared shell rendering `[label] [is] [displayValue] [x]` with popover for type-specific content
+- [ ] FilterBar: renders active FilterPills + "Clear all" button
+- [ ] FilterMenu: dropdown listing available (not yet active) filters; clicking one adds it and opens its popover
+
+### Table rendering
+
+- [ ] Uses `@proteus/ui` Table primitives (TableHeader, TableBody, TableRow, TableHead, TableCell)
+- [ ] TanStack Table with `manualPagination`, `manualSorting`, `manualFiltering`
+- [ ] Cell rendering resolves: `cell` function > `render` string (global registry) > text fallback
+- [ ] `configureDataTable({ renderers })` for global renderer registry, called once at app boot
+- [ ] Truncated cell tooltip: hover shows full value when text overflows (opt-out via `truncateTooltip: false`)
+- [ ] Row click handling: normal click = client-side nav, Cmd/Ctrl+Click = new tab, Shift+Click = new window (when `rowHref` defined)
+- [ ] Skeleton loading state while `isPending` is true (toolbar, table rows, pagination all show skeletons)
+
+### Pagination
+
+- [ ] Prev/Next buttons with page info (current page, total pages)
+- [ ] Scroll-to-top on page change
+
+### Empty states
+
+- [ ] `EMPTY` state when no data at all (uses `empty` config)
+- [ ] `FILTERED_EMPTY` state when search/filters active but no rows match (uses `filtered` config)
+
+### Product list page (verification)
+
+- [ ] Route at `_authed/_shell/products/index.tsx` with `validateSearch` reusing `AdminProductListParams` from `@proteus/http-schemas`
+- [ ] Uses `useDefineTable<Product>()` with `useData` wrapping the generated `useProducts()` React Query hook
+- [ ] Columns: title, handle, status (badge with color per status), createdAt (datetime renderer) — all via `col.accessor`
+- [ ] Filters: status (select filter with draft/published/proposed/rejected options), createdAt (date filter with standard presets)
+- [ ] Per-row action menu (`rowActions`) with "Edit" and "Delete" actions
+- [ ] "Create Product" action button in toolbar
+- [ ] Clicking a row navigates to `/products/$id` (via `rowHref`)
+- [ ] Pagination, search, filters, and sorting all round-trip through the URL and produce correct API calls
+- [ ] Empty and filtered-empty states render correctly
+
+### Deferred (not in scope)
+
+- [ ] Row selection + command bar (spec covers it, build when needed)
+- [ ] `number` and `string` filter types (not needed for product list)
+- [ ] `useOptions` async filter options (not needed for product list)
+- [ ] View persistence, column reordering, column visibility
