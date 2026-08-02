@@ -9,68 +9,218 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
-import { Route as CustomersRouteImport } from './routes/customers'
-import { Route as IndexRouteImport } from './routes/index'
+import { Route as PublicRouteRouteImport } from './routes/_public/route'
+import { Route as AuthedRouteRouteImport } from './routes/_authed/route'
+import { Route as PublicLoginRouteImport } from './routes/_public/login'
+import { Route as AuthedShellRouteRouteImport } from './routes/_authed/_shell/route'
+import { Route as AuthedShellIndexRouteImport } from './routes/_authed/_shell/index'
+import { Route as AuthedShellCustomersRouteImport } from './routes/_authed/_shell/customers'
+import { Route as AuthedShellProductsRouteRouteImport } from './routes/_authed/_shell/products/route'
+import { Route as AuthedShellProductsIndexRouteImport } from './routes/_authed/_shell/products/index'
 
-const CustomersRoute = CustomersRouteImport.update({
-  id: '/customers',
-  path: '/customers',
+const PublicRouteRoute = PublicRouteRouteImport.update({
+  id: '/_public',
   getParentRoute: () => rootRouteImport,
 } as any)
-const IndexRoute = IndexRouteImport.update({
+const AuthedRouteRoute = AuthedRouteRouteImport.update({
+  id: '/_authed',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PublicLoginRoute = PublicLoginRouteImport.update({
+  id: '/login',
+  path: '/login',
+  getParentRoute: () => PublicRouteRoute,
+} as any)
+const AuthedShellRouteRoute = AuthedShellRouteRouteImport.update({
+  id: '/_shell',
+  getParentRoute: () => AuthedRouteRoute,
+} as any)
+const AuthedShellIndexRoute = AuthedShellIndexRouteImport.update({
   id: '/',
   path: '/',
-  getParentRoute: () => rootRouteImport,
+  getParentRoute: () => AuthedShellRouteRoute,
 } as any)
+const AuthedShellCustomersRoute = AuthedShellCustomersRouteImport.update({
+  id: '/customers',
+  path: '/customers',
+  getParentRoute: () => AuthedShellRouteRoute,
+} as any)
+const AuthedShellProductsRouteRoute =
+  AuthedShellProductsRouteRouteImport.update({
+    id: '/products',
+    path: '/products',
+    getParentRoute: () => AuthedShellRouteRoute,
+  } as any)
+const AuthedShellProductsIndexRoute =
+  AuthedShellProductsIndexRouteImport.update({
+    id: '/',
+    path: '/',
+    getParentRoute: () => AuthedShellProductsRouteRoute,
+  } as any)
 
 export interface FileRoutesByFullPath {
-  '/': typeof IndexRoute
-  '/customers': typeof CustomersRoute
+  '/': typeof AuthedShellIndexRoute
+  '/login': typeof PublicLoginRoute
+  '/products': typeof AuthedShellProductsRouteRouteWithChildren
+  '/customers': typeof AuthedShellCustomersRoute
+  '/products/': typeof AuthedShellProductsIndexRoute
 }
 export interface FileRoutesByTo {
-  '/': typeof IndexRoute
-  '/customers': typeof CustomersRoute
+  '/': typeof AuthedShellIndexRoute
+  '/login': typeof PublicLoginRoute
+  '/customers': typeof AuthedShellCustomersRoute
+  '/products': typeof AuthedShellProductsIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
-  '/': typeof IndexRoute
-  '/customers': typeof CustomersRoute
+  '/_authed': typeof AuthedRouteRouteWithChildren
+  '/_public': typeof PublicRouteRouteWithChildren
+  '/_authed/_shell': typeof AuthedShellRouteRouteWithChildren
+  '/_public/login': typeof PublicLoginRoute
+  '/_authed/_shell/products': typeof AuthedShellProductsRouteRouteWithChildren
+  '/_authed/_shell/customers': typeof AuthedShellCustomersRoute
+  '/_authed/_shell/': typeof AuthedShellIndexRoute
+  '/_authed/_shell/products/': typeof AuthedShellProductsIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/customers'
+  fullPaths: '/' | '/login' | '/products' | '/customers' | '/products/'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/customers'
-  id: '__root__' | '/' | '/customers'
+  to: '/' | '/login' | '/customers' | '/products'
+  id:
+    | '__root__'
+    | '/_authed'
+    | '/_public'
+    | '/_authed/_shell'
+    | '/_public/login'
+    | '/_authed/_shell/products'
+    | '/_authed/_shell/customers'
+    | '/_authed/_shell/'
+    | '/_authed/_shell/products/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
-  IndexRoute: typeof IndexRoute
-  CustomersRoute: typeof CustomersRoute
+  AuthedRouteRoute: typeof AuthedRouteRouteWithChildren
+  PublicRouteRoute: typeof PublicRouteRouteWithChildren
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
-    '/customers': {
-      id: '/customers'
-      path: '/customers'
-      fullPath: '/customers'
-      preLoaderRoute: typeof CustomersRouteImport
+    '/_public': {
+      id: '/_public'
+      path: ''
+      fullPath: '/'
+      preLoaderRoute: typeof PublicRouteRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/': {
-      id: '/'
+    '/_authed': {
+      id: '/_authed'
+      path: ''
+      fullPath: '/'
+      preLoaderRoute: typeof AuthedRouteRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/_public/login': {
+      id: '/_public/login'
+      path: '/login'
+      fullPath: '/login'
+      preLoaderRoute: typeof PublicLoginRouteImport
+      parentRoute: typeof PublicRouteRoute
+    }
+    '/_authed/_shell': {
+      id: '/_authed/_shell'
+      path: ''
+      fullPath: '/'
+      preLoaderRoute: typeof AuthedShellRouteRouteImport
+      parentRoute: typeof AuthedRouteRoute
+    }
+    '/_authed/_shell/': {
+      id: '/_authed/_shell/'
       path: '/'
       fullPath: '/'
-      preLoaderRoute: typeof IndexRouteImport
-      parentRoute: typeof rootRouteImport
+      preLoaderRoute: typeof AuthedShellIndexRouteImport
+      parentRoute: typeof AuthedShellRouteRoute
+    }
+    '/_authed/_shell/customers': {
+      id: '/_authed/_shell/customers'
+      path: '/customers'
+      fullPath: '/customers'
+      preLoaderRoute: typeof AuthedShellCustomersRouteImport
+      parentRoute: typeof AuthedShellRouteRoute
+    }
+    '/_authed/_shell/products': {
+      id: '/_authed/_shell/products'
+      path: '/products'
+      fullPath: '/products'
+      preLoaderRoute: typeof AuthedShellProductsRouteRouteImport
+      parentRoute: typeof AuthedShellRouteRoute
+    }
+    '/_authed/_shell/products/': {
+      id: '/_authed/_shell/products/'
+      path: '/'
+      fullPath: '/products/'
+      preLoaderRoute: typeof AuthedShellProductsIndexRouteImport
+      parentRoute: typeof AuthedShellProductsRouteRoute
     }
   }
 }
 
+interface AuthedShellProductsRouteRouteChildren {
+  AuthedShellProductsIndexRoute: typeof AuthedShellProductsIndexRoute
+}
+
+const AuthedShellProductsRouteRouteChildren: AuthedShellProductsRouteRouteChildren =
+  {
+    AuthedShellProductsIndexRoute: AuthedShellProductsIndexRoute,
+  }
+
+const AuthedShellProductsRouteRouteWithChildren =
+  AuthedShellProductsRouteRoute._addFileChildren(
+    AuthedShellProductsRouteRouteChildren,
+  )
+
+interface AuthedShellRouteRouteChildren {
+  AuthedShellProductsRouteRoute: typeof AuthedShellProductsRouteRouteWithChildren
+  AuthedShellCustomersRoute: typeof AuthedShellCustomersRoute
+  AuthedShellIndexRoute: typeof AuthedShellIndexRoute
+}
+
+const AuthedShellRouteRouteChildren: AuthedShellRouteRouteChildren = {
+  AuthedShellProductsRouteRoute: AuthedShellProductsRouteRouteWithChildren,
+  AuthedShellCustomersRoute: AuthedShellCustomersRoute,
+  AuthedShellIndexRoute: AuthedShellIndexRoute,
+}
+
+const AuthedShellRouteRouteWithChildren =
+  AuthedShellRouteRoute._addFileChildren(AuthedShellRouteRouteChildren)
+
+interface AuthedRouteRouteChildren {
+  AuthedShellRouteRoute: typeof AuthedShellRouteRouteWithChildren
+}
+
+const AuthedRouteRouteChildren: AuthedRouteRouteChildren = {
+  AuthedShellRouteRoute: AuthedShellRouteRouteWithChildren,
+}
+
+const AuthedRouteRouteWithChildren = AuthedRouteRoute._addFileChildren(
+  AuthedRouteRouteChildren,
+)
+
+interface PublicRouteRouteChildren {
+  PublicLoginRoute: typeof PublicLoginRoute
+}
+
+const PublicRouteRouteChildren: PublicRouteRouteChildren = {
+  PublicLoginRoute: PublicLoginRoute,
+}
+
+const PublicRouteRouteWithChildren = PublicRouteRoute._addFileChildren(
+  PublicRouteRouteChildren,
+)
+
 const rootRouteChildren: RootRouteChildren = {
-  IndexRoute: IndexRoute,
-  CustomersRoute: CustomersRoute,
+  AuthedRouteRoute: AuthedRouteRouteWithChildren,
+  PublicRouteRoute: PublicRouteRouteWithChildren,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

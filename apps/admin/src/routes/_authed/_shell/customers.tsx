@@ -3,7 +3,7 @@ import { getCustomersQueryOptions } from '#/features/customers/api/customers'
 import { CreateCustomerForm } from '#/features/customers/components/create-customer-form.tsx'
 import { CustomerList } from '#/features/customers/components/customer-list.tsx'
 
-export const Route = createFileRoute('/customers')({
+export const Route = createFileRoute('/_authed/_shell/customers')({
   component: CustomersPage,
   loader: ({ context }) => context.queryClient.ensureQueryData(getCustomersQueryOptions({ limit: 5, offset: 0 })),
 })
