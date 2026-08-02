@@ -20,6 +20,8 @@ export function useColumns<T>(columns: ColumnDef<T>[], rowActions?: (row: T) => 
       minSize: col.minSize,
       maxSize: col.maxSize,
       meta: { align: col.align, truncateTooltip: col.truncateTooltip },
+      // Cell resolution priority: inline cell fn → named render string → plain text.
+      // Order matters — inline always wins so consumers can override global renderers per-column.
       cell: (info) => {
         const value = info.getValue() as CellValue
         const row = info.row.original

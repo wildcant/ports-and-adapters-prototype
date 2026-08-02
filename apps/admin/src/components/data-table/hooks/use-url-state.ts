@@ -19,6 +19,9 @@ export function useUrlState({ prefix, filterDefs }: UrlStateConfig) {
     [navigate],
   )
 
+  // Every setter except setOffset uses this to reset to page 0. Without it,
+  // changing a filter while on page 3 can leave the user on an offset that
+  // exceeds the new result count — showing an empty table.
   const updateAndResetPage = useCallback(
     (patch: Record<string, unknown>) => update({ ...patch, [prefixed('offset')]: undefined }),
     [update, prefixed],

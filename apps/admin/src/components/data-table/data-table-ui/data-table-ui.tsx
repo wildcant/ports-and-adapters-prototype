@@ -37,6 +37,8 @@ export function DataTableUi<T>({
 
   return (
     <div ref={containerRef} className="overflow-auto">
+      {/* table-fixed so column size/minSize/maxSize are respected — without it the
+          browser's auto-sizing algorithm ignores configured widths */}
       <Table className="table-fixed">
         <TableHeader className="sticky top-0 z-1 bg-background">
           {table.getHeaderGroups().map((group) => (

@@ -4,6 +4,8 @@ import { useCallback } from 'react'
 export function useRowNavigation() {
   const navigate = useNavigate()
 
+  // Preserve standard browser navigation conventions on row clicks:
+  // Cmd/Ctrl+Click or middle-click → new tab, Shift+Click → new window.
   return useCallback(
     (event: React.MouseEvent, href: string) => {
       const target = event.target as HTMLElement
