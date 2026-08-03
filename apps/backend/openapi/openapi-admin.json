@@ -919,18 +919,6 @@
           },
           "metadata": {
             "type": ["string", "null"]
-          },
-          "createdAt": {
-            "type": "string",
-            "format": "date-time"
-          },
-          "updatedAt": {
-            "type": "string",
-            "format": "date-time"
-          },
-          "deletedAt": {
-            "type": ["string", "null"],
-            "format": "date-time"
           }
         },
         "required": [
@@ -952,10 +940,7 @@
           "material",
           "discountable",
           "externalId",
-          "metadata",
-          "createdAt",
-          "updatedAt",
-          "deletedAt"
+          "metadata"
         ]
       },
       "AdminCreateProductResponse": {
@@ -1005,6 +990,252 @@
           "status": {
             "type": "string",
             "enum": ["draft", "proposed", "published", "rejected"]
+          }
+        }
+      },
+      "AdminProductVariantListResponse": {
+        "type": "object",
+        "properties": {
+          "count": {
+            "type": "number"
+          },
+          "offset": {
+            "type": "number"
+          },
+          "limit": {
+            "type": "number"
+          },
+          "variants": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/AdminProductVariant"
+            }
+          }
+        },
+        "required": ["count", "offset", "limit", "variants"]
+      },
+      "AdminProductVariant": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "productId": {
+            "type": "string"
+          },
+          "title": {
+            "type": "string"
+          },
+          "sku": {
+            "type": ["string", "null"]
+          },
+          "barcode": {
+            "type": ["string", "null"]
+          },
+          "ean": {
+            "type": ["string", "null"]
+          },
+          "upc": {
+            "type": ["string", "null"]
+          },
+          "allowBackorder": {
+            "type": "boolean"
+          },
+          "manageInventory": {
+            "type": "boolean"
+          },
+          "hsCode": {
+            "type": ["string", "null"]
+          },
+          "originCountry": {
+            "type": ["string", "null"]
+          },
+          "midCode": {
+            "type": ["string", "null"]
+          },
+          "material": {
+            "type": ["string", "null"]
+          },
+          "weight": {
+            "type": ["number", "null"]
+          },
+          "length": {
+            "type": ["number", "null"]
+          },
+          "height": {
+            "type": ["number", "null"]
+          },
+          "width": {
+            "type": ["number", "null"]
+          },
+          "variantRank": {
+            "type": ["number", "null"]
+          },
+          "metadata": {
+            "type": ["string", "null"]
+          }
+        },
+        "required": [
+          "id",
+          "productId",
+          "title",
+          "sku",
+          "barcode",
+          "ean",
+          "upc",
+          "allowBackorder",
+          "manageInventory",
+          "hsCode",
+          "originCountry",
+          "midCode",
+          "material",
+          "weight",
+          "length",
+          "height",
+          "width",
+          "variantRank",
+          "metadata"
+        ]
+      },
+      "AdminCreateProductVariantResponse": {
+        "type": "object",
+        "properties": {
+          "variant": {
+            "$ref": "#/components/schemas/AdminProductVariant"
+          }
+        },
+        "required": ["variant"]
+      },
+      "AdminCreateProductVariant": {
+        "type": "object",
+        "properties": {
+          "title": {
+            "type": "string",
+            "minLength": 1
+          },
+          "sku": {
+            "type": ["string", "null"]
+          },
+          "barcode": {
+            "type": ["string", "null"]
+          },
+          "ean": {
+            "type": ["string", "null"]
+          },
+          "upc": {
+            "type": ["string", "null"]
+          },
+          "allowBackorder": {
+            "type": "boolean"
+          },
+          "manageInventory": {
+            "type": "boolean"
+          },
+          "hsCode": {
+            "type": ["string", "null"]
+          },
+          "originCountry": {
+            "type": ["string", "null"]
+          },
+          "midCode": {
+            "type": ["string", "null"]
+          },
+          "material": {
+            "type": ["string", "null"]
+          },
+          "weight": {
+            "type": ["number", "null"]
+          },
+          "length": {
+            "type": ["number", "null"]
+          },
+          "height": {
+            "type": ["number", "null"]
+          },
+          "width": {
+            "type": ["number", "null"]
+          },
+          "variantRank": {
+            "type": "number"
+          },
+          "metadata": {
+            "type": ["string", "null"]
+          }
+        },
+        "required": ["title"]
+      },
+      "AdminProductVariantResponse": {
+        "type": "object",
+        "properties": {
+          "variant": {
+            "$ref": "#/components/schemas/AdminProductVariant"
+          }
+        },
+        "required": ["variant"]
+      },
+      "AdminUpdateProductVariantResponse": {
+        "type": "object",
+        "properties": {
+          "variant": {
+            "$ref": "#/components/schemas/AdminProductVariant"
+          }
+        },
+        "required": ["variant"]
+      },
+      "AdminUpdateProductVariant": {
+        "type": "object",
+        "properties": {
+          "title": {
+            "type": "string",
+            "minLength": 1
+          },
+          "sku": {
+            "type": ["string", "null"]
+          },
+          "barcode": {
+            "type": ["string", "null"]
+          },
+          "ean": {
+            "type": ["string", "null"]
+          },
+          "upc": {
+            "type": ["string", "null"]
+          },
+          "allowBackorder": {
+            "type": "boolean"
+          },
+          "manageInventory": {
+            "type": "boolean"
+          },
+          "hsCode": {
+            "type": ["string", "null"]
+          },
+          "originCountry": {
+            "type": ["string", "null"]
+          },
+          "midCode": {
+            "type": ["string", "null"]
+          },
+          "material": {
+            "type": ["string", "null"]
+          },
+          "weight": {
+            "type": ["number", "null"]
+          },
+          "length": {
+            "type": ["number", "null"]
+          },
+          "height": {
+            "type": ["number", "null"]
+          },
+          "width": {
+            "type": ["number", "null"]
+          },
+          "variantRank": {
+            "type": "number"
+          },
+          "metadata": {
+            "type": ["string", "null"]
           }
         }
       },
@@ -2527,6 +2758,338 @@
             },
             "required": true,
             "name": "id",
+            "in": "path"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DeleteResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Validation error"
+          },
+          "404": {
+            "description": "Not found"
+          }
+        }
+      }
+    },
+    "/admin/products/{id}/variants": {
+      "get": {
+        "operationId": "listProductVariants",
+        "summary": "List product variants",
+        "tags": ["Product Variants"],
+        "parameters": [
+          {
+            "schema": {
+              "type": "string",
+              "minLength": 1
+            },
+            "required": true,
+            "name": "id",
+            "in": "path"
+          },
+          {
+            "schema": {
+              "type": ["integer", "null"],
+              "minimum": 0,
+              "default": 0
+            },
+            "required": false,
+            "name": "offset",
+            "in": "query"
+          },
+          {
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 100,
+              "default": 10
+            },
+            "required": false,
+            "name": "limit",
+            "in": "query"
+          },
+          {
+            "schema": {
+              "type": "string"
+            },
+            "required": false,
+            "name": "order",
+            "in": "query"
+          },
+          {
+            "schema": {
+              "type": "string"
+            },
+            "required": false,
+            "name": "q",
+            "in": "query"
+          },
+          {
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "boolean"
+                },
+                {
+                  "type": "string"
+                }
+              ]
+            },
+            "required": false,
+            "name": "allowBackorder",
+            "in": "query"
+          },
+          {
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "boolean"
+                },
+                {
+                  "type": "string"
+                }
+              ]
+            },
+            "required": false,
+            "name": "manageInventory",
+            "in": "query"
+          },
+          {
+            "schema": {
+              "type": "object",
+              "properties": {
+                "$eq": {
+                  "type": "string"
+                },
+                "$ne": {
+                  "type": "string"
+                },
+                "$gt": {
+                  "type": "string"
+                },
+                "$gte": {
+                  "type": "string"
+                },
+                "$lt": {
+                  "type": "string"
+                },
+                "$lte": {
+                  "type": "string"
+                },
+                "$like": {
+                  "type": "string"
+                },
+                "$ilike": {
+                  "type": "string"
+                },
+                "$in": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                },
+                "$nin": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                }
+              }
+            },
+            "required": false,
+            "name": "createdAt",
+            "in": "query"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AdminProductVariantListResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Validation error"
+          },
+          "404": {
+            "description": "Not found"
+          }
+        }
+      },
+      "post": {
+        "operationId": "createProductVariant",
+        "summary": "Create a product variant",
+        "tags": ["Product Variants"],
+        "parameters": [
+          {
+            "schema": {
+              "type": "string",
+              "minLength": 1
+            },
+            "required": true,
+            "name": "id",
+            "in": "path"
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AdminCreateProductVariant"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AdminCreateProductVariantResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Validation error"
+          },
+          "404": {
+            "description": "Not found"
+          }
+        }
+      }
+    },
+    "/admin/products/{id}/variants/{variantId}": {
+      "get": {
+        "operationId": "getProductVariant",
+        "summary": "Retrieve a product variant",
+        "tags": ["Product Variants"],
+        "parameters": [
+          {
+            "schema": {
+              "type": "string",
+              "minLength": 1
+            },
+            "required": true,
+            "name": "id",
+            "in": "path"
+          },
+          {
+            "schema": {
+              "type": "string",
+              "minLength": 1
+            },
+            "required": true,
+            "name": "variantId",
+            "in": "path"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AdminProductVariantResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Validation error"
+          },
+          "404": {
+            "description": "Not found"
+          }
+        }
+      },
+      "patch": {
+        "operationId": "updateProductVariant",
+        "summary": "Update a product variant",
+        "tags": ["Product Variants"],
+        "parameters": [
+          {
+            "schema": {
+              "type": "string",
+              "minLength": 1
+            },
+            "required": true,
+            "name": "id",
+            "in": "path"
+          },
+          {
+            "schema": {
+              "type": "string",
+              "minLength": 1
+            },
+            "required": true,
+            "name": "variantId",
+            "in": "path"
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AdminUpdateProductVariant"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AdminUpdateProductVariantResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Validation error"
+          },
+          "404": {
+            "description": "Not found"
+          }
+        }
+      },
+      "delete": {
+        "operationId": "deleteProductVariant",
+        "summary": "Delete a product variant",
+        "tags": ["Product Variants"],
+        "parameters": [
+          {
+            "schema": {
+              "type": "string",
+              "minLength": 1
+            },
+            "required": true,
+            "name": "id",
+            "in": "path"
+          },
+          {
+            "schema": {
+              "type": "string",
+              "minLength": 1
+            },
+            "required": true,
+            "name": "variantId",
             "in": "path"
           }
         ],

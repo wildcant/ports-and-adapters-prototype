@@ -15,6 +15,7 @@ import type {
   ProductOptionValueDTO,
   ProductVariantDTO,
   UpdateProductDTO,
+  UpdateProductVariantDTO,
 } from '../../../core/types/index.js'
 import type { Logger } from '../../../core/types/logger.js'
 import { toHandle } from '../../../core/utils/to-handle.js'
@@ -135,6 +136,38 @@ export class ProductModuleService implements IProductModuleService {
     context?: Context,
   ): Promise<ProductVariantDTO[]> {
     return this.productVariantRepository.find(filters, config, context)
+  }
+
+  async listAndCountProductVariants(
+    filters?: FilterableProductVariantProps,
+    config?: FindConfig<ProductVariantDTO>,
+    context?: Context,
+  ): Promise<[ProductVariantDTO[], number]> {
+    return this.productVariantRepository.findAndCount(filters, config, context)
+  }
+
+  async retrieveProductVariant(
+    variantId: string,
+    config?: FindConfig<ProductVariantDTO>,
+    context?: Context,
+  ): Promise<ProductVariantDTO> {
+    return this.productVariantRepository.findByIdOrFail(variantId, config, context)
+  }
+
+  async updateProductVariants(
+    variantIds: string[],
+    data: UpdateProductVariantDTO,
+    context?: Context,
+  ): Promise<ProductVariantDTO[]> {
+    return this.withTransaction(context, async (ctx) => {
+      return this.productVariantRepository.update(variantIds, data, ctx)
+    })
+  }
+
+  async deleteProductVariants(variantIds: string[], context?: Context): Promise<void> {
+    return this.withTransaction(context, async (ctx) => {
+      await this.productVariantRepository.softDelete(variantIds, ctx)
+    })
   }
 
   async createProductImages(data: CreateProductImageDTO[], context?: Context): Promise<ProductImageDTO[]> {

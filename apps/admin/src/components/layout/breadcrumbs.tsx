@@ -18,6 +18,9 @@ export function Breadcrumbs() {
       label: ((m.context as Record<string, unknown>)?.breadcrumb as string) ?? m.staticData?.breadcrumb ?? '',
       path: m.pathname,
     }))
+    // Context propagates from parent to child — deduplicate consecutive crumbs
+    // that share the same label (e.g. layout route + its index route).
+    .filter((crumb, i, arr) => i === 0 || crumb.label !== arr[i - 1]!.label)
 
   if (crumbs.length === 0) return null
 

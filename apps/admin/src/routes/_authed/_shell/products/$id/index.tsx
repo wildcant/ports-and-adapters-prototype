@@ -1,0 +1,28 @@
+import { useSuspenseQuery } from '@tanstack/react-query'
+import { createFileRoute } from '@tanstack/react-router'
+import { PageLayout } from '#/components/layout/page-layout'
+import { productQueryOptions } from '#/features/products/api/products'
+import { ProductAttributeSection } from '#/features/products/components/product-attribute-section'
+import { ProductGeneralSection } from '#/features/products/components/product-general-section'
+import { ProductVariantSection } from '#/features/products/components/product-variant-section'
+
+export const Route = createFileRoute('/_authed/_shell/products/$id/')({
+  component: ProductDetailPage,
+})
+
+function ProductDetailPage() {
+  const { id } = Route.useParams()
+  const { data } = useSuspenseQuery(productQueryOptions(id))
+
+  return (
+    <PageLayout.TwoColumn>
+      <PageLayout.TwoColumn.Main>
+        <ProductGeneralSection product={data.product} />
+        <ProductVariantSection productId={id} />
+      </PageLayout.TwoColumn.Main>
+      <PageLayout.TwoColumn.Side>
+        <ProductAttributeSection product={data.product} />
+      </PageLayout.TwoColumn.Side>
+    </PageLayout.TwoColumn>
+  )
+}

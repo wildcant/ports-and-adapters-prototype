@@ -15,6 +15,7 @@ import {
   SidebarMenuItem,
   SidebarProvider,
   SidebarSeparator,
+  SidebarTrigger,
   TooltipProvider,
 } from '@proteus/ui'
 import { Link, Outlet, useRouterState } from '@tanstack/react-router'
@@ -56,6 +57,8 @@ export function SettingsLayout({ groups }: SettingsLayoutProps) {
 function Topbar() {
   return (
     <header className="flex h-12 shrink-0 items-center gap-2 border-b px-4">
+      <SidebarTrigger className="-ml-1" />
+      <Separator orientation="vertical" className="mr-2 h-4" />
       <Breadcrumbs />
     </header>
   )
@@ -88,7 +91,7 @@ function SettingsSidebar({ groups }: { groups: SettingsNavGroup[] }) {
                   render={<SidebarGroupLabel />}
                 >
                   {group.label}
-                  <ChevronDownIcon className="ml-auto transition-transform group-data-[panel-open]/collapsible:rotate-180" />
+                  <ChevronDownIcon className="ml-auto transition-transform group-data-panel-open/collapsible:rotate-180" />
                 </CollapsibleTrigger>
                 <CollapsibleContent>
                   <SidebarGroupContent>

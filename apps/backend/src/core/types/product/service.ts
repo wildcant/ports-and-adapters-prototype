@@ -16,6 +16,7 @@ import type {
   CreateProductOptionValueDTO,
   CreateProductVariantDTO,
   UpdateProductDTO,
+  UpdateProductVariantDTO,
 } from './mutations.js'
 
 export type IProductModuleService = {
@@ -34,12 +35,28 @@ export type IProductModuleService = {
   updateProducts(productIds: string[], data: UpdateProductDTO, context?: Context): Promise<ProductDTO[]>
   deleteProducts(productIds: string[], context?: Context): Promise<void>
   createProductVariants(data: CreateProductVariantDTO[], context?: Context): Promise<ProductVariantDTO[]>
-  createProductOptions(data: CreateProductOptionDTO[], context?: Context): Promise<ProductOptionDTO[]>
-  createProductOptionValues(data: CreateProductOptionValueDTO[], context?: Context): Promise<ProductOptionValueDTO[]>
-  createProductImages(data: CreateProductImageDTO[], context?: Context): Promise<ProductImageDTO[]>
   listProductVariants(
     filters?: FilterableProductVariantProps,
     config?: FindConfig<ProductVariantDTO>,
     context?: Context,
   ): Promise<ProductVariantDTO[]>
+  listAndCountProductVariants(
+    filters?: FilterableProductVariantProps,
+    config?: FindConfig<ProductVariantDTO>,
+    context?: Context,
+  ): Promise<[ProductVariantDTO[], number]>
+  retrieveProductVariant(
+    variantId: string,
+    config?: FindConfig<ProductVariantDTO>,
+    context?: Context,
+  ): Promise<ProductVariantDTO>
+  updateProductVariants(
+    variantIds: string[],
+    data: UpdateProductVariantDTO,
+    context?: Context,
+  ): Promise<ProductVariantDTO[]>
+  deleteProductVariants(variantIds: string[], context?: Context): Promise<void>
+  createProductOptions(data: CreateProductOptionDTO[], context?: Context): Promise<ProductOptionDTO[]>
+  createProductOptionValues(data: CreateProductOptionValueDTO[], context?: Context): Promise<ProductOptionValueDTO[]>
+  createProductImages(data: CreateProductImageDTO[], context?: Context): Promise<ProductImageDTO[]>
 }
