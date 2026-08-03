@@ -1,6 +1,7 @@
 import { AdminProductListParams } from '@proteus/http-schemas/admin'
 import { createFileRoute } from '@tanstack/react-router'
 import { DataTable } from '#/components/data-table'
+import { PageLayout } from '#/components/layout/page-layout'
 import { useProductTable } from '#/features/products/hooks/use-product-table'
 
 export const Route = createFileRoute('/_authed/_shell/products/')({
@@ -12,11 +13,13 @@ function ProductsPage() {
   const products = useProductTable()
 
   return (
-    <DataTable
-      use={products}
-      className="flex-1"
-      heading="Products"
-      actions={[{ label: 'Create Product', to: 'create' }]}
-    />
+    <PageLayout.SingleColumn>
+      <DataTable
+        use={products}
+        className="flex-1"
+        heading="Products"
+        actions={[{ label: 'Create Product', to: 'create' }]}
+      />
+    </PageLayout.SingleColumn>
   )
 }

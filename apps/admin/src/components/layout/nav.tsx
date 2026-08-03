@@ -1,4 +1,4 @@
-import { PackageIcon } from 'lucide-react'
+import { PackageIcon, SettingsIcon } from 'lucide-react'
 import type { ReactNode } from 'react'
 
 export type NavItem = {
@@ -7,4 +7,7 @@ export type NavItem = {
   icon: ReactNode
 }
 
-export const navItems: NavItem[] = [{ label: 'Products', to: '/products', icon: <PackageIcon /> }]
+export const navItems: NavItem[] = [
+  { label: 'Products', to: '/products', icon: <PackageIcon /> },
+  { label: 'Settings', to: '/settings/store', icon: <SettingsIcon /> },
+]

@@ -12,8 +12,10 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as PublicRouteRouteImport } from './routes/_public/route'
 import { Route as AuthedRouteRouteImport } from './routes/_authed/route'
 import { Route as PublicLoginRouteImport } from './routes/_public/login'
+import { Route as AuthedSettingsRouteRouteImport } from './routes/_authed/settings/route'
 import { Route as AuthedShellRouteRouteImport } from './routes/_authed/_shell/route'
 import { Route as AuthedShellIndexRouteImport } from './routes/_authed/_shell/index'
+import { Route as AuthedSettingsStoreRouteImport } from './routes/_authed/settings/store'
 import { Route as AuthedShellCustomersRouteImport } from './routes/_authed/_shell/customers'
 import { Route as AuthedShellProductsRouteRouteImport } from './routes/_authed/_shell/products/route'
 import { Route as AuthedShellProductsIndexRouteImport } from './routes/_authed/_shell/products/index'
@@ -31,6 +33,11 @@ const PublicLoginRoute = PublicLoginRouteImport.update({
   path: '/login',
   getParentRoute: () => PublicRouteRoute,
 } as any)
+const AuthedSettingsRouteRoute = AuthedSettingsRouteRouteImport.update({
+  id: '/settings',
+  path: '/settings',
+  getParentRoute: () => AuthedRouteRoute,
+} as any)
 const AuthedShellRouteRoute = AuthedShellRouteRouteImport.update({
   id: '/_shell',
   getParentRoute: () => AuthedRouteRoute,
@@ -39,6 +46,11 @@ const AuthedShellIndexRoute = AuthedShellIndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => AuthedShellRouteRoute,
+} as any)
+const AuthedSettingsStoreRoute = AuthedSettingsStoreRouteImport.update({
+  id: '/store',
+  path: '/store',
+  getParentRoute: () => AuthedSettingsRouteRoute,
 } as any)
 const AuthedShellCustomersRoute = AuthedShellCustomersRouteImport.update({
   id: '/customers',
@@ -60,15 +72,19 @@ const AuthedShellProductsIndexRoute =
 
 export interface FileRoutesByFullPath {
   '/': typeof AuthedShellIndexRoute
+  '/settings': typeof AuthedSettingsRouteRouteWithChildren
   '/login': typeof PublicLoginRoute
   '/products': typeof AuthedShellProductsRouteRouteWithChildren
   '/customers': typeof AuthedShellCustomersRoute
+  '/settings/store': typeof AuthedSettingsStoreRoute
   '/products/': typeof AuthedShellProductsIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof AuthedShellIndexRoute
+  '/settings': typeof AuthedSettingsRouteRouteWithChildren
   '/login': typeof PublicLoginRoute
   '/customers': typeof AuthedShellCustomersRoute
+  '/settings/store': typeof AuthedSettingsStoreRoute
   '/products': typeof AuthedShellProductsIndexRoute
 }
 export interface FileRoutesById {
@@ -76,25 +92,42 @@ export interface FileRoutesById {
   '/_authed': typeof AuthedRouteRouteWithChildren
   '/_public': typeof PublicRouteRouteWithChildren
   '/_authed/_shell': typeof AuthedShellRouteRouteWithChildren
+  '/_authed/settings': typeof AuthedSettingsRouteRouteWithChildren
   '/_public/login': typeof PublicLoginRoute
   '/_authed/_shell/products': typeof AuthedShellProductsRouteRouteWithChildren
   '/_authed/_shell/customers': typeof AuthedShellCustomersRoute
+  '/_authed/settings/store': typeof AuthedSettingsStoreRoute
   '/_authed/_shell/': typeof AuthedShellIndexRoute
   '/_authed/_shell/products/': typeof AuthedShellProductsIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/login' | '/products' | '/customers' | '/products/'
+  fullPaths:
+    | '/'
+    | '/settings'
+    | '/login'
+    | '/products'
+    | '/customers'
+    | '/settings/store'
+    | '/products/'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/login' | '/customers' | '/products'
+  to:
+    | '/'
+    | '/settings'
+    | '/login'
+    | '/customers'
+    | '/settings/store'
+    | '/products'
   id:
     | '__root__'
     | '/_authed'
     | '/_public'
     | '/_authed/_shell'
+    | '/_authed/settings'
     | '/_public/login'
     | '/_authed/_shell/products'
     | '/_authed/_shell/customers'
+    | '/_authed/settings/store'
     | '/_authed/_shell/'
     | '/_authed/_shell/products/'
   fileRoutesById: FileRoutesById
@@ -127,6 +160,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof PublicLoginRouteImport
       parentRoute: typeof PublicRouteRoute
     }
+    '/_authed/settings': {
+      id: '/_authed/settings'
+      path: '/settings'
+      fullPath: '/settings'
+      preLoaderRoute: typeof AuthedSettingsRouteRouteImport
+      parentRoute: typeof AuthedRouteRoute
+    }
     '/_authed/_shell': {
       id: '/_authed/_shell'
       path: ''
@@ -140,6 +180,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/'
       preLoaderRoute: typeof AuthedShellIndexRouteImport
       parentRoute: typeof AuthedShellRouteRoute
+    }
+    '/_authed/settings/store': {
+      id: '/_authed/settings/store'
+      path: '/store'
+      fullPath: '/settings/store'
+      preLoaderRoute: typeof AuthedSettingsStoreRouteImport
+      parentRoute: typeof AuthedSettingsRouteRoute
     }
     '/_authed/_shell/customers': {
       id: '/_authed/_shell/customers'
@@ -194,12 +241,25 @@ const AuthedShellRouteRouteChildren: AuthedShellRouteRouteChildren = {
 const AuthedShellRouteRouteWithChildren =
   AuthedShellRouteRoute._addFileChildren(AuthedShellRouteRouteChildren)
 
+interface AuthedSettingsRouteRouteChildren {
+  AuthedSettingsStoreRoute: typeof AuthedSettingsStoreRoute
+}
+
+const AuthedSettingsRouteRouteChildren: AuthedSettingsRouteRouteChildren = {
+  AuthedSettingsStoreRoute: AuthedSettingsStoreRoute,
+}
+
+const AuthedSettingsRouteRouteWithChildren =
+  AuthedSettingsRouteRoute._addFileChildren(AuthedSettingsRouteRouteChildren)
+
 interface AuthedRouteRouteChildren {
   AuthedShellRouteRoute: typeof AuthedShellRouteRouteWithChildren
+  AuthedSettingsRouteRoute: typeof AuthedSettingsRouteRouteWithChildren
 }
 
 const AuthedRouteRouteChildren: AuthedRouteRouteChildren = {
   AuthedShellRouteRoute: AuthedShellRouteRouteWithChildren,
+  AuthedSettingsRouteRoute: AuthedSettingsRouteRouteWithChildren,
 }
 
 const AuthedRouteRouteWithChildren = AuthedRouteRoute._addFileChildren(
