@@ -14,12 +14,29 @@ function isPgError(err: unknown): err is PgError & Error {
   return err instanceof Error && 'code' in err
 }
 
-function getConstraintInfo(detail?: string): string {
-  if (!detail) return ''
-  // "Key (email)=(foo@bar.com) already exists."
-  const match = detail.match(/Key \(([^)]+)\)=\(([^)]+)\)/)
-  if (match) return `${match[1]} = ${match[2]}`
-  return detail
+const getConstraintInfo = (err: PgError) => {
+  const detail = err.detail
+  if (!detail) {
+    return null
+  }
+
+  const [keys, values] = detail.match(/\([^(]*\)/g) || []
+
+  if (!keys || !values) {
+    return null
+  }
+
+  return {
+    table: err.table_name?.split('_').join(' ') ?? 'unknown',
+    keys: keys
+      .substring(1, keys.length - 1)
+      .split(',')
+      .map((k) => k.trim()),
+    values: values
+      .substring(1, values.length - 1)
+      .split(',')
+      .map((v) => v.trim()),
+  }
 }
 
 export function dbErrorMapper(err: unknown): never {
@@ -34,11 +51,13 @@ export function dbErrorMapper(err: unknown): never {
   switch (err.code) {
     // unique_violation
     case '23505': {
-      const info = getConstraintInfo(err.detail)
-      const constraint = err.constraint_name ? ` (constraint: ${err.constraint_name})` : ''
+      const info = getConstraintInfo(err)
+      const message = info
+        ? `${info.table}: ${info.keys.map((k, i) => `${k} "${info.values[i] ?? ''}"`).join(', ')} already exists`
+        : 'Already exists'
       throw new AppError({
-        type: ErrorTypes.INVALID_DATA,
-        message: info ? `Already exists: ${info}${constraint}` : `Already exists${constraint}`,
+        type: ErrorTypes.DUPLICATE_ERROR,
+        message,
       })
     }
     // not_null_violation

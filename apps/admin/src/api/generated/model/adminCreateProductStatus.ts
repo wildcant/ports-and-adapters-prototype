@@ -5,10 +5,10 @@
  * OpenAPI spec version: 0.1.0
  */
 
-export type AdminUpdateProductStatus = typeof AdminUpdateProductStatus[keyof typeof AdminUpdateProductStatus];
+export type AdminCreateProductStatus = typeof AdminCreateProductStatus[keyof typeof AdminCreateProductStatus];
 
 
-export const AdminUpdateProductStatus = {
+export const AdminCreateProductStatus = {
   draft: 'draft',
   proposed: 'proposed',
   published: 'published',

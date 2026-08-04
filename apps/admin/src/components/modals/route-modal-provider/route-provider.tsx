@@ -13,10 +13,10 @@ export const RouteModalProvider = ({ prev, children }: RouteModalProviderProps) 
   const handleSuccess = useCallback(
     (path?: string) => {
       const to = path || prev
+      // Set success state on current location before navigating back
+      window.history.replaceState({ ...window.history.state, isSubmitSuccessful: true }, '')
 
       if (typeof to === 'number') {
-        // Set success state on current location before navigating back
-        window.history.replaceState({ ...window.history.state, isSubmitSuccessful: true }, '')
         window.history.go(to)
       } else {
         navigate({

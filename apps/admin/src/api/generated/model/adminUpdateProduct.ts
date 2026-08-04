@@ -4,10 +4,8 @@
  * Admin API
  * OpenAPI spec version: 0.1.0
  */
-import type { AdminUpdateProductStatus } from './adminUpdateProductStatus.ts';
 
 export interface AdminUpdateProduct {
   /** @minLength 1 */
-  title?: string;
-  status?: AdminUpdateProductStatus;
+  title: string;
 }

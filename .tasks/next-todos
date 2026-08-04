@@ -1,3 +1,4 @@
+- To stop failures from crashing the server - implement Graceful Shutdowns, Safe Fetch Parsing, and Global Exception Handling.
 - admin
 - fulfillment module (port) and providers (adapters)
 - deploy to supabase and coudflare workers.

@@ -4,8 +4,26 @@
  * Admin API
  * OpenAPI spec version: 0.1.0
  */
+import type { AdminCreateProductStatus } from './adminCreateProductStatus.ts';
 
 export interface AdminCreateProduct {
+  description?: string;
+  discountable?: boolean;
+  handle?: string;
+  /** @nullable */
+  height?: number | null;
+  hsCode?: string;
+  /** @nullable */
+  length?: number | null;
+  material?: string;
+  midCode?: string;
+  originCountry?: string;
+  status?: AdminCreateProductStatus;
+  subtitle?: string;
   /** @minLength 1 */
   title: string;
+  /** @nullable */
+  weight?: number | null;
+  /** @nullable */
+  width?: number | null;
 }

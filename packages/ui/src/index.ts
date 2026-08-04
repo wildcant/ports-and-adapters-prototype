@@ -122,5 +122,8 @@ export {
   TableHeader,
   TableRow,
 } from './components/ui/table.tsx'
+export { Tabs, TabsContent, TabsList, TabsTrigger, tabsListVariants } from './components/ui/tabs.tsx'
+export { Textarea } from './components/ui/textarea.tsx'
+export { Toaster, toast, useToastManager } from './components/ui/toast.tsx'
 export { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from './components/ui/tooltip.tsx'
 export { cn } from './lib/utils.ts'

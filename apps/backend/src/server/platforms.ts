@@ -45,6 +45,12 @@ export async function serveExpress(
     response.headers.forEach((value, key) => {
       res.setHeader(key, value)
     })
+
+    if (!response.body) {
+      res.status(response.status).end()
+      return
+    }
+
     const body = await response.json()
     res.status(response.status).json(body)
   })

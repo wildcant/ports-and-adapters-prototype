@@ -970,9 +970,49 @@
       "AdminCreateProduct": {
         "type": "object",
         "properties": {
+          "description": {
+            "type": "string"
+          },
+          "discountable": {
+            "type": "boolean"
+          },
+          "handle": {
+            "type": "string"
+          },
+          "height": {
+            "type": ["number", "null"]
+          },
+          "hsCode": {
+            "type": "string"
+          },
+          "length": {
+            "type": ["number", "null"]
+          },
+          "material": {
+            "type": "string"
+          },
+          "midCode": {
+            "type": "string"
+          },
+          "originCountry": {
+            "type": "string"
+          },
+          "status": {
+            "type": "string",
+            "enum": ["draft", "proposed", "published", "rejected"]
+          },
+          "subtitle": {
+            "type": "string"
+          },
           "title": {
             "type": "string",
             "minLength": 1
+          },
+          "weight": {
+            "type": ["number", "null"]
+          },
+          "width": {
+            "type": ["number", "null"]
           }
         },
         "required": ["title"]
@@ -1001,12 +1041,9 @@
           "title": {
             "type": "string",
             "minLength": 1
-          },
-          "status": {
-            "type": "string",
-            "enum": ["draft", "proposed", "published", "rejected"]
           }
-        }
+        },
+        "required": ["title"]
       },
       "AdminProductVariantListResponse": {
         "type": "object",

@@ -5,73 +5,148 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 ## Commands
 
 ```bash
-# First-time setup (install deps, run Drizzle migrations)
-npm run setup
+# Install
+npm install
 
-# Start standalone backend API (http://localhost:3000)
-npm run --workspace=backend start
+# Dev servers
+npm run --workspace=backend dev          # API at :3000 (Swagger at /admin/docs/, /store/docs/)
+npm run --workspace=admin dev            # Admin SPA at :3002
+npm run --workspace=frontend dev         # Storefront at :3001
 
-# Start frontend dev server (http://localhost:3001)
-npm run --workspace=frontend dev
+# Database (Supabase local Postgres)
+npm run --workspace=backend db:start:lean   # Start Postgres (no extras)
+npm run --workspace=backend db:migrate:dev  # Run migrations
+npm run --workspace=backend db:generate     # Generate migration after schema change
+npm run --workspace=backend db:seed:dev     # Seed dev data
 
-# Type-check backend
-npm run --workspace=backend typecheck
+# Testing
+npm run --workspace=backend test                          # All backend tests
+npx -w backend vitest run src/modules/product             # Single module tests
+npx -w backend dotenvx run -f ../../.env.test -- vitest run src/modules/product  # With env
 
-# Run frontend tests
-npm run --workspace=frontend test
+# Linting & type-checking
+npm run check                  # Biome lint + format
+npm run typecheck              # All workspaces
+npm run check:all              # Biome + dependency-cruiser (all apps) + env usage
 
-# Drizzle: generate migration after schema change
-npm run --workspace=backend db:generate
-
-# Drizzle: run migrations
-npm run --workspace=backend db:migrate
-
-# Regenerate OpenAPI specs + Orval clients (admin & frontend)
-npm run openapi:generate
-
+# Code generation
+npm run openapi:generate       # Dump OpenAPI spec → regenerate Orval clients (admin + frontend)
+npm run --workspace=admin openapi:client    # Admin Orval client only
+npm run --workspace=admin generate-routes   # TanStack Router route tree
 ```
 
-## Architecture
+## Project Structure
 
-This is a **Ports & Adapters (Hexagonal Architecture)** prototype using npm workspaces (`backend`, `frontend`). It demonstrates swappable ORM adapters, HTTP frameworks, and platform runners — all wired through Awilix DI.
+Monorepo with npm workspaces:
 
-### Core pattern
+- `apps/backend` — API server (Ports & Adapters / Hexagonal Architecture)
+- `apps/admin` — Admin SPA (TanStack Router + React Query + React Table)
+- `apps/frontend` — Storefront SPA (TanStack Start, backend-as-library)
+- `packages/http-schemas` — Shared Zod schemas (exports `./admin` and `./store`)
+- `packages/ui` — Component library (shadcn/base-nova style, @base-ui/react primitives)
+- `packages/utils` — Shared utilities (date formatting via date-fns)
 
-Every module follows the same layered structure:
+## Backend Architecture
 
-1. **Ports** (`src/modules/<name>/ports.ts`) — Pure TypeScript interfaces. Domain types, service interface (driving/inbound), repository interface (driven/outbound). No imports from frameworks or ORMs.
-2. **Service** (`src/modules/<name>/service.ts`) — Business logic. Depends only on port interfaces. Receives dependencies via Awilix factory injection (`({ userRepository }) => ...`).
-3. **Adapters** (`src/modules/<name>/adapters/<orm>/`) — Concrete implementations of driven ports (e.g., Drizzle or Prisma repository). Each adapter folder re-exports `createDb` and `createUserRepository` from an `index.ts`.
-4. **Module wiring** (`src/modules/<name>/index.ts`) — Composition root. Registers factories into the Awilix container. **Swap adapters by changing one import path** (drizzle vs prisma).
+### Module System
 
-### Two entry points for the same business logic
+Each module at `apps/backend/src/modules/{name}/` follows an identical layout:
+- `models/` — Drizzle table definitions (use `timestamps` helper from `src/core/db/columns.ts`)
+- `repositories/` — Extend `BaseRepository(table)`, receive `{ getDb }` factory
+- `services/` — Business logic implementing an interface from `src/core/types/`
+- `__tests__/` — Integration tests
+- `index.ts` — `Module()` factory definition
+- `database.config.ts` — Drizzle migration config
 
-- **Standalone API** (`apps/backend/src/index.ts`): Creates container → creates App (zero-dep fetch router) → loads file-based routes → serves via Node.js
-- **Backend-as-library** (`apps/backend/src/container.ts`): Exports the container for direct use by `apps/frontend/src/server/users.ts` via TanStack Start `createServerFn` — no HTTP round-trip
+Modules: cart, customer, fulfillment, inventory, payment, product, user.
 
-### HTTP layer
+### Two-Container Bootstrap
 
-- **Route handlers** (`apps/backend/src/api/`) use file-based routing (Next.js-style `[id]` params). They export named HTTP methods (`GET`, `POST`, `PATCH`, `DELETE`) and receive `HttpRequest` / return `HttpResult` — framework-agnostic types defined in `apps/backend/src/server/ports.ts`.
-- **App** (`apps/backend/src/server/app.ts`) is a zero-dependency router that compiles route patterns to regexes and produces a Web Standard `fetch(Request) -> Response` handler.
-- **Platform runners** (`apps/backend/src/server/platforms.ts`) are thin adapters that plug the App's fetch handler into Node.js, Express, Vercel, Lambda, Cloudflare Workers, Bun, or Deno.
+`src/container.ts` creates a shared Awilix container. Each module gets a private local container with its repos. Only the module's service is exposed to the shared container. Modules cannot access each other's internals.
 
-### DI convention
+Registration keys: `GET_DB`, `DB_PROVIDER`, `LOGGER`, `LINK` (in `ContainerRegistrationKeys`).
 
-All factories use Awilix FP-style: `const createThing = ({ dep1, dep2 }: Dependencies): Thing => ...`. Registered with `asFunction(...).singleton()`. Route handlers resolve services from `req.scope` (a scoped container created per request).
+### Cross-Module Patterns
 
-### Database
+- **Link modules** (`src/link-modules/`) — Cross-module join tables and relations. Accessed via `LinkService.repo("cartProduct")`. Two types: writeable (own table + BaseRepository) and readonly (Drizzle relations only + ReadonlyLinkRepository).
+- **Workflows** (`src/workflows/`) — Cross-module orchestration with `ctx.step()` calls and compensation for rollback.
 
-Drizzle schemas live in each module's `models/` directory (e.g. `src/modules/user/models/`, `src/modules/customer/models/`). Each module has its own `drizzle.config.ts` and colocated migrations.
+### Server & Routing
 
-### Frontend
+- `src/server/app.ts` — Zero-dependency router: `fetch(Request) → Response`. File-based route discovery from `src/api/`.
+- `src/server/platforms.ts` — Platform adapters (Node via Hono, Express with Swagger, Workers).
+- `src/server/api-caller.ts` — Backend-as-library adapter for TanStack Start server functions (no HTTP round-trip).
+- Route files: `src/api/admin/{resource}/route.ts` export `GET`, `POST`, etc. Middleware via `middlewares.ts`.
+- Query parsing uses `qs` library (supports nested operator params like `$eq`, `$in`, `$gte`).
 
-TanStack Start (React 19, Vite, TanStack Router). Uses `#/*` import alias for `./src/*`. The `/users` page calls `createServerFn` handlers that resolve services from the shared backend container.
+### Key Conventions
 
-## Coding Style
+- `getDb` is always a factory function `() => Database`, never a direct instance. Repositories call `getDb()` and support transaction context via `getClient(context?)`.
+- `createWithTransaction(getDb)` wraps mutations. Services use `this.withTransaction(context, async (ctx) => { ... })`.
+- Date handling: DB stores `timestamptz` → Drizzle returns `Date` → DTOs use `Date` → API serializes to ISO strings. In `http-schemas`, use `dateToIso` pipeline and `z.input` (not `z.infer`) for entity types.
+- Soft-delete by default: every table has `deletedAt`, BaseRepository auto-filters.
+- SQL-level prefixed IDs (e.g., `cus_550e8400...`) generated by Postgres.
+- `DbProvider` port: Node uses singleton pool; Workers uses per-request connection via AsyncLocalStorage.
 
+## Admin App Architecture
+
+### Stack
+
+TanStack Router + React Query + React Table + TanStack Form + Zod v4. Path alias: `#/*` → `./src/*`.
+
+### API Layer
+
+Orval generates typed API clients from the backend's OpenAPI spec into `src/api/generated/` (tags-split mode). Custom fetcher at `src/lib/fetcher.ts` uses `qs.stringify()` for nested query params.
+
+Feature modules wrap generated functions with React Query hooks in `features/{name}/api/`.
+
+### DataTable System (`src/components/data-table/`)
+
+Consumer API: `useDefineTable<T>(config)` returns a table definition passed to `<DataTable use={table} />`.
+
+All table state (pagination, sorting, filters, search) lives in URL params via TanStack Router. Params are prefixed per table instance (e.g., `products_offset`, `products_order`).
+
+Global cell renderers (datetime, date, boolean, text) configured via `configureDataTable()` in `main.tsx`. Cell resolution order: inline `cell` fn → named `render` string → text fallback.
+
+### Route-Driven Modals
+
+Create/edit forms open as child routes using `RouteFocusModal` (full viewport drawer) or `RouteDrawer` (side drawer). `RouteModalForm` wraps TanStack Form with an unsaved-changes guard via `useBlocker()`.
+
+### Features Structure
+
+Each feature at `src/features/{name}/` co-locates:
+- `api/` — React Query hooks and mutation factories
+- `components/` — Feature-specific UI
+- `hooks/` — `useDefineTable` config, form hooks
+
+### Dependency Rules (dependency-cruiser)
+
+- Admin app must not import store schemas from http-schemas
+- `@tanstack/react-table` imports only allowed inside `components/data-table/`
+- No circular dependencies
+
+## Testing
+
+Backend tests are integration tests against a real Postgres database. Custom Vitest fixtures in `tests/setup/test-extend.ts` provide:
+- `getDb` — Factory function `() => dbInstance`
+- `logger` — noopLogger
+- `dto.generate` — Faker-based data builders (e.g., `generateCreateProductDTO`)
+
+Tests construct services manually with injected repos. Vitest config at `apps/backend/vitest.config.ts` runs tests sequentially (`fileParallelism: false`). Path aliases: `@tests/*`, `@core/*`.
+
+## Code Style
+
+- **Biome** for linting and formatting (spaces, 120 char lines, single quotes, no semicolons, trailing commas)
+- Naming: `camelCase` for properties, `CONSTANT_CASE` for enum members
+- Frontend: `type` over `interface` (enforced in frontend app)
+- Backend: TypeScript strict mode with `noUncheckedIndexedAccess`
 - Use simple, direct variable names. No unnecessary suffixes like `Result`, `Data`, `Value`, `Info`. Name variables for what they represent, not their type or origin.
 - Prefer guard clauses over nested conditionals. Check unusual conditions early and return, keeping the happy path linear and unindented. See `docs/refactoring/replace_nested_conditional_with_guard_clauses.txt`.
 - Comments should explain *why*, not *what*. Don't restate the code — document the intent, business reason, or non-obvious constraint.
 - For best-effort async calls, use `.catch((e) => this.logger.error(e))` instead of wrapping in try/catch with an empty or comment-only catch block.
 - Use `Promise.all` with `.map()` instead of `for` loops with `await` inside when iterations are independent.
 - Use `type` instead of `interface`. Interfaces allow declaration merging on name overlap, which can cause subtle bugs. Composable `type` aliases with `&` intersections are safer and more predictable.
+ 
+## Documentation
+
+Architecture Decision Records in `docs/adr/`. Guides at `docs/adding-a-module.md`, `docs/error-handling.md`, `docs/middleware-and-openapi.md`.

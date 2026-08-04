@@ -9,6 +9,7 @@ import type {
   AddStoreCartShippingMethodBody,
   CreateStoreCartBody,
   DeleteResponse,
+  ListStoreCartShippingOptionsParams,
   StoreCartDetailResponse,
   StoreCartResponse,
   StoreCreateCartLineItemResponse,
@@ -110,9 +111,11 @@ export const deleteStoreCartLineItem = (
  */
 export const listStoreCartShippingOptions = (
     id: string,
+    params?: ListStoreCartShippingOptionsParams,
  ) => {
       return fetcher<StoreShippingOptionListResponse>(
-      {url: `/store/carts/${id}/shipping-options`, method: 'GET'
+      {url: `/store/carts/${id}/shipping-options`, method: 'GET',
+        params
     },
       );
     }

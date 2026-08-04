@@ -34,7 +34,8 @@ export const fetcher = async <T>({
   const response = await fetch(target, init)
 
   if (!response.ok) {
-    throw new Error(`${method} ${url} failed: ${response.status}`)
+    const body = await response.json().catch(() => null)
+    throw new Error(body?.message ?? `${method} ${url} failed: ${response.status}`)
   }
 
   if ([204, 205, 304].includes(response.status)) return {} as T

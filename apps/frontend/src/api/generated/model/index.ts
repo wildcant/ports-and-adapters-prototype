@@ -15,6 +15,7 @@ export * from './createStorePaymentSessionBody.ts';
 export * from './createStorePaymentSessionBodyContext.ts';
 export * from './createStorePaymentSessionBodyData.ts';
 export * from './deleteResponse.ts';
+export * from './listStoreCartShippingOptionsParams.ts';
 export * from './listStoreProductsParams.ts';
 export * from './storeCart.ts';
 export * from './storeCartDetailResponse.ts';
