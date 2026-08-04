@@ -25,6 +25,14 @@
     "enabled": true,
     "rules": {
       "preset": "recommended",
+      "suspicious": {
+        "noConsole": {
+          "level": "warn",
+          "options": {
+            "allow": ["info"]
+          }
+        }
+      },
       "style": {
         "useComponentExportOnlyModules": "warn",
         "useNamingConvention": {
@@ -105,6 +113,16 @@
         "rules": {
           "correctness": {
             "useHookAtTopLevel": "off"
+          }
+        }
+      }
+    },
+    {
+      "includes": ["apps/backend/src/core/logger/console-logger.ts", "apps/backend/tests/setup/setup-test-env.ts"],
+      "linter": {
+        "rules": {
+          "suspicious": {
+            "noConsole": "off"
           }
         }
       }

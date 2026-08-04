@@ -19,5 +19,5 @@ const db = drizzle(client, DRIZZLE_OPTIONS)
 
 await syncPaymentProviders(() => db)
 
-console.log('Seeded payment providers')
+console.info('Seeded payment providers')
 await client.end()

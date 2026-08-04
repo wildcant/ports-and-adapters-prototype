@@ -24,15 +24,15 @@ if (existingUsers.length === 0) {
     email: `user${i + 1}@example.com`,
   }))
   const createdUsers = await userService.createUsers(users)
-  console.log(`Seeded ${createdUsers.length} users`)
+  console.info(`Seeded ${createdUsers.length} users`)
 } else {
-  console.log(`Skipped users (${existingUsers.length} already exist)`)
+  console.info(`Skipped users (${existingUsers.length} already exist)`)
 }
 
 // --- Products ---
 const existingProducts = await productService.listProducts()
 if (existingProducts.length > 0) {
-  console.log(`Skipped products (${existingProducts.length} already exist)`)
+  console.info(`Skipped products (${existingProducts.length} already exist)`)
   process.exit(0)
 }
 
@@ -80,7 +80,7 @@ const [tshirt, sweatshirt, sweatpants, shorts] = createdProducts as [
   (typeof createdProducts)[number],
   (typeof createdProducts)[number],
 ]
-console.log(`Seeded ${4} products`)
+console.info(`Seeded ${4} products`)
 
 // --- Options ---
 const tshirtOptions = await productService.createProductOptions([
@@ -97,7 +97,7 @@ const [sweatpantsSize] = (await productService.createProductOptions([{ productId
 const [shortsSize] = (await productService.createProductOptions([{ productId: shorts.id, title: 'Size' }])) as [
   (typeof tshirtOptions)[number],
 ]
-console.log('Seeded product options')
+console.info('Seeded product options')
 
 // --- Option Values ---
 const sizes = ['S', 'M', 'L', 'XL']
@@ -110,7 +110,7 @@ await productService.createProductOptionValues([
   ...sizes.map((value, i) => ({ optionId: sweatpantsSize.id, value, rank: i })),
   ...sizes.map((value, i) => ({ optionId: shortsSize.id, value, rank: i })),
 ])
-console.log('Seeded product option values')
+console.info('Seeded product option values')
 
 // --- Variants ---
 const tshirtVariants = sizes.flatMap((size) =>
@@ -145,7 +145,7 @@ const createdVariants = await productService.createProductVariants([
   ...sweatpantsVariants,
   ...shortsVariants,
 ])
-console.log(`Seeded ${createdVariants.length} product variants`)
+console.info(`Seeded ${createdVariants.length} product variants`)
 
 // --- Images ---
 await productService.createProductImages([
@@ -160,7 +160,7 @@ await productService.createProductImages([
   { productId: shorts.id, url: 'https://placehold.co/600x400?text=Shorts+Front', rank: 0 },
   { productId: shorts.id, url: 'https://placehold.co/600x400?text=Shorts+Back', rank: 1 },
 ])
-console.log('Seeded product images')
+console.info('Seeded product images')
 
 // --- Inventory Items + Levels + Variant Links ---
 const inventoryData = createdVariants.map((v) => ({
@@ -170,7 +170,7 @@ const inventoryData = createdVariants.map((v) => ({
 }))
 
 const createdItems = await inventoryService.createInventoryItems(inventoryData)
-console.log(`Seeded ${createdItems.length} inventory items`)
+console.info(`Seeded ${createdItems.length} inventory items`)
 
 // Create inventory levels (all items at a single default location with stock)
 await inventoryService.createInventoryLevels(
@@ -182,7 +182,7 @@ await inventoryService.createInventoryLevels(
     incomingQuantity: 0,
   })),
 )
-console.log(`Seeded ${createdItems.length} inventory levels`)
+console.info(`Seeded ${createdItems.length} inventory levels`)
 
 // Link variants -> inventory items (1:1 by matching SKU order)
 const links = createdVariants.map((variant, i) => {
@@ -191,7 +191,7 @@ const links = createdVariants.map((variant, i) => {
   return { variantId: variant.id, inventoryItemId: item.id }
 })
 await linkService.repo('productVariantInventoryItem').createMany(links)
-console.log(`Seeded ${links.length} variant-inventory links`)
+console.info(`Seeded ${links.length} variant-inventory links`)
 
 // --- Cart with line items (for testing payment endpoints) ---
 const existingCarts = await cartService.listCarts()
@@ -226,9 +226,9 @@ if (existingCarts.length === 0) {
     },
   ])) as [Awaited<ReturnType<typeof cartService.createCarts>>[number]]
 
-  console.log(`Seeded cart ${cart.id} with 2 line items (total: $95.00)`)
+  console.info(`Seeded cart ${cart.id} with 2 line items (total: $95.00)`)
 } else {
-  console.log(`Skipped cart (${existingCarts.length} already exist)`)
+  console.info(`Skipped cart (${existingCarts.length} already exist)`)
 }
 
 // --- Refund reasons ---
@@ -240,10 +240,10 @@ if (existingReasons.length === 0) {
     { label: 'Damaged', code: 'damaged' },
     { label: 'Changed Mind', code: 'changed_mind' },
   ])
-  console.log('Seeded 4 refund reasons')
+  console.info('Seeded 4 refund reasons')
 } else {
-  console.log(`Skipped refund reasons (${existingReasons.length} already exist)`)
+  console.info(`Skipped refund reasons (${existingReasons.length} already exist)`)
 }
 
-console.log('Done!')
+console.info('Done!')
 process.exit(0)

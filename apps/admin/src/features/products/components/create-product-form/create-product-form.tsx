@@ -18,7 +18,6 @@ export function CreateProductForm() {
       handleSuccess(`../${data.product.id}`)
     },
     onError: (error) => {
-      console.log({ error })
       toast.add({ type: 'error', title: 'Failed to create product', description: error })
     },
   })
