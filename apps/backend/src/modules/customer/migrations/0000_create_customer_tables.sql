@@ -16,9 +16,9 @@ CREATE TABLE "customer_address" (
 	"postal_code" text,
 	"phone" text,
 	"metadata" text,
-	"created_at" timestamp DEFAULT now() NOT NULL,
-	"updated_at" timestamp DEFAULT now() NOT NULL,
-	"deleted_at" timestamp
+	"created_at" timestamp with time zone DEFAULT now() NOT NULL,
+	"updated_at" timestamp with time zone DEFAULT now() NOT NULL,
+	"deleted_at" timestamp with time zone
 );
 --> statement-breakpoint
 CREATE TABLE "customer" (
@@ -27,9 +27,9 @@ CREATE TABLE "customer" (
 	"last_name" text NOT NULL,
 	"email" text NOT NULL,
 	"status" "customer_status" DEFAULT 'active' NOT NULL,
-	"created_at" timestamp DEFAULT now() NOT NULL,
-	"updated_at" timestamp DEFAULT now() NOT NULL,
-	"deleted_at" timestamp,
+	"created_at" timestamp with time zone DEFAULT now() NOT NULL,
+	"updated_at" timestamp with time zone DEFAULT now() NOT NULL,
+	"deleted_at" timestamp with time zone,
 	CONSTRAINT "customer_email_unique" UNIQUE("email")
 );
 --> statement-breakpoint

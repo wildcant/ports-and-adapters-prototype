@@ -24,9 +24,9 @@ export interface AdminPaymentSession {
   authorizedAt: string | null;
   /** @nullable */
   metadata: AdminPaymentSessionMetadata;
+  payment?: AdminPayment;
   createdAt: string;
   updatedAt: string;
   /** @nullable */
   deletedAt: string | null;
-  payment?: AdminPayment;
 }

@@ -1,8 +1,5 @@
-import {
-  type AdminCustomerResponse,
-  AdminUpdateCustomer,
-  type AdminUpdateCustomerBody,
-} from '@proteus/http-schemas/admin'
+import { AdminUpdateCustomer, type AdminUpdateCustomerBody } from '@proteus/http-schemas/admin'
+import type { AdminCustomerResponse } from '#/api/generated/model'
 import { useUpdateCustomer } from '#/features/customers/api/customers'
 import type { SubmitFormParams } from '#/lib/form.ts'
 import { useAppForm } from '#/lib/form-hook.ts'

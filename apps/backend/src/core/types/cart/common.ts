@@ -13,10 +13,10 @@ export type CartDTO = {
   shippingAddressId: string | null
   billingAddressId: string | null
   metadata: string | null
-  completedAt: string | null
-  createdAt: string
-  updatedAt: string
-  deletedAt: string | null
+  completedAt: Date | null
+  createdAt: Date
+  updatedAt: Date
+  deletedAt: Date | null
 }
 
 export interface FilterableCartProps extends BaseFilterable<FilterableCartProps> {
@@ -27,7 +27,7 @@ export interface FilterableCartProps extends BaseFilterable<FilterableCartProps>
   status?: CartStatus | CartStatus[]
   regionId?: string | string[]
   salesChannelId?: string | string[]
-  createdAt?: OperatorMap<string>
+  createdAt?: OperatorMap<Date>
 }
 
 export type CartLineItemDTO = {
@@ -55,9 +55,9 @@ export type CartLineItemDTO = {
   compareAtUnitPrice: number | null
   unitPrice: number
   metadata: string | null
-  createdAt: string
-  updatedAt: string
-  deletedAt: string | null
+  createdAt: Date
+  updatedAt: Date
+  deletedAt: Date | null
 }
 
 export interface FilterableCartLineItemProps extends BaseFilterable<FilterableCartLineItemProps> {
@@ -65,7 +65,7 @@ export interface FilterableCartLineItemProps extends BaseFilterable<FilterableCa
   cartId?: string | string[]
   variantId?: string | string[]
   productId?: string | string[]
-  createdAt?: OperatorMap<string>
+  createdAt?: OperatorMap<Date>
 }
 
 export type CartShippingMethodDTO = {
@@ -78,9 +78,9 @@ export type CartShippingMethodDTO = {
   shippingOptionId: string | null
   data: string | null
   metadata: string | null
-  createdAt: string
-  updatedAt: string
-  deletedAt: string | null
+  createdAt: Date
+  updatedAt: Date
+  deletedAt: Date | null
 }
 
 export interface FilterableCartShippingMethodProps extends BaseFilterable<FilterableCartShippingMethodProps> {

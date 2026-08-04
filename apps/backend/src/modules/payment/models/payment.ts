@@ -9,8 +9,8 @@ export const paymentTable = pgTable(
   {
     id: text().primaryKey().default(sql`CONCAT('pay_', REPLACE(gen_random_uuid()::text, '-', ''))`),
     amount: integer().notNull(),
-    canceledAt: timestamp({ mode: 'string' }),
-    capturedAt: timestamp({ mode: 'string' }),
+    canceledAt: timestamp({ withTimezone: true }),
+    capturedAt: timestamp({ withTimezone: true }),
     currencyCode: text().notNull(),
     data: jsonb().$type<Record<string, unknown> | null>(),
     metadata: jsonb().$type<Record<string, unknown> | null>(),

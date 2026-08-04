@@ -491,7 +491,7 @@ export class FulfillmentModuleService implements IFulfillmentModuleService {
         .cancelFulfillment(fulfillment.providerId, fulfillment as unknown as Record<string, unknown>)
         .catch((e) => this.logger.error(e))
 
-      const [updated] = await this.fulfillmentRepository.update([id], { canceledAt: new Date().toISOString() }, ctx)
+      const [updated] = await this.fulfillmentRepository.update([id], { canceledAt: new Date() }, ctx)
 
       return (updated ?? fulfillment) as FulfillmentDTO
     })

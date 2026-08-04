@@ -53,16 +53,54 @@ Every schema exports both the zod object (for runtime validation / OpenAPI) and 
 
 ```ts
 export const AdminProduct = z.object({ ... }).openapi('AdminProduct')
-export type AdminProduct = z.infer<typeof AdminProduct>
+export type AdminProduct = z.input<typeof AdminProduct>
 ```
 
 ### OpenAPI names
 
 Every schema that appears in API responses or request bodies must call `.openapi('SchemaName')` with a unique name matching the export name.
 
-### Datetime fields
+### Datetime fields — the `dateToIso` pipeline
 
-Use `z.iso.datetime()` for all timestamp fields (`createdAt`, `updatedAt`, `deletedAt`, etc.).
+Timestamp fields use the `dateToIso` pipeline from `common.ts`, which accepts a `Date` and outputs an ISO 8601 string:
+
+```ts
+export const dateToIso = z
+  .date()
+  .transform((d) => d.toISOString())
+  .pipe(z.iso.datetime({ offset: true }))
+```
+
+For the standard `createdAt` / `updatedAt` / `deletedAt` trio, spread `...timestamps.shape`:
+
+```ts
+export const AdminUser = z.object({
+  id: z.string(),
+  name: z.string(),
+  ...timestamps.shape,
+}).openapi('AdminUser')
+```
+
+### `z.input` vs `z.infer` for schemas with transforms
+
+Because `dateToIso` has a transform, `z.infer` gives the *output* type (`string`) while `z.input` gives the *input* type (`Date`). Entity and response type aliases use `z.input` so the backend can pass `Date` objects:
+
+```ts
+// z.input<typeof AdminUser> → { createdAt: Date, ... }  ← backend uses this
+// z.infer<typeof AdminUser> → { createdAt: string, ... } ← wire format
+export type AdminUser = z.input<typeof AdminUser>
+```
+
+### Parsing dates from query params
+
+For filtering on date fields (e.g. `?createdAt[$gte]=2026-01-01`), use `createDateOperatorMap()` which parses ISO strings into `Date` objects via `z.coerce.date()`:
+
+```ts
+export function createDateOperatorMap() {
+  const t = z.coerce.date().optional()
+  return z.object({ $eq: t, $ne: t, $gt: t, $gte: t, $lt: t, $lte: t })
+}
+```
 
 ### Nullable vs optional
 

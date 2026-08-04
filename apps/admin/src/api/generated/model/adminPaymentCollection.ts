@@ -24,10 +24,10 @@ export interface AdminPaymentCollection {
   status: AdminPaymentCollectionStatus;
   /** @nullable */
   metadata: AdminPaymentCollectionMetadata;
+  paymentSessions?: AdminPaymentSession[];
+  payments?: AdminPayment[];
   createdAt: string;
   updatedAt: string;
   /** @nullable */
   deletedAt: string | null;
-  paymentSessions?: AdminPaymentSession[];
-  payments?: AdminPayment[];
 }

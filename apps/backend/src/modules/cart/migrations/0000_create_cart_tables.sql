@@ -13,9 +13,9 @@ CREATE TABLE "cart_address" (
 	"postal_code" text,
 	"phone" text,
 	"metadata" text,
-	"created_at" timestamp DEFAULT now() NOT NULL,
-	"updated_at" timestamp DEFAULT now() NOT NULL,
-	"deleted_at" timestamp
+	"created_at" timestamp with time zone DEFAULT now() NOT NULL,
+	"updated_at" timestamp with time zone DEFAULT now() NOT NULL,
+	"deleted_at" timestamp with time zone
 );
 --> statement-breakpoint
 CREATE TABLE "cart" (
@@ -29,10 +29,10 @@ CREATE TABLE "cart" (
 	"shipping_address_id" text,
 	"billing_address_id" text,
 	"metadata" text,
-	"completed_at" timestamp,
-	"created_at" timestamp DEFAULT now() NOT NULL,
-	"updated_at" timestamp DEFAULT now() NOT NULL,
-	"deleted_at" timestamp
+	"completed_at" timestamp with time zone,
+	"created_at" timestamp with time zone DEFAULT now() NOT NULL,
+	"updated_at" timestamp with time zone DEFAULT now() NOT NULL,
+	"deleted_at" timestamp with time zone
 );
 --> statement-breakpoint
 CREATE TABLE "cart_credit_line" (
@@ -42,9 +42,9 @@ CREATE TABLE "cart_credit_line" (
 	"reference_id" text,
 	"amount" integer NOT NULL,
 	"metadata" text,
-	"created_at" timestamp DEFAULT now() NOT NULL,
-	"updated_at" timestamp DEFAULT now() NOT NULL,
-	"deleted_at" timestamp
+	"created_at" timestamp with time zone DEFAULT now() NOT NULL,
+	"updated_at" timestamp with time zone DEFAULT now() NOT NULL,
+	"deleted_at" timestamp with time zone
 );
 --> statement-breakpoint
 CREATE TABLE "cart_line_item" (
@@ -72,9 +72,9 @@ CREATE TABLE "cart_line_item" (
 	"compare_at_unit_price" integer,
 	"unit_price" integer NOT NULL,
 	"metadata" text,
-	"created_at" timestamp DEFAULT now() NOT NULL,
-	"updated_at" timestamp DEFAULT now() NOT NULL,
-	"deleted_at" timestamp
+	"created_at" timestamp with time zone DEFAULT now() NOT NULL,
+	"updated_at" timestamp with time zone DEFAULT now() NOT NULL,
+	"deleted_at" timestamp with time zone
 );
 --> statement-breakpoint
 CREATE TABLE "cart_line_item_tax_line" (
@@ -86,9 +86,9 @@ CREATE TABLE "cart_line_item_tax_line" (
 	"provider_id" text,
 	"tax_rate_id" text,
 	"metadata" text,
-	"created_at" timestamp DEFAULT now() NOT NULL,
-	"updated_at" timestamp DEFAULT now() NOT NULL,
-	"deleted_at" timestamp
+	"created_at" timestamp with time zone DEFAULT now() NOT NULL,
+	"updated_at" timestamp with time zone DEFAULT now() NOT NULL,
+	"deleted_at" timestamp with time zone
 );
 --> statement-breakpoint
 CREATE TABLE "cart_shipping_method" (
@@ -101,9 +101,9 @@ CREATE TABLE "cart_shipping_method" (
 	"shipping_option_id" text,
 	"data" text,
 	"metadata" text,
-	"created_at" timestamp DEFAULT now() NOT NULL,
-	"updated_at" timestamp DEFAULT now() NOT NULL,
-	"deleted_at" timestamp
+	"created_at" timestamp with time zone DEFAULT now() NOT NULL,
+	"updated_at" timestamp with time zone DEFAULT now() NOT NULL,
+	"deleted_at" timestamp with time zone
 );
 --> statement-breakpoint
 CREATE TABLE "cart_shipping_method_tax_line" (
@@ -115,9 +115,9 @@ CREATE TABLE "cart_shipping_method_tax_line" (
 	"provider_id" text,
 	"tax_rate_id" text,
 	"metadata" text,
-	"created_at" timestamp DEFAULT now() NOT NULL,
-	"updated_at" timestamp DEFAULT now() NOT NULL,
-	"deleted_at" timestamp
+	"created_at" timestamp with time zone DEFAULT now() NOT NULL,
+	"updated_at" timestamp with time zone DEFAULT now() NOT NULL,
+	"deleted_at" timestamp with time zone
 );
 --> statement-breakpoint
 ALTER TABLE "cart" ADD CONSTRAINT "cart_shipping_address_id_cart_address_id_fk" FOREIGN KEY ("shipping_address_id") REFERENCES "public"."cart_address"("id") ON DELETE no action ON UPDATE no action;--> statement-breakpoint

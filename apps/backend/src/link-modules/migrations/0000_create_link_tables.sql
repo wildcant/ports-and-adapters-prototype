@@ -3,18 +3,18 @@ CREATE TABLE "product_variant_inventory_item" (
 	"variant_id" text NOT NULL,
 	"inventory_item_id" text NOT NULL,
 	"required_quantity" integer DEFAULT 1 NOT NULL,
-	"created_at" timestamp DEFAULT now() NOT NULL,
-	"updated_at" timestamp DEFAULT now() NOT NULL,
-	"deleted_at" timestamp
+	"created_at" timestamp with time zone DEFAULT now() NOT NULL,
+	"updated_at" timestamp with time zone DEFAULT now() NOT NULL,
+	"deleted_at" timestamp with time zone
 );
 --> statement-breakpoint
 CREATE TABLE "cart_payment_collection" (
 	"id" text PRIMARY KEY DEFAULT CONCAT('cartpaycol_', REPLACE(gen_random_uuid()::text, '-', '')) NOT NULL,
 	"cart_id" text NOT NULL,
 	"payment_collection_id" text NOT NULL,
-	"created_at" timestamp DEFAULT now() NOT NULL,
-	"updated_at" timestamp DEFAULT now() NOT NULL,
-	"deleted_at" timestamp
+	"created_at" timestamp with time zone DEFAULT now() NOT NULL,
+	"updated_at" timestamp with time zone DEFAULT now() NOT NULL,
+	"deleted_at" timestamp with time zone
 );
 --> statement-breakpoint
 CREATE UNIQUE INDEX "idx_pvitem_variant_inventory" ON "product_variant_inventory_item" USING btree ("variant_id","inventory_item_id") WHERE deleted_at IS NULL;--> statement-breakpoint

@@ -2,13 +2,13 @@ import { z } from 'zod'
 import { StoreCart, StoreCartLineItem, StoreCartShippingMethod, StoreConfirmInventoryItem } from './entities.js'
 
 export const StoreCartResponse = z.object({ cart: StoreCart }).openapi('StoreCartResponse')
-export type StoreCartResponse = z.infer<typeof StoreCartResponse>
+export type StoreCartResponse = z.input<typeof StoreCartResponse>
 
 export const StoreCreateCartResponse = z.object({ cart: StoreCart }).openapi('StoreCreateCartResponse')
-export type StoreCreateCartResponse = z.infer<typeof StoreCreateCartResponse>
+export type StoreCreateCartResponse = z.input<typeof StoreCreateCartResponse>
 
 export const StoreUpdateCartResponse = z.object({ cart: StoreCart }).openapi('StoreUpdateCartResponse')
-export type StoreUpdateCartResponse = z.infer<typeof StoreUpdateCartResponse>
+export type StoreUpdateCartResponse = z.input<typeof StoreUpdateCartResponse>
 
 export const StoreCartDetailResponse = z
   .object({
@@ -18,25 +18,25 @@ export const StoreCartDetailResponse = z
     }),
   })
   .openapi('StoreCartDetailResponse')
-export type StoreCartDetailResponse = z.infer<typeof StoreCartDetailResponse>
+export type StoreCartDetailResponse = z.input<typeof StoreCartDetailResponse>
 
 export const StoreCartLineItemResponse = z.object({ lineItem: StoreCartLineItem }).openapi('StoreCartLineItemResponse')
-export type StoreCartLineItemResponse = z.infer<typeof StoreCartLineItemResponse>
+export type StoreCartLineItemResponse = z.input<typeof StoreCartLineItemResponse>
 
 export const StoreCreateCartLineItemResponse = z
   .object({ lineItem: StoreCartLineItem })
   .openapi('StoreCreateCartLineItemResponse')
-export type StoreCreateCartLineItemResponse = z.infer<typeof StoreCreateCartLineItemResponse>
+export type StoreCreateCartLineItemResponse = z.input<typeof StoreCreateCartLineItemResponse>
 
 export const StoreUpdateCartLineItemResponse = z
   .object({ lineItem: StoreCartLineItem })
   .openapi('StoreUpdateCartLineItemResponse')
-export type StoreUpdateCartLineItemResponse = z.infer<typeof StoreUpdateCartLineItemResponse>
+export type StoreUpdateCartLineItemResponse = z.input<typeof StoreUpdateCartLineItemResponse>
 
 export const StoreCreateCartShippingMethodResponse = z
   .object({ shippingMethod: StoreCartShippingMethod })
   .openapi('StoreCreateCartShippingMethodResponse')
-export type StoreCreateCartShippingMethodResponse = z.infer<typeof StoreCreateCartShippingMethodResponse>
+export type StoreCreateCartShippingMethodResponse = z.input<typeof StoreCreateCartShippingMethodResponse>
 
 export const StoreCartInventoryResponse = z
   .object({
@@ -44,4 +44,4 @@ export const StoreCartInventoryResponse = z
     items: z.array(StoreConfirmInventoryItem),
   })
   .openapi('StoreCartInventoryResponse')
-export type StoreCartInventoryResponse = z.infer<typeof StoreCartInventoryResponse>
+export type StoreCartInventoryResponse = z.input<typeof StoreCartInventoryResponse>

@@ -55,8 +55,8 @@ export function generateCustomerDTO(overrides?: Partial<CustomerDTO>): CustomerD
     firstName: faker.person.firstName(),
     lastName: faker.person.lastName(),
     email: faker.internet.email(),
-    createdAt: faker.date.recent().toISOString(),
-    updatedAt: faker.date.recent().toISOString(),
+    createdAt: faker.date.recent(),
+    updatedAt: faker.date.recent(),
     deletedAt: null,
     ...overrides,
   }

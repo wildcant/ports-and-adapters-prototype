@@ -1,4 +1,5 @@
 import { z } from 'zod'
+import { dateToIso, timestamps } from '../../common.js'
 
 export const AdminPaymentProvider = z
   .object({
@@ -6,7 +7,7 @@ export const AdminPaymentProvider = z
     isEnabled: z.boolean(),
   })
   .openapi('AdminPaymentProvider')
-export type AdminPaymentProvider = z.infer<typeof AdminPaymentProvider>
+export type AdminPaymentProvider = z.input<typeof AdminPaymentProvider>
 
 export const AdminCapture = z
   .object({
@@ -15,10 +16,10 @@ export const AdminCapture = z
     amount: z.number(),
     createdBy: z.string().nullable(),
     metadata: z.record(z.string(), z.unknown()).nullable(),
-    createdAt: z.iso.datetime(),
+    createdAt: dateToIso,
   })
   .openapi('AdminCapture')
-export type AdminCapture = z.infer<typeof AdminCapture>
+export type AdminCapture = z.input<typeof AdminCapture>
 
 export const AdminRefund = z
   .object({
@@ -29,10 +30,10 @@ export const AdminRefund = z
     note: z.string().nullable(),
     createdBy: z.string().nullable(),
     metadata: z.record(z.string(), z.unknown()).nullable(),
-    createdAt: z.iso.datetime(),
+    createdAt: dateToIso,
   })
   .openapi('AdminRefund')
-export type AdminRefund = z.infer<typeof AdminRefund>
+export type AdminRefund = z.input<typeof AdminRefund>
 
 export const AdminPayment = z
   .object({
@@ -44,16 +45,14 @@ export const AdminPayment = z
     providerId: z.string(),
     data: z.record(z.string(), z.unknown()).nullable(),
     metadata: z.record(z.string(), z.unknown()).nullable(),
-    capturedAt: z.iso.datetime().nullable(),
-    canceledAt: z.iso.datetime().nullable(),
-    createdAt: z.iso.datetime(),
-    updatedAt: z.iso.datetime(),
-    deletedAt: z.iso.datetime().nullable(),
+    capturedAt: dateToIso.nullable(),
+    canceledAt: dateToIso.nullable(),
     captures: z.array(AdminCapture).optional(),
     refunds: z.array(AdminRefund).optional(),
+    ...timestamps.shape,
   })
   .openapi('AdminPayment')
-export type AdminPayment = z.infer<typeof AdminPayment>
+export type AdminPayment = z.input<typeof AdminPayment>
 
 export const AdminPaymentSession = z
   .object({
@@ -73,15 +72,13 @@ export const AdminPaymentSession = z
     ]),
     data: z.record(z.string(), z.unknown()),
     context: z.record(z.string(), z.unknown()).nullable(),
-    authorizedAt: z.iso.datetime().nullable(),
+    authorizedAt: dateToIso.nullable(),
     metadata: z.record(z.string(), z.unknown()).nullable(),
-    createdAt: z.iso.datetime(),
-    updatedAt: z.iso.datetime(),
-    deletedAt: z.iso.datetime().nullable(),
     payment: AdminPayment.optional(),
+    ...timestamps.shape,
   })
   .openapi('AdminPaymentSession')
-export type AdminPaymentSession = z.infer<typeof AdminPaymentSession>
+export type AdminPaymentSession = z.input<typeof AdminPaymentSession>
 
 export const AdminPaymentCollection = z
   .object({
@@ -91,17 +88,15 @@ export const AdminPaymentCollection = z
     authorizedAmount: z.number().nullable(),
     capturedAmount: z.number().nullable(),
     refundedAmount: z.number().nullable(),
-    completedAt: z.iso.datetime().nullable(),
+    completedAt: dateToIso.nullable(),
     status: z.enum(['not_paid', 'awaiting', 'authorized', 'partially_authorized', 'completed']),
     metadata: z.record(z.string(), z.unknown()).nullable(),
-    createdAt: z.iso.datetime(),
-    updatedAt: z.iso.datetime(),
-    deletedAt: z.iso.datetime().nullable(),
     paymentSessions: z.array(AdminPaymentSession).optional(),
     payments: z.array(AdminPayment).optional(),
+    ...timestamps.shape,
   })
   .openapi('AdminPaymentCollection')
-export type AdminPaymentCollection = z.infer<typeof AdminPaymentCollection>
+export type AdminPaymentCollection = z.input<typeof AdminPaymentCollection>
 
 export const AdminRefundReason = z
   .object({
@@ -110,9 +105,7 @@ export const AdminRefundReason = z
     code: z.string(),
     description: z.string().nullable(),
     metadata: z.record(z.string(), z.unknown()).nullable(),
-    createdAt: z.iso.datetime(),
-    updatedAt: z.iso.datetime(),
-    deletedAt: z.iso.datetime().nullable(),
+    ...timestamps.shape,
   })
   .openapi('AdminRefundReason')
-export type AdminRefundReason = z.infer<typeof AdminRefundReason>
+export type AdminRefundReason = z.input<typeof AdminRefundReason>

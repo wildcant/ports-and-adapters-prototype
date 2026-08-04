@@ -12,9 +12,9 @@ CREATE TABLE "fulfillment_address" (
 	"postal_code" text,
 	"phone" text,
 	"metadata" text,
-	"created_at" timestamp DEFAULT now() NOT NULL,
-	"updated_at" timestamp DEFAULT now() NOT NULL,
-	"deleted_at" timestamp
+	"created_at" timestamp with time zone DEFAULT now() NOT NULL,
+	"updated_at" timestamp with time zone DEFAULT now() NOT NULL,
+	"deleted_at" timestamp with time zone
 );
 --> statement-breakpoint
 CREATE TABLE "fulfillment_item" (
@@ -27,17 +27,17 @@ CREATE TABLE "fulfillment_item" (
 	"line_item_id" text,
 	"inventory_item_id" text,
 	"metadata" text,
-	"created_at" timestamp DEFAULT now() NOT NULL,
-	"updated_at" timestamp DEFAULT now() NOT NULL,
-	"deleted_at" timestamp
+	"created_at" timestamp with time zone DEFAULT now() NOT NULL,
+	"updated_at" timestamp with time zone DEFAULT now() NOT NULL,
+	"deleted_at" timestamp with time zone
 );
 --> statement-breakpoint
 CREATE TABLE "fulfillment_provider" (
 	"id" text PRIMARY KEY NOT NULL,
 	"is_enabled" boolean DEFAULT true NOT NULL,
-	"created_at" timestamp DEFAULT now() NOT NULL,
-	"updated_at" timestamp DEFAULT now() NOT NULL,
-	"deleted_at" timestamp
+	"created_at" timestamp with time zone DEFAULT now() NOT NULL,
+	"updated_at" timestamp with time zone DEFAULT now() NOT NULL,
+	"deleted_at" timestamp with time zone
 );
 --> statement-breakpoint
 CREATE TABLE "fulfillment_set" (
@@ -45,9 +45,9 @@ CREATE TABLE "fulfillment_set" (
 	"name" text NOT NULL,
 	"type" text NOT NULL,
 	"metadata" text,
-	"created_at" timestamp DEFAULT now() NOT NULL,
-	"updated_at" timestamp DEFAULT now() NOT NULL,
-	"deleted_at" timestamp
+	"created_at" timestamp with time zone DEFAULT now() NOT NULL,
+	"updated_at" timestamp with time zone DEFAULT now() NOT NULL,
+	"deleted_at" timestamp with time zone
 );
 --> statement-breakpoint
 CREATE TABLE "fulfillment" (
@@ -57,14 +57,14 @@ CREATE TABLE "fulfillment" (
 	"shipping_option_id" text,
 	"data" jsonb,
 	"requires_shipping" boolean DEFAULT true NOT NULL,
-	"packed_at" timestamp,
-	"shipped_at" timestamp,
-	"delivered_at" timestamp,
-	"canceled_at" timestamp,
+	"packed_at" timestamp with time zone,
+	"shipped_at" timestamp with time zone,
+	"delivered_at" timestamp with time zone,
+	"canceled_at" timestamp with time zone,
 	"metadata" text,
-	"created_at" timestamp DEFAULT now() NOT NULL,
-	"updated_at" timestamp DEFAULT now() NOT NULL,
-	"deleted_at" timestamp
+	"created_at" timestamp with time zone DEFAULT now() NOT NULL,
+	"updated_at" timestamp with time zone DEFAULT now() NOT NULL,
+	"deleted_at" timestamp with time zone
 );
 --> statement-breakpoint
 CREATE TABLE "geo_zone" (
@@ -76,9 +76,9 @@ CREATE TABLE "geo_zone" (
 	"postal_expression" text,
 	"service_zone_id" text NOT NULL,
 	"metadata" text,
-	"created_at" timestamp DEFAULT now() NOT NULL,
-	"updated_at" timestamp DEFAULT now() NOT NULL,
-	"deleted_at" timestamp
+	"created_at" timestamp with time zone DEFAULT now() NOT NULL,
+	"updated_at" timestamp with time zone DEFAULT now() NOT NULL,
+	"deleted_at" timestamp with time zone
 );
 --> statement-breakpoint
 CREATE TABLE "service_zone" (
@@ -86,9 +86,9 @@ CREATE TABLE "service_zone" (
 	"name" text NOT NULL,
 	"fulfillment_set_id" text NOT NULL,
 	"metadata" text,
-	"created_at" timestamp DEFAULT now() NOT NULL,
-	"updated_at" timestamp DEFAULT now() NOT NULL,
-	"deleted_at" timestamp
+	"created_at" timestamp with time zone DEFAULT now() NOT NULL,
+	"updated_at" timestamp with time zone DEFAULT now() NOT NULL,
+	"deleted_at" timestamp with time zone
 );
 --> statement-breakpoint
 CREATE TABLE "shipping_option" (
@@ -103,9 +103,9 @@ CREATE TABLE "shipping_option" (
 	"data" jsonb,
 	"metadata" text,
 	"is_enabled" boolean DEFAULT true NOT NULL,
-	"created_at" timestamp DEFAULT now() NOT NULL,
-	"updated_at" timestamp DEFAULT now() NOT NULL,
-	"deleted_at" timestamp
+	"created_at" timestamp with time zone DEFAULT now() NOT NULL,
+	"updated_at" timestamp with time zone DEFAULT now() NOT NULL,
+	"deleted_at" timestamp with time zone
 );
 --> statement-breakpoint
 CREATE TABLE "shipping_option_type" (
@@ -113,9 +113,9 @@ CREATE TABLE "shipping_option_type" (
 	"label" text NOT NULL,
 	"description" text,
 	"code" text NOT NULL,
-	"created_at" timestamp DEFAULT now() NOT NULL,
-	"updated_at" timestamp DEFAULT now() NOT NULL,
-	"deleted_at" timestamp
+	"created_at" timestamp with time zone DEFAULT now() NOT NULL,
+	"updated_at" timestamp with time zone DEFAULT now() NOT NULL,
+	"deleted_at" timestamp with time zone
 );
 --> statement-breakpoint
 CREATE TABLE "shipping_profile" (
@@ -123,9 +123,9 @@ CREATE TABLE "shipping_profile" (
 	"name" text NOT NULL,
 	"type" text NOT NULL,
 	"metadata" text,
-	"created_at" timestamp DEFAULT now() NOT NULL,
-	"updated_at" timestamp DEFAULT now() NOT NULL,
-	"deleted_at" timestamp
+	"created_at" timestamp with time zone DEFAULT now() NOT NULL,
+	"updated_at" timestamp with time zone DEFAULT now() NOT NULL,
+	"deleted_at" timestamp with time zone
 );
 --> statement-breakpoint
 ALTER TABLE "fulfillment_address" ADD CONSTRAINT "fulfillment_address_fulfillment_id_fulfillment_id_fk" FOREIGN KEY ("fulfillment_id") REFERENCES "public"."fulfillment"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint

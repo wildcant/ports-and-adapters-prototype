@@ -9,9 +9,9 @@ export type FulfillmentSetDTO = {
   name: string
   type: string
   metadata: string | null
-  createdAt: string
-  updatedAt: string
-  deletedAt: string | null
+  createdAt: Date
+  updatedAt: Date
+  deletedAt: Date | null
 }
 
 export type ServiceZoneDTO = {
@@ -19,9 +19,9 @@ export type ServiceZoneDTO = {
   name: string
   fulfillmentSetId: string
   metadata: string | null
-  createdAt: string
-  updatedAt: string
-  deletedAt: string | null
+  createdAt: Date
+  updatedAt: Date
+  deletedAt: Date | null
 }
 
 export type GeoZoneDTO = {
@@ -33,9 +33,9 @@ export type GeoZoneDTO = {
   postalExpression: string | null
   serviceZoneId: string
   metadata: string | null
-  createdAt: string
-  updatedAt: string
-  deletedAt: string | null
+  createdAt: Date
+  updatedAt: Date
+  deletedAt: Date | null
 }
 
 export type ShippingProfileDTO = {
@@ -43,9 +43,9 @@ export type ShippingProfileDTO = {
   name: string
   type: string
   metadata: string | null
-  createdAt: string
-  updatedAt: string
-  deletedAt: string | null
+  createdAt: Date
+  updatedAt: Date
+  deletedAt: Date | null
 }
 
 export type ShippingOptionTypeDTO = {
@@ -53,9 +53,9 @@ export type ShippingOptionTypeDTO = {
   label: string
   description: string | null
   code: string
-  createdAt: string
-  updatedAt: string
-  deletedAt: string | null
+  createdAt: Date
+  updatedAt: Date
+  deletedAt: Date | null
 }
 
 export type ShippingOptionDTO = {
@@ -70,15 +70,15 @@ export type ShippingOptionDTO = {
   data: unknown
   metadata: string | null
   isEnabled: boolean
-  createdAt: string
-  updatedAt: string
-  deletedAt: string | null
+  createdAt: Date
+  updatedAt: Date
+  deletedAt: Date | null
 }
 
 export type FulfillmentProviderDTO = {
   id: string
   isEnabled: boolean
-  deletedAt: string | null
+  deletedAt: Date | null
 }
 
 export type FulfillmentDTO = {
@@ -88,14 +88,14 @@ export type FulfillmentDTO = {
   shippingOptionId: string | null
   data: unknown
   requiresShipping: boolean
-  packedAt: string | null
-  shippedAt: string | null
-  deliveredAt: string | null
-  canceledAt: string | null
+  packedAt: Date | null
+  shippedAt: Date | null
+  deliveredAt: Date | null
+  canceledAt: Date | null
   metadata: string | null
-  createdAt: string
-  updatedAt: string
-  deletedAt: string | null
+  createdAt: Date
+  updatedAt: Date
+  deletedAt: Date | null
 }
 
 export type FulfillmentItemDTO = {
@@ -108,8 +108,8 @@ export type FulfillmentItemDTO = {
   lineItemId: string | null
   inventoryItemId: string | null
   metadata: string | null
-  createdAt: string
-  deletedAt: string | null
+  createdAt: Date
+  deletedAt: Date | null
 }
 
 export type FulfillmentAddressDTO = {
@@ -126,8 +126,8 @@ export type FulfillmentAddressDTO = {
   postalCode: string | null
   phone: string | null
   metadata: string | null
-  createdAt: string
-  deletedAt: string | null
+  createdAt: Date
+  deletedAt: Date | null
 }
 
 // Filterable types

@@ -16,8 +16,8 @@ export type InventoryItemDTO = {
   title: string | null
   thumbnail: string | null
   metadata: string | null
-  createdAt: string
-  deletedAt: string | null
+  createdAt: Date
+  deletedAt: Date | null
 }
 
 export interface FilterableInventoryItemProps extends BaseFilterable<FilterableInventoryItemProps> {
@@ -25,7 +25,7 @@ export interface FilterableInventoryItemProps extends BaseFilterable<FilterableI
   sku?: string | string[] | OperatorMap<string>
   title?: string | OperatorMap<string>
   requiresShipping?: boolean
-  createdAt?: OperatorMap<string>
+  createdAt?: OperatorMap<Date>
 }
 
 export type InventoryLevelDTO = {
@@ -36,8 +36,8 @@ export type InventoryLevelDTO = {
   reservedQuantity: number
   incomingQuantity: number
   metadata: string | null
-  createdAt: string
-  deletedAt: string | null
+  createdAt: Date
+  deletedAt: Date | null
 }
 
 export interface FilterableInventoryLevelProps extends BaseFilterable<FilterableInventoryLevelProps> {
@@ -46,7 +46,7 @@ export interface FilterableInventoryLevelProps extends BaseFilterable<Filterable
   locationId?: string | string[]
   stockedQuantity?: OperatorMap<number>
   reservedQuantity?: OperatorMap<number>
-  createdAt?: OperatorMap<string>
+  createdAt?: OperatorMap<Date>
 }
 
 export type ReservationItemDTO = {
@@ -60,8 +60,8 @@ export type ReservationItemDTO = {
   description: string | null
   createdBy: string | null
   metadata: string | null
-  createdAt: string
-  deletedAt: string | null
+  createdAt: Date
+  deletedAt: Date | null
 }
 
 export interface FilterableReservationItemProps extends BaseFilterable<FilterableReservationItemProps> {
@@ -69,5 +69,5 @@ export interface FilterableReservationItemProps extends BaseFilterable<Filterabl
   inventoryItemId?: string | string[]
   locationId?: string | string[]
   lineItemId?: string | string[]
-  createdAt?: OperatorMap<string>
+  createdAt?: OperatorMap<Date>
 }

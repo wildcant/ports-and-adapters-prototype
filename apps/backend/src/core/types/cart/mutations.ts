@@ -61,5 +61,5 @@ export type UpdateCartDTO = {
   shippingAddressId?: string | null | undefined
   billingAddressId?: string | null | undefined
   metadata?: string | null | undefined
-  completedAt?: string | null | undefined
+  completedAt?: Date | null | undefined
 }

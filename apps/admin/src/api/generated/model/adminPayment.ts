@@ -24,10 +24,10 @@ export interface AdminPayment {
   capturedAt: string | null;
   /** @nullable */
   canceledAt: string | null;
+  captures?: AdminCapture[];
+  refunds?: AdminRefund[];
   createdAt: string;
   updatedAt: string;
   /** @nullable */
   deletedAt: string | null;
-  captures?: AdminCapture[];
-  refunds?: AdminRefund[];
 }

@@ -80,7 +80,7 @@ describe('ProductModuleService', () => {
   })
 
   test('listAndCountProducts with created_at range filter', async ({ expect, dto }) => {
-    const oneMinuteAgo = new Date(Date.now() - 60_000).toISOString()
+    const oneMinuteAgo = new Date(Date.now() - 60_000)
     await service.createProducts([dto.generate.createProduct(), dto.generate.createProduct()])
 
     const [rows, count] = await service.listAndCountProducts({
@@ -99,7 +99,7 @@ describe('ProductModuleService', () => {
     expect(product.handle).toBe('my-cool-product')
     expect(product.id).toBeDefined()
     expect(product.status).toBe('draft')
-    expect(product.createdAt).toBeTypeOf('string')
+    expect(product.createdAt).toBeInstanceOf(Date)
   })
 
   test('updateProducts', async ({ expect, dto }) => {

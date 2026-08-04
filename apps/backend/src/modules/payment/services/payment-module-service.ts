@@ -242,7 +242,7 @@ export class PaymentModuleService implements IPaymentModuleService {
       {
         status,
         data: provider.data ?? session.data,
-        authorizedAt: status === 'authorized' || status === 'captured' ? new Date().toISOString() : null,
+        authorizedAt: status === 'authorized' || status === 'captured' ? new Date() : null,
       },
       context,
     )
@@ -351,7 +351,7 @@ export class PaymentModuleService implements IPaymentModuleService {
       // Mark payment as fully captured once all funds are accounted for
       const totalCaptured = alreadyCaptured + captureAmount
       if (totalCaptured >= payment.amount) {
-        await this.paymentRepository.update([payment.id], { capturedAt: new Date().toISOString() }, ctx)
+        await this.paymentRepository.update([payment.id], { capturedAt: new Date() }, ctx)
       }
 
       await this.maybeUpdatePaymentCollection_(payment.paymentCollectionId, ctx)
@@ -429,7 +429,7 @@ export class PaymentModuleService implements IPaymentModuleService {
         data: payment.data ?? undefined,
       })
 
-      await this.paymentRepository.update([payment.id], { canceledAt: new Date().toISOString() }, ctx)
+      await this.paymentRepository.update([payment.id], { canceledAt: new Date() }, ctx)
 
       await this.maybeUpdatePaymentCollection_(payment.paymentCollectionId, ctx)
 
@@ -608,11 +608,11 @@ export class PaymentModuleService implements IPaymentModuleService {
 
     // Derive status (check most advanced status first)
     let status: PaymentCollectionStatus = 'not_paid'
-    let completedAt: string | null = collection.completedAt
+    let completedAt: Date | null = collection.completedAt
 
     if (capturedAmount >= collection.amount) {
       status = 'completed'
-      completedAt = completedAt ?? new Date().toISOString()
+      completedAt = completedAt ?? new Date()
     } else if (authorizedAmount >= collection.amount) {
       status = 'authorized'
     } else if (authorizedAmount > 0) {

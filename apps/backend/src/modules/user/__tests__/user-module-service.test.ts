@@ -26,7 +26,7 @@ describe('UserModuleService', () => {
       email: input[0]?.email,
     })
     expect(result[0]?.id).toBeDefined()
-    expect(result[0]?.createdAt).toBeTypeOf('string')
+    expect(result[0]?.createdAt).toBeInstanceOf(Date)
   })
 
   test('retrieveUser', async ({ expect, dto }) => {

@@ -18,7 +18,7 @@ export const paymentSessionTable = pgTable(
   {
     id: text().primaryKey().default(sql`CONCAT('payses_', REPLACE(gen_random_uuid()::text, '-', ''))`),
     amount: integer().notNull(),
-    authorizedAt: timestamp({ mode: 'string' }),
+    authorizedAt: timestamp({ withTimezone: true }),
     context: jsonb().$type<Record<string, unknown> | null>(),
     currencyCode: text().notNull(),
     data: jsonb().$type<Record<string, unknown>>().notNull().default({}),

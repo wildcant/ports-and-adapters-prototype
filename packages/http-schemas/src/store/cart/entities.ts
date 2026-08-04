@@ -1,4 +1,5 @@
 import { z } from 'zod'
+import { dateToIso, timestamps } from '../../common.js'
 
 export const StoreCart = z
   .object({
@@ -12,13 +13,11 @@ export const StoreCart = z
     shippingAddressId: z.string().nullable(),
     billingAddressId: z.string().nullable(),
     metadata: z.string().nullable(),
-    completedAt: z.iso.datetime().nullable(),
-    createdAt: z.iso.datetime(),
-    updatedAt: z.iso.datetime(),
-    deletedAt: z.iso.datetime().nullable(),
+    completedAt: dateToIso.nullable(),
+    ...timestamps.shape,
   })
   .openapi('StoreCart')
-export type StoreCart = z.infer<typeof StoreCart>
+export type StoreCart = z.input<typeof StoreCart>
 
 export const StoreCartLineItem = z
   .object({
@@ -46,12 +45,10 @@ export const StoreCartLineItem = z
     compareAtUnitPrice: z.number().nullable(),
     unitPrice: z.number(),
     metadata: z.string().nullable(),
-    createdAt: z.iso.datetime(),
-    updatedAt: z.iso.datetime(),
-    deletedAt: z.iso.datetime().nullable(),
+    ...timestamps.shape,
   })
   .openapi('StoreCartLineItem')
-export type StoreCartLineItem = z.infer<typeof StoreCartLineItem>
+export type StoreCartLineItem = z.input<typeof StoreCartLineItem>
 
 export const StoreCartShippingMethod = z
   .object({
@@ -64,12 +61,10 @@ export const StoreCartShippingMethod = z
     shippingOptionId: z.string().nullable(),
     data: z.string().nullable(),
     metadata: z.string().nullable(),
-    createdAt: z.iso.datetime(),
-    updatedAt: z.iso.datetime(),
-    deletedAt: z.iso.datetime().nullable(),
+    ...timestamps.shape,
   })
   .openapi('StoreCartShippingMethod')
-export type StoreCartShippingMethod = z.infer<typeof StoreCartShippingMethod>
+export type StoreCartShippingMethod = z.input<typeof StoreCartShippingMethod>
 
 export const StoreConfirmInventoryItem = z
   .object({
@@ -81,4 +76,4 @@ export const StoreConfirmInventoryItem = z
     locationIds: z.array(z.string()),
   })
   .openapi('StoreConfirmInventoryItem')
-export type StoreConfirmInventoryItem = z.infer<typeof StoreConfirmInventoryItem>
+export type StoreConfirmInventoryItem = z.input<typeof StoreConfirmInventoryItem>

@@ -22,8 +22,8 @@ export function generateUserDTO(overrides?: Partial<UserDTO>): UserDTO {
     id: `usr_${faker.string.alphanumeric(32)}`,
     email: faker.internet.email(),
     name: faker.person.fullName(),
-    createdAt: faker.date.recent().toISOString(),
-    updatedAt: faker.date.recent().toISOString(),
+    createdAt: faker.date.recent(),
+    updatedAt: faker.date.recent(),
     deletedAt: null,
     ...overrides,
   }

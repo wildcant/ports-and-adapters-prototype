@@ -9,6 +9,7 @@ import {
 } from '#/api/generated/customers/customers'
 import type {
   AdminCreateCustomer,
+  AdminCreateCustomersResponse,
   AdminCustomerListResponse,
   AdminCustomerResponse,
   AdminUpdateCustomer,
@@ -57,7 +58,7 @@ export const useCustomers = (
 // --- Mutation hooks ---
 
 export const useCreateCustomer = (
-  options?: UseMutationOptions<AdminCustomerListResponse, Error, AdminCreateCustomer[]>,
+  options?: UseMutationOptions<AdminCreateCustomersResponse, Error, AdminCreateCustomer[]>,
 ) => {
   const { onSuccess, ...rest } = options ?? {}
   return useMutation({

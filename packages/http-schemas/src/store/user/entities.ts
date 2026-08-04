@@ -1,13 +1,12 @@
 import { z } from 'zod'
+import { timestamps } from '../../common.js'
 
 export const User = z
   .object({
     id: z.string(),
     name: z.string(),
     email: z.string(),
-    createdAt: z.iso.datetime(),
-    updatedAt: z.iso.datetime(),
-    deletedAt: z.iso.datetime().nullable(),
+    ...timestamps.shape,
   })
   .openapi('User')
-export type User = z.infer<typeof User>
+export type User = z.input<typeof User>

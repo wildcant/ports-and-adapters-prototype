@@ -1,5 +1,16 @@
 import { z } from 'zod'
 
+export const dateToIso = z
+  .date()
+  .transform((d) => d.toISOString())
+  .pipe(z.iso.datetime({ offset: true }))
+
+export const timestamps = z.object({
+  createdAt: dateToIso,
+  updatedAt: dateToIso,
+  deletedAt: dateToIso.nullable(),
+})
+
 export const IdParams = z.object({ id: z.string().min(1) })
 export type IdParams = z.infer<typeof IdParams>
 
@@ -16,6 +27,20 @@ export function createOperatorMap() {
     $ilike: t,
     $in: z.array(z.string()).optional(),
     $nin: z.array(z.string()).optional(),
+  })
+}
+
+export function createDateOperatorMap() {
+  const t = z.coerce.date().optional()
+  return z.object({
+    $eq: t,
+    $ne: t,
+    $gt: t,
+    $gte: t,
+    $lt: t,
+    $lte: t,
+    $in: z.array(z.coerce.date()).optional(),
+    $nin: z.array(z.coerce.date()).optional(),
   })
 }
 

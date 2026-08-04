@@ -1,9 +1,10 @@
-import { AdminCreateCustomer, type AdminCustomerListResponse } from '@proteus/http-schemas/admin'
+import { AdminCreateCustomer } from '@proteus/http-schemas/admin'
+import type { AdminCreateCustomersResponse } from '#/api/generated/model'
 import { useCreateCustomer } from '#/features/customers/api/customers'
 import type { SubmitFormParams } from '#/lib/form.ts'
 import { useAppForm } from '#/lib/form-hook.ts'
 
-export type CreateCustomerFormParams = SubmitFormParams<AdminCustomerListResponse>
+export type CreateCustomerFormParams = SubmitFormParams<AdminCreateCustomersResponse>
 
 export function useCreateCustomerForm(params?: CreateCustomerFormParams) {
   const createMutation = useCreateCustomer()

@@ -12,8 +12,8 @@ export function generateCustomer(overrides?: Partial<CreateCustomer>): CreateCus
     lastName: faker.person.lastName(),
     email: faker.internet.email(),
     status: faker.helpers.arrayElement(['active', 'inactive']),
-    createdAt: faker.date.recent().toISOString(),
-    updatedAt: faker.date.recent().toISOString(),
+    createdAt: faker.date.recent(),
+    updatedAt: faker.date.recent(),
     deletedAt: null,
     ...overrides,
   }

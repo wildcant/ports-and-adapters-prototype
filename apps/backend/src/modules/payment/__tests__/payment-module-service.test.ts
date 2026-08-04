@@ -76,7 +76,7 @@ describe('PaymentModuleService', () => {
       expect(result[0]).toMatchObject({ amount: 10000, currencyCode: 'usd', status: 'not_paid' })
       expect(result[1]).toMatchObject({ amount: 5000, currencyCode: 'usd', status: 'not_paid' })
       expect(result[0]?.id).toBeDefined()
-      expect(result[0]?.createdAt).toBeTypeOf('string')
+      expect(result[0]?.createdAt).toBeInstanceOf(Date)
     })
 
     test('retrievePaymentCollection', async ({ expect, dto }) => {
@@ -232,7 +232,7 @@ describe('PaymentModuleService', () => {
 
       const captured = await service.capturePayment({ paymentId: authorized.id })
 
-      expect(captured.capturedAt).toBeTypeOf('string')
+      expect(captured.capturedAt).toBeInstanceOf(Date)
       expect(captured.captures).toHaveLength(1)
       assertDefined(captured.captures)
       expect(captured.captures[0]?.amount).toBe(10000)
@@ -254,7 +254,7 @@ describe('PaymentModuleService', () => {
 
       const secondCapture = await service.capturePayment({ paymentId: authorized.id, amount: 6000 })
 
-      expect(secondCapture.capturedAt).toBeTypeOf('string')
+      expect(secondCapture.capturedAt).toBeInstanceOf(Date)
       expect(secondCapture.captures).toHaveLength(2)
     })
 
@@ -300,7 +300,7 @@ describe('PaymentModuleService', () => {
 
       const canceled = await service.cancelPayment(authorized.id)
 
-      expect(canceled.canceledAt).toBeTypeOf('string')
+      expect(canceled.canceledAt).toBeInstanceOf(Date)
       expect(mockProvider.cancelPayment).toHaveBeenCalledOnce()
     })
 
@@ -343,7 +343,7 @@ describe('PaymentModuleService', () => {
       const afterCapture = await service.retrievePaymentCollection(collection.id)
       expect(afterCapture.status).toBe('completed')
       expect(afterCapture.capturedAmount).toBe(10000)
-      expect(afterCapture.completedAt).toBeTypeOf('string')
+      expect(afterCapture.completedAt).toBeInstanceOf(Date)
     })
 
     test('partial authorization sets partially_authorized', async ({ expect, dto }) => {

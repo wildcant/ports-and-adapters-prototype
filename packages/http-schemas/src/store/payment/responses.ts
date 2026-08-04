@@ -4,14 +4,14 @@ import { StorePaymentCollection, StorePaymentProvider, StorePaymentSession } fro
 export const StorePaymentProviderListResponse = z
   .object({ paymentProviders: z.array(StorePaymentProvider) })
   .openapi('StorePaymentProviderListResponse')
-export type StorePaymentProviderListResponse = z.infer<typeof StorePaymentProviderListResponse>
+export type StorePaymentProviderListResponse = z.input<typeof StorePaymentProviderListResponse>
 
 export const StoreCreatePaymentCollectionResponse = z
   .object({ paymentCollection: StorePaymentCollection })
   .openapi('StoreCreatePaymentCollectionResponse')
-export type StoreCreatePaymentCollectionResponse = z.infer<typeof StoreCreatePaymentCollectionResponse>
+export type StoreCreatePaymentCollectionResponse = z.input<typeof StoreCreatePaymentCollectionResponse>
 
 export const StoreCreatePaymentSessionResponse = z
   .object({ paymentSession: StorePaymentSession })
   .openapi('StoreCreatePaymentSessionResponse')
-export type StoreCreatePaymentSessionResponse = z.infer<typeof StoreCreatePaymentSessionResponse>
+export type StoreCreatePaymentSessionResponse = z.input<typeof StoreCreatePaymentSessionResponse>

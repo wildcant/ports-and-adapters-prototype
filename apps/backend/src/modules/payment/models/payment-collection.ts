@@ -17,7 +17,7 @@ export const paymentCollectionTable = pgTable(
     amount: integer().notNull(),
     authorizedAmount: integer(),
     capturedAmount: integer(),
-    completedAt: timestamp({ mode: 'string' }),
+    completedAt: timestamp({ withTimezone: true }),
     currencyCode: text().notNull().default('usd'),
     metadata: jsonb().$type<Record<string, unknown> | null>(),
     refundedAmount: integer(),

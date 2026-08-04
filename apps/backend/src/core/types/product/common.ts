@@ -22,9 +22,9 @@ export type ProductDTO = {
   discountable: boolean
   externalId: string | null
   metadata: string | null
-  createdAt: string
-  updatedAt: string
-  deletedAt: string | null
+  createdAt: Date
+  updatedAt: Date
+  deletedAt: Date | null
 }
 
 export interface FilterableProductProps extends BaseFilterable<FilterableProductProps> {
@@ -33,7 +33,7 @@ export interface FilterableProductProps extends BaseFilterable<FilterableProduct
   handle?: string | string[]
   status?: ProductStatusType | ProductStatusType[]
   isGiftcard?: boolean
-  createdAt?: OperatorMap<string>
+  createdAt?: OperatorMap<Date>
 }
 
 export type ProductVariantDTO = {
@@ -56,9 +56,9 @@ export type ProductVariantDTO = {
   width: number | null
   variantRank: number | null
   metadata: string | null
-  createdAt: string
-  updatedAt: string
-  deletedAt: string | null
+  createdAt: Date
+  updatedAt: Date
+  deletedAt: Date | null
 }
 
 export interface FilterableProductVariantProps extends BaseFilterable<FilterableProductVariantProps> {
@@ -66,7 +66,7 @@ export interface FilterableProductVariantProps extends BaseFilterable<Filterable
   productId?: string | string[]
   sku?: string | string[] | OperatorMap<string>
   title?: string | OperatorMap<string>
-  createdAt?: OperatorMap<string>
+  createdAt?: OperatorMap<Date>
 }
 
 export type ProductOptionDTO = {
@@ -74,9 +74,9 @@ export type ProductOptionDTO = {
   productId: string
   title: string
   metadata: string | null
-  createdAt: string
-  updatedAt: string
-  deletedAt: string | null
+  createdAt: Date
+  updatedAt: Date
+  deletedAt: Date | null
 }
 
 export interface FilterableProductOptionProps extends BaseFilterable<FilterableProductOptionProps> {
@@ -91,9 +91,9 @@ export type ProductOptionValueDTO = {
   value: string
   rank: number | null
   metadata: string | null
-  createdAt: string
-  updatedAt: string
-  deletedAt: string | null
+  createdAt: Date
+  updatedAt: Date
+  deletedAt: Date | null
 }
 
 export interface FilterableProductOptionValueProps extends BaseFilterable<FilterableProductOptionValueProps> {
@@ -108,9 +108,9 @@ export type ProductImageDTO = {
   url: string
   rank: number
   metadata: string | null
-  createdAt: string
-  updatedAt: string
-  deletedAt: string | null
+  createdAt: Date
+  updatedAt: Date
+  deletedAt: Date | null
 }
 
 export interface FilterableProductImageProps extends BaseFilterable<FilterableProductImageProps> {

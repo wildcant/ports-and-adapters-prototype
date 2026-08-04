@@ -1,4 +1,5 @@
 import { z } from 'zod'
+import { dateToIso, timestamps } from '../../common.js'
 
 export const StorePaymentProvider = z
   .object({
@@ -6,7 +7,7 @@ export const StorePaymentProvider = z
     isEnabled: z.boolean(),
   })
   .openapi('StorePaymentProvider')
-export type StorePaymentProvider = z.infer<typeof StorePaymentProvider>
+export type StorePaymentProvider = z.input<typeof StorePaymentProvider>
 
 export const StorePaymentSession = z
   .object({
@@ -26,14 +27,12 @@ export const StorePaymentSession = z
     ]),
     data: z.record(z.string(), z.unknown()),
     context: z.record(z.string(), z.unknown()).nullable(),
-    authorizedAt: z.iso.datetime().nullable(),
+    authorizedAt: dateToIso.nullable(),
     metadata: z.record(z.string(), z.unknown()).nullable(),
-    createdAt: z.iso.datetime(),
-    updatedAt: z.iso.datetime(),
-    deletedAt: z.iso.datetime().nullable(),
+    ...timestamps.shape,
   })
   .openapi('StorePaymentSession')
-export type StorePaymentSession = z.infer<typeof StorePaymentSession>
+export type StorePaymentSession = z.input<typeof StorePaymentSession>
 
 export const StorePaymentCollection = z
   .object({
@@ -43,12 +42,10 @@ export const StorePaymentCollection = z
     authorizedAmount: z.number().nullable(),
     capturedAmount: z.number().nullable(),
     refundedAmount: z.number().nullable(),
-    completedAt: z.iso.datetime().nullable(),
+    completedAt: dateToIso.nullable(),
     status: z.enum(['not_paid', 'awaiting', 'authorized', 'partially_authorized', 'completed']),
     metadata: z.record(z.string(), z.unknown()).nullable(),
-    createdAt: z.iso.datetime(),
-    updatedAt: z.iso.datetime(),
-    deletedAt: z.iso.datetime().nullable(),
+    ...timestamps.shape,
   })
   .openapi('StorePaymentCollection')
-export type StorePaymentCollection = z.infer<typeof StorePaymentCollection>
+export type StorePaymentCollection = z.input<typeof StorePaymentCollection>

@@ -21,15 +21,19 @@ q?: string;
 allowBackorder?: boolean | string;
 manageInventory?: boolean | string;
 createdAt?: {
-  $eq?: string;
-  $ne?: string;
-  $gt?: string;
-  $gte?: string;
-  $lt?: string;
-  $lte?: string;
-  $like?: string;
-  $ilike?: string;
-  $in?: string[];
-  $nin?: string[];
+  /** @nullable */
+  $eq?: string | null;
+  /** @nullable */
+  $ne?: string | null;
+  /** @nullable */
+  $gt?: string | null;
+  /** @nullable */
+  $gte?: string | null;
+  /** @nullable */
+  $lt?: string | null;
+  /** @nullable */
+  $lte?: string | null;
+  $in?: (string | null)[];
+  $nin?: (string | null)[];
 };
 };

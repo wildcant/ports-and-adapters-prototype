@@ -534,18 +534,6 @@
             "type": ["object", "null"],
             "additionalProperties": {}
           },
-          "createdAt": {
-            "type": "string",
-            "format": "date-time"
-          },
-          "updatedAt": {
-            "type": "string",
-            "format": "date-time"
-          },
-          "deletedAt": {
-            "type": ["string", "null"],
-            "format": "date-time"
-          },
           "paymentSessions": {
             "type": "array",
             "items": {
@@ -557,6 +545,18 @@
             "items": {
               "$ref": "#/components/schemas/AdminPayment"
             }
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "updatedAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "deletedAt": {
+            "type": ["string", "null"],
+            "format": "date-time"
           }
         },
         "required": [
@@ -612,6 +612,9 @@
             "type": ["object", "null"],
             "additionalProperties": {}
           },
+          "payment": {
+            "$ref": "#/components/schemas/AdminPayment"
+          },
           "createdAt": {
             "type": "string",
             "format": "date-time"
@@ -623,9 +626,6 @@
           "deletedAt": {
             "type": ["string", "null"],
             "format": "date-time"
-          },
-          "payment": {
-            "$ref": "#/components/schemas/AdminPayment"
           }
         },
         "required": [
@@ -681,18 +681,6 @@
             "type": ["string", "null"],
             "format": "date-time"
           },
-          "createdAt": {
-            "type": "string",
-            "format": "date-time"
-          },
-          "updatedAt": {
-            "type": "string",
-            "format": "date-time"
-          },
-          "deletedAt": {
-            "type": ["string", "null"],
-            "format": "date-time"
-          },
           "captures": {
             "type": "array",
             "items": {
@@ -704,6 +692,18 @@
             "items": {
               "$ref": "#/components/schemas/AdminRefund"
             }
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "updatedAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "deletedAt": {
+            "type": ["string", "null"],
+            "format": "date-time"
           }
         },
         "required": [
@@ -919,6 +919,18 @@
           },
           "metadata": {
             "type": ["string", "null"]
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "updatedAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "deletedAt": {
+            "type": ["string", "null"],
+            "format": "date-time"
           }
         },
         "required": [
@@ -940,7 +952,10 @@
           "material",
           "discountable",
           "externalId",
-          "metadata"
+          "metadata",
+          "createdAt",
+          "updatedAt",
+          "deletedAt"
         ]
       },
       "AdminCreateProductResponse": {
@@ -2580,39 +2595,41 @@
               "type": "object",
               "properties": {
                 "$eq": {
-                  "type": "string"
+                  "type": ["string", "null"],
+                  "format": "date-time"
                 },
                 "$ne": {
-                  "type": "string"
+                  "type": ["string", "null"],
+                  "format": "date-time"
                 },
                 "$gt": {
-                  "type": "string"
+                  "type": ["string", "null"],
+                  "format": "date-time"
                 },
                 "$gte": {
-                  "type": "string"
+                  "type": ["string", "null"],
+                  "format": "date-time"
                 },
                 "$lt": {
-                  "type": "string"
+                  "type": ["string", "null"],
+                  "format": "date-time"
                 },
                 "$lte": {
-                  "type": "string"
-                },
-                "$like": {
-                  "type": "string"
-                },
-                "$ilike": {
-                  "type": "string"
+                  "type": ["string", "null"],
+                  "format": "date-time"
                 },
                 "$in": {
                   "type": "array",
                   "items": {
-                    "type": "string"
+                    "type": ["string", "null"],
+                    "format": "date-time"
                   }
                 },
                 "$nin": {
                   "type": "array",
                   "items": {
-                    "type": "string"
+                    "type": ["string", "null"],
+                    "format": "date-time"
                   }
                 }
               }
@@ -2868,39 +2885,41 @@
               "type": "object",
               "properties": {
                 "$eq": {
-                  "type": "string"
+                  "type": ["string", "null"],
+                  "format": "date-time"
                 },
                 "$ne": {
-                  "type": "string"
+                  "type": ["string", "null"],
+                  "format": "date-time"
                 },
                 "$gt": {
-                  "type": "string"
+                  "type": ["string", "null"],
+                  "format": "date-time"
                 },
                 "$gte": {
-                  "type": "string"
+                  "type": ["string", "null"],
+                  "format": "date-time"
                 },
                 "$lt": {
-                  "type": "string"
+                  "type": ["string", "null"],
+                  "format": "date-time"
                 },
                 "$lte": {
-                  "type": "string"
-                },
-                "$like": {
-                  "type": "string"
-                },
-                "$ilike": {
-                  "type": "string"
+                  "type": ["string", "null"],
+                  "format": "date-time"
                 },
                 "$in": {
                   "type": "array",
                   "items": {
-                    "type": "string"
+                    "type": ["string", "null"],
+                    "format": "date-time"
                   }
                 },
                 "$nin": {
                   "type": "array",
                   "items": {
-                    "type": "string"
+                    "type": ["string", "null"],
+                    "format": "date-time"
                   }
                 }
               }

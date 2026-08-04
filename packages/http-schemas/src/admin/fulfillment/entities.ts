@@ -1,13 +1,14 @@
 import { z } from 'zod'
+import { dateToIso, timestamps } from '../../common.js'
 
 export const AdminFulfillmentProvider = z
   .object({
     id: z.string(),
     isEnabled: z.boolean(),
-    deletedAt: z.iso.datetime().nullable(),
+    deletedAt: dateToIso.nullable(),
   })
   .openapi('AdminFulfillmentProvider')
-export type AdminFulfillmentProvider = z.infer<typeof AdminFulfillmentProvider>
+export type AdminFulfillmentProvider = z.input<typeof AdminFulfillmentProvider>
 
 export const AdminFulfillmentSet = z
   .object({
@@ -15,12 +16,10 @@ export const AdminFulfillmentSet = z
     name: z.string(),
     type: z.string(),
     metadata: z.string().nullable(),
-    createdAt: z.iso.datetime(),
-    updatedAt: z.iso.datetime(),
-    deletedAt: z.iso.datetime().nullable(),
+    ...timestamps.shape,
   })
   .openapi('AdminFulfillmentSet')
-export type AdminFulfillmentSet = z.infer<typeof AdminFulfillmentSet>
+export type AdminFulfillmentSet = z.input<typeof AdminFulfillmentSet>
 
 export const AdminServiceZone = z
   .object({
@@ -28,12 +27,10 @@ export const AdminServiceZone = z
     name: z.string(),
     fulfillmentSetId: z.string(),
     metadata: z.string().nullable(),
-    createdAt: z.iso.datetime(),
-    updatedAt: z.iso.datetime(),
-    deletedAt: z.iso.datetime().nullable(),
+    ...timestamps.shape,
   })
   .openapi('AdminServiceZone')
-export type AdminServiceZone = z.infer<typeof AdminServiceZone>
+export type AdminServiceZone = z.input<typeof AdminServiceZone>
 
 export const AdminGeoZone = z
   .object({
@@ -45,12 +42,10 @@ export const AdminGeoZone = z
     postalExpression: z.string().nullable(),
     serviceZoneId: z.string(),
     metadata: z.string().nullable(),
-    createdAt: z.iso.datetime(),
-    updatedAt: z.iso.datetime(),
-    deletedAt: z.iso.datetime().nullable(),
+    ...timestamps.shape,
   })
   .openapi('AdminGeoZone')
-export type AdminGeoZone = z.infer<typeof AdminGeoZone>
+export type AdminGeoZone = z.input<typeof AdminGeoZone>
 
 export const AdminShippingProfile = z
   .object({
@@ -58,12 +53,10 @@ export const AdminShippingProfile = z
     name: z.string(),
     type: z.string(),
     metadata: z.string().nullable(),
-    createdAt: z.iso.datetime(),
-    updatedAt: z.iso.datetime(),
-    deletedAt: z.iso.datetime().nullable(),
+    ...timestamps.shape,
   })
   .openapi('AdminShippingProfile')
-export type AdminShippingProfile = z.infer<typeof AdminShippingProfile>
+export type AdminShippingProfile = z.input<typeof AdminShippingProfile>
 
 export const AdminShippingOption = z
   .object({
@@ -78,9 +71,7 @@ export const AdminShippingOption = z
     data: z.unknown(),
     metadata: z.string().nullable(),
     isEnabled: z.boolean(),
-    createdAt: z.iso.datetime(),
-    updatedAt: z.iso.datetime(),
-    deletedAt: z.iso.datetime().nullable(),
+    ...timestamps.shape,
   })
   .openapi('AdminShippingOption')
-export type AdminShippingOption = z.infer<typeof AdminShippingOption>
+export type AdminShippingOption = z.input<typeof AdminShippingOption>

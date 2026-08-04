@@ -1,4 +1,5 @@
 import { z } from 'zod'
+import { timestamps } from '../../common.js'
 
 export const StoreShippingOption = z
   .object({
@@ -13,9 +14,7 @@ export const StoreShippingOption = z
     data: z.unknown(),
     metadata: z.string().nullable(),
     isEnabled: z.boolean(),
-    createdAt: z.iso.datetime(),
-    updatedAt: z.iso.datetime(),
-    deletedAt: z.iso.datetime().nullable(),
+    ...timestamps.shape,
   })
   .openapi('StoreShippingOption')
-export type StoreShippingOption = z.infer<typeof StoreShippingOption>
+export type StoreShippingOption = z.input<typeof StoreShippingOption>

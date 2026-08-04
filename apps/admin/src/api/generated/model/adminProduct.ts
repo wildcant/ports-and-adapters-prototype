@@ -39,4 +39,8 @@ export interface AdminProduct {
   externalId: string | null;
   /** @nullable */
   metadata: string | null;
+  createdAt: string;
+  updatedAt: string;
+  /** @nullable */
+  deletedAt: string | null;
 }
