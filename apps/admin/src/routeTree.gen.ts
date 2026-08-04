@@ -19,8 +19,9 @@ import { Route as AuthedSettingsStoreRouteImport } from './routes/_authed/settin
 import { Route as AuthedShellCustomersRouteImport } from './routes/_authed/_shell/customers'
 import { Route as AuthedShellProductsRouteRouteImport } from './routes/_authed/_shell/products/route'
 import { Route as AuthedShellProductsIndexRouteImport } from './routes/_authed/_shell/products/index'
+import { Route as AuthedShellProductsCreateRouteImport } from './routes/_authed/_shell/products/create'
 import { Route as AuthedShellProductsIdRouteRouteImport } from './routes/_authed/_shell/products/$id/route'
-import { Route as AuthedShellProductsIdIndexRouteImport } from './routes/_authed/_shell/products/$id/index'
+import { Route as AuthedShellProductsIdEditRouteImport } from './routes/_authed/_shell/products/$id/edit'
 
 const PublicRouteRoute = PublicRouteRouteImport.update({
   id: '/_public',
@@ -71,16 +72,22 @@ const AuthedShellProductsIndexRoute =
     path: '/',
     getParentRoute: () => AuthedShellProductsRouteRoute,
   } as any)
+const AuthedShellProductsCreateRoute =
+  AuthedShellProductsCreateRouteImport.update({
+    id: '/create',
+    path: '/create',
+    getParentRoute: () => AuthedShellProductsRouteRoute,
+  } as any)
 const AuthedShellProductsIdRouteRoute =
   AuthedShellProductsIdRouteRouteImport.update({
     id: '/$id',
     path: '/$id',
     getParentRoute: () => AuthedShellProductsRouteRoute,
   } as any)
-const AuthedShellProductsIdIndexRoute =
-  AuthedShellProductsIdIndexRouteImport.update({
-    id: '/',
-    path: '/',
+const AuthedShellProductsIdEditRoute =
+  AuthedShellProductsIdEditRouteImport.update({
+    id: '/edit',
+    path: '/edit',
     getParentRoute: () => AuthedShellProductsIdRouteRoute,
   } as any)
 
@@ -92,8 +99,9 @@ export interface FileRoutesByFullPath {
   '/customers': typeof AuthedShellCustomersRoute
   '/settings/store': typeof AuthedSettingsStoreRoute
   '/products/$id': typeof AuthedShellProductsIdRouteRouteWithChildren
+  '/products/create': typeof AuthedShellProductsCreateRoute
   '/products/': typeof AuthedShellProductsIndexRoute
-  '/products/$id/': typeof AuthedShellProductsIdIndexRoute
+  '/products/$id/edit': typeof AuthedShellProductsIdEditRoute
 }
 export interface FileRoutesByTo {
   '/': typeof AuthedShellIndexRoute
@@ -101,8 +109,10 @@ export interface FileRoutesByTo {
   '/login': typeof PublicLoginRoute
   '/customers': typeof AuthedShellCustomersRoute
   '/settings/store': typeof AuthedSettingsStoreRoute
+  '/products/$id': typeof AuthedShellProductsIdRouteRouteWithChildren
+  '/products/create': typeof AuthedShellProductsCreateRoute
   '/products': typeof AuthedShellProductsIndexRoute
-  '/products/$id': typeof AuthedShellProductsIdIndexRoute
+  '/products/$id/edit': typeof AuthedShellProductsIdEditRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -116,8 +126,9 @@ export interface FileRoutesById {
   '/_authed/settings/store': typeof AuthedSettingsStoreRoute
   '/_authed/_shell/': typeof AuthedShellIndexRoute
   '/_authed/_shell/products/$id': typeof AuthedShellProductsIdRouteRouteWithChildren
+  '/_authed/_shell/products/create': typeof AuthedShellProductsCreateRoute
   '/_authed/_shell/products/': typeof AuthedShellProductsIndexRoute
-  '/_authed/_shell/products/$id/': typeof AuthedShellProductsIdIndexRoute
+  '/_authed/_shell/products/$id/edit': typeof AuthedShellProductsIdEditRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -129,8 +140,9 @@ export interface FileRouteTypes {
     | '/customers'
     | '/settings/store'
     | '/products/$id'
+    | '/products/create'
     | '/products/'
-    | '/products/$id/'
+    | '/products/$id/edit'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -138,8 +150,10 @@ export interface FileRouteTypes {
     | '/login'
     | '/customers'
     | '/settings/store'
-    | '/products'
     | '/products/$id'
+    | '/products/create'
+    | '/products'
+    | '/products/$id/edit'
   id:
     | '__root__'
     | '/_authed'
@@ -152,8 +166,9 @@ export interface FileRouteTypes {
     | '/_authed/settings/store'
     | '/_authed/_shell/'
     | '/_authed/_shell/products/$id'
+    | '/_authed/_shell/products/create'
     | '/_authed/_shell/products/'
-    | '/_authed/_shell/products/$id/'
+    | '/_authed/_shell/products/$id/edit'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -233,6 +248,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthedShellProductsIndexRouteImport
       parentRoute: typeof AuthedShellProductsRouteRoute
     }
+    '/_authed/_shell/products/create': {
+      id: '/_authed/_shell/products/create'
+      path: '/create'
+      fullPath: '/products/create'
+      preLoaderRoute: typeof AuthedShellProductsCreateRouteImport
+      parentRoute: typeof AuthedShellProductsRouteRoute
+    }
     '/_authed/_shell/products/$id': {
       id: '/_authed/_shell/products/$id'
       path: '/$id'
@@ -240,23 +262,23 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthedShellProductsIdRouteRouteImport
       parentRoute: typeof AuthedShellProductsRouteRoute
     }
-    '/_authed/_shell/products/$id/': {
-      id: '/_authed/_shell/products/$id/'
-      path: '/'
-      fullPath: '/products/$id/'
-      preLoaderRoute: typeof AuthedShellProductsIdIndexRouteImport
+    '/_authed/_shell/products/$id/edit': {
+      id: '/_authed/_shell/products/$id/edit'
+      path: '/edit'
+      fullPath: '/products/$id/edit'
+      preLoaderRoute: typeof AuthedShellProductsIdEditRouteImport
       parentRoute: typeof AuthedShellProductsIdRouteRoute
     }
   }
 }
 
 interface AuthedShellProductsIdRouteRouteChildren {
-  AuthedShellProductsIdIndexRoute: typeof AuthedShellProductsIdIndexRoute
+  AuthedShellProductsIdEditRoute: typeof AuthedShellProductsIdEditRoute
 }
 
 const AuthedShellProductsIdRouteRouteChildren: AuthedShellProductsIdRouteRouteChildren =
   {
-    AuthedShellProductsIdIndexRoute: AuthedShellProductsIdIndexRoute,
+    AuthedShellProductsIdEditRoute: AuthedShellProductsIdEditRoute,
   }
 
 const AuthedShellProductsIdRouteRouteWithChildren =
@@ -266,6 +288,7 @@ const AuthedShellProductsIdRouteRouteWithChildren =
 
 interface AuthedShellProductsRouteRouteChildren {
   AuthedShellProductsIdRouteRoute: typeof AuthedShellProductsIdRouteRouteWithChildren
+  AuthedShellProductsCreateRoute: typeof AuthedShellProductsCreateRoute
   AuthedShellProductsIndexRoute: typeof AuthedShellProductsIndexRoute
 }
 
@@ -273,6 +296,7 @@ const AuthedShellProductsRouteRouteChildren: AuthedShellProductsRouteRouteChildr
   {
     AuthedShellProductsIdRouteRoute:
       AuthedShellProductsIdRouteRouteWithChildren,
+    AuthedShellProductsCreateRoute: AuthedShellProductsCreateRoute,
     AuthedShellProductsIndexRoute: AuthedShellProductsIndexRoute,
   }
 

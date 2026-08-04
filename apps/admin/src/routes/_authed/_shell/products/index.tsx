@@ -2,10 +2,12 @@ import { AdminProductListParams } from '@proteus/http-schemas/admin'
 import { createFileRoute } from '@tanstack/react-router'
 import { DataTable } from '#/components/data-table'
 import { PageLayout } from '#/components/layout/page-layout'
+import { productsListQueryOptions } from '#/features/products/api/products'
 import { useProductTable } from '#/features/products/hooks/use-product-table'
 
 export const Route = createFileRoute('/_authed/_shell/products/')({
   validateSearch: AdminProductListParams,
+  loader: ({ context }) => context.queryClient.ensureQueryData(productsListQueryOptions()),
   component: ProductsPage,
 })
 

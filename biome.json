@@ -83,7 +83,8 @@
             "noLabelWithoutControl": "off"
           },
           "suspicious": {
-            "noArrayIndexKey": "off"
+            "noArrayIndexKey": "off",
+            "noLeakedRender": "on"
           }
         }
       }

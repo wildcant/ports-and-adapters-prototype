@@ -1,3 +1,17 @@
+export {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogMedia,
+  AlertDialogOverlay,
+  AlertDialogPortal,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from './components/ui/alert-dialog.tsx'
 export { Badge, badgeVariants } from './components/ui/badge.tsx'
 export {
   Breadcrumb,
@@ -20,6 +34,19 @@ export {
 } from './components/ui/card.tsx'
 export { Checkbox } from './components/ui/checkbox.tsx'
 export { Collapsible, CollapsibleContent, CollapsibleTrigger } from './components/ui/collapsible.tsx'
+export {
+  Drawer,
+  DrawerClose,
+  DrawerContent,
+  DrawerDescription,
+  DrawerFooter,
+  DrawerHeader,
+  DrawerOverlay,
+  DrawerPortal,
+  DrawerSwipeHandle,
+  DrawerTitle,
+  DrawerTrigger,
+} from './components/ui/drawer.tsx'
 export {
   DropdownMenu,
   DropdownMenuCheckboxItem,

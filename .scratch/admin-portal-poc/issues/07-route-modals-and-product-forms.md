@@ -1,39 +1,139 @@
 # 07 — Admin: Route-based modals and product forms
 
-**What to build:** Navigating to `/products/create` opens a full-screen Drawer overlay with a title-only product create form. Navigating to `/products/:id/edit` opens a slide-in Drawer panel with a title-only product edit form. Both modal types are built on `Drawer` from `@proteus/ui`: `RouteFocusModal` uses the full-screen variant, `RouteDrawer` uses `swipeDirection="right"` for the slide-in panel. A `RouteModalForm` wrapper integrates TanStack Router's `useBlocker` for dirty-form blocking — if the form has unsaved changes and the user tries to navigate away, a confirmation dialog appears with proceed/cancel options. Forms use TanStack Form with zod validation (schemas from `@proteus/http-schemas`). The `TextField` component follows the frontend's established pattern (`useFieldContext` + `Input` from `@proteus/ui` + `FieldError`). Submitting the create form creates the product and navigates to the new product's detail page. Submitting the edit form updates the product, closes the drawer, and refreshes the detail page data via query invalidation.
+**What to build:** A reusable route-based modal system, then product create/edit forms on top of it. Phase 1 builds the modal infrastructure: install shadcn Drawer and AlertDialog into `@proteus/ui`, then build `RouteFocusModal`, `RouteDrawer`, `RouteModalForm`, `RouteModalProvider`, and `KeyboundForm` in the admin app. Phase 2 wires up product create and edit routes using those modal components with TanStack Form + Zod validation.
 
-**Blocked by:** 04 — DataTable system + Product list page, 06 — Product detail page
+**Blocked by:** 04 -- DataTable system + Product list page, 06 -- Product detail page
 
-**Status:** ready-for-agent
+**Status:** done
 
-**Reference files to study:**
+**Spec:** `.scratch/admin-portal-poc/modal-system-spec.md`
 
-- Medusa source — route-based modal components (port structure, use `Drawer` from `@proteus/ui`):
-  - `medusa-source/packages/admin/dashboard/src/components/modals/route-drawer/route-drawer.tsx` — RouteDrawer (slide-in panel)
-  - `medusa-source/packages/admin/dashboard/src/components/modals/route-focus-modal/route-focus-modal.tsx` — RouteFocusModal (full-screen overlay)
-  - `medusa-source/packages/admin/dashboard/src/components/modals/route-modal-form/route-modal-form.tsx` — RouteModalForm with dirty-form blocking
-  - `medusa-source/packages/admin/dashboard/src/components/modals/route-modal-provider/route-modal-context.tsx` — modal context
-- Medusa source — product create/edit forms:
-  - `medusa-source/packages/admin/dashboard/src/routes/products/product-create/product-create.tsx` — create route
-  - `medusa-source/packages/admin/dashboard/src/routes/products/product-create/components/product-create-form/product-create-form.tsx` — create form
-  - `medusa-source/packages/admin/dashboard/src/routes/products/product-edit/product-edit.tsx` — edit route
-  - `medusa-source/packages/admin/dashboard/src/routes/products/product-edit/components/edit-product-form/edit-product-form.tsx` — edit form
-- Proteus — existing form pattern to follow:
-  - `apps/frontend/src/components/form/text-field.tsx` — TextField with `useFieldContext`, `Input` from `@proteus/ui`, FieldError
-- `@proteus/ui` — component to add to the shared package (via `shadcn add` in `packages/ui`), then export and import in admin:
-  - Drawer: https://ui.shadcn.com/docs/components/base/drawer
+---
 
-- [ ] `RouteDrawer` component wraps `Drawer` from `@proteus/ui` with `swipeDirection="right"`, provides `onClose` that navigates to parent route, compound children (`.Header`, `.Title`, `.Body`, `.Footer`)
-- [ ] `RouteFocusModal` component wraps `Drawer` from `@proteus/ui` in full-screen variant, provides `onClose` that navigates to parent route, compound children (`.Header`, `.Title`, `.Body`, `.Footer`)
-- [ ] `RouteModalForm` wrapper uses `useBlocker({ shouldBlockFn, withResolver: true, enableBeforeUnload })` to block navigation when form is dirty
-- [ ] `shouldBlockFn` returns `false` if submit was successful (tracked via ref), otherwise returns `form.state.isDirty`
-- [ ] Blocked state renders a confirmation dialog with "Discard changes" (calls `proceed()`) and "Keep editing" (calls `reset()`)
-- [ ] `TextField` component using `useFieldContext<string>()`, `Input` from `@proteus/ui`, `FieldLabel`, `FieldError` — matching the frontend pattern
-- [ ] `products/create.tsx` route renders `RouteFocusModal` with a create form (single title field, required)
-- [ ] Create form submits via `useCreateProduct` mutation, navigates to `/products/$id` on success
-- [ ] Handle is auto-generated on the backend — form only sends title
-- [ ] `products/$id/edit.tsx` route renders `RouteDrawer` with an edit form (single title field, pre-populated)
-- [ ] Edit form submits via `useUpdateProduct` mutation, closes drawer on success, detail page data refreshes via cache invalidation
-- [ ] Both modals are URL-addressable: navigating directly to `/products/create` or `/products/:id/edit` opens them correctly
-- [ ] Both modals animate in on mount and out on close
-- [ ] Form validation uses zod schemas from `@proteus/http-schemas` (CreateProduct, UpdateProduct)
+## Phase 1: Modal system infrastructure
+
+### 1a. Install shadcn components into `@proteus/ui`
+
+- [x] Run `npx shadcn@latest add drawer alert-dialog` in `packages/ui` (adds `drawer.tsx` and `alert-dialog.tsx` to `packages/ui/src/components/ui/`)
+- [x] Export all Drawer parts from `packages/ui/src/index.ts`: `Drawer`, `DrawerClose`, `DrawerContent`, `DrawerDescription`, `DrawerFooter`, `DrawerHeader`, `DrawerOverlay`, `DrawerPortal`, `DrawerSwipeHandle`, `DrawerTitle`, `DrawerTrigger`
+- [x] Export all AlertDialog parts from `packages/ui/src/index.ts`: `AlertDialog`, `AlertDialogAction`, `AlertDialogCancel`, `AlertDialogContent`, `AlertDialogDescription`, `AlertDialogFooter`, `AlertDialogHeader`, `AlertDialogMedia`, `AlertDialogOverlay`, `AlertDialogPortal`, `AlertDialogTitle`, `AlertDialogTrigger`
+- [x] Verify `npm run --workspace=frontend typecheck` (or equivalent) still passes -- alert-dialog install may try to overwrite `button.tsx`, decline the overwrite
+
+### 1b. RouteModalProvider -- context layer
+
+Location: `apps/admin/src/components/modals/route-modal-provider/`
+
+- [x] `route-modal-context.tsx` -- create context with `handleSuccess` and `setCloseOnEscape` (see spec: RouteModalProvider section)
+- [x] `route-provider.tsx` -- provider implementation using `useNavigate()`, `handleSuccess` sets `isSubmitSuccessful: true` in router state before navigating, supports both string paths and numeric history offsets
+- [x] `use-route-modal.tsx` -- `useRouteModal()` hook that throws if used outside provider
+
+### 1c. RouteFocusModal -- full-screen bottom-up drawer
+
+Location: `apps/admin/src/components/modals/route-focus-modal/route-focus-modal.tsx`
+
+- [x] `Root` component wraps shadcn `Drawer` (default `swipeDirection="down"`) with controlled `open` state -- opens on mount via `useEffect`, navigates to parent on close
+- [x] Wraps children in `RouteModalProvider`
+- [x] `Content` sub-component renders `DrawerContent`, intercepts Escape key when `closeOnEscape` is false (for inline editing)
+- [x] Compound API via `Object.assign`: `.Header` (DrawerHeader), `.Title` (DrawerTitle), `.Description` (DrawerDescription), `.Body` (scrollable div wrapper), `.Footer` (DrawerFooter), `.Close` (DrawerClose), `.Form` (RouteModalForm)
+- [x] `Body` sub-component is a simple `<div className="flex-1 overflow-y-auto">` -- not provided by shadcn Drawer
+
+### 1d. RouteDrawer -- right-side slide-in drawer
+
+Location: `apps/admin/src/components/modals/route-drawer/route-drawer.tsx`
+
+- [x] Same pattern as RouteFocusModal but with `swipeDirection="right"` on `Drawer`
+- [x] Wraps children in `RouteModalProvider`
+- [x] Compound API: `.Header`, `.Title`, `.Description`, `.Body` (with `px-4` padding), `.Footer`, `.Close`, `.Form`
+
+### 1e. RouteModalForm -- unsaved changes guard
+
+Location: `apps/admin/src/components/modals/route-modal-form/route-modal-form.tsx`
+
+- [x] Accepts `form: ReactFormExtendedApi` (from `@tanstack/react-form`) -- reads dirty state via `form.useStore((s) => s.isDirty)`
+- [x] Uses `useBlocker({ shouldBlockFn, withResolver: true, enableBeforeUnload })` from TanStack Router
+- [x] `shouldBlockFn`: returns `false` when `isSubmitSuccessful` is in next location state (bypass after save), otherwise returns `isDirty && isPathChanged`
+- [x] Optional `blockSearchParams` prop -- when true, also blocks on search param changes
+- [x] Renders `AlertDialog` from `@proteus/ui` when `status === "blocked"` -- title: "You have unsaved changes", actions: Cancel (calls `reset()`), Continue (calls `proceed()`)
+- [x] AlertDialog cannot be dismissed via Escape or overlay click -- forces explicit user choice
+
+### 1f. KeyboundForm
+
+Location: `apps/admin/src/components/modals/keybound-form.tsx`
+
+- [x] Prevents form submission on bare Enter (avoids accidental submit)
+- [x] Submits on `Cmd+Enter` (macOS) / `Ctrl+Enter` (Windows/Linux)
+- [x] Allows normal Enter in `<textarea>` elements (newlines)
+- [x] Accepts custom `onKeyDown` override prop
+
+### 1g. Barrel export
+
+Location: `apps/admin/src/components/modals/index.ts`
+
+- [x] Export `RouteFocusModal`, `RouteDrawer`, `RouteModalForm`, `useRouteModal`, `KeyboundForm`
+
+---
+
+## Phase 2: Product create and edit forms
+
+### 2a. Product create route + form
+
+Route: `apps/admin/src/routes/_authed/_shell/products/create.tsx`
+Form: `apps/admin/src/features/products/components/create-product-form.tsx`
+
+- [x] `create.tsx` route renders `RouteFocusModal` wrapping `CreateProductForm`
+- [x] `RouteFocusModal.Title` with `className="sr-only"` for accessibility (visual title is in the form body)
+- [x] Form uses `useAppForm` from `#/lib/form-hook.ts` with:
+  - `defaultValues: { title: "" }`
+  - `validators: { onSubmit: AdminCreateProduct }` (from `@proteus/http-schemas`)
+  - `onSubmit` calls `useCreateProduct().mutateAsync`, then `handleSuccess(\`../$\{data.product.id\}\`)` to navigate to the new product detail page
+- [x] Form renders inside `RouteFocusModal.Form` (provides dirty-form blocking) and `KeyboundForm` (Cmd+Enter submit)
+- [x] Single field: `<form.AppField name="title">` using the existing `TextField` component
+- [x] Footer: Cancel (`RouteFocusModal.Close`) and Save (`<Button type="submit">`)
+- [x] Add "Create" button to products list page that navigates to this route
+
+### 2b. Product edit route + form
+
+Route: `apps/admin/src/routes/_authed/_shell/products/$id/edit.tsx`
+Form: `apps/admin/src/features/products/components/edit-product-form.tsx`
+
+- [x] `edit.tsx` route renders `RouteDrawer` wrapping `EditProductForm`
+- [x] `EditProductForm` receives `product` prop (loaded by parent route's `beforeLoad`)
+- [x] Form uses `useAppForm` with:
+  - `defaultValues: { title: product.title }` (pre-populated from existing data)
+  - `validators: { onSubmit: AdminUpdateProduct }` (from `@proteus/http-schemas`)
+  - `onSubmit` calls `useUpdateProduct(id).mutateAsync`, then `handleSuccess()` (navigates back to detail page)
+- [x] Query invalidation happens in the existing `useUpdateProduct` hook (`onSuccess` in `products.ts`) -- no extra work needed
+- [x] Form renders inside `RouteDrawer.Form` and `KeyboundForm`
+- [x] Single field: `<form.AppField name="title">` using `TextField`
+- [x] Footer: Cancel (`RouteDrawer.Close`) and Save (`<Button type="submit">`)
+- [x] Add "Edit" action to product detail page that navigates to this route
+
+### 2c. Route wiring
+
+- [x] Products list `Outlet` -- the `products/route.tsx` already renders `<Outlet />`, so the create modal route will render inside it automatically
+- [x] Product detail `Outlet` -- `products/$id/route.tsx` already renders `<Outlet />`, so the edit drawer route will render inside it automatically
+- [x] Both modals are URL-addressable: navigating directly to `/products/create` or `/products/:id/edit` opens them
+- [x] Both modals animate in on mount and out on close (handled by Drawer's built-in CSS transitions)
+
+---
+
+## Reference files
+
+**Spec (implementation details, component APIs, code examples):**
+- `.scratch/admin-portal-poc/modal-system-spec.md`
+
+**Medusa source (structural reference -- adapt patterns, don't copy verbatim):**
+- `medusa-source/packages/admin/dashboard/src/components/modals/route-drawer/route-drawer.tsx`
+- `medusa-source/packages/admin/dashboard/src/components/modals/route-focus-modal/route-focus-modal.tsx`
+- `medusa-source/packages/admin/dashboard/src/components/modals/route-modal-form/route-modal-form.tsx`
+- `medusa-source/packages/admin/dashboard/src/components/modals/route-modal-provider/`
+
+**Existing proteus code to build on:**
+- `packages/ui/src/components/ui/sheet.tsx` -- existing Sheet shows the `@base-ui/react/dialog` wrapper pattern (Drawer follows the same structure with `@base-ui/react/drawer`)
+- `apps/admin/src/components/form/text-field.tsx` -- TextField with `useFieldContext`, reuse as-is
+- `apps/admin/src/lib/form-hook.ts` -- `useAppForm` hook with registered field components
+- `apps/admin/src/lib/form-context.ts` -- `fieldContext`, `formContext`, `useFieldContext`
+- `apps/admin/src/features/products/api/products.ts` -- `useCreateProduct`, `useUpdateProduct` mutation hooks (already exist)
+- `packages/http-schemas/src/admin/product/payloads.ts` -- `AdminCreateProduct` (title required), `AdminUpdateProduct` (title optional)
+- `apps/admin/src/routes/_authed/_shell/products/route.tsx` -- parent layout with `<Outlet />`
+- `apps/admin/src/routes/_authed/_shell/products/$id/route.tsx` -- detail layout with `<Outlet />`

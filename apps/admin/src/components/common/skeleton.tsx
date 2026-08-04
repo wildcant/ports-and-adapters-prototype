@@ -168,12 +168,7 @@ export function SingleColumnPageSkeleton({
   return (
     <div className="flex flex-col gap-y-3">
       {Array.from({ length: sections }, (_, i) => (
-        <SkeletonBlock
-          key={i}
-          className={cn('h-full max-h-115 w-full rounded-lg', {
-            'max-h-54.75': i === 0,
-          })}
-        />
+        <SkeletonBlock key={i} className={cn('w-full rounded-lg', i === 0 ? 'h-54.75' : 'h-115')} />
       ))}
       {showMetadata && <SkeletonBlock className="h-15 w-full rounded-lg" />}
       {showJSON && <SkeletonBlock className="h-15 w-full rounded-lg" />}
@@ -199,12 +194,7 @@ export function TwoColumnPageSkeleton({
       <div className="flex flex-col gap-x-4 gap-y-3 xl:flex-row xl:items-start">
         <div className="flex w-full flex-col gap-y-3">
           {Array.from({ length: mainSections }, (_, i) => (
-            <SkeletonBlock
-              key={i}
-              className={cn('h-full max-h-115 w-full rounded-lg', {
-                'max-h-54.75': i === 0,
-              })}
-            />
+            <SkeletonBlock key={i} className={cn('w-full rounded-lg', i === 0 ? 'h-54.75' : 'h-115')} />
           ))}
           {showExtraData && (
             <div className="hidden flex-col gap-y-3 xl:flex">
@@ -215,12 +205,7 @@ export function TwoColumnPageSkeleton({
         </div>
         <div className="flex w-full max-w-full flex-col gap-y-3 xl:mt-0 xl:max-w-110">
           {Array.from({ length: sidebarSections }, (_, i) => (
-            <SkeletonBlock
-              key={i}
-              className={cn('h-full max-h-80 w-full rounded-lg', {
-                'max-h-35': i === 0,
-              })}
-            />
+            <SkeletonBlock key={i} className={cn('w-full rounded-lg', i === 0 ? 'h-35' : 'h-80')} />
           ))}
           {showExtraData && (
             <div className="flex flex-col gap-y-3 xl:hidden">
