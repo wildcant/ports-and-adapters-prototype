@@ -6,7 +6,7 @@
     "./api": "./src/api/index.ts"
   },
   "scripts": {
-    "dev": "dotenvx run -f ../../.env.local -- tsx src/index.ts",
+    "dev": "dotenvx run -f ../../.env.local -- tsx --watch src/index.ts",
     "dev:workerd": "wrangler dev --config wrangler.jsonc --env-file .env.workerd",
     "deploy": "wrangler deploy --config wrangler.jsonc",
     "start": "dotenvx run -f ../../.env -- tsx src/index.ts",
@@ -29,14 +29,15 @@
   },
   "dependencies": {
     "@asteasolutions/zod-to-openapi": "^8.5.0",
-    "@proteus/http-schemas": "*",
     "@dotenvx/dotenvx": "^2.14.0",
     "@hono/node-server": "^2.0.0",
+    "@proteus/http-schemas": "*",
     "awilix": "^12.0.0",
     "drizzle-orm": "^0.39.0",
     "express": "^4.21.0",
     "hono": "^4.12.0",
     "postgres": "^3.4.7",
+    "qs": "^6.15.3",
     "stripe": "^22.3.2",
     "swagger-ui-express": "^5.0.1",
     "winston": "^3.19.0",
@@ -45,6 +46,7 @@
   "devDependencies": {
     "@faker-js/faker": "^10.5.0",
     "@types/express": "^5.0.0",
+    "@types/qs": "^6.15.1",
     "@types/swagger-ui-express": "^4.1.8",
     "dependency-cruiser": "^18.1.0",
     "drizzle-kit": "^0.31.0",

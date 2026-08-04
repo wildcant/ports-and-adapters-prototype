@@ -20,7 +20,7 @@ export type HttpRequest<
   } = object,
 > = {
   params: T extends { params: infer P } ? P : Record<string, string>
-  query: Record<string, string | string[]>
+  query: Record<string, unknown>
   validatedQuery: T extends { query: infer Q } ? Q : Record<string, unknown>
   body: T extends { body: infer B } ? B : unknown
   scope: AwilixContainer

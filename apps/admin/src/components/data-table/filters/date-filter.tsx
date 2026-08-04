@@ -9,8 +9,11 @@ type DateFilterProps = {
 }
 
 export function DateFilter({ value, onChange, presets }: DateFilterProps) {
-  const toDateInput = (iso: string | undefined) => {
+  const toDateInput = (iso: string | undefined | Date) => {
     if (!iso) return ''
+    if (iso instanceof Date) {
+      return iso.toISOString().slice(0, 10)
+    }
     return iso.slice(0, 10)
   }
 

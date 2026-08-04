@@ -8,11 +8,20 @@ function buildTransports(): winston.transport[] {
   const transports: winston.transport[] = []
 
   if (IS_DEV) {
+    const message = Symbol.for('message')
+    const appendStack = winston.format((info) => {
+      if (info.stack) {
+        ;(info as Record<string | symbol, unknown>)[message] += `\n${info.stack}`
+      }
+      return info
+    })
+
     transports.push(
       new winston.transports.Console({
         format: winston.format.combine(
           winston.format.cli({ levels: winston.config.npm.levels }),
           winston.format.splat(),
+          appendStack(),
         ),
       }),
     )

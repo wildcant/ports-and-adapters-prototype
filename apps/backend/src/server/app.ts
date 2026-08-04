@@ -6,6 +6,7 @@
  * Runs everywhere: Node.js, Vercel, Lambda, CF Workers, Bun, Deno.
  */
 
+import qs from 'qs'
 import { errorHandler } from '../core/errors/index.js'
 import type { Logger } from '../core/types/logger.js'
 import { ContainerRegistrationKeys } from '../core/utils/index.js'
@@ -69,15 +70,7 @@ export const createApp: CreateApp = ({ container }) => {
           params[name] = match[i + 1] ?? ''
         })
 
-        const query: Record<string, string | string[]> = {}
-        for (const [key, value] of url.searchParams.entries()) {
-          const existing = query[key]
-          if (existing) {
-            query[key] = Array.isArray(existing) ? [...existing, value] : [existing, value]
-          } else {
-            query[key] = value
-          }
-        }
+        const query = qs.parse(url.search, { ignoreQueryPrefix: true }) as Record<string, unknown>
 
         const body = ['GET', 'HEAD', 'DELETE'].includes(method)
           ? undefined

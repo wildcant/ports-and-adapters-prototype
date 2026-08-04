@@ -1,3 +1,4 @@
+import qs from 'qs'
 import { env } from '#/env'
 
 export const fetcher = async <T>({
@@ -18,16 +19,7 @@ export const fetcher = async <T>({
   const target = new URL(url, env.VITE_BACKEND_URL)
 
   if (params) {
-    for (const [key, value] of Object.entries(params)) {
-      if (value === undefined || value === null) continue
-      if (Array.isArray(value)) {
-        for (const v of value) {
-          target.searchParams.append(key, String(v))
-        }
-      } else {
-        target.searchParams.append(key, String(value))
-      }
-    }
+    target.search = qs.stringify(params, { skipNulls: true })
   }
 
   const init: RequestInit = { method }
