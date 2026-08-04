@@ -1,4 +1,4 @@
-import { queryOptions, useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
+import { queryOptions, useMutation, useQuery } from '@tanstack/react-query'
 import type { AdminCreateProduct, AdminUpdateProduct, ListProductsParams } from '#/api/generated/model'
 import {
   createProduct,
@@ -7,6 +7,7 @@ import {
   listProducts,
   updateProduct,
 } from '#/api/generated/products/products'
+import { queryClient } from '#/lib/query-client'
 import { queryKeysFactory } from '#/lib/query-key-factory'
 
 const productKeys = queryKeysFactory<'products', ListProductsParams>('products')
@@ -28,7 +29,6 @@ export const useProducts = (params?: ListProductsParams) => useQuery(productsLis
 export const useProduct = (id: string) => useQuery(productQueryOptions(id))
 
 export const useCreateProduct = () => {
-  const queryClient = useQueryClient()
   return useMutation({
     mutationFn: (data: AdminCreateProduct) => createProduct(data),
     onSuccess: () => {
@@ -38,7 +38,6 @@ export const useCreateProduct = () => {
 }
 
 export const useUpdateProduct = (id: string) => {
-  const queryClient = useQueryClient()
   return useMutation({
     mutationFn: (data: AdminUpdateProduct) => updateProduct(id, data),
     onSuccess: () => {
@@ -49,7 +48,6 @@ export const useUpdateProduct = (id: string) => {
 }
 
 export const useDeleteProduct = (id: string) => {
-  const queryClient = useQueryClient()
   return useMutation({
     mutationFn: () => deleteProduct(id),
     onSuccess: () => {
