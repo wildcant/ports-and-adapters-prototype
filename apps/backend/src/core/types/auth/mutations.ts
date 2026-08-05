@@ -29,7 +29,9 @@ export type CreateAuthVerificationDTO = {
 }
 
 export type UpdateAuthVerificationDTO = {
+  codeProvider?: string | undefined
   verifiedAt?: Date | null | undefined
+  requestedAt?: Date | undefined
   providerMetadata?: Record<string, unknown> | null | undefined
 }
 

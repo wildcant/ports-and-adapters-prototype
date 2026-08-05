@@ -1,3 +1,4 @@
+- update base repository and module services to allow creating single records. (too many verifications after entities create and update)
 - add a new validation script to make sure we are not throwing generic errors in backend, we should throw AppError instead.
 - To stop failures from crashing the server - implement Graceful Shutdowns, Safe Fetch Parsing, and Global Exception Handling.
 - admin

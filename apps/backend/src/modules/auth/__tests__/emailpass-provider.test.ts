@@ -10,6 +10,7 @@ import { AuthVerificationRepository } from '../repositories/auth-verification.js
 import { ProviderIdentityRepository } from '../repositories/provider-identity.js'
 import { AuthModuleService } from '../services/auth-module-service.js'
 import { AuthProviderService } from '../services/auth-provider-service.js'
+import { VerificationProviderService } from '../services/verification-provider-service.js'
 
 let service: AuthModuleService
 
@@ -28,6 +29,7 @@ test.beforeEach(({ getDb, logger }) => {
   const emailpass = new EmailpassProvider({}, TEST_SCRYPT_OPTIONS)
   container.register({ [EMAIL_PASS_KEY]: asValue(emailpass) })
   const authProviderService = new AuthProviderService({ container })
+  const verificationProviderService = new VerificationProviderService({ container })
 
   service = new AuthModuleService({
     authIdentityRepository,
@@ -35,6 +37,7 @@ test.beforeEach(({ getDb, logger }) => {
     authVerificationRepository,
     authPasswordResetTokenRepository,
     authProviderService,
+    verificationProviderService,
     withTransaction,
     logger,
   })

@@ -6,6 +6,9 @@ import type {
   AuthIdentityProviderService,
   AuthPasswordResetTokenDTO,
   AuthVerificationDTO,
+  AuthVerificationService,
+  ConfirmAuthVerificationDTO,
+  ConfirmAuthVerificationResult,
   Context,
   CreateAuthIdentityDTO,
   CreateAuthPasswordResetTokenDTO,
@@ -17,6 +20,8 @@ import type {
   FindConfig,
   IAuthModuleService,
   ProviderIdentityDTO,
+  RequestAuthVerificationDTO,
+  RequestAuthVerificationResult,
   UpdateAuthIdentityDTO,
   UpdateAuthVerificationDTO,
   UpdateProviderIdentityDTO,
@@ -28,6 +33,7 @@ import type { AuthPasswordResetTokenRepository } from '../repositories/auth-pass
 import type { AuthVerificationRepository } from '../repositories/auth-verification.js'
 import type { ProviderIdentityRepository } from '../repositories/provider-identity.js'
 import type { AuthProviderService } from './auth-provider-service.js'
+import type { VerificationProviderService } from './verification-provider-service.js'
 
 type InjectedDependencies = {
   authIdentityRepository: AuthIdentityRepository
@@ -35,6 +41,7 @@ type InjectedDependencies = {
   authVerificationRepository: AuthVerificationRepository
   authPasswordResetTokenRepository: AuthPasswordResetTokenRepository
   authProviderService: AuthProviderService
+  verificationProviderService: VerificationProviderService
   withTransaction: WithTransaction
   logger: Logger
 }
@@ -45,6 +52,7 @@ export class AuthModuleService implements IAuthModuleService {
   private authVerificationRepository: AuthVerificationRepository
   private authPasswordResetTokenRepository: AuthPasswordResetTokenRepository
   private authProviderService: AuthProviderService
+  private verificationProviderService: VerificationProviderService
   private withTransaction: WithTransaction
   private logger: Logger
 
@@ -54,6 +62,7 @@ export class AuthModuleService implements IAuthModuleService {
     authVerificationRepository,
     authPasswordResetTokenRepository,
     authProviderService,
+    verificationProviderService,
     withTransaction,
     logger,
   }: InjectedDependencies) {
@@ -62,6 +71,7 @@ export class AuthModuleService implements IAuthModuleService {
     this.authVerificationRepository = authVerificationRepository
     this.authPasswordResetTokenRepository = authPasswordResetTokenRepository
     this.authProviderService = authProviderService
+    this.verificationProviderService = verificationProviderService
     this.withTransaction = withTransaction
     this.logger = logger
   }
@@ -97,7 +107,7 @@ export class AuthModuleService implements IAuthModuleService {
    * This keeps providers decoupled from repositories — they only see
    * retrieve/create/update, scoped to a single provider string.
    */
-  getAuthIdentityProviderService(provider: string): AuthIdentityProviderService {
+  getAuthIdentityProviderService(provider: string, context?: Context): AuthIdentityProviderService {
     return {
       retrieve: async ({ entityId }) => {
         const results = await this.providerIdentityRepository.find({ entityId, provider }, { limit: 1 })
@@ -109,7 +119,7 @@ export class AuthModuleService implements IAuthModuleService {
       },
 
       create: async ({ entityId, providerMetadata, appMetadata }) => {
-        return this.withTransaction(undefined, async (ctx) => {
+        return this.withTransaction(context, async (ctx) => {
           const authIdentities = await this.authIdentityRepository.createMany(
             [{ appMetadata: appMetadata ?? null }],
             ctx,
@@ -132,7 +142,7 @@ export class AuthModuleService implements IAuthModuleService {
       },
 
       update: async (entityId, data) => {
-        return this.withTransaction(undefined, async (ctx) => {
+        return this.withTransaction(context, async (ctx) => {
           const results = await this.providerIdentityRepository.find({ entityId, provider }, { limit: 1 }, ctx)
           const existing = results[0]
           if (!existing) {
@@ -170,6 +180,40 @@ export class AuthModuleService implements IAuthModuleService {
         })
       },
     }
+  }
+
+  getAuthVerificationService(context?: Context): AuthVerificationService {
+    return {
+      list: (filters) => this.authVerificationRepository.find(filters, undefined, context),
+      create: (data) => this.authVerificationRepository.createMany(data, context),
+      update: (ids, data) => this.authVerificationRepository.update(ids, data, context),
+    }
+  }
+
+  // --- Verification ---
+
+  async requestAuthVerification(
+    data: RequestAuthVerificationDTO,
+    context?: Context,
+  ): Promise<RequestAuthVerificationResult> {
+    return this.withTransaction(context, async (transactionContext) => {
+      return this.verificationProviderService.request(
+        { providerId: data.codeProvider, data },
+        this.getAuthVerificationService(transactionContext),
+      )
+    })
+  }
+
+  async confirmAuthVerification(
+    data: ConfirmAuthVerificationDTO,
+    context?: Context,
+  ): Promise<ConfirmAuthVerificationResult> {
+    return this.withTransaction(context, async (transactionContext) => {
+      return this.verificationProviderService.confirm(
+        { providerId: data.codeProvider ?? 'token', data },
+        this.getAuthVerificationService(transactionContext),
+      )
+    })
   }
 
   // --- AuthIdentity ---

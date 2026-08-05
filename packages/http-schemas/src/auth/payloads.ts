@@ -11,3 +11,21 @@ export type AuthParams = z.infer<typeof AuthParams>
 
 export const AuthBody = z.record(z.string(), z.string()).openapi('AuthBody')
 export type AuthBody = z.infer<typeof AuthBody>
+
+export const VerificationConfirmBody = z
+  .object({
+    code: z.string().min(1),
+    codeProvider: z.string().min(1).optional(),
+  })
+  .openapi('VerificationConfirmBody')
+export type VerificationConfirmBody = z.infer<typeof VerificationConfirmBody>
+
+export const VerificationRequestBody = z
+  .object({
+    entityId: z.string().min(1),
+    entityType: z.string().min(1),
+    codeProvider: z.string().min(1).default('token'),
+    metadata: z.record(z.string(), z.unknown()).optional().default({}),
+  })
+  .openapi('VerificationRequestResponse')
+export type VerificationRequestBody = z.infer<typeof VerificationRequestBody>

@@ -14,3 +14,23 @@ export const AuthenticateResponse = z
   })
   .openapi('AuthenticateResponse')
 export type AuthenticateResponse = z.infer<typeof AuthenticateResponse>
+
+export const VerificationRequestResponse = z
+  .object({
+    id: z.string(),
+    entityId: z.string(),
+    entityType: z.string(),
+    requestedAt: z.string().datetime(),
+  })
+  .openapi('VerificationRequestResponse')
+export type VerificationRequestResponse = z.infer<typeof VerificationRequestResponse>
+
+export const VerificationConfirmResponse = z
+  .object({
+    id: z.string(),
+    entityId: z.string(),
+    entityType: z.string(),
+    verifiedAt: z.string().datetime(),
+  })
+  .openapi('VerificationConfirmResponse')
+export type VerificationConfirmResponse = z.infer<typeof VerificationConfirmResponse>

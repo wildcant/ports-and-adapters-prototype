@@ -2,10 +2,7 @@ import type { FindConfig } from '../common.js'
 import type { Context } from '../context.js'
 import type {
   AuthIdentityDTO,
-  AuthPasswordResetTokenDTO,
-  AuthVerificationDTO,
   FilterableAuthIdentityProps,
-  FilterableAuthVerificationProps,
   FilterableProviderIdentityProps,
   ProviderIdentityDTO,
 } from './common.js'
@@ -19,12 +16,25 @@ import type {
   UpdateProviderIdentityDTO,
 } from './mutations.js'
 import type { AuthenticationInput, AuthenticationResponse } from './provider.js'
+import type {
+  AuthPasswordResetTokenDTO,
+  AuthVerificationDTO,
+  ConfirmAuthVerificationDTO,
+  ConfirmAuthVerificationResult,
+  FilterableAuthVerificationProps,
+  RequestAuthVerificationDTO,
+  RequestAuthVerificationResult,
+} from './verification.js'
 
 export type IAuthModuleService = {
   // Auth provider delegation
   register(provider: string, authData: AuthenticationInput): Promise<AuthenticationResponse>
   authenticate(provider: string, authData: AuthenticationInput): Promise<AuthenticationResponse>
   updateProvider(provider: string, data: Record<string, unknown>): Promise<AuthenticationResponse>
+
+  // Verification provider delegation
+  requestAuthVerification(data: RequestAuthVerificationDTO, context?: Context): Promise<RequestAuthVerificationResult>
+  confirmAuthVerification(data: ConfirmAuthVerificationDTO, context?: Context): Promise<ConfirmAuthVerificationResult>
 
   // Token refresh validation
   validateAuthIdentity(

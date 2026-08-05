@@ -34,38 +34,3 @@ export interface FilterableProviderIdentityProps extends BaseFilterable<Filterab
   createdAt?: OperatorMap<Date> | undefined
   updatedAt?: OperatorMap<Date> | undefined
 }
-
-export type AuthVerificationDTO = {
-  id: string
-  authIdentityId: string
-  entityId: string
-  entityType: string
-  codeProvider: string
-  verifiedAt: Date | null
-  requestedAt: Date
-  providerMetadata: Record<string, unknown> | null
-  createdAt: Date
-  updatedAt: Date
-  deletedAt: Date | null
-}
-
-export interface FilterableAuthVerificationProps extends BaseFilterable<FilterableAuthVerificationProps> {
-  id?: string | string[] | undefined
-  authIdentityId?: string | string[] | undefined
-  entityId?: string | string[] | OperatorMap<string> | undefined
-  entityType?: string | string[] | OperatorMap<string> | undefined
-  codeProvider?: string | string[] | OperatorMap<string> | undefined
-  createdAt?: OperatorMap<Date> | undefined
-  updatedAt?: OperatorMap<Date> | undefined
-}
-
-export type AuthPasswordResetTokenDTO = {
-  id: string
-  authIdentityId: string
-  providerIdentityId: string
-  entityId: string
-  tokenHash: string
-  expiresAt: Date
-  createdAt: Date
-  updatedAt: Date
-}
