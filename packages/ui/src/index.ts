@@ -12,6 +12,14 @@ export {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from './components/ui/alert-dialog.tsx'
+export {
+  Avatar,
+  AvatarBadge,
+  AvatarFallback,
+  AvatarGroup,
+  AvatarGroupCount,
+  AvatarImage,
+} from './components/ui/avatar.tsx'
 export { Badge, badgeVariants } from './components/ui/badge.tsx'
 export {
   Breadcrumb,

@@ -13,6 +13,14 @@ import { Tags } from '../../../core/middleware/types.js'
 export default [
   {
     method: 'GET',
+    matcher: '/admin/users/me',
+    operationId: 'getMe',
+    summary: 'Retrieve the authenticated user',
+    tags: [Tags.USERS],
+    responseSchema: AdminUserResponse,
+  },
+  {
+    method: 'GET',
     matcher: '/admin/users',
     querySchema: AdminUserListParams,
     operationId: 'listUsers',

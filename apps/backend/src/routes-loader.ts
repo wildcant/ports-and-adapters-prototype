@@ -6,7 +6,8 @@ import { applyNamespaceAuth } from './core/middleware/namespace-auth.js'
 import type { MiddlewareRoute } from './core/middleware/types.js'
 import { registerOpenApiRoutes } from './core/openapi/register-route.js'
 import type { Logger } from './core/types/logger.js'
-import type { App } from './server/ports.js'
+import type { App, RouteHandler } from './server/ports.js'
+import { RoutesSorter } from './server/routes-sorter.js'
 
 const HTTP_METHODS = ['GET', 'POST', 'PUT', 'PATCH', 'DELETE'] as const
 
@@ -66,9 +67,17 @@ function findMiddlewarePath(routeFilePath: string, sourceDir: string): string | 
  */
 export type RegistryResolver = (routePath: string) => OpenAPIRegistry | undefined
 
+type CollectedRoute = {
+  matcher: string
+  method: string
+  handler: RouteHandler
+  relativePath: string
+}
+
 export async function loadRoutes(server: App, sourceDir: string, logger: Logger, resolveRegistry?: RegistryResolver) {
   const routeFiles = findRouteFiles(sourceDir)
   const middlewareCache = new Map<string, MiddlewareRoute[]>()
+  const collected: CollectedRoute[] = []
 
   for (const absolutePath of routeFiles) {
     const relativePath = absolutePath.replace(sourceDir + sep, '')
@@ -104,8 +113,14 @@ export async function loadRoutes(server: App, sourceDir: string, logger: Logger,
         handler = applyMiddleware(config, handler)
       }
 
-      server.addRoute(method, routePath, handler)
-      logger.info(`  ${method} ${routePath}  <-  ${relativePath}`)
+      collected.push({ matcher: routePath, method, handler, relativePath })
     }
+  }
+
+  const sorted = new RoutesSorter(collected).sort()
+
+  for (const route of sorted) {
+    server.addRoute(route.method, route.matcher, route.handler)
+    logger.info(`  ${route.method} ${route.matcher}  <-  ${route.relativePath}`)
   }
 }

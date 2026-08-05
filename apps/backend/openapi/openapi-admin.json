@@ -1610,26 +1610,14 @@
           }
         }
       },
-      "AdminUserListResponse": {
+      "AdminUserResponse": {
         "type": "object",
         "properties": {
-          "count": {
-            "type": "number"
-          },
-          "offset": {
-            "type": "number"
-          },
-          "limit": {
-            "type": "number"
-          },
-          "users": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/AdminUser"
-            }
+          "user": {
+            "$ref": "#/components/schemas/AdminUser"
           }
         },
-        "required": ["count", "offset", "limit", "users"]
+        "required": ["user"]
       },
       "AdminUser": {
         "type": "object",
@@ -1658,14 +1646,26 @@
         },
         "required": ["id", "name", "email", "createdAt", "updatedAt", "deletedAt"]
       },
-      "AdminUserResponse": {
+      "AdminUserListResponse": {
         "type": "object",
         "properties": {
-          "user": {
-            "$ref": "#/components/schemas/AdminUser"
+          "count": {
+            "type": "number"
+          },
+          "offset": {
+            "type": "number"
+          },
+          "limit": {
+            "type": "number"
+          },
+          "users": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/AdminUser"
+            }
           }
         },
-        "required": ["user"]
+        "required": ["count", "offset", "limit", "users"]
       },
       "AdminCreateUser": {
         "type": "object",
@@ -3658,6 +3658,28 @@
           },
           "404": {
             "description": "Not found"
+          }
+        }
+      }
+    },
+    "/admin/users/me": {
+      "get": {
+        "operationId": "getMe",
+        "summary": "Retrieve the authenticated user",
+        "tags": ["Users"],
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AdminUserResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Validation error"
           }
         }
       }

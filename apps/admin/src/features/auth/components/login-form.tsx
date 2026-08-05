@@ -1,0 +1,30 @@
+import { Button, toast } from '@proteus/ui'
+import type { LoginFormParams } from '#/features/auth/hooks/use-login-form'
+import { useLoginForm } from '#/features/auth/hooks/use-login-form'
+
+export function LoginForm(props: LoginFormParams) {
+  const { form, isPending } = useLoginForm({
+    ...props,
+    onError: (error) => toast.add({ type: 'error', title: 'Login failed', description: error }),
+  })
+
+  return (
+    <form
+      onSubmit={(event) => {
+        event.preventDefault()
+        form.handleSubmit()
+      }}
+      className="flex flex-col gap-4"
+    >
+      <form.AppField name="email">
+        {(field) => <field.TextField label="Email" type="email" autoComplete="email" autoFocus />}
+      </form.AppField>
+      <form.AppField name="password">
+        {(field) => <field.TextField label="Password" type="password" autoComplete="current-password" />}
+      </form.AppField>
+      <Button type="submit" disabled={isPending}>
+        {isPending ? 'Signing in...' : 'Sign in'}
+      </Button>
+    </form>
+  )
+}
