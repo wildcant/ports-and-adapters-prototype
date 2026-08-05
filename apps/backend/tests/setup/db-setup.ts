@@ -18,6 +18,10 @@ beforeEach(async () => {
   await db.execute(dsql`DROP SCHEMA IF EXISTS public CASCADE`)
   await db.execute(dsql`CREATE SCHEMA public`)
   await migrate(db, {
+    migrationsFolder: join(migrationsRoot, 'src/modules/auth/migrations'),
+    migrationsTable: 'migrations_auth',
+  })
+  await migrate(db, {
     migrationsFolder: join(migrationsRoot, 'src/modules/user/migrations'),
     migrationsTable: 'migrations_user',
   })

@@ -2,6 +2,15 @@ import { test as testBase } from 'vitest'
 import { noopLogger } from '../../src/core/logger/index.js'
 import type { Logger } from '../../src/core/types/logger.js'
 import type { Database } from '../../src/schema.type.js'
+import {
+  generateCreateAuthIdentityDTO,
+  generateCreateAuthPasswordResetTokenDTO,
+  generateCreateAuthVerificationDTO,
+  generateCreateProviderIdentityDTO,
+  generateUpdateAuthIdentityDTO,
+  generateUpdateAuthVerificationDTO,
+  generateUpdateProviderIdentityDTO,
+} from '../factories/auth-dto.js'
 import { generateCustomer } from '../factories/customer.js'
 import {
   generateCreateCustomerAddressDTO,
@@ -31,6 +40,13 @@ type Fixtures = {
   }
   dto: {
     generate: {
+      createAuthIdentity: typeof generateCreateAuthIdentityDTO
+      updateAuthIdentity: typeof generateUpdateAuthIdentityDTO
+      createProviderIdentity: typeof generateCreateProviderIdentityDTO
+      updateProviderIdentity: typeof generateUpdateProviderIdentityDTO
+      createAuthVerification: typeof generateCreateAuthVerificationDTO
+      updateAuthVerification: typeof generateUpdateAuthVerificationDTO
+      createAuthPasswordResetToken: typeof generateCreateAuthPasswordResetTokenDTO
       createCustomer: typeof generateCreateCustomerDTO
       createCustomerAddress: typeof generateCreateCustomerAddressDTO
       updateCustomer: typeof generateUpdateCustomerDTO
@@ -67,6 +83,13 @@ export const test = testBase.extend<Fixtures>({
   async dto({ task: _ }, use) {
     await use({
       generate: {
+        createAuthIdentity: generateCreateAuthIdentityDTO,
+        updateAuthIdentity: generateUpdateAuthIdentityDTO,
+        createProviderIdentity: generateCreateProviderIdentityDTO,
+        updateProviderIdentity: generateUpdateProviderIdentityDTO,
+        createAuthVerification: generateCreateAuthVerificationDTO,
+        updateAuthVerification: generateUpdateAuthVerificationDTO,
+        createAuthPasswordResetToken: generateCreateAuthPasswordResetTokenDTO,
         createCustomer: generateCreateCustomerDTO,
         createCustomerAddress: generateCreateCustomerAddressDTO,
         updateCustomer: generateUpdateCustomerDTO,

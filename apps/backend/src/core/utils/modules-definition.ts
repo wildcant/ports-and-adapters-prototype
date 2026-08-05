@@ -1,4 +1,5 @@
 export const Modules = {
+  AUTH: 'auth',
   USER: 'user',
   CUSTOMER: 'customer',
   CART: 'cart',
