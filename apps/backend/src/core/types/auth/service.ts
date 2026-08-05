@@ -7,9 +7,11 @@ import type {
   ProviderIdentityDTO,
 } from './common.js'
 import type {
+  ConsumePasswordResetTokenDTO,
   CreateAuthIdentityDTO,
   CreateAuthPasswordResetTokenDTO,
   CreateAuthVerificationDTO,
+  CreatePasswordResetTokenDTO,
   CreateProviderIdentityDTO,
   UpdateAuthIdentityDTO,
   UpdateAuthVerificationDTO,
@@ -21,6 +23,8 @@ import type {
   AuthVerificationDTO,
   ConfirmAuthVerificationDTO,
   ConfirmAuthVerificationResult,
+  ConsumePasswordResetTokenResult,
+  CreatePasswordResetTokenResult,
   FilterableAuthVerificationProps,
   RequestAuthVerificationDTO,
   RequestAuthVerificationResult,
@@ -111,6 +115,10 @@ export type IAuthModuleService = {
   deleteAuthVerifications(ids: string[], context?: Context): Promise<void>
   softDeleteAuthVerifications(ids: string[], context?: Context): Promise<void>
   restoreAuthVerifications(ids: string[], context?: Context): Promise<void>
+
+  // Password reset (orchestration)
+  createPasswordResetToken(input: CreatePasswordResetTokenDTO): Promise<CreatePasswordResetTokenResult>
+  consumePasswordResetToken(input: ConsumePasswordResetTokenDTO): Promise<ConsumePasswordResetTokenResult>
 
   // AuthPasswordResetToken (hard-delete only)
   createAuthPasswordResetToken(

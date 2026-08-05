@@ -1,5 +1,6 @@
 import type { BaseFilterable, OperatorMap } from '../common.js'
 import type { Context } from '../context.js'
+import type { ProviderIdentityDTO } from './common.js'
 import type { CreateAuthVerificationDTO, UpdateAuthVerificationDTO } from './mutations.js'
 
 export type AuthVerificationDTO = {
@@ -36,6 +37,18 @@ export type AuthPasswordResetTokenDTO = {
   expiresAt: Date
   createdAt: Date
   updatedAt: Date
+}
+
+export type CreatePasswordResetTokenResult = {
+  jti: string
+  expiresAt: Date
+  providerIdentity: ProviderIdentityDTO
+}
+
+export type ConsumePasswordResetTokenResult = {
+  authIdentityId: string
+  providerIdentityId: string
+  entityId: string
 }
 
 export type RequestAuthVerificationDTO = {

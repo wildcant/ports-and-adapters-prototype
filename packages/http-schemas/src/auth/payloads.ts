@@ -20,6 +20,20 @@ export const VerificationConfirmBody = z
   .openapi('VerificationConfirmBody')
 export type VerificationConfirmBody = z.infer<typeof VerificationConfirmBody>
 
+export const ResetPasswordBody = z
+  .object({
+    email: z.email(),
+  })
+  .openapi('ResetPasswordBody')
+export type ResetPasswordBody = z.infer<typeof ResetPasswordBody>
+
+export const UpdatePasswordBody = z
+  .object({
+    password: z.string().min(1),
+  })
+  .openapi('UpdatePasswordBody')
+export type UpdatePasswordBody = z.infer<typeof UpdatePasswordBody>
+
 export const VerificationRequestBody = z
   .object({
     entityId: z.string().min(1),

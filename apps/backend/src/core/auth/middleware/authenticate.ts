@@ -1,9 +1,8 @@
 import type { ActorType } from '@proteus/http-schemas/auth'
-import jwt from 'jsonwebtoken'
-import { env } from '../../../env.js'
 import { AppError, ErrorTypes } from '../../errors/app-error.js'
 import type { MiddlewareFunction } from '../../middleware/types.js'
-import type { AuthContext, AuthTokenPayload } from '../types.js'
+import type { AuthContext } from '../types.js'
+import { extractTokenPayload } from '../utils/token.js'
 
 type AuthenticateOptions = {
   allowUnauthenticated?: boolean
@@ -18,27 +17,10 @@ function getAuthContextFromJwtToken(
   authHeader: string | undefined,
   actorTypes: (ActorType | '*')[],
 ): AuthContext | null {
-  if (!authHeader?.startsWith('Bearer ')) {
+  const payload = extractTokenPayload(authHeader)
+  if (!payload) {
     return null
   }
-
-  const token = authHeader.slice(7)
-  if (!token) {
-    return null
-  }
-
-  // Explicit own-properties so a polluted Object.prototype can't silently disable expiry checks
-  const decoded = jwt.verify(token, env.JWT_SECRET, {
-    ignoreExpiration: false,
-    ignoreNotBefore: false,
-  })
-
-  if (typeof decoded !== 'object' || decoded === null) {
-    return null
-  }
-
-  // Own-property access only — prototype pollution defense
-  const payload = Object.assign(Object.create(null), decoded) as AuthTokenPayload
 
   const isWildcard = actorTypes.includes('*')
   if (!payload.actorType || (!isWildcard && !actorTypes.includes(payload.actorType))) {

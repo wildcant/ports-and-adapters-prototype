@@ -42,3 +42,15 @@ export type CreateAuthPasswordResetTokenDTO = {
   tokenHash: string
   expiresAt: Date
 }
+
+export type CreatePasswordResetTokenDTO = {
+  provider: string
+  entityId: string
+  ttlSeconds?: number
+}
+
+export type ConsumePasswordResetTokenDTO = {
+  jti: string
+  provider: string
+  entityId: string
+}

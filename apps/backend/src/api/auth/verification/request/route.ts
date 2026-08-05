@@ -28,7 +28,7 @@ export const POST = async (req: HttpRequest<RequestInput>): Promise<HttpResult<V
       id: result.id,
       entityId: result.entityId,
       entityType: result.entityType,
-      requestedAt: result.requestedAt.toISOString(),
+      requestedAt: result.requestedAt,
     },
   }
 }

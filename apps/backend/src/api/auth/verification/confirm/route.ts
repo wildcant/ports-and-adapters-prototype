@@ -34,7 +34,7 @@ export const POST = async (req: HttpRequest<ConfirmInput>): Promise<HttpResult<V
       id: result.id,
       entityId: result.entityId,
       entityType: result.entityType,
-      verifiedAt: verifiedAt.toISOString(),
+      verifiedAt,
     },
   }
 }

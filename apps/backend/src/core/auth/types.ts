@@ -6,7 +6,7 @@ export type AuthContext = {
   actorType: ActorType
   authIdentityId: string
   authProvider: string
-  // TODO: define concrete types once metadata shape is settled
+  purpose?: string
   appMetadata: Record<string, unknown>
   userMetadata: Record<string, unknown>
 }

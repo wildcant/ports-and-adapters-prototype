@@ -1,3 +1,4 @@
+import crypto from 'node:crypto'
 import { AppError, ErrorTypes } from '../../../core/errors/index.js'
 import type {
   AuthenticationInput,
@@ -9,10 +10,14 @@ import type {
   AuthVerificationService,
   ConfirmAuthVerificationDTO,
   ConfirmAuthVerificationResult,
+  ConsumePasswordResetTokenDTO,
+  ConsumePasswordResetTokenResult,
   Context,
   CreateAuthIdentityDTO,
   CreateAuthPasswordResetTokenDTO,
   CreateAuthVerificationDTO,
+  CreatePasswordResetTokenDTO,
+  CreatePasswordResetTokenResult,
   CreateProviderIdentityDTO,
   FilterableAuthIdentityProps,
   FilterableAuthVerificationProps,
@@ -34,6 +39,8 @@ import type { AuthVerificationRepository } from '../repositories/auth-verificati
 import type { ProviderIdentityRepository } from '../repositories/provider-identity.js'
 import type { AuthProviderService } from './auth-provider-service.js'
 import type { VerificationProviderService } from './verification-provider-service.js'
+
+const RESET_PASSWORD_TOKEN_TTL_SECONDS = 15 * 60
 
 type InjectedDependencies = {
   authIdentityRepository: AuthIdentityRepository
@@ -214,6 +221,78 @@ export class AuthModuleService implements IAuthModuleService {
         this.getAuthVerificationService(transactionContext),
       )
     })
+  }
+
+  // --- Password Reset (orchestration) ---
+
+  private hashJti(jti: string): string {
+    return crypto.createHash('sha256').update(jti).digest('hex')
+  }
+
+  async createPasswordResetToken(input: CreatePasswordResetTokenDTO): Promise<CreatePasswordResetTokenResult> {
+    const { provider, entityId, ttlSeconds = RESET_PASSWORD_TOKEN_TTL_SECONDS } = input
+
+    const providerIdentities = await this.providerIdentityRepository.find({ entityId, provider }, { limit: 1 })
+    const providerIdentity = providerIdentities[0]
+    if (!providerIdentity) {
+      throw new AppError({
+        type: ErrorTypes.NOT_FOUND,
+        message: `Provider identity with entityId "${entityId}" and provider "${provider}" not found`,
+      })
+    }
+
+    const jti = crypto.randomUUID()
+    const tokenHash = this.hashJti(jti)
+    const expiresAt = new Date(Date.now() + ttlSeconds * 1000)
+
+    await this.withTransaction(undefined, async (context) => {
+      // Invalidate prior tokens for this provider identity
+      await this.authPasswordResetTokenRepository.deleteByProviderIdentityId(providerIdentity.id, context)
+
+      await this.authPasswordResetTokenRepository.create(
+        {
+          authIdentityId: providerIdentity.authIdentityId,
+          providerIdentityId: providerIdentity.id,
+          entityId,
+          tokenHash,
+          expiresAt,
+        },
+        context,
+      )
+    })
+
+    return { jti, expiresAt, providerIdentity }
+  }
+
+  async consumePasswordResetToken(input: ConsumePasswordResetTokenDTO): Promise<ConsumePasswordResetTokenResult> {
+    const { jti, provider, entityId } = input
+    const tokenHash = this.hashJti(jti)
+
+    const record = await this.authPasswordResetTokenRepository.findByTokenHash(tokenHash)
+    if (!record) {
+      throw new AppError({ type: ErrorTypes.UNAUTHORIZED, message: 'Invalid or expired reset token' })
+    }
+
+    if (record.expiresAt < new Date()) {
+      // Clean up expired token before rejecting
+      await this.authPasswordResetTokenRepository.hardDelete([record.id])
+      throw new AppError({ type: ErrorTypes.UNAUTHORIZED, message: 'Invalid or expired reset token' })
+    }
+
+    // Cross-check provider + entity_id against the DB record
+    const providerIdentity = await this.providerIdentityRepository.findByIdOrFail(record.providerIdentityId)
+    if (providerIdentity.provider !== provider || providerIdentity.entityId !== entityId) {
+      throw new AppError({ type: ErrorTypes.UNAUTHORIZED, message: 'Invalid or expired reset token' })
+    }
+
+    // Single-use: hard-delete the token atomically
+    await this.authPasswordResetTokenRepository.hardDelete([record.id])
+
+    return {
+      authIdentityId: record.authIdentityId,
+      providerIdentityId: record.providerIdentityId,
+      entityId: providerIdentity.entityId,
+    }
   }
 
   // --- AuthIdentity ---

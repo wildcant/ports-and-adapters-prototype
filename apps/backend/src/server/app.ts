@@ -81,6 +81,8 @@ export const createApp: CreateApp = ({ container }) => {
           headers[key] = value
         })
 
+        logger.http(`${method} ${url.pathname}`)
+
         try {
           const result = await route.handler({
             params,

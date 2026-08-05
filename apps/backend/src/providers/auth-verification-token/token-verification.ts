@@ -1,3 +1,8 @@
+import {
+  generateVerificationToken,
+  getVerificationTokenTtlMs,
+  hashVerificationToken,
+} from '../../core/auth/utils/verification-token.js'
 import { AppError } from '../../core/errors/index.js'
 import type {
   AuthVerificationDTO,
@@ -8,11 +13,6 @@ import type {
   RequestAuthVerificationResult,
 } from '../../core/types/index.js'
 import { AbstractAuthVerificationProvider } from '../../core/utils/abstract-auth-verification-provider.js'
-import {
-  generateVerificationToken,
-  getVerificationTokenTtlMs,
-  hashVerificationToken,
-} from '../../modules/auth/utils/verification-token.js'
 
 const DEFAULT_TTL_SECONDS = 900
 

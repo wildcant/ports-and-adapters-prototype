@@ -1,10 +1,15 @@
 import { authenticate } from '@core/auth/middleware/authenticate.js'
 import { validateScopeProviderAssociation } from '@core/auth/utils/validate-scope-provider-association.js'
+import { validateToken } from '@core/auth/utils/validate-token.js'
 import {
   AuthBody,
   AuthenticateResponse,
   AuthParams,
   AuthTokenResponse,
+  ResetPasswordBody,
+  ResetPasswordResponse,
+  UpdatePasswordBody,
+  UpdatePasswordResponse,
   VerificationConfirmBody,
   VerificationConfirmResponse,
   VerificationRequestBody,
@@ -35,6 +40,28 @@ export default [
     summary: 'Authenticate with an auth provider',
     tags: [Tags.AUTH],
     responseSchema: AuthenticateResponse,
+  },
+  {
+    method: 'POST',
+    matcher: '/auth/:actorType/:authProvider/reset-password',
+    middlewares: [validateScopeProviderAssociation()],
+    paramsSchema: AuthParams,
+    bodySchema: ResetPasswordBody,
+    operationId: 'authResetPassword',
+    summary: 'Request a password reset token',
+    tags: [Tags.AUTH],
+    responseSchema: ResetPasswordResponse,
+  },
+  {
+    method: 'POST',
+    matcher: '/auth/:actorType/:authProvider/update',
+    middlewares: [validateToken()],
+    paramsSchema: AuthParams,
+    bodySchema: UpdatePasswordBody,
+    operationId: 'authUpdatePassword',
+    summary: 'Update password using a reset token',
+    tags: [Tags.AUTH],
+    responseSchema: UpdatePasswordResponse,
   },
   {
     method: 'POST',

@@ -1,4 +1,5 @@
 import { z } from 'zod'
+import { dateToIso } from '../common.js'
 
 export const AuthTokenResponse = z
   .object({
@@ -15,22 +16,32 @@ export const AuthenticateResponse = z
   .openapi('AuthenticateResponse')
 export type AuthenticateResponse = z.infer<typeof AuthenticateResponse>
 
+export const ResetPasswordResponse = z.object({}).openapi('ResetPasswordResponse')
+export type ResetPasswordResponse = z.infer<typeof ResetPasswordResponse>
+
+export const UpdatePasswordResponse = z
+  .object({
+    success: z.boolean(),
+  })
+  .openapi('UpdatePasswordResponse')
+export type UpdatePasswordResponse = z.infer<typeof UpdatePasswordResponse>
+
 export const VerificationRequestResponse = z
   .object({
     id: z.string(),
     entityId: z.string(),
     entityType: z.string(),
-    requestedAt: z.string().datetime(),
+    requestedAt: dateToIso,
   })
   .openapi('VerificationRequestResponse')
-export type VerificationRequestResponse = z.infer<typeof VerificationRequestResponse>
+export type VerificationRequestResponse = z.input<typeof VerificationRequestResponse>
 
 export const VerificationConfirmResponse = z
   .object({
     id: z.string(),
     entityId: z.string(),
     entityType: z.string(),
-    verifiedAt: z.string().datetime(),
+    verifiedAt: dateToIso,
   })
   .openapi('VerificationConfirmResponse')
-export type VerificationConfirmResponse = z.infer<typeof VerificationConfirmResponse>
+export type VerificationConfirmResponse = z.input<typeof VerificationConfirmResponse>

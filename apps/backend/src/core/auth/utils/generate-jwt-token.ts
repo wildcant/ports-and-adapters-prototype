@@ -53,6 +53,41 @@ export function generateJwtTokenForAuthIdentity(
   )
 }
 
+const RESET_PASSWORD_TOKEN_TTL_SECONDS = 15 * 60
+
+/**
+ * Build a purpose-bound reset JWT. The token carries `purpose: "reset"`,
+ * a `jti` claim that links to the DB reset record, and the entity_id
+ * in the `actorId` field so the update endpoint can identify the user.
+ */
+export function generateResetJwtToken(
+  input: {
+    entityId: string
+    provider: string
+    actorType: string
+    authIdentityId: string
+    jti: string
+  },
+  jwtConfig: AuthJwtConfig,
+): string {
+  return generateJwtToken(
+    {
+      actorId: input.entityId,
+      actorType: input.actorType as GenerateTokenInput['actorType'],
+      authIdentityId: input.authIdentityId,
+      authProvider: input.provider,
+      appMetadata: {},
+      userMetadata: {},
+      purpose: 'reset',
+    },
+    {
+      secret: jwtConfig.secret,
+      expiresIn: RESET_PASSWORD_TOKEN_TTL_SECONDS,
+      jwtOptions: { jwtid: input.jti },
+    },
+  )
+}
+
 type GenerateTokenWithChecksResult = { token: string; verificationRequired?: true }
 
 /**

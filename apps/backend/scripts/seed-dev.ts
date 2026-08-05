@@ -1,6 +1,8 @@
 import { container } from '../src/container.node.js'
 import type {
+  IAuthModuleService,
   ICartModuleService,
+  ICustomerModuleService,
   IInventoryModuleService,
   ILinkService,
   IPaymentModuleService,
@@ -9,6 +11,8 @@ import type {
 } from '../src/core/types/index.js'
 import { ContainerRegistrationKeys, Modules } from '../src/core/utils/index.js'
 
+const authService = container.resolve<IAuthModuleService>(Modules.AUTH)
+const customerService = container.resolve<ICustomerModuleService>(Modules.CUSTOMER)
 const userService = container.resolve<IUserModuleService>(Modules.USER)
 const productService = container.resolve<IProductModuleService>(Modules.PRODUCT)
 const inventoryService = container.resolve<IInventoryModuleService>(Modules.INVENTORY)
@@ -27,6 +31,137 @@ if (existingUsers.length === 0) {
   console.info(`Seeded ${createdUsers.length} users`)
 } else {
   console.info(`Skipped users (${existingUsers.length} already exist)`)
+}
+
+// --- Dev admin user (registered + linked, ready for admin auth) ---
+const DEV_ADMIN_EMAIL = 'admin@example.com'
+const DEV_ADMIN_PASSWORD = 'password'
+
+const existingAdminIdentities = await authService.listProviderIdentities({
+  entityId: DEV_ADMIN_EMAIL,
+  provider: 'emailpass',
+})
+if (existingAdminIdentities.length === 0) {
+  const registrationResult = await authService.register('emailpass', {
+    body: { email: DEV_ADMIN_EMAIL, password: DEV_ADMIN_PASSWORD },
+  })
+  if (!registrationResult.success || !registrationResult.authIdentity) {
+    throw new Error(`Failed to register dev admin: ${registrationResult.error}`)
+  }
+  console.info(`Seeded dev admin: ${DEV_ADMIN_EMAIL} / ${DEV_ADMIN_PASSWORD}`)
+} else {
+  console.info(`Skipped dev admin (${DEV_ADMIN_EMAIL} already exists)`)
+}
+
+// Ensure admin user entity exists and is linked to auth identity
+const adminIdentity = (await authService.listProviderIdentities({
+  entityId: DEV_ADMIN_EMAIL,
+  provider: 'emailpass',
+}))[0]
+if (adminIdentity) {
+  const adminAuthIdentity = await authService.retrieveAuthIdentity(adminIdentity.authIdentityId)
+  const hasUserId = adminAuthIdentity.appMetadata && typeof adminAuthIdentity.appMetadata === 'object' && 'userId' in adminAuthIdentity.appMetadata
+
+  if (!hasUserId) {
+    const existingAdminUsers = await userService.listUsers({ email: DEV_ADMIN_EMAIL })
+    let userId: string
+    if (existingAdminUsers.length > 0 && existingAdminUsers[0]) {
+      userId = existingAdminUsers[0].id
+    } else {
+      const [created] = await userService.createUsers([{ name: 'Dev Admin', email: DEV_ADMIN_EMAIL }])
+      if (!created) throw new Error('Failed to create dev admin user entity')
+      userId = created.id
+    }
+    await authService.updateAuthIdentities([adminIdentity.authIdentityId], {
+      appMetadata: { ...((adminAuthIdentity.appMetadata as Record<string, unknown>) ?? {}), userId },
+    })
+    console.info(`Linked dev admin user ${userId} to auth identity`)
+  } else {
+    console.info('Skipped admin user linking (already linked)')
+  }
+}
+
+// --- Dev customer (registered + email-verified, ready for store auth) ---
+const DEV_CUSTOMER_EMAIL = 'customer@example.com'
+const DEV_CUSTOMER_PASSWORD = 'password'
+
+const existingCustomerIdentities = await authService.listProviderIdentities({
+  entityId: DEV_CUSTOMER_EMAIL,
+  provider: 'emailpass',
+})
+if (existingCustomerIdentities.length === 0) {
+  const registrationResult = await authService.register('emailpass', {
+    body: { email: DEV_CUSTOMER_EMAIL, password: DEV_CUSTOMER_PASSWORD },
+  })
+  if (!registrationResult.success || !registrationResult.authIdentity) {
+    throw new Error(`Failed to register dev customer: ${registrationResult.error}`)
+  }
+  console.info(`Seeded dev customer: ${DEV_CUSTOMER_EMAIL} / ${DEV_CUSTOMER_PASSWORD}`)
+} else {
+  console.info(`Skipped dev customer (${DEV_CUSTOMER_EMAIL} already exists)`)
+}
+
+// Ensure customer entity exists and is linked to auth identity
+const customerIdentity = (await authService.listProviderIdentities({
+  entityId: DEV_CUSTOMER_EMAIL,
+  provider: 'emailpass',
+}))[0]
+if (customerIdentity) {
+  const authIdentity = await authService.retrieveAuthIdentity(customerIdentity.authIdentityId)
+  const hasCustomerId = authIdentity.appMetadata && typeof authIdentity.appMetadata === 'object' && 'customerId' in authIdentity.appMetadata
+
+  if (!hasCustomerId) {
+    const existingCustomers = await customerService.listCustomers({ email: DEV_CUSTOMER_EMAIL })
+    let customerId: string
+    if (existingCustomers.length > 0 && existingCustomers[0]) {
+      customerId = existingCustomers[0].id
+    } else {
+      const [created] = await customerService.createCustomers([
+        { firstName: 'Dev', lastName: 'Customer', email: DEV_CUSTOMER_EMAIL },
+      ])
+      if (!created) throw new Error('Failed to create dev customer entity')
+      customerId = created.id
+    }
+    await authService.updateAuthIdentities([customerIdentity.authIdentityId], {
+      appMetadata: { ...((authIdentity.appMetadata as Record<string, unknown>) ?? {}), customerId },
+    })
+    console.info(`Linked dev customer entity ${customerId} to auth identity`)
+  } else {
+    console.info('Skipped customer entity linking (already linked)')
+  }
+
+  // Ensure email verification exists (idempotent — safe to re-run after earlier seeds that lacked it)
+  const existingVerifications = await authService.listAuthVerifications({
+    authIdentityId: customerIdentity.authIdentityId,
+    entityId: DEV_CUSTOMER_EMAIL,
+    entityType: 'email',
+  })
+  if (existingVerifications.length === 0) {
+    await authService.createAuthVerifications([
+      {
+        authIdentityId: customerIdentity.authIdentityId,
+        entityId: DEV_CUSTOMER_EMAIL,
+        entityType: 'email',
+        codeProvider: 'token',
+        requestedAt: new Date(),
+      },
+    ])
+    const verifications = await authService.listAuthVerifications({
+      authIdentityId: customerIdentity.authIdentityId,
+      entityId: DEV_CUSTOMER_EMAIL,
+      entityType: 'email',
+    })
+    const verification = verifications[0]
+    if (verification) {
+      await authService.updateAuthVerifications([verification.id], { verifiedAt: new Date() })
+    }
+    console.info('Created email verification for dev customer')
+  } else if (!existingVerifications[0]?.verifiedAt) {
+    await authService.updateAuthVerifications([existingVerifications[0].id], { verifiedAt: new Date() })
+    console.info('Marked existing email verification as verified for dev customer')
+  } else {
+    console.info('Skipped email verification (already verified)')
+  }
 }
 
 // --- Products ---
