@@ -18,9 +18,7 @@
             "$ref": "#/components/schemas/StoreCart"
           }
         },
-        "required": [
-          "cart"
-        ]
+        "required": ["cart"]
       },
       "StoreCart": {
         "type": "object",
@@ -29,28 +27,16 @@
             "type": "string"
           },
           "regionId": {
-            "type": [
-              "string",
-              "null"
-            ]
+            "type": ["string", "null"]
           },
           "customerId": {
-            "type": [
-              "string",
-              "null"
-            ]
+            "type": ["string", "null"]
           },
           "salesChannelId": {
-            "type": [
-              "string",
-              "null"
-            ]
+            "type": ["string", "null"]
           },
           "email": {
-            "type": [
-              "string",
-              "null"
-            ]
+            "type": ["string", "null"]
           },
           "currencyCode": {
             "type": "string"
@@ -59,28 +45,16 @@
             "type": "string"
           },
           "shippingAddressId": {
-            "type": [
-              "string",
-              "null"
-            ]
+            "type": ["string", "null"]
           },
           "billingAddressId": {
-            "type": [
-              "string",
-              "null"
-            ]
+            "type": ["string", "null"]
           },
           "metadata": {
-            "type": [
-              "string",
-              "null"
-            ]
+            "type": ["string", "null"]
           },
           "completedAt": {
-            "type": [
-              "string",
-              "null"
-            ],
+            "type": ["string", "null"],
             "format": "date-time"
           },
           "createdAt": {
@@ -92,10 +66,7 @@
             "format": "date-time"
           },
           "deletedAt": {
-            "type": [
-              "string",
-              "null"
-            ],
+            "type": ["string", "null"],
             "format": "date-time"
           }
         },
@@ -140,17 +111,12 @@
                     }
                   }
                 },
-                "required": [
-                  "items",
-                  "shippingMethods"
-                ]
+                "required": ["items", "shippingMethods"]
               }
             ]
           }
         },
-        "required": [
-          "cart"
-        ]
+        "required": ["cart"]
       },
       "StoreCartLineItem": {
         "type": "object",
@@ -165,85 +131,46 @@
             "type": "string"
           },
           "subtitle": {
-            "type": [
-              "string",
-              "null"
-            ]
+            "type": ["string", "null"]
           },
           "thumbnail": {
-            "type": [
-              "string",
-              "null"
-            ]
+            "type": ["string", "null"]
           },
           "quantity": {
             "type": "number"
           },
           "variantId": {
-            "type": [
-              "string",
-              "null"
-            ]
+            "type": ["string", "null"]
           },
           "productId": {
-            "type": [
-              "string",
-              "null"
-            ]
+            "type": ["string", "null"]
           },
           "productTitle": {
-            "type": [
-              "string",
-              "null"
-            ]
+            "type": ["string", "null"]
           },
           "productDescription": {
-            "type": [
-              "string",
-              "null"
-            ]
+            "type": ["string", "null"]
           },
           "productSubtitle": {
-            "type": [
-              "string",
-              "null"
-            ]
+            "type": ["string", "null"]
           },
           "productType": {
-            "type": [
-              "string",
-              "null"
-            ]
+            "type": ["string", "null"]
           },
           "productHandle": {
-            "type": [
-              "string",
-              "null"
-            ]
+            "type": ["string", "null"]
           },
           "variantSku": {
-            "type": [
-              "string",
-              "null"
-            ]
+            "type": ["string", "null"]
           },
           "variantBarcode": {
-            "type": [
-              "string",
-              "null"
-            ]
+            "type": ["string", "null"]
           },
           "variantTitle": {
-            "type": [
-              "string",
-              "null"
-            ]
+            "type": ["string", "null"]
           },
           "variantOptionValues": {
-            "type": [
-              "string",
-              "null"
-            ]
+            "type": ["string", "null"]
           },
           "requiresShipping": {
             "type": "boolean"
@@ -258,19 +185,13 @@
             "type": "boolean"
           },
           "compareAtUnitPrice": {
-            "type": [
-              "number",
-              "null"
-            ]
+            "type": ["number", "null"]
           },
           "unitPrice": {
             "type": "number"
           },
           "metadata": {
-            "type": [
-              "string",
-              "null"
-            ]
+            "type": ["string", "null"]
           },
           "createdAt": {
             "type": "string",
@@ -281,10 +202,7 @@
             "format": "date-time"
           },
           "deletedAt": {
-            "type": [
-              "string",
-              "null"
-            ],
+            "type": ["string", "null"],
             "format": "date-time"
           }
         },
@@ -331,10 +249,7 @@
             "type": "string"
           },
           "description": {
-            "type": [
-              "string",
-              "null"
-            ]
+            "type": ["string", "null"]
           },
           "amount": {
             "type": "number"
@@ -343,22 +258,13 @@
             "type": "boolean"
           },
           "shippingOptionId": {
-            "type": [
-              "string",
-              "null"
-            ]
+            "type": ["string", "null"]
           },
           "data": {
-            "type": [
-              "string",
-              "null"
-            ]
+            "type": ["string", "null"]
           },
           "metadata": {
-            "type": [
-              "string",
-              "null"
-            ]
+            "type": ["string", "null"]
           },
           "createdAt": {
             "type": "string",
@@ -369,10 +275,7 @@
             "format": "date-time"
           },
           "deletedAt": {
-            "type": [
-              "string",
-              "null"
-            ],
+            "type": ["string", "null"],
             "format": "date-time"
           }
         },
@@ -398,9 +301,7 @@
             "$ref": "#/components/schemas/StoreCart"
           }
         },
-        "required": [
-          "cart"
-        ]
+        "required": ["cart"]
       },
       "StoreCreateCartLineItemResponse": {
         "type": "object",
@@ -409,9 +310,7 @@
             "$ref": "#/components/schemas/StoreCartLineItem"
           }
         },
-        "required": [
-          "lineItem"
-        ]
+        "required": ["lineItem"]
       },
       "StoreUpdateCartLineItemResponse": {
         "type": "object",
@@ -420,9 +319,7 @@
             "$ref": "#/components/schemas/StoreCartLineItem"
           }
         },
-        "required": [
-          "lineItem"
-        ]
+        "required": ["lineItem"]
       },
       "DeleteResponse": {
         "type": "object",
@@ -434,10 +331,7 @@
             "type": "boolean"
           }
         },
-        "required": [
-          "id",
-          "deleted"
-        ]
+        "required": ["id", "deleted"]
       },
       "StoreShippingOptionListResponse": {
         "type": "object",
@@ -449,9 +343,7 @@
             }
           }
         },
-        "required": [
-          "shippingOptions"
-        ]
+        "required": ["shippingOptions"]
       },
       "StoreShippingOption": {
         "type": "object",
@@ -464,16 +356,10 @@
           },
           "priceType": {
             "type": "string",
-            "enum": [
-              "flat",
-              "calculated"
-            ]
+            "enum": ["flat", "calculated"]
           },
           "amount": {
-            "type": [
-              "number",
-              "null"
-            ]
+            "type": ["number", "null"]
           },
           "serviceZoneId": {
             "type": "string"
@@ -482,20 +368,14 @@
             "type": "string"
           },
           "shippingOptionTypeId": {
-            "type": [
-              "string",
-              "null"
-            ]
+            "type": ["string", "null"]
           },
           "providerId": {
             "type": "string"
           },
           "data": {},
           "metadata": {
-            "type": [
-              "string",
-              "null"
-            ]
+            "type": ["string", "null"]
           },
           "isEnabled": {
             "type": "boolean"
@@ -509,10 +389,7 @@
             "format": "date-time"
           },
           "deletedAt": {
-            "type": [
-              "string",
-              "null"
-            ],
+            "type": ["string", "null"],
             "format": "date-time"
           }
         },
@@ -539,9 +416,7 @@
             "$ref": "#/components/schemas/StoreCartShippingMethod"
           }
         },
-        "required": [
-          "shippingMethod"
-        ]
+        "required": ["shippingMethod"]
       },
       "StoreCartResponse": {
         "type": "object",
@@ -550,9 +425,7 @@
             "$ref": "#/components/schemas/StoreCart"
           }
         },
-        "required": [
-          "cart"
-        ]
+        "required": ["cart"]
       },
       "StoreCreatePaymentCollectionResponse": {
         "type": "object",
@@ -561,9 +434,7 @@
             "$ref": "#/components/schemas/StorePaymentCollection"
           }
         },
-        "required": [
-          "paymentCollection"
-        ]
+        "required": ["paymentCollection"]
       },
       "StorePaymentCollection": {
         "type": "object",
@@ -578,45 +449,24 @@
             "type": "number"
           },
           "authorizedAmount": {
-            "type": [
-              "number",
-              "null"
-            ]
+            "type": ["number", "null"]
           },
           "capturedAmount": {
-            "type": [
-              "number",
-              "null"
-            ]
+            "type": ["number", "null"]
           },
           "refundedAmount": {
-            "type": [
-              "number",
-              "null"
-            ]
+            "type": ["number", "null"]
           },
           "completedAt": {
-            "type": [
-              "string",
-              "null"
-            ],
+            "type": ["string", "null"],
             "format": "date-time"
           },
           "status": {
             "type": "string",
-            "enum": [
-              "not_paid",
-              "awaiting",
-              "authorized",
-              "partially_authorized",
-              "completed"
-            ]
+            "enum": ["not_paid", "awaiting", "authorized", "partially_authorized", "completed"]
           },
           "metadata": {
-            "type": [
-              "object",
-              "null"
-            ],
+            "type": ["object", "null"],
             "additionalProperties": {}
           },
           "createdAt": {
@@ -628,10 +478,7 @@
             "format": "date-time"
           },
           "deletedAt": {
-            "type": [
-              "string",
-              "null"
-            ],
+            "type": ["string", "null"],
             "format": "date-time"
           }
         },
@@ -657,9 +504,7 @@
             "$ref": "#/components/schemas/StorePaymentSession"
           }
         },
-        "required": [
-          "paymentSession"
-        ]
+        "required": ["paymentSession"]
       },
       "StorePaymentSession": {
         "type": "object",
@@ -681,39 +526,22 @@
           },
           "status": {
             "type": "string",
-            "enum": [
-              "pending",
-              "authorized",
-              "captured",
-              "requires_more",
-              "error",
-              "canceled",
-              "pending_authorization"
-            ]
+            "enum": ["pending", "authorized", "captured", "requires_more", "error", "canceled", "pending_authorization"]
           },
           "data": {
             "type": "object",
             "additionalProperties": {}
           },
           "context": {
-            "type": [
-              "object",
-              "null"
-            ],
+            "type": ["object", "null"],
             "additionalProperties": {}
           },
           "authorizedAt": {
-            "type": [
-              "string",
-              "null"
-            ],
+            "type": ["string", "null"],
             "format": "date-time"
           },
           "metadata": {
-            "type": [
-              "object",
-              "null"
-            ],
+            "type": ["object", "null"],
             "additionalProperties": {}
           },
           "createdAt": {
@@ -725,10 +553,7 @@
             "format": "date-time"
           },
           "deletedAt": {
-            "type": [
-              "string",
-              "null"
-            ],
+            "type": ["string", "null"],
             "format": "date-time"
           }
         },
@@ -758,9 +583,7 @@
             }
           }
         },
-        "required": [
-          "paymentProviders"
-        ]
+        "required": ["paymentProviders"]
       },
       "StorePaymentProvider": {
         "type": "object",
@@ -772,10 +595,7 @@
             "type": "boolean"
           }
         },
-        "required": [
-          "id",
-          "isEnabled"
-        ]
+        "required": ["id", "isEnabled"]
       },
       "StoreProductListResponse": {
         "type": "object",
@@ -796,12 +616,7 @@
             }
           }
         },
-        "required": [
-          "count",
-          "offset",
-          "limit",
-          "products"
-        ]
+        "required": ["count", "offset", "limit", "products"]
       },
       "StoreProduct": {
         "type": "object",
@@ -816,58 +631,31 @@
             "type": "string"
           },
           "subtitle": {
-            "type": [
-              "string",
-              "null"
-            ]
+            "type": ["string", "null"]
           },
           "description": {
-            "type": [
-              "string",
-              "null"
-            ]
+            "type": ["string", "null"]
           },
           "thumbnail": {
-            "type": [
-              "string",
-              "null"
-            ]
+            "type": ["string", "null"]
           },
           "weight": {
-            "type": [
-              "number",
-              "null"
-            ]
+            "type": ["number", "null"]
           },
           "length": {
-            "type": [
-              "number",
-              "null"
-            ]
+            "type": ["number", "null"]
           },
           "height": {
-            "type": [
-              "number",
-              "null"
-            ]
+            "type": ["number", "null"]
           },
           "width": {
-            "type": [
-              "number",
-              "null"
-            ]
+            "type": ["number", "null"]
           },
           "originCountry": {
-            "type": [
-              "string",
-              "null"
-            ]
+            "type": ["string", "null"]
           },
           "material": {
-            "type": [
-              "string",
-              "null"
-            ]
+            "type": ["string", "null"]
           }
         },
         "required": [
@@ -903,16 +691,12 @@
                     }
                   }
                 },
-                "required": [
-                  "variants"
-                ]
+                "required": ["variants"]
               }
             ]
           }
         },
-        "required": [
-          "product"
-        ]
+        "required": ["product"]
       },
       "StoreProductVariant": {
         "type": "object",
@@ -927,60 +711,28 @@
             "type": "string"
           },
           "sku": {
-            "type": [
-              "string",
-              "null"
-            ]
+            "type": ["string", "null"]
           },
           "barcode": {
-            "type": [
-              "string",
-              "null"
-            ]
+            "type": ["string", "null"]
           },
           "material": {
-            "type": [
-              "string",
-              "null"
-            ]
+            "type": ["string", "null"]
           },
           "weight": {
-            "type": [
-              "number",
-              "null"
-            ]
+            "type": ["number", "null"]
           },
           "length": {
-            "type": [
-              "number",
-              "null"
-            ]
+            "type": ["number", "null"]
           },
           "height": {
-            "type": [
-              "number",
-              "null"
-            ]
+            "type": ["number", "null"]
           },
           "width": {
-            "type": [
-              "number",
-              "null"
-            ]
+            "type": ["number", "null"]
           }
         },
-        "required": [
-          "id",
-          "productId",
-          "title",
-          "sku",
-          "barcode",
-          "material",
-          "weight",
-          "length",
-          "height",
-          "width"
-        ]
+        "required": ["id", "productId", "title", "sku", "barcode", "material", "weight", "length", "height", "width"]
       },
       "AuthTokenResponse": {
         "type": "object",
@@ -989,9 +741,7 @@
             "type": "string"
           }
         },
-        "required": [
-          "token"
-        ]
+        "required": ["token"]
       },
       "AuthBody": {
         "type": "object",
@@ -1009,9 +759,7 @@
             "type": "boolean"
           }
         },
-        "required": [
-          "token"
-        ]
+        "required": ["token"]
       },
       "ResetPasswordResponse": {
         "type": "object",
@@ -1025,9 +773,7 @@
             "format": "email"
           }
         },
-        "required": [
-          "email"
-        ]
+        "required": ["email"]
       },
       "UpdatePasswordResponse": {
         "type": "object",
@@ -1036,9 +782,7 @@
             "type": "boolean"
           }
         },
-        "required": [
-          "success"
-        ]
+        "required": ["success"]
       },
       "UpdatePasswordBody": {
         "type": "object",
@@ -1048,9 +792,7 @@
             "minLength": 1
           }
         },
-        "required": [
-          "password"
-        ]
+        "required": ["password"]
       },
       "VerificationRequestResponse": {
         "type": "object",
@@ -1069,12 +811,7 @@
             "format": "date-time"
           }
         },
-        "required": [
-          "id",
-          "entityId",
-          "entityType",
-          "requestedAt"
-        ]
+        "required": ["id", "entityId", "entityType", "requestedAt"]
       },
       "VerificationConfirmResponse": {
         "type": "object",
@@ -1093,12 +830,7 @@
             "format": "date-time"
           }
         },
-        "required": [
-          "id",
-          "entityId",
-          "entityType",
-          "verifiedAt"
-        ]
+        "required": ["id", "entityId", "entityType", "verifiedAt"]
       },
       "VerificationConfirmBody": {
         "type": "object",
@@ -1112,9 +844,7 @@
             "minLength": 1
           }
         },
-        "required": [
-          "code"
-        ]
+        "required": ["code"]
       }
     },
     "parameters": {}
@@ -1124,9 +854,7 @@
       "post": {
         "operationId": "createStoreCart",
         "summary": "Create a cart",
-        "tags": [
-          "Carts"
-        ],
+        "tags": ["Carts"],
         "requestBody": {
           "content": {
             "application/json": {
@@ -1171,17 +899,11 @@
                           "type": "string"
                         }
                       },
-                      "required": [
-                        "title",
-                        "quantity",
-                        "unitPrice"
-                      ]
+                      "required": ["title", "quantity", "unitPrice"]
                     }
                   }
                 },
-                "required": [
-                  "currencyCode"
-                ]
+                "required": ["currencyCode"]
               }
             }
           }
@@ -1207,9 +929,7 @@
       "get": {
         "operationId": "getStoreCart",
         "summary": "Retrieve a cart with line items",
-        "tags": [
-          "Carts"
-        ],
+        "tags": ["Carts"],
         "parameters": [
           {
             "schema": {
@@ -1243,9 +963,7 @@
       "post": {
         "operationId": "updateStoreCart",
         "summary": "Update a cart",
-        "tags": [
-          "Carts"
-        ],
+        "tags": ["Carts"],
         "parameters": [
           {
             "schema": {
@@ -1300,9 +1018,7 @@
       "post": {
         "operationId": "addStoreCartLineItem",
         "summary": "Add a line item to a cart",
-        "tags": [
-          "Carts"
-        ],
+        "tags": ["Carts"],
         "parameters": [
           {
             "schema": {
@@ -1345,11 +1061,7 @@
                     "type": "string"
                   }
                 },
-                "required": [
-                  "title",
-                  "quantity",
-                  "unitPrice"
-                ]
+                "required": ["title", "quantity", "unitPrice"]
               }
             }
           }
@@ -1378,9 +1090,7 @@
       "post": {
         "operationId": "updateStoreCartLineItem",
         "summary": "Update a cart line item",
-        "tags": [
-          "Carts"
-        ],
+        "tags": ["Carts"],
         "parameters": [
           {
             "schema": {
@@ -1442,9 +1152,7 @@
       "delete": {
         "operationId": "deleteStoreCartLineItem",
         "summary": "Remove a line item from a cart",
-        "tags": [
-          "Carts"
-        ],
+        "tags": ["Carts"],
         "parameters": [
           {
             "schema": {
@@ -1489,9 +1197,7 @@
       "get": {
         "operationId": "listStoreCartShippingOptions",
         "summary": "List available shipping options for a cart",
-        "tags": [
-          "Carts"
-        ],
+        "tags": ["Carts"],
         "parameters": [
           {
             "schema": {
@@ -1559,9 +1265,7 @@
       "post": {
         "operationId": "addStoreCartShippingMethod",
         "summary": "Select a shipping method for a cart",
-        "tags": [
-          "Carts"
-        ],
+        "tags": ["Carts"],
         "parameters": [
           {
             "schema": {
@@ -1588,9 +1292,7 @@
                     "additionalProperties": {}
                   }
                 },
-                "required": [
-                  "shippingOptionId"
-                ]
+                "required": ["shippingOptionId"]
               }
             }
           }
@@ -1619,9 +1321,7 @@
       "post": {
         "operationId": "completeStoreCart",
         "summary": "Complete a cart (authorize payment and mark as completed)",
-        "tags": [
-          "Carts"
-        ],
+        "tags": ["Carts"],
         "parameters": [
           {
             "schema": {
@@ -1657,9 +1357,7 @@
       "post": {
         "operationId": "createStorePaymentCollection",
         "summary": "Create a payment collection for a cart",
-        "tags": [
-          "Payment Collections"
-        ],
+        "tags": ["Payment Collections"],
         "requestBody": {
           "content": {
             "application/json": {
@@ -1671,9 +1369,7 @@
                     "minLength": 1
                   }
                 },
-                "required": [
-                  "cartId"
-                ]
+                "required": ["cartId"]
               }
             }
           }
@@ -1699,9 +1395,7 @@
       "post": {
         "operationId": "createStorePaymentSession",
         "summary": "Create a payment session",
-        "tags": [
-          "Payment Collections"
-        ],
+        "tags": ["Payment Collections"],
         "parameters": [
           {
             "schema": {
@@ -1732,9 +1426,7 @@
                     "additionalProperties": {}
                   }
                 },
-                "required": [
-                  "providerId"
-                ]
+                "required": ["providerId"]
               }
             }
           }
@@ -1763,9 +1455,7 @@
       "get": {
         "operationId": "listStorePaymentProviders",
         "summary": "List enabled payment providers",
-        "tags": [
-          "Payments"
-        ],
+        "tags": ["Payments"],
         "responses": {
           "200": {
             "description": "Successful response",
@@ -1787,16 +1477,11 @@
       "get": {
         "operationId": "listStoreProducts",
         "summary": "List published products",
-        "tags": [
-          "Products"
-        ],
+        "tags": ["Products"],
         "parameters": [
           {
             "schema": {
-              "type": [
-                "integer",
-                "null"
-              ],
+              "type": ["integer", "null"],
               "minimum": 0,
               "default": 0
             },
@@ -1853,9 +1538,7 @@
       "get": {
         "operationId": "getStoreProduct",
         "summary": "Retrieve a product with variants",
-        "tags": [
-          "Products"
-        ],
+        "tags": ["Products"],
         "parameters": [
           {
             "schema": {
@@ -1891,17 +1574,12 @@
       "post": {
         "operationId": "authRegister",
         "summary": "Register with an auth provider",
-        "tags": [
-          "Auth"
-        ],
+        "tags": ["Auth"],
         "parameters": [
           {
             "schema": {
               "type": "string",
-              "enum": [
-                "user",
-                "customer"
-              ]
+              "enum": ["user", "customer"]
             },
             "required": true,
             "name": "actorType",
@@ -1950,17 +1628,12 @@
       "post": {
         "operationId": "authAuthenticate",
         "summary": "Authenticate with an auth provider",
-        "tags": [
-          "Auth"
-        ],
+        "tags": ["Auth"],
         "parameters": [
           {
             "schema": {
               "type": "string",
-              "enum": [
-                "user",
-                "customer"
-              ]
+              "enum": ["user", "customer"]
             },
             "required": true,
             "name": "actorType",
@@ -2009,17 +1682,12 @@
       "post": {
         "operationId": "authResetPassword",
         "summary": "Request a password reset token",
-        "tags": [
-          "Auth"
-        ],
+        "tags": ["Auth"],
         "parameters": [
           {
             "schema": {
               "type": "string",
-              "enum": [
-                "user",
-                "customer"
-              ]
+              "enum": ["user", "customer"]
             },
             "required": true,
             "name": "actorType",
@@ -2068,17 +1736,12 @@
       "post": {
         "operationId": "authUpdatePassword",
         "summary": "Update password using a reset token",
-        "tags": [
-          "Auth"
-        ],
+        "tags": ["Auth"],
         "parameters": [
           {
             "schema": {
               "type": "string",
-              "enum": [
-                "user",
-                "customer"
-              ]
+              "enum": ["user", "customer"]
             },
             "required": true,
             "name": "actorType",
@@ -2127,9 +1790,7 @@
       "post": {
         "operationId": "authTokenRefresh",
         "summary": "Refresh an auth token",
-        "tags": [
-          "Auth"
-        ],
+        "tags": ["Auth"],
         "responses": {
           "200": {
             "description": "Successful response",
@@ -2151,9 +1812,7 @@
       "post": {
         "operationId": "authVerificationRequest",
         "summary": "Request a verification code",
-        "tags": [
-          "Auth"
-        ],
+        "tags": ["Auth"],
         "requestBody": {
           "content": {
             "application/json": {
@@ -2184,9 +1843,7 @@
       "post": {
         "operationId": "authVerificationConfirm",
         "summary": "Confirm a verification code",
-        "tags": [
-          "Auth"
-        ],
+        "tags": ["Auth"],
         "requestBody": {
           "content": {
             "application/json": {
