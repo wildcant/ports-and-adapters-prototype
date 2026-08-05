@@ -5,6 +5,7 @@
  */
 
 import { applyMiddleware } from './core/middleware/apply-middleware.js'
+import { applyNamespaceAuth } from './core/middleware/namespace-auth.js'
 import type { MiddlewareRoute } from './core/middleware/types.js'
 import { registerOpenApiRoutes } from './core/openapi/register-route.js'
 import type { Logger } from './core/types/logger.js'
@@ -120,6 +121,7 @@ export function registerStaticRoutes(app: App, logger: Logger, resolveRegistry?:
       if (typeof handler !== 'function') continue
 
       const config = middlewares.find((m) => m.matcher === path && m.method === method)
+      if (config) applyNamespaceAuth(config, path)
       const finalHandler = config ? applyMiddleware(config, handler as RouteHandler) : (handler as RouteHandler)
 
       app.addRoute(method, path, finalHandler)

@@ -9,6 +9,7 @@
  */
 
 import type { AwilixContainer } from 'awilix'
+import type { AuthContext } from '../core/auth/types.js'
 
 // ---- Route handler types (used by api/ route files) ----
 
@@ -25,6 +26,7 @@ export type HttpRequest<
   body: T extends { body: infer B } ? B : unknown
   scope: AwilixContainer
   headers: Record<string, string>
+  authContext?: AuthContext
 }
 
 export type HttpResult<T> = {

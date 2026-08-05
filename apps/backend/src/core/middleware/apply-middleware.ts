@@ -3,10 +3,12 @@ import { AppError, ErrorTypes } from '../errors/app-error.js'
 import { formatZodIssues } from '../errors/format-zod-issues.js'
 import { buildSearchFilter } from '../utils/build-search-filter.js'
 import { parseOrder, validateQuery } from '../utils/validate-query.js'
+import { runMiddlewares } from './run-middlewares.js'
 import type { MiddlewareRoute } from './types.js'
 
 export function applyMiddleware(config: MiddlewareRoute, handler: RouteHandler): RouteHandler {
   return (async (req) => {
+    if (config.middlewares) req = await runMiddlewares(config.middlewares, req)
     if (config.paramsSchema) {
       const result = config.paramsSchema.safeParse(req.params)
       if (!result.success) {

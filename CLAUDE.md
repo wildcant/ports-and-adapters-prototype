@@ -140,7 +140,7 @@ Tests construct services manually with injected repos. Vitest config at `apps/ba
 - Naming: `camelCase` for properties, `CONSTANT_CASE` for enum members
 - Frontend: `type` over `interface` (enforced in frontend app)
 - Backend: TypeScript strict mode with `noUncheckedIndexedAccess`
-- Use simple, direct variable names. No unnecessary suffixes like `Result`, `Data`, `Value`, `Info`. Name variables for what they represent, not their type or origin.
+- Use simple, direct variable names. No unnecessary suffixes like `Result`, `Data`, `Value`, `Info`. Name variables for what they represent, not their type or origin. Never abbreviate variable names (e.g., `namespaceAuthMiddleware` not `nsAuth`, `configuration` not `cfg`, `repository` not `repo`). Clarity over brevity.
 - Prefer guard clauses over nested conditionals. Check unusual conditions early and return, keeping the happy path linear and unindented. See `docs/refactoring/replace_nested_conditional_with_guard_clauses.txt`.
 - Comments should explain *why*, not *what*. Don't restate the code — document the intent, business reason, or non-obvious constraint.
 - For best-effort async calls, use `.catch((e) => this.logger.error(e))` instead of wrapping in try/catch with an empty or comment-only catch block.

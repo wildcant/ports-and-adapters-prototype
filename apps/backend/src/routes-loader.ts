@@ -2,6 +2,7 @@ import { existsSync, readdirSync, statSync } from 'node:fs'
 import { join, sep } from 'node:path'
 import type { OpenAPIRegistry } from '@asteasolutions/zod-to-openapi'
 import { applyMiddleware } from './core/middleware/apply-middleware.js'
+import { applyNamespaceAuth } from './core/middleware/namespace-auth.js'
 import type { MiddlewareRoute } from './core/middleware/types.js'
 import { registerOpenApiRoutes } from './core/openapi/register-route.js'
 import type { Logger } from './core/types/logger.js'
@@ -99,6 +100,7 @@ export async function loadRoutes(server: App, sourceDir: string, logger: Logger,
       // Match middleware by path and method
       const config = middlewareConfigs.find((m) => m.matcher === routePath && m.method === method)
       if (config) {
+        applyNamespaceAuth(config, routePath)
         handler = applyMiddleware(config, handler)
       }
 

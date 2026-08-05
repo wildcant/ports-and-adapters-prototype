@@ -8,6 +8,8 @@ const envSchema = z.object({
   NODE_ENV: z.string().default('development'),
   LOG_LEVEL: z.string().default('http'),
   LOG_FILE: z.string().default(''),
+  JWT_SECRET: z.string(),
+  JWT_EXPIRES_IN: z.string().default('1d'),
   STRIPE_SECRET_KEY: z.string(),
   STRIPE_WEBHOOK_SECRET: z.string(),
   CORS_ORIGIN: z

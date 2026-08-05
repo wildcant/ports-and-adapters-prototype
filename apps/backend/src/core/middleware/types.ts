@@ -1,4 +1,7 @@
 import type { z } from 'zod'
+import type { HttpRequest } from '../../server/ports.js'
+
+export type MiddlewareFunction = (req: HttpRequest) => HttpRequest | Promise<HttpRequest>
 
 export function searchable<T>(...columns: Array<keyof T & string>): string[] {
   return columns
@@ -26,6 +29,7 @@ export type Tag = (typeof Tags)[keyof typeof Tags]
 type BaseRoute = {
   description?: string
   matcher: string
+  middlewares?: MiddlewareFunction[]
   operationId: string
   paramsSchema?: z.ZodType
   responseSchema: z.ZodType
