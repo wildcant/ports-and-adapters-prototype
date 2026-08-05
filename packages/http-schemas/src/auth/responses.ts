@@ -16,6 +16,7 @@ export const AuthenticateResponse = z
   .openapi('AuthenticateResponse')
 export type AuthenticateResponse = z.infer<typeof AuthenticateResponse>
 
+// TODO: Define proper response schema for reset password endpoint
 export const ResetPasswordResponse = z.object({}).openapi('ResetPasswordResponse')
 export type ResetPasswordResponse = z.infer<typeof ResetPasswordResponse>
 

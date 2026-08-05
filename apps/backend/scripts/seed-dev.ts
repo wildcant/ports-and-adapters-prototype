@@ -54,13 +54,18 @@ if (existingAdminIdentities.length === 0) {
 }
 
 // Ensure admin user entity exists and is linked to auth identity
-const adminIdentity = (await authService.listProviderIdentities({
-  entityId: DEV_ADMIN_EMAIL,
-  provider: 'emailpass',
-}))[0]
+const adminIdentity = (
+  await authService.listProviderIdentities({
+    entityId: DEV_ADMIN_EMAIL,
+    provider: 'emailpass',
+  })
+)[0]
 if (adminIdentity) {
   const adminAuthIdentity = await authService.retrieveAuthIdentity(adminIdentity.authIdentityId)
-  const hasUserId = adminAuthIdentity.appMetadata && typeof adminAuthIdentity.appMetadata === 'object' && 'userId' in adminAuthIdentity.appMetadata
+  const hasUserId =
+    adminAuthIdentity.appMetadata &&
+    typeof adminAuthIdentity.appMetadata === 'object' &&
+    'userId' in adminAuthIdentity.appMetadata
 
   if (!hasUserId) {
     const existingAdminUsers = await userService.listUsers({ email: DEV_ADMIN_EMAIL })
@@ -102,13 +107,16 @@ if (existingCustomerIdentities.length === 0) {
 }
 
 // Ensure customer entity exists and is linked to auth identity
-const customerIdentity = (await authService.listProviderIdentities({
-  entityId: DEV_CUSTOMER_EMAIL,
-  provider: 'emailpass',
-}))[0]
+const customerIdentity = (
+  await authService.listProviderIdentities({
+    entityId: DEV_CUSTOMER_EMAIL,
+    provider: 'emailpass',
+  })
+)[0]
 if (customerIdentity) {
   const authIdentity = await authService.retrieveAuthIdentity(customerIdentity.authIdentityId)
-  const hasCustomerId = authIdentity.appMetadata && typeof authIdentity.appMetadata === 'object' && 'customerId' in authIdentity.appMetadata
+  const hasCustomerId =
+    authIdentity.appMetadata && typeof authIdentity.appMetadata === 'object' && 'customerId' in authIdentity.appMetadata
 
   if (!hasCustomerId) {
     const existingCustomers = await customerService.listCustomers({ email: DEV_CUSTOMER_EMAIL })
@@ -136,6 +144,7 @@ if (customerIdentity) {
     entityId: DEV_CUSTOMER_EMAIL,
     entityType: 'email',
   })
+  const existingVerification = existingVerifications[0]
   if (existingVerifications.length === 0) {
     await authService.createAuthVerifications([
       {
@@ -156,8 +165,8 @@ if (customerIdentity) {
       await authService.updateAuthVerifications([verification.id], { verifiedAt: new Date() })
     }
     console.info('Created email verification for dev customer')
-  } else if (!existingVerifications[0]?.verifiedAt) {
-    await authService.updateAuthVerifications([existingVerifications[0].id], { verifiedAt: new Date() })
+  } else if (existingVerification && !existingVerification.verifiedAt) {
+    await authService.updateAuthVerifications([existingVerification.id], { verifiedAt: new Date() })
     console.info('Marked existing email verification as verified for dev customer')
   } else {
     console.info('Skipped email verification (already verified)')

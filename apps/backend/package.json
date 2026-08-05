@@ -24,7 +24,7 @@
     "db:seed:dev": "dotenvx run -f ../../.env.local -- tsx scripts/seed-dev.ts",
     "db:seed:providers": "dotenvx run -f ../../.env -- tsx --dns-result-order=ipv4first scripts/seed-providers.ts",
     "openapi:dump": "curl -s http://localhost:3000/admin/openapi.json | python3 -m json.tool > openapi/openapi-admin.json && curl -s http://localhost:3000/store/openapi.json | python3 -m json.tool > openapi/openapi-store.json && echo 'Saved openapi/openapi-admin.json and openapi/openapi-store.json'",
-    "openapi:dump:offline": "tsx scripts/openapi-dump.ts",
+    "openapi:dump:offline": "dotenvx run -f ../../.env.test -- tsx scripts/openapi-dump.ts",
     "check:deps": "depcruise src/ --config deps-analyzer/.dependency-cruiser.cjs",
     "check:deps:graph": "depcruise src/ --config deps-analyzer/.dependency-cruiser.cjs --output-type archi --exclude '(node_modules|__tests__)' --collapse 3 | dot -T svg -o deps-analyzer/dependency-graph.svg && open deps-analyzer/dependency-graph.svg"
   },

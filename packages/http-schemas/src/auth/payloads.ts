@@ -9,6 +9,7 @@ export const AuthParams = z.object({
 })
 export type AuthParams = z.infer<typeof AuthParams>
 
+// TODO: Define proper schema for auth body
 export const AuthBody = z.record(z.string(), z.string()).openapi('AuthBody')
 export type AuthBody = z.infer<typeof AuthBody>
 

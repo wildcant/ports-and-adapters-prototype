@@ -11,6 +11,7 @@ import refundReasonMiddlewares from '../src/api/admin/refund-reasons/middlewares
 import shippingOptionsMiddlewares from '../src/api/admin/shipping-options/middlewares.js'
 import shippingProfilesMiddlewares from '../src/api/admin/shipping-profiles/middlewares.js'
 import userMiddlewares from '../src/api/admin/users/middlewares.js'
+import authMiddlewares from '../src/api/auth/middlewares.js'
 import storeCartMiddlewares from '../src/api/store/carts/middlewares.js'
 import storePaymentCollectionMiddlewares from '../src/api/store/payment-collections/middlewares.js'
 import storePaymentProviderMiddlewares from '../src/api/store/payment-providers/middlewares.js'
@@ -32,6 +33,7 @@ registerOpenApiRoutes(adminRegistry, refundReasonMiddlewares)
 registerOpenApiRoutes(adminRegistry, shippingOptionsMiddlewares)
 registerOpenApiRoutes(adminRegistry, shippingProfilesMiddlewares)
 registerOpenApiRoutes(adminRegistry, userMiddlewares)
+registerOpenApiRoutes(adminRegistry, authMiddlewares)
 
 const adminDoc = generateDocument(adminRegistry, 'Admin API')
 const adminPath = resolve(__dirname, '../openapi/openapi-admin.json')
@@ -44,6 +46,7 @@ registerOpenApiRoutes(storeRegistry, storeCartMiddlewares)
 registerOpenApiRoutes(storeRegistry, storePaymentCollectionMiddlewares)
 registerOpenApiRoutes(storeRegistry, storePaymentProviderMiddlewares)
 registerOpenApiRoutes(storeRegistry, storeProductMiddlewares)
+registerOpenApiRoutes(storeRegistry, authMiddlewares)
 
 const storeDoc = generateDocument(storeRegistry, 'Store API')
 const storePath = resolve(__dirname, '../openapi/openapi-store.json')
