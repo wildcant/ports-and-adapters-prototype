@@ -18,8 +18,14 @@ import type {
   UpdateAuthVerificationDTO,
   UpdateProviderIdentityDTO,
 } from './mutations.js'
+import type { AuthenticationInput, AuthenticationResponse } from './provider.js'
 
 export type IAuthModuleService = {
+  // Auth provider delegation
+  register(provider: string, authData: AuthenticationInput): Promise<AuthenticationResponse>
+  authenticate(provider: string, authData: AuthenticationInput): Promise<AuthenticationResponse>
+  updateProvider(provider: string, data: Record<string, unknown>): Promise<AuthenticationResponse>
+
   // AuthIdentity
   retrieveAuthIdentity(id: string, config?: FindConfig<AuthIdentityDTO>, context?: Context): Promise<AuthIdentityDTO>
   listAuthIdentities(

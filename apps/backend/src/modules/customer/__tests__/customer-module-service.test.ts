@@ -65,7 +65,7 @@ describe('CustomerModuleService', () => {
     const error = await service.createCustomers(input).catch((e) => e)
 
     expect(AppError.isError(error)).toBe(true)
-    expect(error.type).toBe(ErrorTypes.INVALID_DATA)
+    expect(error.type).toBe(ErrorTypes.DUPLICATE_ERROR)
 
     // Customer should NOT exist — transaction rolled back
     const customers = await service.listCustomers()

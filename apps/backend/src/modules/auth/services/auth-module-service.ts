@@ -1,5 +1,9 @@
+import { AppError, ErrorTypes } from '../../../core/errors/index.js'
 import type {
+  AuthenticationInput,
+  AuthenticationResponse,
   AuthIdentityDTO,
+  AuthIdentityProviderService,
   AuthPasswordResetTokenDTO,
   AuthVerificationDTO,
   Context,
@@ -23,12 +27,14 @@ import type { AuthIdentityRepository } from '../repositories/auth-identity.js'
 import type { AuthPasswordResetTokenRepository } from '../repositories/auth-password-reset-token.js'
 import type { AuthVerificationRepository } from '../repositories/auth-verification.js'
 import type { ProviderIdentityRepository } from '../repositories/provider-identity.js'
+import type { AuthProviderService } from './auth-provider-service.js'
 
 type InjectedDependencies = {
   authIdentityRepository: AuthIdentityRepository
   providerIdentityRepository: ProviderIdentityRepository
   authVerificationRepository: AuthVerificationRepository
   authPasswordResetTokenRepository: AuthPasswordResetTokenRepository
+  authProviderService: AuthProviderService
   withTransaction: WithTransaction
   logger: Logger
 }
@@ -38,6 +44,7 @@ export class AuthModuleService implements IAuthModuleService {
   private providerIdentityRepository: ProviderIdentityRepository
   private authVerificationRepository: AuthVerificationRepository
   private authPasswordResetTokenRepository: AuthPasswordResetTokenRepository
+  private authProviderService: AuthProviderService
   private withTransaction: WithTransaction
   private logger: Logger
 
@@ -46,6 +53,7 @@ export class AuthModuleService implements IAuthModuleService {
     providerIdentityRepository,
     authVerificationRepository,
     authPasswordResetTokenRepository,
+    authProviderService,
     withTransaction,
     logger,
   }: InjectedDependencies) {
@@ -53,8 +61,101 @@ export class AuthModuleService implements IAuthModuleService {
     this.providerIdentityRepository = providerIdentityRepository
     this.authVerificationRepository = authVerificationRepository
     this.authPasswordResetTokenRepository = authPasswordResetTokenRepository
+    this.authProviderService = authProviderService
     this.withTransaction = withTransaction
     this.logger = logger
+  }
+
+  async register(provider: string, authData: AuthenticationInput): Promise<AuthenticationResponse> {
+    return this.authProviderService.register(provider, authData, this.getAuthIdentityProviderService(provider))
+  }
+
+  async authenticate(provider: string, authData: AuthenticationInput): Promise<AuthenticationResponse> {
+    return this.authProviderService.authenticate(provider, authData, this.getAuthIdentityProviderService(provider))
+  }
+
+  async updateProvider(provider: string, data: Record<string, unknown>): Promise<AuthenticationResponse> {
+    return this.authProviderService.update(provider, data, this.getAuthIdentityProviderService(provider))
+  }
+
+  /**
+   * Build a scoped service that auth providers use to read/write identities.
+   * This keeps providers decoupled from repositories — they only see
+   * retrieve/create/update, scoped to a single provider string.
+   */
+  getAuthIdentityProviderService(provider: string): AuthIdentityProviderService {
+    return {
+      retrieve: async ({ entityId }) => {
+        const results = await this.providerIdentityRepository.find({ entityId, provider }, { limit: 1 })
+        const providerIdentity = results[0]
+        if (!providerIdentity) return null
+
+        const authIdentity = await this.authIdentityRepository.findByIdOrFail(providerIdentity.authIdentityId)
+        return { authIdentity, providerIdentity }
+      },
+
+      create: async ({ entityId, providerMetadata, appMetadata }) => {
+        return this.withTransaction(undefined, async (ctx) => {
+          const authIdentities = await this.authIdentityRepository.createMany(
+            [{ appMetadata: appMetadata ?? null }],
+            ctx,
+          )
+          const authIdentity = authIdentities[0]
+          if (!authIdentity)
+            throw new AppError({ type: ErrorTypes.UNEXPECTED_STATE, message: 'Expected auth identity to be created' })
+          const providerIdentities = await this.providerIdentityRepository.createMany(
+            [{ authIdentityId: authIdentity.id, entityId, provider, providerMetadata: providerMetadata ?? null }],
+            ctx,
+          )
+          const providerIdentity = providerIdentities[0]
+          if (!providerIdentity)
+            throw new AppError({
+              type: ErrorTypes.UNEXPECTED_STATE,
+              message: 'Expected provider identity to be created',
+            })
+          return { authIdentity, providerIdentity }
+        })
+      },
+
+      update: async (entityId, data) => {
+        return this.withTransaction(undefined, async (ctx) => {
+          const results = await this.providerIdentityRepository.find({ entityId, provider }, { limit: 1 }, ctx)
+          const existing = results[0]
+          if (!existing) {
+            throw new AppError({ type: ErrorTypes.NOT_FOUND, message: 'Provider identity not found' })
+          }
+
+          const updatedProviderIdentities = await this.providerIdentityRepository.update(
+            [existing.id],
+            { providerMetadata: data.providerMetadata },
+            ctx,
+          )
+          const providerIdentity = updatedProviderIdentities[0]
+          if (!providerIdentity)
+            throw new AppError({
+              type: ErrorTypes.UNEXPECTED_STATE,
+              message: 'Expected provider identity to be updated',
+            })
+
+          let authIdentity: AuthIdentityDTO
+          if (data.appMetadata !== undefined) {
+            const updatedAuthIdentities = await this.authIdentityRepository.update(
+              [existing.authIdentityId],
+              { appMetadata: data.appMetadata },
+              ctx,
+            )
+            const updated = updatedAuthIdentities[0]
+            if (!updated)
+              throw new AppError({ type: ErrorTypes.UNEXPECTED_STATE, message: 'Expected auth identity to be updated' })
+            authIdentity = updated
+          } else {
+            authIdentity = await this.authIdentityRepository.findByIdOrFail(existing.authIdentityId, undefined, ctx)
+          }
+
+          return { authIdentity, providerIdentity }
+        })
+      },
+    }
   }
 
   // --- AuthIdentity ---

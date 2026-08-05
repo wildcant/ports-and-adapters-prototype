@@ -1,6 +1,7 @@
 import { AppError, ErrorTypes } from '@core/errors/app-error.js'
 import { test } from '@tests/setup/test-extend.js'
 import { assertDefined } from '@tests/utils/assert-defined.js'
+import { asValue, createContainer } from 'awilix'
 import { describe } from 'vitest'
 import { createWithTransaction } from '../../../core/utils/with-transaction.js'
 import { AuthIdentityRepository } from '../repositories/auth-identity.js'
@@ -8,6 +9,7 @@ import { AuthPasswordResetTokenRepository } from '../repositories/auth-password-
 import { AuthVerificationRepository } from '../repositories/auth-verification.js'
 import { ProviderIdentityRepository } from '../repositories/provider-identity.js'
 import { AuthModuleService } from '../services/auth-module-service.js'
+import { AuthProviderService } from '../services/auth-provider-service.js'
 
 let service: AuthModuleService
 
@@ -17,11 +19,15 @@ test.beforeEach(({ getDb, logger }) => {
   const authVerificationRepository = new AuthVerificationRepository({ getDb })
   const authPasswordResetTokenRepository = new AuthPasswordResetTokenRepository({ getDb })
   const withTransaction = createWithTransaction(getDb)
+  const container = createContainer()
+  container.register({ placeholder: asValue(null) })
+  const authProviderService = new AuthProviderService({ container })
   service = new AuthModuleService({
     authIdentityRepository,
     providerIdentityRepository,
     authVerificationRepository,
     authPasswordResetTokenRepository,
+    authProviderService,
     withTransaction,
     logger,
   })
