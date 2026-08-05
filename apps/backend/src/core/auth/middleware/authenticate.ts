@@ -1,8 +1,9 @@
+import type { ActorType } from '@proteus/http-schemas/auth'
 import jwt from 'jsonwebtoken'
 import { env } from '../../../env.js'
 import { AppError, ErrorTypes } from '../../errors/app-error.js'
 import type { MiddlewareFunction } from '../../middleware/types.js'
-import type { ActorType, AuthContext, AuthTokenPayload } from '../types.js'
+import type { AuthContext, AuthTokenPayload } from '../types.js'
 
 type AuthenticateOptions = {
   allowUnauthenticated?: boolean
@@ -13,7 +14,10 @@ type AuthenticateOptions = {
  * Extract and verify an AuthContext from a JWT bearer token.
  * Returns null if the header is missing/malformed (caller decides whether that's an error).
  */
-function getAuthContextFromJwtToken(authHeader: string | undefined, actorTypes: ActorType[]): AuthContext | null {
+function getAuthContextFromJwtToken(
+  authHeader: string | undefined,
+  actorTypes: (ActorType | '*')[],
+): AuthContext | null {
   if (!authHeader?.startsWith('Bearer ')) {
     return null
   }
@@ -36,7 +40,8 @@ function getAuthContextFromJwtToken(authHeader: string | undefined, actorTypes: 
   // Own-property access only — prototype pollution defense
   const payload = Object.assign(Object.create(null), decoded) as AuthTokenPayload
 
-  if (!payload.actorType || !actorTypes.includes(payload.actorType)) {
+  const isWildcard = actorTypes.includes('*')
+  if (!payload.actorType || (!isWildcard && !actorTypes.includes(payload.actorType))) {
     throw new AppError({
       type: ErrorTypes.UNAUTHORIZED,
       message: 'Unauthorized: invalid actor type',
@@ -45,7 +50,7 @@ function getAuthContextFromJwtToken(authHeader: string | undefined, actorTypes: 
 
   return {
     actorId: payload.actorId,
-    actorType: payload.actorTyp,
+    actorType: payload.actorType,
     authIdentityId: payload.authIdentityId,
     authProvider: payload.authProvider,
     appMetadata: payload.appMetadata,
@@ -62,7 +67,7 @@ function getAuthContextFromJwtToken(authHeader: string | undefined, actorTypes: 
  * 3. Valid token, empty actorId -> allowUnregistered? proceed : 401
  * 4. Valid token, has actorId -> proceed
  */
-export function authenticate(actorType: ActorType, options?: AuthenticateOptions): MiddlewareFunction {
+export function authenticate(actorType: ActorType | '*', options?: AuthenticateOptions): MiddlewareFunction {
   const { allowUnauthenticated = false, allowUnregistered = false } = options ?? {}
 
   return async (req) => {

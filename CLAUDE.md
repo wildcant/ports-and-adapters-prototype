@@ -137,7 +137,7 @@ Tests construct services manually with injected repos. Vitest config at `apps/ba
 ## Code Style
 
 - **Biome** for linting and formatting (spaces, 120 char lines, single quotes, no semicolons, trailing commas)
-- Naming: `camelCase` for properties, `CONSTANT_CASE` for enum members
+- **Never use `snake_case`.** Use `camelCase` for variables, functions, parameters, and properties. Use `PascalCase` for classes, types, and components. Use `CONSTANT_CASE` for enum members and true constants. This is enforced by Biome's `useNamingConvention` rule.
 - Frontend: `type` over `interface` (enforced in frontend app)
 - Backend: TypeScript strict mode with `noUncheckedIndexedAccess`
 - Use simple, direct variable names. No unnecessary suffixes like `Result`, `Data`, `Value`, `Info`. Name variables for what they represent, not their type or origin. Never abbreviate variable names (e.g., `namespaceAuthMiddleware` not `nsAuth`, `configuration` not `cfg`, `repository` not `repo`). Clarity over brevity.

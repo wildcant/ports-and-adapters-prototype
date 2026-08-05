@@ -1,6 +1,5 @@
+import type { ActorType } from '@proteus/http-schemas/auth'
 import type { JwtPayload } from 'jsonwebtoken'
-
-export type ActorType = 'user' | 'customer'
 
 export type AuthContext = {
   actorId: string

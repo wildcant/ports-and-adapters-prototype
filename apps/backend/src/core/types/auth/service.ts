@@ -26,6 +26,12 @@ export type IAuthModuleService = {
   authenticate(provider: string, authData: AuthenticationInput): Promise<AuthenticationResponse>
   updateProvider(provider: string, data: Record<string, unknown>): Promise<AuthenticationResponse>
 
+  // Token refresh validation
+  validateAuthIdentity(
+    authIdentityId: string,
+    provider: string,
+  ): Promise<{ authIdentity: AuthIdentityDTO & { providerIdentities: ProviderIdentityDTO[] } }>
+
   // AuthIdentity
   retrieveAuthIdentity(id: string, config?: FindConfig<AuthIdentityDTO>, context?: Context): Promise<AuthIdentityDTO>
   listAuthIdentities(

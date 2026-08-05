@@ -19,6 +19,7 @@ import adminPaymentCollectionsMw from './api/admin/payment-collections/middlewar
 import adminPaymentsMw from './api/admin/payments/middlewares.js'
 import adminRefundReasonsMw from './api/admin/refund-reasons/middlewares.js'
 import adminUsersMw from './api/admin/users/middlewares.js'
+import authMw from './api/auth/middlewares.js'
 import hooksMw from './api/hooks/middlewares.js'
 import storeCartsMw from './api/store/carts/middlewares.js'
 import storePaymentCollectionsMw from './api/store/payment-collections/middlewares.js'
@@ -39,6 +40,9 @@ import * as adminRefundReasonsById from './api/admin/refund-reasons/[id]/route.j
 import * as adminRefundReasons from './api/admin/refund-reasons/route.js'
 import * as adminUsersById from './api/admin/users/[id]/route.js'
 import * as adminUsers from './api/admin/users/route.js'
+import * as authRegister from './api/auth/[actorType]/[authProvider]/register/route.js'
+import * as authAuthenticate from './api/auth/[actorType]/[authProvider]/route.js'
+import * as authTokenRefresh from './api/auth/token/refresh/route.js'
 import * as hooksPaymentByProvider from './api/hooks/payment/[provider]/route.js'
 import * as storeCartsByIdComplete from './api/store/carts/[id]/complete/route.js'
 import * as storeCartsByIdInventory from './api/store/carts/[id]/inventory/route.js'
@@ -63,6 +67,9 @@ type RouteEntry = {
 }
 
 const routes: RouteEntry[] = [
+  { path: '/auth/:actorType/:authProvider/register', module: authRegister, middlewares: authMw },
+  { path: '/auth/:actorType/:authProvider', module: authAuthenticate, middlewares: authMw },
+  { path: '/auth/token/refresh', module: authTokenRefresh, middlewares: authMw },
   { path: '/admin/customers/:id', module: adminCustomersById, middlewares: adminCustomersMw },
   { path: '/admin/customers', module: adminCustomers, middlewares: adminCustomersMw },
   {

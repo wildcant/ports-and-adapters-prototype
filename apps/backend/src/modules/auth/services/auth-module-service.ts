@@ -78,6 +78,20 @@ export class AuthModuleService implements IAuthModuleService {
     return this.authProviderService.update(provider, data, this.getAuthIdentityProviderService(provider))
   }
 
+  async validateAuthIdentity(
+    authIdentityId: string,
+    provider: string,
+  ): Promise<{ authIdentity: AuthIdentityDTO & { providerIdentities: ProviderIdentityDTO[] } }> {
+    const authIdentity = await this.authIdentityRepository.findByIdOrFail(authIdentityId)
+    const providerIdentities = await this.providerIdentityRepository.find({ authIdentityId: authIdentity.id, provider })
+
+    if (providerIdentities.length === 0) {
+      throw new AppError({ type: ErrorTypes.NOT_FOUND, message: 'Provider identity not found' })
+    }
+
+    return { authIdentity: { ...authIdentity, providerIdentities } }
+  }
+
   /**
    * Build a scoped service that auth providers use to read/write identities.
    * This keeps providers decoupled from repositories — they only see
