@@ -1,7 +1,7 @@
 import { inspect } from 'node:util'
 import winston from 'winston'
+import type { Logger } from '../../core/types/logger.js'
 import { env } from '../../env.js'
-import type { Logger } from '../types/logger.js'
 
 const IS_DEV = env.NODE_ENV.startsWith('dev')
 function buildTransports(): winston.transport[] {

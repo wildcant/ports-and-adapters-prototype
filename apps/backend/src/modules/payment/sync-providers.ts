@@ -1,4 +1,4 @@
-import { noopLogger } from '../../core/logger/index.js'
+import { noopLogger } from '../../framework/logger/index.js'
 import type { Database } from '../../schema.type.js'
 import { seedProviders } from './loaders/providers.js'
 import { paymentProviderDeclarations } from './provider-declarations.js'

@@ -1,4 +1,5 @@
 import { env } from '#/env'
+import { clearToken, getToken } from '#/lib/auth-token'
 
 export const fetcher = async <T>({
   url,
@@ -30,19 +31,30 @@ export const fetcher = async <T>({
     }
   }
 
+  const token = getToken()
+  const baseHeaders: Record<string, string> = {}
+  if (token) {
+    baseHeaders.Authorization = `Bearer ${token}`
+  }
+
   const init: RequestInit = { method }
   if (data) {
-    init.headers = { 'Content-Type': 'application/json', ...headers }
+    init.headers = { ...baseHeaders, 'Content-Type': 'application/json', ...headers }
     init.body = JSON.stringify(data)
-  } else if (headers) {
-    init.headers = headers
+  } else {
+    init.headers = { ...baseHeaders, ...headers }
   }
   if (signal) init.signal = signal
 
   const response = await fetch(target, init)
 
   if (!response.ok) {
-    throw new Error(`${method} ${url} failed: ${response.status}`)
+    if (response.status === 401 && !url.startsWith('/auth/')) {
+      clearToken()
+    }
+
+    const body = await response.json().catch(() => null)
+    throw new Error(body?.message ?? `${method} ${url} failed: ${response.status}`)
   }
 
   if ([204, 205, 304].includes(response.status)) return {} as T

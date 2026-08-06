@@ -1,6 +1,6 @@
 import { test as testBase } from 'vitest'
-import { noopLogger } from '../../src/core/logger/index.js'
 import type { Logger } from '../../src/core/types/logger.js'
+import { noopLogger } from '../../src/framework/logger/index.js'
 import type { Database } from '../../src/schema.type.js'
 import {
   generateCreateAuthIdentityDTO,

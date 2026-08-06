@@ -118,7 +118,7 @@
       }
     },
     {
-      "includes": ["apps/backend/src/core/logger/console-logger.ts", "apps/backend/tests/setup/setup-test-env.ts"],
+      "includes": ["apps/backend/src/framework/logger/console-logger.ts", "apps/backend/tests/setup/setup-test-env.ts"],
       "linter": {
         "rules": {
           "suspicious": {

@@ -1,4 +1,3 @@
-import { noopLogger } from '@core/logger/noop-logger.js'
 import type { CartLineItemDTO } from '@core/types/cart/common.js'
 import type { ICartModuleService } from '@core/types/cart/service.js'
 import type { InventoryLevelDTO } from '@core/types/inventory/common.js'
@@ -10,6 +9,7 @@ import { createSimpleWorkflowEngine } from '@core/workflows/simple-adapter.js'
 import { setWorkflowEngine } from '@core/workflows/types.js'
 import { asValue, createContainer } from 'awilix'
 import { describe, expect, it } from 'vitest'
+import { noopLogger } from '../../../framework/logger/noop-logger.js'
 import { confirmInventoryWorkflow } from '../confirm-inventory-workflow.js'
 
 function makeLineItem(overrides: Partial<CartLineItemDTO> & { id: string; cartId: string }): CartLineItemDTO {

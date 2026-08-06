@@ -18,6 +18,7 @@ export default [
     summary: 'List published products',
     tags: [Tags.PRODUCTS],
     responseSchema: StoreProductListResponse,
+    middlewares: [],
   },
   {
     method: 'GET',
@@ -27,5 +28,6 @@ export default [
     summary: 'Retrieve a product with variants',
     tags: [Tags.PRODUCTS],
     responseSchema: StoreProductResponse,
+    middlewares: [],
   },
 ] satisfies MiddlewareRoute[]

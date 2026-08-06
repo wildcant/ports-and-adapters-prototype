@@ -2,8 +2,8 @@
 
 import { bootstrapContainer } from './container.js'
 import { createWorkersDbProvider } from './core/db/workers-provider.js'
-import { ConsoleLogger } from './core/logger/console-logger.js'
 import { env } from './env.js'
+import { ConsoleLogger } from './framework/logger/console-logger.js'
 
 const dbProvider = createWorkersDbProvider(env.DATABASE_URL)
 const logger = new ConsoleLogger()

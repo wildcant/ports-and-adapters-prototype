@@ -1,5 +1,5 @@
+import type { Logger } from '../../core/types/logger.js'
 import { env } from '../../env.js'
-import type { Logger } from '../types/logger.js'
 
 const LOG_LEVELS: Record<string, number> = {
   error: 0,

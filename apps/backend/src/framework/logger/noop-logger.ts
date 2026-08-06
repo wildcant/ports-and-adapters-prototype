@@ -1,4 +1,4 @@
-import type { Logger } from '../types/logger.js'
+import type { Logger } from '../../core/types/logger.js'
 
 export const noopLogger: Logger = {
   error() {},
