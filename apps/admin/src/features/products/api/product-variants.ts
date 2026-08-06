@@ -1,4 +1,4 @@
-import { queryOptions, useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
+import { keepPreviousData, queryOptions, useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import type {
   AdminCreateProductVariant,
   AdminUpdateProductVariant,
@@ -21,6 +21,7 @@ export const productVariantsListQueryOptions = (productId: string, params?: List
   queryOptions({
     queryKey: variantKeys.list({ ...params, productId }),
     queryFn: () => listProductVariants(productId, params),
+    placeholderData: keepPreviousData,
   })
 
 export const productVariantQueryOptions = (productId: string, variantId: string) =>

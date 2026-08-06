@@ -5,11 +5,12 @@ import { useProductVariants } from '#/features/products/api/product-variants'
 export const useVariantTable = (productId: string) =>
   useDefineTable<AdminProductVariant>({
     useData: (params) => {
-      const { data, isPending } = useProductVariants(productId, params)
+      const { data, isPending, isFetching } = useProductVariants(productId, params)
       return {
         data: data?.variants ?? [],
         count: data?.count,
         isPending,
+        isFetching,
       }
     },
 

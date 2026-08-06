@@ -1,4 +1,4 @@
-import { queryOptions, useMutation, useQuery } from '@tanstack/react-query'
+import { keepPreviousData, queryOptions, useMutation, useQuery } from '@tanstack/react-query'
 import type { AdminCreateProduct, AdminUpdateProduct, ListProductsParams } from '#/api/generated/model'
 import {
   createProduct,
@@ -16,6 +16,7 @@ export const productsListQueryOptions = (params?: ListProductsParams) =>
   queryOptions({
     queryKey: productKeys.list(params),
     queryFn: () => listProducts(params),
+    placeholderData: keepPreviousData,
   })
 
 export const productQueryOptions = (id: string) =>

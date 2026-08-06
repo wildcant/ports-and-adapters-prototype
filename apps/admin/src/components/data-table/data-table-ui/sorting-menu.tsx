@@ -9,7 +9,6 @@ import {
 } from '@proteus/ui'
 import { ArrowUpDownIcon } from 'lucide-react'
 import type { ColumnDef } from '../types'
-import { ToolbarButtonSkeleton } from './skeleton'
 
 type SortingMenuProps<T> = {
   sortableColumns: ColumnDef<T>[]
@@ -20,8 +19,7 @@ type SortingMenuProps<T> = {
 }
 
 export function SortingMenu<T>({ sortableColumns, current, setField, setDirection, isPending }: SortingMenuProps<T>) {
-  if (isPending) return <ToolbarButtonSkeleton />
-  if (sortableColumns.length === 0) return null
+  if (isPending || sortableColumns.length === 0) return null
 
   const currentCol = current ? sortableColumns.find((c) => c.id === current.field) : null
 
