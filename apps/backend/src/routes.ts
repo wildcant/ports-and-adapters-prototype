@@ -28,9 +28,17 @@ import storePaymentCollectionDefinitions from './api/store/payment-collections/d
 import storePaymentProviderDefinitions from './api/store/payment-providers/definitions.js'
 import storeProductDefinitions from './api/store/products/definitions.js'
 
-// ---- All definitions ----
+// ---- Shared auth routes exposed to the store API ----
 
-export const allDefinitions: RouteDefinition[] = [
+const storeSharedAuthRoutes = new Set([
+  '/auth/verification/confirm',
+  '/auth/:actorType/:authProvider/reset-password',
+  '/auth/:actorType/:authProvider/update',
+])
+
+// ---- Definitions by scope ----
+
+export const adminDefinitions: RouteDefinition[] = [
   ...authDefinitions,
   ...adminCustomerDefinitions,
   ...adminFulfillmentProviderDefinitions,
@@ -42,8 +50,11 @@ export const allDefinitions: RouteDefinition[] = [
   ...adminShippingOptionDefinitions,
   ...adminShippingProfileDefinitions,
   ...adminUserDefinitions,
-  ...hookDefinitions,
+]
+
+export const storeDefinitions: RouteDefinition[] = [
   ...storeAuthDefinitions,
+  ...authDefinitions.filter((d) => storeSharedAuthRoutes.has(d.matcher)),
   ...storeCartDefinitions,
   ...storeCustomerDefinitions,
   ...storePaymentCollectionDefinitions,
@@ -51,19 +62,26 @@ export const allDefinitions: RouteDefinition[] = [
   ...storeProductDefinitions,
 ]
 
+// All unique definitions for runtime registration (deduplicated since scoped arrays share auth routes)
+const allDefinitions = [...new Set([...adminDefinitions, ...storeDefinitions, ...hookDefinitions])]
+
 // ---- Registration ----
 
-export type RegistryResolver = (routePath: string) => OpenAPIRegistry | undefined
-
-export function registerRoutes(app: App, logger: Logger, resolveRegistry?: RegistryResolver) {
+export function registerRoutes(
+  app: App,
+  logger: Logger,
+  registries?: { admin: OpenAPIRegistry; store: OpenAPIRegistry },
+) {
   for (const definition of allDefinitions) {
     applyNamespaceAuth(definition)
   }
 
-  if (resolveRegistry) {
-    for (const definition of allDefinitions) {
-      const registry = resolveRegistry(definition.matcher)
-      if (registry) registerOpenApiRoute(registry, definition.matcher, definition)
+  if (registries) {
+    for (const definition of adminDefinitions) {
+      registerOpenApiRoute(registries.admin, definition.matcher, definition)
+    }
+    for (const definition of storeDefinitions) {
+      registerOpenApiRoute(registries.store, definition.matcher, definition)
     }
   }
 

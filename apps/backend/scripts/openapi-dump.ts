@@ -3,23 +3,13 @@ import { dirname, resolve } from 'node:path'
 import { fileURLToPath } from 'node:url'
 import { registerOpenApiRoute } from '../src/core/openapi/register-route.js'
 import { createRegistry, generateDocument } from '../src/core/openapi/registry.js'
-import { allDefinitions } from '../src/routes.js'
+import { adminDefinitions, storeDefinitions } from '../src/routes.js'
 
 const __dirname = dirname(fileURLToPath(import.meta.url))
 
-function isAdminRoute(matcher: string) {
-  return matcher.startsWith('/admin/') || matcher.startsWith('/auth/')
-}
-
-const storeAuthWhitelist = ['/auth/verification/confirm']
-
-function isStoreRoute(matcher: string) {
-  return matcher.startsWith('/store/') || storeAuthWhitelist.includes(matcher)
-}
-
 // Admin API
 const adminRegistry = createRegistry()
-for (const definition of allDefinitions.filter((d) => isAdminRoute(d.matcher))) {
+for (const definition of adminDefinitions) {
   registerOpenApiRoute(adminRegistry, definition.matcher, definition)
 }
 
@@ -30,7 +20,7 @@ console.info(`Admin OpenAPI spec written to ${adminPath}`)
 
 // Store API
 const storeRegistry = createRegistry()
-for (const definition of allDefinitions.filter((d) => isStoreRoute(d.matcher))) {
+for (const definition of storeDefinitions) {
   registerOpenApiRoute(storeRegistry, definition.matcher, definition)
 }
 

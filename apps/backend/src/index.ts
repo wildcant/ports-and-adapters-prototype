@@ -19,11 +19,7 @@ const adminRegistry = createRegistry()
 const storeRegistry = createRegistry()
 
 logger.info('Registering routes:')
-registerRoutes(app, logger, (routePath) => {
-  if (routePath.startsWith('/admin/')) return adminRegistry
-  if (routePath.startsWith('/store/')) return storeRegistry
-  return undefined
-})
+registerRoutes(app, logger, { admin: adminRegistry, store: storeRegistry })
 
 // ---- OpenAPI ----
 

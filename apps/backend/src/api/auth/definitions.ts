@@ -49,7 +49,7 @@ export default [
     method: 'POST',
     matcher: '/auth/:actorType/:authProvider/update',
     handler: authUpdateRoutes.POST,
-    middlewares: [validateToken()],
+    middlewares: [validateScopeProviderAssociation(), validateToken()],
     input: authUpdateRoutes.PostInput,
     operationId: 'authUpdatePassword',
     summary: 'Update password using a reset token',

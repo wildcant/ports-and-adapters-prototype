@@ -1,11 +1,15 @@
 import { toast } from '@proteus/ui'
-import { createFileRoute, useNavigate } from '@tanstack/react-router'
+import { createFileRoute, Link, redirect, useNavigate } from '@tanstack/react-router'
 import { useState } from 'react'
 import type { AuthenticateResponse } from '#/api/generated/model'
 import { LoginForm } from '#/features/auth/components/login-form'
 import { RegisterForm } from '#/features/auth/components/register-form'
+import { getToken } from '#/lib/auth-token'
 
 export const Route = createFileRoute('/login')({
+  beforeLoad: () => {
+    if (getToken()) throw redirect({ to: '/account' })
+  },
   component: LoginPage,
 })
 
@@ -33,7 +37,10 @@ function LoginPage() {
               Sign in to access an enhanced shopping experience.
             </p>
             <LoginForm onSuccess={handleSuccess} onError={(error) => toast.add({ type: 'error', title: error })} />
-            <span className="mt-6 text-center text-xs text-[var(--sea-ink-soft)]">
+            <Link to="/forgot-password" className="mt-4 text-xs text-[var(--sea-ink-soft)] underline">
+              Forgot your password?
+            </Link>
+            <span className="mt-4 text-center text-xs text-[var(--sea-ink-soft)]">
               Not a member?{' '}
               <button type="button" onClick={() => setCurrentView('register')} className="underline">
                 Join us

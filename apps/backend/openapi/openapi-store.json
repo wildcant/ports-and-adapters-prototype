@@ -11,39 +11,6 @@
   ],
   "components": {
     "schemas": {
-      "VerificationConfirmResponse": {
-        "type": "object",
-        "properties": {
-          "id": {
-            "type": "string"
-          },
-          "entityId": {
-            "type": "string"
-          },
-          "entityType": {
-            "type": "string"
-          },
-          "verifiedAt": {
-            "type": "string",
-            "format": "date-time"
-          }
-        },
-        "required": ["id", "entityId", "entityType", "verifiedAt"]
-      },
-      "VerificationConfirmBody": {
-        "type": "object",
-        "properties": {
-          "code": {
-            "type": "string",
-            "minLength": 1
-          },
-          "codeProvider": {
-            "type": "string",
-            "minLength": 1
-          }
-        },
-        "required": ["code"]
-      },
       "AuthenticateResponse": {
         "type": "object",
         "properties": {
@@ -91,6 +58,72 @@
           }
         },
         "required": ["email", "password"]
+      },
+      "ResetPasswordResponse": {
+        "type": "object",
+        "properties": {}
+      },
+      "ResetPasswordBody": {
+        "type": "object",
+        "properties": {
+          "email": {
+            "type": "string",
+            "format": "email"
+          }
+        },
+        "required": ["email"]
+      },
+      "UpdatePasswordResponse": {
+        "type": "object",
+        "properties": {
+          "success": {
+            "type": "boolean"
+          }
+        },
+        "required": ["success"]
+      },
+      "UpdatePasswordBody": {
+        "type": "object",
+        "properties": {
+          "password": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "required": ["password"]
+      },
+      "VerificationConfirmResponse": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "entityId": {
+            "type": "string"
+          },
+          "entityType": {
+            "type": "string"
+          },
+          "verifiedAt": {
+            "type": "string",
+            "format": "date-time"
+          }
+        },
+        "required": ["id", "entityId", "entityType", "verifiedAt"]
+      },
+      "VerificationConfirmBody": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "string",
+            "minLength": 1
+          },
+          "codeProvider": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "required": ["code"]
       },
       "StoreCreateCartResponse": {
         "type": "object",
@@ -900,37 +933,6 @@
     "parameters": {}
   },
   "paths": {
-    "/auth/verification/confirm": {
-      "post": {
-        "operationId": "authVerificationConfirm",
-        "summary": "Confirm a verification code",
-        "tags": ["Auth"],
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/VerificationConfirmBody"
-              }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "description": "Successful response",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/VerificationConfirmResponse"
-                }
-              }
-            }
-          },
-          "400": {
-            "description": "Validation error"
-          }
-        }
-      }
-    },
     "/store/auth/signup": {
       "post": {
         "operationId": "storeAuthSignup",
@@ -983,6 +985,145 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/AuthenticateResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Validation error"
+          }
+        }
+      }
+    },
+    "/auth/{actorType}/{authProvider}/reset-password": {
+      "post": {
+        "operationId": "authResetPassword",
+        "summary": "Request a password reset token",
+        "tags": ["Auth"],
+        "parameters": [
+          {
+            "schema": {
+              "type": "string",
+              "enum": ["user", "customer"]
+            },
+            "required": true,
+            "name": "actorType",
+            "in": "path"
+          },
+          {
+            "schema": {
+              "type": "string",
+              "minLength": 1
+            },
+            "required": true,
+            "name": "authProvider",
+            "in": "path"
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ResetPasswordBody"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ResetPasswordResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Validation error"
+          },
+          "404": {
+            "description": "Not found"
+          }
+        }
+      }
+    },
+    "/auth/{actorType}/{authProvider}/update": {
+      "post": {
+        "operationId": "authUpdatePassword",
+        "summary": "Update password using a reset token",
+        "tags": ["Auth"],
+        "parameters": [
+          {
+            "schema": {
+              "type": "string",
+              "enum": ["user", "customer"]
+            },
+            "required": true,
+            "name": "actorType",
+            "in": "path"
+          },
+          {
+            "schema": {
+              "type": "string",
+              "minLength": 1
+            },
+            "required": true,
+            "name": "authProvider",
+            "in": "path"
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdatePasswordBody"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UpdatePasswordResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Validation error"
+          },
+          "404": {
+            "description": "Not found"
+          }
+        }
+      }
+    },
+    "/auth/verification/confirm": {
+      "post": {
+        "operationId": "authVerificationConfirm",
+        "summary": "Confirm a verification code",
+        "tags": ["Auth"],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/VerificationConfirmBody"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/VerificationConfirmResponse"
                 }
               }
             }

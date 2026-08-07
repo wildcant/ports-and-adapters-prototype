@@ -33,7 +33,8 @@ export const POST = async (req: HttpRequest<typeof PostInput>): Promise<HttpResu
     )
 
     // TODO: replace with notification module
-    logger.info(`[password-reset] token for ${email}: ${resetToken}`)
+    const resetLink = `http://localhost:3001/reset-password?token=${resetToken}`
+    logger.debug(`[password-reset] reset link for ${email}: ${resetLink}`)
   } catch (error) {
     // Swallow NOT_FOUND to prevent email enumeration
     if (!AppError.isError(error)) throw error

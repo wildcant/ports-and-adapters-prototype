@@ -15,13 +15,9 @@ export const POST = async (req: HttpRequest<typeof PostInput>): Promise<HttpResu
     throw new AppError({ type: ErrorTypes.UNAUTHORIZED, message: 'Unauthorized' })
   }
 
-  // entity_id comes from the validated reset token, not from the request body
   const entityId = req.authContext.actorId
 
-  const result = await authService.updateProvider(authProvider, {
-    email: entityId,
-    password: req.body.password,
-  })
+  const result = await authService.updateProvider(authProvider, { email: entityId, password: req.body.password })
 
   if (!result.success) {
     throw new AppError({ type: ErrorTypes.INVALID_DATA, message: result.error ?? 'Password update failed' })

@@ -6,8 +6,12 @@
  */
 import type {
   AuthenticateResponse,
+  ResetPasswordBody,
+  ResetPasswordResponse,
   StoreLoginBody,
   StoreSignupBody,
+  UpdatePasswordBody,
+  UpdatePasswordResponse,
   VerificationConfirmBody,
   VerificationConfirmResponse
 } from '../model';
@@ -17,19 +21,6 @@ import type { BodyType } from '../../fetcher.ts';
 
 
 
-  /**
- * @summary Confirm a verification code
- */
-export const authVerificationConfirm = (
-    verificationConfirmBody?: BodyType<VerificationConfirmBody>,
- ) => {
-      return fetcher<VerificationConfirmResponse>(
-      {url: `/auth/verification/confirm`, method: 'POST',
-      headers: {'Content-Type': 'application/json', },
-      data: verificationConfirmBody
-    },
-      );
-    }
   /**
  * @summary Register a new customer account
  */
@@ -56,6 +47,51 @@ export const storeAuthLogin = (
     },
       );
     }
-  export type AuthVerificationConfirmResult = NonNullable<Awaited<ReturnType<typeof authVerificationConfirm>>>
-export type StoreAuthSignupResult = NonNullable<Awaited<ReturnType<typeof storeAuthSignup>>>
+  /**
+ * @summary Request a password reset token
+ */
+export const authResetPassword = (
+    actorType: 'user' | 'customer',
+    authProvider: string,
+    resetPasswordBody?: BodyType<ResetPasswordBody>,
+ ) => {
+      return fetcher<ResetPasswordResponse>(
+      {url: `/auth/${actorType}/${authProvider}/reset-password`, method: 'POST',
+      headers: {'Content-Type': 'application/json', },
+      data: resetPasswordBody
+    },
+      );
+    }
+  /**
+ * @summary Update password using a reset token
+ */
+export const authUpdatePassword = (
+    actorType: 'user' | 'customer',
+    authProvider: string,
+    updatePasswordBody?: BodyType<UpdatePasswordBody>,
+ ) => {
+      return fetcher<UpdatePasswordResponse>(
+      {url: `/auth/${actorType}/${authProvider}/update`, method: 'POST',
+      headers: {'Content-Type': 'application/json', },
+      data: updatePasswordBody
+    },
+      );
+    }
+  /**
+ * @summary Confirm a verification code
+ */
+export const authVerificationConfirm = (
+    verificationConfirmBody?: BodyType<VerificationConfirmBody>,
+ ) => {
+      return fetcher<VerificationConfirmResponse>(
+      {url: `/auth/verification/confirm`, method: 'POST',
+      headers: {'Content-Type': 'application/json', },
+      data: verificationConfirmBody
+    },
+      );
+    }
+  export type StoreAuthSignupResult = NonNullable<Awaited<ReturnType<typeof storeAuthSignup>>>
 export type StoreAuthLoginResult = NonNullable<Awaited<ReturnType<typeof storeAuthLogin>>>
+export type AuthResetPasswordResult = NonNullable<Awaited<ReturnType<typeof authResetPassword>>>
+export type AuthUpdatePasswordResult = NonNullable<Awaited<ReturnType<typeof authUpdatePassword>>>
+export type AuthVerificationConfirmResult = NonNullable<Awaited<ReturnType<typeof authVerificationConfirm>>>
