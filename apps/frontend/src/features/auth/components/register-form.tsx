@@ -22,9 +22,6 @@ export function RegisterForm(props: RegisterFormParams) {
         <form.AppField name="email">
           {(field) => <field.TextField label="Email" type="email" autoComplete="email" />}
         </form.AppField>
-        <form.AppField name="phone">
-          {(field) => <field.TextField label="Phone" type="tel" autoComplete="tel" />}
-        </form.AppField>
         <form.AppField name="password">
           {(field) => <field.TextField label="Password" type="password" autoComplete="new-password" />}
         </form.AppField>

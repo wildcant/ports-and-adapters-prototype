@@ -1,17 +1,15 @@
 import type { UseMutationOptions } from '@tanstack/react-query'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { useNavigate } from '@tanstack/react-router'
-import { authAuthenticate, authRegister } from '#/api/generated/auth/auth'
-import type { AuthenticateResponse, AuthTokenResponse } from '#/api/generated/model'
+import { authVerificationConfirm, storeAuthLogin, storeAuthSignup } from '#/api/generated/auth/auth'
+import type { AuthenticateResponse, StoreLoginBody, StoreSignupBody } from '#/api/generated/model'
 import { clearToken, setToken } from '#/lib/auth-token'
 
-type LoginPayload = { email: string; password: string }
-
-export const useLogin = (options?: UseMutationOptions<AuthenticateResponse, Error, LoginPayload>) => {
+export const useLogin = (options?: UseMutationOptions<AuthenticateResponse, Error, StoreLoginBody>) => {
   const { onSuccess, ...rest } = options ?? {}
   return useMutation({
     ...rest,
-    mutationFn: (payload: LoginPayload) => authAuthenticate('customer', 'emailpass', payload),
+    mutationFn: (payload: StoreLoginBody) => storeAuthLogin(payload),
     onSuccess: (...args) => {
       const [data] = args
       setToken(data.token)
@@ -20,18 +18,22 @@ export const useLogin = (options?: UseMutationOptions<AuthenticateResponse, Erro
   })
 }
 
-type RegisterPayload = { firstName: string; lastName: string; email: string; phone?: string; password: string }
-
-export const useRegister = (options?: UseMutationOptions<AuthTokenResponse, Error, RegisterPayload>) => {
+export const useRegister = (options?: UseMutationOptions<AuthenticateResponse, Error, StoreSignupBody>) => {
   const { onSuccess, ...rest } = options ?? {}
   return useMutation({
     ...rest,
-    mutationFn: (payload: RegisterPayload) => authRegister('customer', 'emailpass', payload),
+    mutationFn: (payload: StoreSignupBody) => storeAuthSignup(payload),
     onSuccess: (...args) => {
       const [data] = args
       setToken(data.token)
       onSuccess?.(...args)
     },
+  })
+}
+
+export const useVerifyEmail = () => {
+  return useMutation({
+    mutationFn: (payload: { code: string }) => authVerificationConfirm(payload),
   })
 }
 

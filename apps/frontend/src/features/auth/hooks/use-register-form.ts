@@ -1,25 +1,22 @@
-import { z } from 'zod'
-import type { AuthTokenResponse } from '#/api/generated/model'
+import { StoreSignupBody } from '@proteus/http-schemas/store'
+import type { AuthenticateResponse } from '#/api/generated/model'
 import { useRegister } from '#/features/auth/api/auth'
 import type { SubmitFormParams } from '#/lib/form'
 import { useAppForm } from '#/lib/form-hook'
 
-const RegisterSchema = z.object({
-  firstName: z.string().min(1),
-  lastName: z.string().min(1),
-  email: z.email(),
-  phone: z.string(),
-  password: z.string().min(1),
-})
-
-export type RegisterFormParams = SubmitFormParams<AuthTokenResponse>
+export type RegisterFormParams = SubmitFormParams<AuthenticateResponse>
 
 export function useRegisterForm(params?: RegisterFormParams) {
   const registerMutation = useRegister()
 
   const form = useAppForm({
-    defaultValues: { firstName: '', lastName: '', email: '', phone: '', password: '' },
-    validators: { onSubmit: RegisterSchema },
+    defaultValues: {
+      firstName: 'Willy',
+      lastName: 'Wonka',
+      email: 'wily@mail.com',
+      password: '123',
+    },
+    validators: { onSubmit: StoreSignupBody },
     onSubmit: ({ value }) => {
       registerMutation.mutate(value, {
         onSuccess: (data) => {

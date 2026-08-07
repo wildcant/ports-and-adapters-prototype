@@ -18,20 +18,22 @@ src/api/
 
 ## Route Handler Pattern
 
-Export named HTTP methods (`GET`, `POST`, `PATCH`, `DELETE`). Each handler:
-1. Defines a local input type with `params`, `body`, and/or `query`
-2. Returns `Promise<HttpResult<ResponseType>>` with an explicit response type from `@proteus/http-schemas`
+Export named HTTP methods (`GET`, `POST`, `PATCH`, `DELETE`). Each handler co-exports its `Input` and `Output` constants so the definition file can reference them. Each handler:
+1. Co-exports an `Input` constant (`{ params?, body?, query? }`) and an `Output` schema
+2. Uses `HttpRequest<typeof Input>` and `Promise<HttpResult<typeof Output>>` for type safety
 3. Resolves services from `req.scope` (Awilix scoped container)
 
 ```ts
-import type { AdminCustomerResponse, AdminUpdateCustomerBody, IdParams } from '@proteus/http-schemas/admin'
-import type { HttpRequest, HttpResult } from '../../../../server/ports.js'
+import { AdminCreateCustomers, AdminCreateCustomersResponse } from '@proteus/http-schemas/admin'
+import type { HttpRequest, HttpResult } from '../../../server/ports.js'
 
-type UpdateInput = { params: IdParams; body: AdminUpdateCustomerBody }
-export const PATCH = async (req: HttpRequest<UpdateInput>): Promise<HttpResult<AdminCustomerResponse>> => {
-  const service = req.scope.resolve<ICustomerModuleService>(Modules.CUSTOMER)
-  const [customer] = await service.updateCustomers([req.params.id], req.body)
-  return { status: 200, json: { customer } }
+export const PostInput = { body: AdminCreateCustomers }
+export const PostOutput = AdminCreateCustomersResponse
+
+export const POST = async (req: HttpRequest<typeof PostInput>): Promise<HttpResult<typeof PostOutput>> => {
+  const customerService = req.scope.resolve<ICustomerModuleService>(Modules.CUSTOMER)
+  const customers = await customerService.createCustomers(req.body)
+  return { status: 201, json: { customers } }
 }
 ```
 
@@ -53,10 +55,11 @@ export const PATCH = async (req: HttpRequest<UpdateInput>): Promise<HttpResult<A
 
 ## Definition File
 
-Each domain has a `definitions.ts` that exports a `RouteDefinition[]` array. Each definition wires a handler to its validation schemas, auth policy, and OpenAPI metadata:
+Each domain has a `definitions.ts` that default-exports a `RouteDefinition[]` array. Each definition wires a handler to its `input`/`output` schemas (co-exported from the route file), auth policy, and OpenAPI metadata:
 
 ```ts
-import { AdminCreateCustomers, AdminCustomerListResponse, DeleteResponse, IdParams } from '@proteus/http-schemas/admin'
+import type { RouteDefinition } from '@framework/http/types.js'
+import { Tags } from '@framework/http/types.js'
 import * as customerRoutes from './route.js'
 import * as customerByIdRoutes from './[id]/route.js'
 
@@ -65,21 +68,21 @@ export default [
     method: 'POST',
     matcher: '/admin/customers',
     handler: customerRoutes.POST,
-    bodySchema: AdminCreateCustomers,
+    input: customerRoutes.PostInput,
     operationId: 'createCustomers',
     summary: 'Create customers',
     tags: [Tags.CUSTOMERS],
-    responseSchema: AdminCustomerListResponse,
+    output: customerRoutes.PostOutput,
   },
   {
     method: 'DELETE',
     matcher: '/admin/customers/:id',
     handler: customerByIdRoutes.DELETE,
-    paramsSchema: IdParams,
+    input: customerByIdRoutes.DeleteInput,
     operationId: 'deleteCustomer',
     summary: 'Delete a customer',
     tags: [Tags.CUSTOMERS],
-    responseSchema: DeleteResponse,
+    output: customerByIdRoutes.DeleteOutput,
   },
 ] satisfies RouteDefinition[]
 ```

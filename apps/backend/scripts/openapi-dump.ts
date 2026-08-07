@@ -11,8 +11,10 @@ function isAdminRoute(matcher: string) {
   return matcher.startsWith('/admin/') || matcher.startsWith('/auth/')
 }
 
+const storeAuthWhitelist = ['/auth/verification/confirm']
+
 function isStoreRoute(matcher: string) {
-  return matcher.startsWith('/store/') || matcher.startsWith('/auth/')
+  return matcher.startsWith('/store/') || storeAuthWhitelist.includes(matcher)
 }
 
 // Admin API

@@ -5,7 +5,12 @@
  * OpenAPI spec version: 0.1.0
  */
 
-export interface UpdatePasswordBody {
+export interface StoreSignupBody {
+  email: string;
   /** @minLength 1 */
   password: string;
+  /** @minLength 1 */
+  firstName: string;
+  /** @minLength 1 */
+  lastName: string;
 }

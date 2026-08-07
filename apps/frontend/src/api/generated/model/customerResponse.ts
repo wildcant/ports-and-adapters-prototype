@@ -4,5 +4,8 @@
  * Store API
  * OpenAPI spec version: 0.1.0
  */
+import type { Customer } from './customer.ts';
 
-export interface AuthBody {[key: string]: string}
+export interface CustomerResponse {
+  customer: Customer;
+}

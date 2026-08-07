@@ -21,7 +21,7 @@ export default defineConfig(({ command }) => ({
         },
       },
     }),
-    tanstackStart(),
+    tanstackStart({ spa: { enabled: true } }),
     viteReact(),
   ],
 }))

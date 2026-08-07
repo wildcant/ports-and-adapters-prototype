@@ -21,7 +21,9 @@ import adminShippingProfileDefinitions from './api/admin/shipping-profiles/defin
 import adminUserDefinitions from './api/admin/users/definitions.js'
 import authDefinitions from './api/auth/definitions.js'
 import hookDefinitions from './api/hooks/definitions.js'
+import storeAuthDefinitions from './api/store/auth/definitions.js'
 import storeCartDefinitions from './api/store/carts/definitions.js'
+import storeCustomerDefinitions from './api/store/customers/definitions.js'
 import storePaymentCollectionDefinitions from './api/store/payment-collections/definitions.js'
 import storePaymentProviderDefinitions from './api/store/payment-providers/definitions.js'
 import storeProductDefinitions from './api/store/products/definitions.js'
@@ -41,7 +43,9 @@ export const allDefinitions: RouteDefinition[] = [
   ...adminShippingProfileDefinitions,
   ...adminUserDefinitions,
   ...hookDefinitions,
+  ...storeAuthDefinitions,
   ...storeCartDefinitions,
+  ...storeCustomerDefinitions,
   ...storePaymentCollectionDefinitions,
   ...storePaymentProviderDefinitions,
   ...storeProductDefinitions,

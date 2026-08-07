@@ -16,5 +16,6 @@ export const authMethodsPerActor: Partial<Record<ActorType, string[]>> = {
  * at login and token refresh. If absent for an actor type, no verification required.
  */
 export const authVerificationsPerActor: Partial<Record<ActorType, { entityType: string; authProvider: string }[]>> = {
-  customer: [{ entityType: 'email', authProvider: 'emailpass' }],
+  // TODO: add verification config for customer actor type once notifications module is implemented
+  // customer: [{ entityType: 'email', authProvider: 'emailpass' }],
 }
