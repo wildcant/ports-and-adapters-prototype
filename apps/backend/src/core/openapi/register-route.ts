@@ -1,5 +1,5 @@
 import type { OpenAPIRegistry, RouteConfig } from '@asteasolutions/zod-to-openapi'
-import type { MiddlewareRoute } from '../middleware/types.js'
+import type { RouteDefinition } from '@framework/http/types.js'
 
 const methodMap = {
   GET: 'get',
@@ -9,35 +9,29 @@ const methodMap = {
   DELETE: 'delete',
 } as const
 
-export function registerOpenApiRoutes(registry: OpenAPIRegistry, configs: MiddlewareRoute[]) {
-  for (const config of configs) {
-    registerOpenApiRoute(registry, config.matcher, config)
-  }
-}
-
-export function registerOpenApiRoute(registry: OpenAPIRegistry, routePath: string, config: MiddlewareRoute) {
+export function registerOpenApiRoute(registry: OpenAPIRegistry, routePath: string, config: RouteDefinition) {
   const method = methodMap[config.method]
   const openApiPath = routePath.replace(/:(\w+)/g, '{$1}')
 
   const request: RouteConfig['request'] = {}
 
-  if (config.paramsSchema) {
-    request.params = config.paramsSchema as unknown as NonNullable<RouteConfig['request']>['params']
+  if (config.input?.params) {
+    request.params = config.input.params as unknown as NonNullable<RouteConfig['request']>['params']
   }
-  if (config.method === 'GET' && config.querySchema) {
-    request.query = config.querySchema as unknown as NonNullable<RouteConfig['request']>['query']
+  if (config.method === 'GET' && config.input?.query) {
+    request.query = config.input.query as unknown as NonNullable<RouteConfig['request']>['query']
   }
-  if ((config.method === 'POST' || config.method === 'PUT' || config.method === 'PATCH') && config.bodySchema) {
+  if ((config.method === 'POST' || config.method === 'PUT' || config.method === 'PATCH') && config.input?.body) {
     request.body = {
-      content: { 'application/json': { schema: config.bodySchema } },
+      content: { 'application/json': { schema: config.input.body } },
     }
   }
 
-  const hasParams = config.paramsSchema != null
+  const hasParams = config.input?.params != null
   const responses: RouteConfig['responses'] = {
     200: {
       description: 'Successful response',
-      ...(config.responseSchema ? { content: { 'application/json': { schema: config.responseSchema } } } : {}),
+      ...(config.output ? { content: { 'application/json': { schema: config.output } } } : {}),
     },
     400: { description: 'Validation error' },
   }

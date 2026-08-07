@@ -1,6 +1,6 @@
+import type { MiddlewareFunction } from '@framework/http/types.js'
 import type { ActorType } from '@proteus/http-schemas/auth'
 import { AppError, ErrorTypes } from '../../errors/app-error.js'
-import type { MiddlewareFunction } from '../../middleware/types.js'
 import { authMethodsPerActor } from '../config.js'
 
 /**

@@ -4,35 +4,28 @@
  * When the frontend imports route handlers via `createServerFn`, there is no
  * HTTP layer — so the route loader's middleware never runs. This module wraps
  * each handler with the same middleware (validation, query parsing) that the
- * HTTP path applies, using the middleware configs as the single source of truth.
+ * HTTP path applies, using the route definitions as the single source of truth.
  */
 
-import { applyMiddleware } from '../core/middleware/apply-middleware.js'
-import type { MiddlewareRoute } from '../core/middleware/types.js'
-import * as _customerByIdApi from './admin/customers/[id]/route.js'
-import customerMiddlewares from './admin/customers/middlewares.js'
-import * as _customersApi from './admin/customers/route.js'
-import * as _userByIdApi from './admin/users/[id]/route.js'
-import userMiddlewares from './admin/users/middlewares.js'
-import * as _usersApi from './admin/users/route.js'
+import { applyMiddleware } from '@framework/http/apply-middleware.js'
+import type { RouteDefinition } from '@framework/http/types.js'
+import type { RouteHandler } from '../server/ports.js'
+import customerDefinitions from './admin/customers/definitions.js'
+import userDefinitions from './admin/users/definitions.js'
 
 export { apiCall } from '../server/api-caller.js'
 
-/** Wrap each handler (keyed by HTTP method) with the matching middleware config. */
-// biome-ignore lint/complexity/noUselessTypeConstraint: tmp
-function withMiddleware<T extends any>(handlers: T, matcher: string, middlewares: MiddlewareRoute[]): T {
-  // biome-ignore lint/suspicious/noExplicitAny: tmp
-  const wrapped = { ...(handlers as any) }
-  for (const config of middlewares) {
-    const handler = wrapped[config.method]
-    if (config.matcher === matcher && handler) {
-      wrapped[config.method] = applyMiddleware(config, handler)
+function withMiddleware(matcher: string, definitions: RouteDefinition[]): Record<string, RouteHandler> {
+  const result: Record<string, RouteHandler> = {}
+  for (const definition of definitions) {
+    if (definition.matcher === matcher) {
+      result[definition.method] = applyMiddleware(definition)
     }
   }
-  return wrapped as T
+  return result
 }
 
-export const usersApi = withMiddleware(_usersApi, '/admin/users', userMiddlewares)
-export const userByIdApi = withMiddleware(_userByIdApi, '/admin/users/:id', userMiddlewares)
-export const customersApi = withMiddleware(_customersApi, '/admin/customers', customerMiddlewares)
-export const customerByIdApi = withMiddleware(_customerByIdApi, '/admin/customers/:id', customerMiddlewares)
+export const usersApi = withMiddleware('/admin/users', userDefinitions)
+export const userByIdApi = withMiddleware('/admin/users/:id', userDefinitions)
+export const customersApi = withMiddleware('/admin/customers', customerDefinitions)
+export const customerByIdApi = withMiddleware('/admin/customers/:id', customerDefinitions)

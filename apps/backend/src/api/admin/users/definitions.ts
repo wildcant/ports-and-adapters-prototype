@@ -1,68 +1,67 @@
-import {
-  AdminCreateUser,
-  AdminUpdateUser,
-  AdminUserListParams,
-  AdminUserListResponse,
-  AdminUserResponse,
-  DeleteResponse,
-  IdParams,
-} from '@proteus/http-schemas/admin'
-import type { MiddlewareRoute } from '../../../core/middleware/types.js'
-import { Tags } from '../../../core/middleware/types.js'
+import type { RouteDefinition } from '@framework/http/types.js'
+import { Tags } from '@framework/http/types.js'
+import * as userByIdRoutes from './[id]/route.js'
+import * as meRoutes from './me/route.js'
+import * as userRoutes from './route.js'
 
 export default [
   {
     method: 'GET',
     matcher: '/admin/users/me',
+    handler: meRoutes.GET,
     operationId: 'getMe',
     summary: 'Retrieve the authenticated user',
     tags: [Tags.USERS],
-    responseSchema: AdminUserResponse,
+    output: meRoutes.GetOutput,
   },
   {
     method: 'GET',
     matcher: '/admin/users',
-    querySchema: AdminUserListParams,
+    handler: userRoutes.GET,
+    input: userRoutes.GetInput,
     operationId: 'listUsers',
     summary: 'List users',
     tags: [Tags.USERS],
-    responseSchema: AdminUserListResponse,
+    output: userRoutes.GetOutput,
   },
   {
     method: 'POST',
     matcher: '/admin/users',
-    bodySchema: AdminCreateUser,
+    handler: userRoutes.POST,
+    input: userRoutes.PostInput,
     operationId: 'createUser',
     summary: 'Create a user',
     tags: [Tags.USERS],
-    responseSchema: AdminUserResponse,
+    output: userRoutes.PostOutput,
   },
   {
     method: 'GET',
     matcher: '/admin/users/:id',
-    paramsSchema: IdParams,
+    handler: userByIdRoutes.GET,
+    input: userByIdRoutes.GetInput,
     operationId: 'getUser',
     summary: 'Retrieve a user',
     tags: [Tags.USERS],
-    responseSchema: AdminUserResponse,
+    output: userByIdRoutes.GetOutput,
   },
   {
     method: 'PATCH',
     matcher: '/admin/users/:id',
-    paramsSchema: IdParams,
-    bodySchema: AdminUpdateUser,
+    handler: userByIdRoutes.PATCH,
+    input: userByIdRoutes.PatchInput,
     operationId: 'updateUser',
     summary: 'Update a user',
     tags: [Tags.USERS],
-    responseSchema: AdminUserResponse,
+    output: userByIdRoutes.PatchOutput,
   },
   {
     method: 'DELETE',
     matcher: '/admin/users/:id',
-    paramsSchema: IdParams,
+    handler: userByIdRoutes.DELETE,
+    input: userByIdRoutes.DeleteInput,
     operationId: 'deleteUser',
     summary: 'Delete a user',
     tags: [Tags.USERS],
-    responseSchema: DeleteResponse,
+    output: userByIdRoutes.DeleteOutput,
   },
-] satisfies MiddlewareRoute[]
+] satisfies RouteDefinition[]

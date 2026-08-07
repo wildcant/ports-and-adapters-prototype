@@ -1,50 +1,46 @@
-import {
-  AdminCreateShippingProfile,
-  AdminCreateShippingProfileResponse,
-  AdminShippingProfileListResponse,
-  AdminUpdateShippingProfile,
-  AdminUpdateShippingProfileResponse,
-  DeleteResponse,
-  IdParams,
-} from '@proteus/http-schemas/admin'
-import type { MiddlewareRoute } from '../../../core/middleware/types.js'
-import { Tags } from '../../../core/middleware/types.js'
+import type { RouteDefinition } from '@framework/http/types.js'
+import { Tags } from '@framework/http/types.js'
+import * as shippingProfileByIdRoutes from './[id]/route.js'
+import * as shippingProfileRoutes from './route.js'
 
 export default [
   {
     method: 'GET',
     matcher: '/admin/shipping-profiles',
+    handler: shippingProfileRoutes.GET,
     operationId: 'listAdminShippingProfiles',
     summary: 'List shipping profiles',
     tags: [Tags.SHIPPING_PROFILES],
-    responseSchema: AdminShippingProfileListResponse,
+    output: shippingProfileRoutes.GetOutput,
   },
   {
     method: 'POST',
     matcher: '/admin/shipping-profiles',
-    bodySchema: AdminCreateShippingProfile,
+    handler: shippingProfileRoutes.POST,
+    input: shippingProfileRoutes.PostInput,
     operationId: 'createAdminShippingProfile',
     summary: 'Create a shipping profile',
     tags: [Tags.SHIPPING_PROFILES],
-    responseSchema: AdminCreateShippingProfileResponse,
+    output: shippingProfileRoutes.PostOutput,
   },
   {
     method: 'POST',
     matcher: '/admin/shipping-profiles/:id',
-    paramsSchema: IdParams,
-    bodySchema: AdminUpdateShippingProfile,
+    handler: shippingProfileByIdRoutes.POST,
+    input: shippingProfileByIdRoutes.PostInput,
     operationId: 'updateAdminShippingProfile',
     summary: 'Update a shipping profile',
     tags: [Tags.SHIPPING_PROFILES],
-    responseSchema: AdminUpdateShippingProfileResponse,
+    output: shippingProfileByIdRoutes.PostOutput,
   },
   {
     method: 'DELETE',
     matcher: '/admin/shipping-profiles/:id',
-    paramsSchema: IdParams,
+    handler: shippingProfileByIdRoutes.DELETE,
+    input: shippingProfileByIdRoutes.DeleteInput,
     operationId: 'deleteAdminShippingProfile',
     summary: 'Delete a shipping profile',
     tags: [Tags.SHIPPING_PROFILES],
-    responseSchema: DeleteResponse,
+    output: shippingProfileByIdRoutes.DeleteOutput,
   },
-] satisfies MiddlewareRoute[]
+] satisfies RouteDefinition[]

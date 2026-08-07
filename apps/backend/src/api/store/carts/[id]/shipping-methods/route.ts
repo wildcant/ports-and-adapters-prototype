@@ -1,18 +1,13 @@
 import { AppError, ErrorTypes } from '@core/errors/app-error.js'
 import type { ICartModuleService, IFulfillmentModuleService } from '@core/types/index.js'
 import { Modules } from '@core/utils/index.js'
-import type {
-  AddCartShippingMethodBody,
-  IdParams,
-  StoreCreateCartShippingMethodResponse,
-} from '@proteus/http-schemas/store'
+import { AddCartShippingMethod, IdParams, StoreCreateCartShippingMethodResponse } from '@proteus/http-schemas/store'
 import type { HttpRequest, HttpResult } from '../../../../../server/ports.js'
 
-type PostInput = { params: IdParams; body: AddCartShippingMethodBody }
+export const PostInput = { params: IdParams, body: AddCartShippingMethod }
+export const PostOutput = StoreCreateCartShippingMethodResponse
 
-export const POST = async (
-  req: HttpRequest<PostInput>,
-): Promise<HttpResult<StoreCreateCartShippingMethodResponse | { message: string }>> => {
+export const POST = async (req: HttpRequest<typeof PostInput>): Promise<HttpResult<typeof PostOutput>> => {
   const cartService = req.scope.resolve<ICartModuleService>(Modules.CART)
   const fulfillmentService = req.scope.resolve<IFulfillmentModuleService>(Modules.FULFILLMENT)
 
@@ -20,10 +15,10 @@ export const POST = async (
   const shippingOption = await fulfillmentService.retrieveShippingOption(req.body.shippingOptionId)
 
   if (!shippingOption.isEnabled) {
-    return {
-      status: 400,
-      json: { message: `Shipping option "${req.body.shippingOptionId}" is not available` },
-    }
+    throw new AppError({
+      type: ErrorTypes.NOT_ALLOWED,
+      message: `Shipping option "${req.body.shippingOptionId}" is not available`,
+    })
   }
 
   const amount = shippingOption.amount ?? 0

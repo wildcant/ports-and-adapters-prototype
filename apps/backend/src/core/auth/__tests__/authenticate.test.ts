@@ -1,7 +1,7 @@
+import { authenticate } from '@framework/http/middlewares/authenticate.js'
 import { afterEach, describe, expect, test, vi } from 'vitest'
 import type { HttpRequest } from '../../../server/ports.js'
 import { ErrorTypes } from '../../errors/app-error.js'
-import { authenticate } from '../middleware/authenticate.js'
 import { generateJwtToken } from '../utils/token.js'
 
 const SECRET = 'test-jwt-secret-for-testing-only'

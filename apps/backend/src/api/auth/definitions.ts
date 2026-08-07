@@ -1,95 +1,91 @@
-import { authenticate } from '@core/auth/middleware/authenticate.js'
 import { validateScopeProviderAssociation } from '@core/auth/utils/validate-scope-provider-association.js'
 import { validateToken } from '@core/auth/utils/validate-token.js'
-import {
-  AuthBody,
-  AuthenticateResponse,
-  AuthParams,
-  AuthTokenResponse,
-  ResetPasswordBody,
-  ResetPasswordResponse,
-  UpdatePasswordBody,
-  UpdatePasswordResponse,
-  VerificationConfirmBody,
-  VerificationConfirmResponse,
-  VerificationRequestBody,
-  VerificationRequestResponse,
-} from '@proteus/http-schemas/auth'
-import type { MiddlewareRoute } from '../../core/middleware/types.js'
-import { Tags } from '../../core/middleware/types.js'
+import { authenticate } from '@framework/http/middlewares/authenticate.js'
+import type { RouteDefinition } from '@framework/http/types.js'
+import { Tags } from '@framework/http/types.js'
+import * as authRegisterRoutes from './[actorType]/[authProvider]/register/route.js'
+import * as authResetPasswordRoutes from './[actorType]/[authProvider]/reset-password/route.js'
+import * as authRoutes from './[actorType]/[authProvider]/route.js'
+import * as authUpdateRoutes from './[actorType]/[authProvider]/update/route.js'
+import * as tokenRefreshRoutes from './token/refresh/route.js'
+import * as verificationConfirmRoutes from './verification/confirm/route.js'
+import * as verificationRequestRoutes from './verification/request/route.js'
 
 export default [
   {
     method: 'POST',
     matcher: '/auth/:actorType/:authProvider/register',
+    handler: authRegisterRoutes.POST,
     middlewares: [validateScopeProviderAssociation()],
-    paramsSchema: AuthParams,
-    bodySchema: AuthBody,
+    input: authRegisterRoutes.PostInput,
     operationId: 'authRegister',
     summary: 'Register with an auth provider',
     tags: [Tags.AUTH],
-    responseSchema: AuthTokenResponse,
+    output: authRegisterRoutes.PostOutput,
   },
   {
     method: 'POST',
     matcher: '/auth/:actorType/:authProvider',
+    handler: authRoutes.POST,
     middlewares: [validateScopeProviderAssociation()],
-    paramsSchema: AuthParams,
-    bodySchema: AuthBody,
+    input: authRoutes.PostInput,
     operationId: 'authAuthenticate',
     summary: 'Authenticate with an auth provider',
     tags: [Tags.AUTH],
-    responseSchema: AuthenticateResponse,
+    output: authRoutes.PostOutput,
   },
   {
     method: 'POST',
     matcher: '/auth/:actorType/:authProvider/reset-password',
+    handler: authResetPasswordRoutes.POST,
     middlewares: [validateScopeProviderAssociation()],
-    paramsSchema: AuthParams,
-    bodySchema: ResetPasswordBody,
+    input: authResetPasswordRoutes.PostInput,
     operationId: 'authResetPassword',
     summary: 'Request a password reset token',
     tags: [Tags.AUTH],
-    responseSchema: ResetPasswordResponse,
+    output: authResetPasswordRoutes.PostOutput,
   },
   {
     method: 'POST',
     matcher: '/auth/:actorType/:authProvider/update',
+    handler: authUpdateRoutes.POST,
     middlewares: [validateToken()],
-    paramsSchema: AuthParams,
-    bodySchema: UpdatePasswordBody,
+    input: authUpdateRoutes.PostInput,
     operationId: 'authUpdatePassword',
     summary: 'Update password using a reset token',
     tags: [Tags.AUTH],
-    responseSchema: UpdatePasswordResponse,
+    output: authUpdateRoutes.PostOutput,
   },
   {
     method: 'POST',
     matcher: '/auth/token/refresh',
+    handler: tokenRefreshRoutes.POST,
     middlewares: [authenticate('*', { allowUnregistered: true })],
     operationId: 'authTokenRefresh',
     summary: 'Refresh an auth token',
     tags: [Tags.AUTH],
-    responseSchema: AuthenticateResponse,
+    output: tokenRefreshRoutes.PostOutput,
   },
   {
     method: 'POST',
     matcher: '/auth/verification/request',
+    handler: verificationRequestRoutes.POST,
     middlewares: [authenticate('*', { allowUnregistered: true })],
-    bodySchema: VerificationRequestBody,
+    input: verificationRequestRoutes.PostInput,
     operationId: 'authVerificationRequest',
     summary: 'Request a verification code',
     tags: [Tags.AUTH],
-    responseSchema: VerificationRequestResponse,
+    output: verificationRequestRoutes.PostOutput,
   },
   {
     method: 'POST',
     matcher: '/auth/verification/confirm',
+    handler: verificationConfirmRoutes.POST,
     middlewares: [authenticate('*', { allowUnregistered: true })],
-    bodySchema: VerificationConfirmBody,
+    input: verificationConfirmRoutes.PostInput,
     operationId: 'authVerificationConfirm',
     summary: 'Confirm a verification code',
     tags: [Tags.AUTH],
-    responseSchema: VerificationConfirmResponse,
+    output: verificationConfirmRoutes.PostOutput,
   },
-] satisfies MiddlewareRoute[]
+] satisfies RouteDefinition[]

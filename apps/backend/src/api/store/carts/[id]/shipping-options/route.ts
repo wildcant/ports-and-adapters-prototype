@@ -1,16 +1,13 @@
 import type { IFulfillmentModuleService } from '@core/types/index.js'
 import { Modules } from '@core/utils/index.js'
-import type {
-  IdParams,
-  StoreShippingOptionListQuery,
-  StoreShippingOptionListResponse,
-} from '@proteus/http-schemas/store'
+import { IdParams, StoreShippingOptionListParams, StoreShippingOptionListResponse } from '@proteus/http-schemas/store'
 import type { HttpRequest, HttpResult } from '../../../../../server/ports.js'
 
-type GetInput = { params: IdParams; query: StoreShippingOptionListQuery }
+export const GetInput = { params: IdParams, query: StoreShippingOptionListParams }
+export const GetOutput = StoreShippingOptionListResponse
 
-export const GET = async (req: HttpRequest<GetInput>): Promise<HttpResult<StoreShippingOptionListResponse>> => {
-  const { countryCode, province, city, postalCode } = req.validatedQuery
+export const GET = async (req: HttpRequest<typeof GetInput>): Promise<HttpResult<typeof GetOutput>> => {
+  const { countryCode, province, city, postalCode } = req.validatedQuery.filters
 
   if (!countryCode) {
     return { status: 200, json: { shippingOptions: [] } }

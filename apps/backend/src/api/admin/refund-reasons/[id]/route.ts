@@ -1,11 +1,12 @@
 import type { IPaymentModuleService } from '@core/types/index.js'
 import { Modules } from '@core/utils/index.js'
-import type { DeleteResponse, IdParams } from '@proteus/http-schemas/admin'
+import { DeleteResponse, IdParams } from '@proteus/http-schemas/admin'
 import type { HttpRequest, HttpResult } from '../../../../server/ports.js'
 
-type Input = { params: IdParams }
+export const DeleteInput = { params: IdParams }
+export const DeleteOutput = DeleteResponse
 
-export const DELETE = async (req: HttpRequest<Input>): Promise<HttpResult<DeleteResponse>> => {
+export const DELETE = async (req: HttpRequest<typeof DeleteInput>): Promise<HttpResult<typeof DeleteOutput>> => {
   const paymentService = req.scope.resolve<IPaymentModuleService>(Modules.PAYMENT)
   await paymentService.softDeleteRefundReasons([req.params.id])
 

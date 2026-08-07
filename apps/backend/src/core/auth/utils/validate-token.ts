@@ -1,5 +1,5 @@
+import type { MiddlewareFunction } from '@framework/http/types.js'
 import { AppError, ErrorTypes } from '../../errors/app-error.js'
-import type { MiddlewareFunction } from '../../middleware/types.js'
 import type { IAuthModuleService } from '../../types/index.js'
 import { Modules } from '../../utils/index.js'
 import { extractTokenPayload } from './token.js'

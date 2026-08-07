@@ -1,8 +1,8 @@
 import type { ActorType } from '@proteus/http-schemas/auth'
-import { AppError, ErrorTypes } from '../../errors/app-error.js'
-import type { MiddlewareFunction } from '../../middleware/types.js'
-import type { AuthContext } from '../types.js'
-import { extractTokenPayload } from '../utils/token.js'
+import type { AuthContext } from '../../../core/auth/types.js'
+import { extractTokenPayload } from '../../../core/auth/utils/token.js'
+import { AppError, ErrorTypes } from '../../../core/errors/app-error.js'
+import type { MiddlewareFunction } from '../types.js'
 
 type AuthenticateOptions = {
   allowUnauthenticated?: boolean

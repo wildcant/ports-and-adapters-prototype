@@ -1,9 +1,11 @@
 import type { IPaymentModuleService } from '@core/types/index.js'
 import { Modules } from '@core/utils/index.js'
-import type { StorePaymentProviderListResponse } from '@proteus/http-schemas/store'
+import { StorePaymentProviderListResponse } from '@proteus/http-schemas/store'
 import type { HttpRequest, HttpResult } from '../../../server/ports.js'
 
-export const GET = async (req: HttpRequest): Promise<HttpResult<StorePaymentProviderListResponse>> => {
+export const GetOutput = StorePaymentProviderListResponse
+
+export const GET = async (req: HttpRequest): Promise<HttpResult<typeof GetOutput>> => {
   const paymentService = req.scope.resolve<IPaymentModuleService>(Modules.PAYMENT)
   const providers = await paymentService.listPaymentProviders({ isEnabled: true })
 

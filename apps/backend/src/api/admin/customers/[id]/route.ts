@@ -1,26 +1,28 @@
 import { AppError, ErrorTypes } from '@core/errors/app-error.js'
 import type { ICustomerModuleService } from '@core/types/index.js'
 import { Modules } from '@core/utils/index.js'
-import type {
+import {
   AdminCustomerResponse,
-  AdminUpdateCustomerBody,
+  AdminUpdateCustomer,
   AdminUpdateCustomerResponse,
   DeleteResponse,
   IdParams,
 } from '@proteus/http-schemas/admin'
 import type { HttpRequest, HttpResult } from '../../../../server/ports.js'
 
-type RetrieveCustomerInput = { params: IdParams }
-export const GET = async (req: HttpRequest<RetrieveCustomerInput>): Promise<HttpResult<AdminCustomerResponse>> => {
+export const GetInput = { params: IdParams }
+export const GetOutput = AdminCustomerResponse
+
+export const GET = async (req: HttpRequest<typeof GetInput>): Promise<HttpResult<typeof GetOutput>> => {
   const customerService = req.scope.resolve<ICustomerModuleService>(Modules.CUSTOMER)
   const customer = await customerService.retrieveCustomer(req.params.id)
   return { status: 200, json: { customer } }
 }
 
-type UpdateCustomerInput = { params: IdParams; body: AdminUpdateCustomerBody }
-export const PATCH = async (
-  req: HttpRequest<UpdateCustomerInput>,
-): Promise<HttpResult<AdminUpdateCustomerResponse>> => {
+export const PatchInput = { params: IdParams, body: AdminUpdateCustomer }
+export const PatchOutput = AdminUpdateCustomerResponse
+
+export const PATCH = async (req: HttpRequest<typeof PatchInput>): Promise<HttpResult<typeof PatchOutput>> => {
   const customerService = req.scope.resolve<ICustomerModuleService>(Modules.CUSTOMER)
   const [customer] = await customerService.updateCustomers([req.params.id], req.body)
   if (!customer) {
@@ -29,8 +31,10 @@ export const PATCH = async (
   return { status: 200, json: { customer } }
 }
 
-type DeleteCustomerInput = { params: IdParams }
-export const DELETE = async (req: HttpRequest<DeleteCustomerInput>): Promise<HttpResult<DeleteResponse>> => {
+export const DeleteInput = { params: IdParams }
+export const DeleteOutput = DeleteResponse
+
+export const DELETE = async (req: HttpRequest<typeof DeleteInput>): Promise<HttpResult<typeof DeleteOutput>> => {
   const customerService = req.scope.resolve<ICustomerModuleService>(Modules.CUSTOMER)
   await customerService.softDeleteCustomers([req.params.id])
   return { status: 200, json: { id: req.params.id, deleted: true } }

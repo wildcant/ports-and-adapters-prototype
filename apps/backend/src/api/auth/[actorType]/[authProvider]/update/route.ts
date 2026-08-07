@@ -1,12 +1,13 @@
 import { AppError, ErrorTypes } from '@core/errors/app-error.js'
 import type { IAuthModuleService } from '@core/types/index.js'
 import { Modules } from '@core/utils/index.js'
-import type { AuthParams, UpdatePasswordBody, UpdatePasswordResponse } from '@proteus/http-schemas/auth'
+import { AuthParams, UpdatePasswordBody, UpdatePasswordResponse } from '@proteus/http-schemas/auth'
 import type { HttpRequest, HttpResult } from '../../../../../server/ports.js'
 
-type UpdatePasswordInput = { body: UpdatePasswordBody; params: AuthParams }
+export const PostInput = { body: UpdatePasswordBody, params: AuthParams }
+export const PostOutput = UpdatePasswordResponse
 
-export const POST = async (req: HttpRequest<UpdatePasswordInput>): Promise<HttpResult<UpdatePasswordResponse>> => {
+export const POST = async (req: HttpRequest<typeof PostInput>): Promise<HttpResult<typeof PostOutput>> => {
   const authService = req.scope.resolve<IAuthModuleService>(Modules.AUTH)
   const { authProvider } = req.params
 

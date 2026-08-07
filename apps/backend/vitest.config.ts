@@ -9,6 +9,7 @@ export default defineConfig({
     alias: {
       '@tests': resolve(__dirname, './tests'),
       '@core': resolve(__dirname, './src/core'),
+      '@framework': resolve(__dirname, './src/framework'),
     },
   },
   test: {

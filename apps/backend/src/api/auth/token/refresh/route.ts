@@ -6,10 +6,12 @@ import {
 import { AppError, ErrorTypes } from '@core/errors/app-error.js'
 import type { IAuthModuleService } from '@core/types/index.js'
 import { Modules } from '@core/utils/index.js'
-import type { AuthenticateResponse } from '@proteus/http-schemas/auth'
+import { AuthenticateResponse } from '@proteus/http-schemas/auth'
 import type { HttpRequest, HttpResult } from '../../../../server/ports.js'
 
-export const POST = async (req: HttpRequest): Promise<HttpResult<AuthenticateResponse>> => {
+export const PostOutput = AuthenticateResponse
+
+export const POST = async (req: HttpRequest): Promise<HttpResult<typeof PostOutput>> => {
   const authContext = req.authContext
   if (!authContext) {
     throw new AppError({ type: ErrorTypes.UNAUTHORIZED, message: 'Unauthorized' })

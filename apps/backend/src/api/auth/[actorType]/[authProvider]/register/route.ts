@@ -2,12 +2,13 @@ import { generateJwtTokenForAuthIdentity, getAuthJwtConfig } from '@core/auth/ut
 import { AppError, ErrorTypes } from '@core/errors/app-error.js'
 import type { IAuthModuleService } from '@core/types/index.js'
 import { Modules } from '@core/utils/index.js'
-import type { AuthBody, AuthParams, AuthTokenResponse } from '@proteus/http-schemas/auth'
+import { AuthBody, AuthParams, AuthTokenResponse } from '@proteus/http-schemas/auth'
 import type { HttpRequest, HttpResult } from '../../../../../server/ports.js'
 
-type RegisterInput = { body: AuthBody; params: AuthParams }
+export const PostInput = { body: AuthBody, params: AuthParams }
+export const PostOutput = AuthTokenResponse
 
-export const POST = async (req: HttpRequest<RegisterInput>): Promise<HttpResult<AuthTokenResponse>> => {
+export const POST = async (req: HttpRequest<typeof PostInput>): Promise<HttpResult<typeof PostOutput>> => {
   const authService = req.scope.resolve<IAuthModuleService>(Modules.AUTH)
   const { actorType, authProvider } = req.params
 

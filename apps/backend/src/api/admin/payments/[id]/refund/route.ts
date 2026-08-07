@@ -1,11 +1,12 @@
 import type { IPaymentModuleService } from '@core/types/index.js'
 import { Modules } from '@core/utils/index.js'
-import type { AdminPaymentResponse, AdminRefundPaymentBody, IdParams } from '@proteus/http-schemas/admin'
+import { AdminPaymentResponse, AdminRefundPayment, IdParams } from '@proteus/http-schemas/admin'
 import type { HttpRequest, HttpResult } from '../../../../../server/ports.js'
 
-type Input = { params: IdParams; body: AdminRefundPaymentBody }
+export const PostInput = { params: IdParams, body: AdminRefundPayment }
+export const PostOutput = AdminPaymentResponse
 
-export const POST = async (req: HttpRequest<Input>): Promise<HttpResult<AdminPaymentResponse>> => {
+export const POST = async (req: HttpRequest<typeof PostInput>): Promise<HttpResult<typeof PostOutput>> => {
   const paymentService = req.scope.resolve<IPaymentModuleService>(Modules.PAYMENT)
 
   const payment = await paymentService.refundPayment({

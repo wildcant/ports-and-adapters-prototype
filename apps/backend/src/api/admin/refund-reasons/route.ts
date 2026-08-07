@@ -1,23 +1,26 @@
 import { AppError, ErrorTypes } from '@core/errors/app-error.js'
 import type { IPaymentModuleService } from '@core/types/index.js'
 import { Modules } from '@core/utils/index.js'
-import type {
-  AdminCreateRefundReasonBody,
+import {
+  AdminCreateRefundReason,
   AdminCreateRefundReasonResponse,
   AdminRefundReasonListResponse,
 } from '@proteus/http-schemas/admin'
 import type { HttpRequest, HttpResult } from '../../../server/ports.js'
 
-export const GET = async (req: HttpRequest): Promise<HttpResult<AdminRefundReasonListResponse>> => {
+export const GetOutput = AdminRefundReasonListResponse
+
+export const GET = async (req: HttpRequest): Promise<HttpResult<typeof GetOutput>> => {
   const paymentService = req.scope.resolve<IPaymentModuleService>(Modules.PAYMENT)
   const refundReasons = await paymentService.listRefundReasons()
 
   return { status: 200, json: { refundReasons } }
 }
 
-type Input = { body: AdminCreateRefundReasonBody }
+export const PostInput = { body: AdminCreateRefundReason }
+export const PostOutput = AdminCreateRefundReasonResponse
 
-export const POST = async (req: HttpRequest<Input>): Promise<HttpResult<AdminCreateRefundReasonResponse>> => {
+export const POST = async (req: HttpRequest<typeof PostInput>): Promise<HttpResult<typeof PostOutput>> => {
   const paymentService = req.scope.resolve<IPaymentModuleService>(Modules.PAYMENT)
   const [refundReason] = await paymentService.createRefundReasons([req.body])
 

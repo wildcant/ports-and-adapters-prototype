@@ -3,12 +3,13 @@ import { AppError } from '@core/errors/app-error.js'
 import type { IAuthModuleService } from '@core/types/index.js'
 import type { Logger } from '@core/types/logger.js'
 import { ContainerRegistrationKeys, Modules } from '@core/utils/index.js'
-import type { AuthParams, ResetPasswordBody, ResetPasswordResponse } from '@proteus/http-schemas/auth'
+import { AuthParams, ResetPasswordBody, ResetPasswordResponse } from '@proteus/http-schemas/auth'
 import type { HttpRequest, HttpResult } from '../../../../../server/ports.js'
 
-type ResetPasswordInput = { body: ResetPasswordBody; params: AuthParams }
+export const PostInput = { body: ResetPasswordBody, params: AuthParams }
+export const PostOutput = ResetPasswordResponse
 
-export const POST = async (req: HttpRequest<ResetPasswordInput>): Promise<HttpResult<ResetPasswordResponse>> => {
+export const POST = async (req: HttpRequest<typeof PostInput>): Promise<HttpResult<typeof PostOutput>> => {
   const authService = req.scope.resolve<IAuthModuleService>(Modules.AUTH)
   const logger = req.scope.resolve<Logger>(ContainerRegistrationKeys.LOGGER)
   const { actorType, authProvider } = req.params

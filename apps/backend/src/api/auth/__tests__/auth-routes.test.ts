@@ -4,7 +4,7 @@ import { Modules } from '@core/utils/index.js'
 import { test } from '@tests/setup/test-extend.js'
 import jwt from 'jsonwebtoken'
 import { describe, vi } from 'vitest'
-import type { App, RouteHandler } from '../../../server/ports.js'
+import type { App } from '../../../server/ports.js'
 
 const SECRET = vi.hoisted(() => 'test-jwt-secret-for-testing-only')
 
@@ -22,13 +22,10 @@ vi.mock('../../../env.js', () => ({
   },
 }))
 
-import { applyMiddleware } from '@core/middleware/apply-middleware.js'
+import { applyMiddleware } from '@framework/http/apply-middleware.js'
 import { bootstrapContainer } from '../../../container.js'
 import { createApp } from '../../../server/app.js'
-import * as authRegister from '../[actorType]/[authProvider]/register/route.js'
-import * as authAuthenticate from '../[actorType]/[authProvider]/route.js'
-import authMiddlewares from '../middlewares.js'
-import * as authTokenRefresh from '../token/refresh/route.js'
+import authDefinitions from '../definitions.js'
 
 let app: App
 let authService: IAuthModuleService
@@ -42,21 +39,21 @@ test.beforeEach(async ({ getDb, logger }) => {
   authService = container.resolve<IAuthModuleService>(Modules.AUTH)
   app = createApp({ container })
 
-  // Specific routes before parametric to avoid /auth/token/refresh matching /:actorType/:authProvider
-  const routes = [
-    { path: '/auth/:actorType/:authProvider/register', module: authRegister },
-    { path: '/auth/token/refresh', module: authTokenRefresh },
-    { path: '/auth/:actorType/:authProvider', module: authAuthenticate },
-  ] as const
+  const relevant = authDefinitions.filter((definition) =>
+    ['/auth/:actorType/:authProvider/register', '/auth/:actorType/:authProvider', '/auth/token/refresh'].includes(
+      definition.matcher,
+    ),
+  )
 
-  for (const { path, module } of routes) {
-    for (const method of ['GET', 'POST', 'PUT', 'PATCH', 'DELETE'] as const) {
-      const handler = (module as Record<string, unknown>)[method] as RouteHandler | undefined
-      if (typeof handler !== 'function') continue
-      const config = authMiddlewares.find((m) => m.matcher === path && m.method === method)
-      const finalHandler = config ? applyMiddleware(config, handler) : handler
-      app.addRoute(method, path, finalHandler)
-    }
+  // Register specific routes before parametric to avoid matching issues
+  const ordered = [
+    ...relevant.filter((definition) => definition.matcher === '/auth/:actorType/:authProvider/register'),
+    ...relevant.filter((definition) => definition.matcher === '/auth/token/refresh'),
+    ...relevant.filter((definition) => definition.matcher === '/auth/:actorType/:authProvider'),
+  ]
+
+  for (const definition of ordered) {
+    app.addRoute(definition.method, definition.matcher, applyMiddleware(definition))
   }
 })
 
