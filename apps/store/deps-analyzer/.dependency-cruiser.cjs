@@ -2,8 +2,8 @@
 module.exports = {
   forbidden: [
     {
-      name: 'no-admin-schemas-in-frontend',
-      comment: 'Frontend app must not import admin schemas.',
+      name: 'no-admin-schemas-in-store',
+      comment: 'Store app must not import admin schemas.',
       severity: 'error',
       from: { path: '^src/' },
       to: { path: 'packages/http-schemas/src/admin/' },

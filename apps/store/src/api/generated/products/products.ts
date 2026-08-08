@@ -8,7 +8,7 @@ import type {
   ListStoreProductsParams,
   StoreProductListResponse,
   StoreProductResponse
-} from '../model';
+} from '../model/index.ts';
 
 import { fetcher } from '../../fetcher.ts';
 

@@ -9,7 +9,7 @@ import type {
   CreateStorePaymentSessionBody,
   StoreCreatePaymentCollectionResponse,
   StoreCreatePaymentSessionResponse
-} from '../model';
+} from '../model/index.ts';
 
 import { fetcher } from '../../fetcher.ts';
 import type { BodyType } from '../../fetcher.ts';

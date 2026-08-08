@@ -129,10 +129,10 @@
     },
     {
       "includes": [
-        "apps/frontend/**",
-        "!apps/frontend/src/api/generated/**",
-        "!apps/frontend/src/routeTree.gen.ts",
-        "!apps/frontend/src/router.tsx"
+        "apps/store/**",
+        "!apps/store/src/api/generated/**",
+        "!apps/store/src/routeTree.gen.ts",
+        "!apps/store/src/router.tsx"
       ],
       "linter": {
         "rules": {

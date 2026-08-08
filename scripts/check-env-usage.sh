@@ -17,7 +17,7 @@ RESET='\033[0m'
 
 ALLOWED_FILES=(
   "apps/backend/src/env.ts"
-  "apps/frontend/src/env.ts"
+  "apps/store/src/env.ts"
 )
 
 CONFIG_GLOBS=(
@@ -74,7 +74,7 @@ while IFS= read -r file; do
   done < <(grep -n 'process\.env\|import\.meta\.env' "$file")
 done < <(grep -rl 'process\.env\|import\.meta\.env' \
   "$REPO_ROOT/apps/backend/src" \
-  "$REPO_ROOT/apps/frontend/src" \
+  "$REPO_ROOT/apps/store/src" \
   --include='*.ts' --include='*.tsx' 2>/dev/null || true)
 
 if [[ $violations -gt 0 ]]; then

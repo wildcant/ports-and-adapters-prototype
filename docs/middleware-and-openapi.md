@@ -211,12 +211,12 @@ components/schemas/CreateCustomer  ← from CreateCustomer.openapi('CreateCustom
 
 ## Backend-as-library
 
-The middleware system only applies to the HTTP layer. When the frontend imports the backend container directly (via `createServerFn`), it bypasses the router entirely:
+The middleware system only applies to the HTTP layer. When the store imports the backend container directly (via `createServerFn`), it bypasses the router entirely:
 
 - **HTTP path**: Request → middleware (validates) → handler → service
 - **Direct import path**: `createServerFn` → container → service
 
-The frontend can import the same Zod schemas from `core/http-schemas/` for its own validation in TanStack's `.validator()`:
+The store can import the same Zod schemas from `core/http-schemas/` for its own validation in TanStack's `.validator()`:
 
 ```typescript
 import { CreateCustomers } from 'backend/src/core/http-schemas/customer/payloads.js'

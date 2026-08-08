@@ -11,7 +11,7 @@ npm install
 # Dev servers
 npm run --workspace=backend dev          # API at :3000 (Swagger at /admin/docs/, /store/docs/)
 npm run --workspace=admin dev            # Admin SPA at :3002
-npm run --workspace=frontend dev         # Storefront at :3001
+npm run --workspace=store dev         # Storefront at :3001
 
 # Database (Supabase local Postgres)
 npm run --workspace=backend db:start:lean   # Start Postgres (no extras)
@@ -30,7 +30,7 @@ npm run typecheck              # All workspaces
 npm run check:all              # Biome + dependency-cruiser (all apps) + env usage
 
 # Code generation
-npm run openapi:generate       # Dump OpenAPI spec → regenerate Orval clients (admin + frontend)
+npm run openapi:generate       # Dump OpenAPI spec → regenerate Orval clients (admin + store)
 npm run --workspace=admin openapi:client    # Admin Orval client only
 npm run --workspace=admin generate-routes   # TanStack Router route tree
 ```
@@ -41,7 +41,7 @@ Monorepo with npm workspaces:
 
 - `apps/backend` — API server (Ports & Adapters / Hexagonal Architecture)
 - `apps/admin` — Admin SPA (TanStack Router + React Query + React Table)
-- `apps/frontend` — Storefront SPA (TanStack Start, backend-as-library)
+- `apps/store` — Storefront SPA (TanStack Start, backend-as-library)
 - `packages/http-schemas` — Shared Zod schemas (exports `./admin` and `./store`)
 - `packages/ui` — Component library (shadcn/base-nova style, @base-ui/react primitives)
 - `packages/utils` — Shared utilities (date formatting via date-fns)
@@ -138,7 +138,7 @@ Tests construct services manually with injected repos. Vitest config at `apps/ba
 
 - **Biome** for linting and formatting (spaces, 120 char lines, single quotes, no semicolons, trailing commas)
 - **Never use `snake_case`.** Use `camelCase` for variables, functions, parameters, and properties. Use `PascalCase` for classes, types, and components. Use `CONSTANT_CASE` for enum members and true constants. This is enforced by Biome's `useNamingConvention` rule.
-- Frontend: `type` over `interface` (enforced in frontend app)
+- Frontend: `type` over `interface` (enforced in store app)
 - Backend: TypeScript strict mode with `noUncheckedIndexedAccess`
 - Use simple, direct variable names. No unnecessary suffixes like `Result`, `Data`, `Value`, `Info`. Name variables for what they represent, not their type or origin. Never abbreviate variable names (e.g., `namespaceAuthMiddleware` not `nsAuth`, `configuration` not `cfg`, `repository` not `repo`). Clarity over brevity.
 - Prefer guard clauses over nested conditionals. Check unusual conditions early and return, keeping the happy path linear and unindented. See `docs/refactoring/replace_nested_conditional_with_guard_clauses.txt`.

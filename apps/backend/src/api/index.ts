@@ -1,7 +1,7 @@
 /**
  * Backend-as-library exports.
  *
- * When the frontend imports route handlers via `createServerFn`, there is no
+ * When the store imports route handlers via `createServerFn`, there is no
  * HTTP layer — so the route loader's middleware never runs. This module wraps
  * each handler with the same middleware (validation, query parsing) that the
  * HTTP path applies, using the route definitions as the single source of truth.
