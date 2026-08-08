@@ -21,7 +21,7 @@ import type {
   StoreUpdateCartResponse,
   UpdateStoreCartBody,
   UpdateStoreCartLineItemBody
-} from '../model/index.ts';
+} from '../model';
 
 import { fetcher } from '../../fetcher.ts';
 import type { BodyType } from '../../fetcher.ts';

@@ -6,7 +6,7 @@
  */
 import type {
   StorePaymentProviderListResponse
-} from '../model/index.ts';
+} from '../model';
 
 import { fetcher } from '../../fetcher.ts';
 

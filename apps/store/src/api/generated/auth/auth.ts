@@ -14,7 +14,7 @@ import type {
   UpdatePasswordResponse,
   VerificationConfirmBody,
   VerificationConfirmResponse
-} from '../model/index.ts';
+} from '../model';
 
 import { fetcher } from '../../fetcher.ts';
 import type { BodyType } from '../../fetcher.ts';
