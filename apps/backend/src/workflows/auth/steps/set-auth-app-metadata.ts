@@ -30,13 +30,13 @@ export async function setAuthAppMetadataStep(ctx: WorkflowContext, input: SetAut
       }
 
       const updatedMetadata = { ...(identity.appMetadata ?? {}), [key]: input.actorId }
-      await authService.updateAuthIdentities([input.authIdentityId], { appMetadata: updatedMetadata })
+      await authService.updateAuthIdentity(input.authIdentityId, { appMetadata: updatedMetadata })
 
       return { authIdentityId: input.authIdentityId, previousMetadata }
     },
     async ({ authIdentityId, previousMetadata }, { container }) => {
       const authService = container.resolve<IAuthModuleService>(Modules.AUTH)
-      await authService.updateAuthIdentities([authIdentityId], { appMetadata: previousMetadata })
+      await authService.updateAuthIdentity(authIdentityId, { appMetadata: previousMetadata })
     },
   )
 }

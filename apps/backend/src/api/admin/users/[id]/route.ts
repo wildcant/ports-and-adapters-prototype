@@ -1,4 +1,3 @@
-import { AppError, ErrorTypes } from '@core/errors/app-error.js'
 import type { IUserModuleService } from '@core/types/index.js'
 import { Modules } from '@core/utils/index.js'
 import { AdminUpdateUser, AdminUserResponse, DeleteResponse, IdParams } from '@proteus/http-schemas/admin'
@@ -18,8 +17,7 @@ export const PatchOutput = AdminUserResponse
 
 export const PATCH = async (req: HttpRequest<typeof PatchInput>): Promise<HttpResult<typeof PatchOutput>> => {
   const userService = req.scope.resolve<IUserModuleService>(Modules.USER)
-  const [user] = await userService.updateUsers([req.params.id], req.body)
-  if (!user) throw new AppError({ type: ErrorTypes.NOT_FOUND, message: `User with id "${req.params.id}" not found` })
+  const user = await userService.updateUser(req.params.id, req.body)
   return { status: 200, json: { user } }
 }
 

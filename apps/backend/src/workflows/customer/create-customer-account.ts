@@ -2,7 +2,7 @@ import type { CustomerDTO } from '@core/types/customer/common.js'
 import type { CreateCustomerDTO } from '@core/types/customer/mutations.js'
 import type { ICustomerModuleService } from '@core/types/customer/service.js'
 import { Modules } from '@core/utils/index.js'
-import { createWorkflow, WorkflowTerminalError } from '@core/workflows/types.js'
+import { createWorkflow } from '@core/workflows/types.js'
 import { setAuthAppMetadataStep } from '../auth/steps/set-auth-app-metadata.js'
 
 export type CreateCustomerAccountInput = {
@@ -17,12 +17,7 @@ export const createCustomerAccountWorkflow = createWorkflow<CreateCustomerAccoun
       'create-customer',
       async ({ container }) => {
         const customerService = container.resolve<ICustomerModuleService>(Modules.CUSTOMER)
-        const customers = await customerService.createCustomers([input.customerData])
-        const created = customers[0]
-        if (!created) {
-          throw new WorkflowTerminalError('Expected customer to be created')
-        }
-        return created
+        return customerService.createCustomer(input.customerData)
       },
       async (createdCustomer, { container }) => {
         const customerService = container.resolve<ICustomerModuleService>(Modules.CUSTOMER)

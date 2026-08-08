@@ -70,8 +70,10 @@ export type ConfirmAuthVerificationDTO = {
 
 export type AuthVerificationService = {
   list(filters: FilterableAuthVerificationProps, context?: Context): Promise<AuthVerificationDTO[]>
-  create(data: CreateAuthVerificationDTO[], context?: Context): Promise<AuthVerificationDTO[]>
-  update(ids: string[], data: UpdateAuthVerificationDTO, context?: Context): Promise<AuthVerificationDTO[]>
+  create(data: CreateAuthVerificationDTO, context?: Context): Promise<AuthVerificationDTO>
+  createMany(data: CreateAuthVerificationDTO[], context?: Context): Promise<AuthVerificationDTO[]>
+  update(id: string, data: UpdateAuthVerificationDTO, context?: Context): Promise<AuthVerificationDTO>
+  updateMany(ids: string[], data: UpdateAuthVerificationDTO, context?: Context): Promise<AuthVerificationDTO[]>
 }
 
 export type RequestAuthVerificationResult = AuthVerificationDTO & {

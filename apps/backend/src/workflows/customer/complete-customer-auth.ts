@@ -49,7 +49,7 @@ export const completeCustomerAuthWorkflow = createWorkflow<CompleteCustomerAuthI
         // Store pending customer fields for later (signup path only)
         if (input.customerData) {
           const currentMetadata = authIdentity.appMetadata ?? {}
-          await authService.updateAuthIdentities([authIdentity.id], {
+          await authService.updateAuthIdentity(authIdentity.id, {
             appMetadata: { ...currentMetadata, pending: input.customerData },
           })
         }
@@ -112,7 +112,7 @@ export const completeCustomerAuthWorkflow = createWorkflow<CompleteCustomerAuthI
       if (pending) {
         const freshIdentity = await authService.retrieveAuthIdentity(input.authIdentityId)
         const { pending: _removed, ...cleanedMetadata } = (freshIdentity.appMetadata ?? {}) as Record<string, unknown>
-        await authService.updateAuthIdentities([input.authIdentityId], { appMetadata: cleanedMetadata })
+        await authService.updateAuthIdentity(input.authIdentityId, { appMetadata: cleanedMetadata })
       }
 
       // Re-retrieve to get the updated appMetadata with customerId

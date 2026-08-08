@@ -1,4 +1,3 @@
-import { AppError, ErrorTypes } from '@core/errors/app-error.js'
 import type { IProductModuleService } from '@core/types/index.js'
 import { Modules } from '@core/utils/index.js'
 import {
@@ -29,7 +28,6 @@ export const PostOutput = AdminCreateProductVariantResponse
 
 export const POST = async (req: HttpRequest<typeof PostInput>): Promise<HttpResult<typeof PostOutput>> => {
   const productService = req.scope.resolve<IProductModuleService>(Modules.PRODUCT)
-  const [variant] = await productService.createProductVariants([{ ...req.body, productId: req.params.id }])
-  if (!variant) throw new AppError({ type: ErrorTypes.UNEXPECTED_STATE, message: 'Variant not returned after create' })
+  const variant = await productService.createProductVariant({ ...req.body, productId: req.params.id })
   return { status: 201, json: { variant } }
 }

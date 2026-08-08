@@ -207,7 +207,7 @@ describe('POST /auth/verification/confirm', () => {
     const verifications = await authService.listAuthVerifications({ authIdentityId })
     const verification = verifications[0]
     if (verification) {
-      await authService.updateAuthVerifications([verification.id], {
+      await authService.updateAuthVerification(verification.id, {
         requestedAt: new Date(Date.now() - 16 * 60 * 1000),
       })
     }
@@ -261,7 +261,7 @@ describe('verification gate on login', () => {
     const authIdentityId = decoded.authIdentityId as string
 
     // Link to a customer
-    await authService.updateAuthIdentities([authIdentityId], {
+    await authService.updateAuthIdentity(authIdentityId, {
       appMetadata: { registered: true, customerId: 'cus_linked' },
     })
 

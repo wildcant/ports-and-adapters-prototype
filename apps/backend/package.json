@@ -11,6 +11,8 @@
     "deploy": "wrangler deploy --config wrangler.jsonc",
     "start": "dotenvx run -f ../../.env -- tsx src/index.ts",
     "test": "dotenvx run -f ../../.env.test -- vitest run",
+    "db:test:up": "docker compose -f docker-compose.test.yml up -d --wait",
+    "db:test:down": "docker compose -f docker-compose.test.yml down",
     "typecheck": "tsc --noEmit",
     "db:restart": "npm run db:reset && npm run db:migrate:dev && npm run db:seed:dev",
     "db:start": "supabase start",

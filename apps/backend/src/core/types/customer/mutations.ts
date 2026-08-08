@@ -1,4 +1,5 @@
 export type CreateCustomerDTO = {
+  id?: string
   firstName: string
   lastName: string
   email: string

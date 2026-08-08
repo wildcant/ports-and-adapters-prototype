@@ -54,33 +54,21 @@ export class TokenVerificationProvider extends AbstractAuthVerificationProvider<
 
     let verification: AuthVerificationDTO
     if (existing) {
-      const updated = await authVerificationService.update([existing.id], {
+      verification = await authVerificationService.update(existing.id, {
         codeProvider: data.codeProvider,
         providerMetadata: { tokenHash },
         requestedAt,
         verifiedAt: null,
       })
-      const first = updated[0]
-      if (!first) {
-        throw new AppError({ type: AppError.Types.UNEXPECTED_STATE, message: 'Expected verification to be updated' })
-      }
-      verification = first
     } else {
-      const created = await authVerificationService.create([
-        {
-          authIdentityId: data.authIdentityId,
-          entityId: data.entityId,
-          entityType: data.entityType,
-          codeProvider: data.codeProvider,
-          providerMetadata: { tokenHash },
-          requestedAt,
-        },
-      ])
-      const first = created[0]
-      if (!first) {
-        throw new AppError({ type: AppError.Types.UNEXPECTED_STATE, message: 'Expected verification to be created' })
-      }
-      verification = first
+      verification = await authVerificationService.create({
+        authIdentityId: data.authIdentityId,
+        entityId: data.entityId,
+        entityType: data.entityType,
+        codeProvider: data.codeProvider,
+        providerMetadata: { tokenHash },
+        requestedAt,
+      })
     }
 
     return {
@@ -120,14 +108,6 @@ export class TokenVerificationProvider extends AbstractAuthVerificationProvider<
       throw new AppError({ type: AppError.Types.NOT_ALLOWED, message: 'Verification code has expired' })
     }
 
-    const updated = await authVerificationService.update([verification.id], { verifiedAt: new Date(Date.now()) })
-    const confirmed = updated[0]
-    if (!confirmed) {
-      throw new AppError({
-        type: AppError.Types.UNEXPECTED_STATE,
-        message: 'Expected verification to be confirmed',
-      })
-    }
-    return confirmed
+    return authVerificationService.update(verification.id, { verifiedAt: new Date(Date.now()) })
   }
 }

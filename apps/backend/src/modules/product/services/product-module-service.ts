@@ -96,7 +96,19 @@ export class ProductModuleService implements IProductModuleService {
 
   async updateProducts(productIds: string[], data: UpdateProductDTO, context?: Context): Promise<ProductDTO[]> {
     return this.withTransaction(context, async (ctx) => {
-      return this.productRepository.update(productIds, data, ctx)
+      return this.productRepository.updateMany(productIds, data, ctx)
+    })
+  }
+
+  async createProduct(data: CreateProductDTO, context?: Context): Promise<ProductDTO> {
+    return this.withTransaction(context, async (ctx) => {
+      return this.productRepository.create({ ...data, handle: data.handle ?? toHandle(data.title) }, ctx)
+    })
+  }
+
+  async updateProduct(productId: string, data: UpdateProductDTO, context?: Context): Promise<ProductDTO> {
+    return this.withTransaction(context, async (ctx) => {
+      return this.productRepository.update(productId, data, ctx)
     })
   }
 
@@ -113,10 +125,22 @@ export class ProductModuleService implements IProductModuleService {
     })
   }
 
+  async createProductVariant(data: CreateProductVariantDTO, context?: Context): Promise<ProductVariantDTO> {
+    return this.withTransaction(context, async (ctx) => {
+      return this.productVariantRepository.create(data, ctx)
+    })
+  }
+
   async createProductOptions(data: CreateProductOptionDTO[], context?: Context): Promise<ProductOptionDTO[]> {
     this.logger.debug(`Creating ${data.length} product option(s)`)
     return this.withTransaction(context, async (ctx) => {
       return this.productOptionRepository.createMany(data, ctx)
+    })
+  }
+
+  async createProductOption(data: CreateProductOptionDTO, context?: Context): Promise<ProductOptionDTO> {
+    return this.withTransaction(context, async (ctx) => {
+      return this.productOptionRepository.create(data, ctx)
     })
   }
 
@@ -127,6 +151,12 @@ export class ProductModuleService implements IProductModuleService {
     this.logger.debug(`Creating ${data.length} product option value(s)`)
     return this.withTransaction(context, async (ctx) => {
       return this.productOptionValueRepository.createMany(data, ctx)
+    })
+  }
+
+  async createProductOptionValue(data: CreateProductOptionValueDTO, context?: Context): Promise<ProductOptionValueDTO> {
+    return this.withTransaction(context, async (ctx) => {
+      return this.productOptionValueRepository.create(data, ctx)
     })
   }
 
@@ -160,7 +190,17 @@ export class ProductModuleService implements IProductModuleService {
     context?: Context,
   ): Promise<ProductVariantDTO[]> {
     return this.withTransaction(context, async (ctx) => {
-      return this.productVariantRepository.update(variantIds, data, ctx)
+      return this.productVariantRepository.updateMany(variantIds, data, ctx)
+    })
+  }
+
+  async updateProductVariant(
+    variantId: string,
+    data: UpdateProductVariantDTO,
+    context?: Context,
+  ): Promise<ProductVariantDTO> {
+    return this.withTransaction(context, async (ctx) => {
+      return this.productVariantRepository.update(variantId, data, ctx)
     })
   }
 
@@ -174,6 +214,12 @@ export class ProductModuleService implements IProductModuleService {
     this.logger.debug(`Creating ${data.length} product image(s)`)
     return this.withTransaction(context, async (ctx) => {
       return this.productImageRepository.createMany(data, ctx)
+    })
+  }
+
+  async createProductImage(data: CreateProductImageDTO, context?: Context): Promise<ProductImageDTO> {
+    return this.withTransaction(context, async (ctx) => {
+      return this.productImageRepository.create(data, ctx)
     })
   }
 }

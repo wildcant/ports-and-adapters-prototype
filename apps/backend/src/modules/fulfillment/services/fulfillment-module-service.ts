@@ -136,7 +136,17 @@ export class FulfillmentModuleService implements IFulfillmentModuleService {
     context?: Context,
   ): Promise<FulfillmentSetDTO[]> {
     return this.withTransaction(context, async (ctx) => {
-      return this.fulfillmentSetRepository.update(ids, data, ctx)
+      return this.fulfillmentSetRepository.updateMany(ids, data, ctx)
+    })
+  }
+
+  async createFulfillmentSet(data: CreateFulfillmentSetDTO, context?: Context): Promise<FulfillmentSetDTO> {
+    return this.fulfillmentSetRepository.create(data, context)
+  }
+
+  async updateFulfillmentSet(id: string, data: UpdateFulfillmentSetDTO, context?: Context): Promise<FulfillmentSetDTO> {
+    return this.withTransaction(context, async (ctx) => {
+      return this.fulfillmentSetRepository.update(id, data, ctx)
     })
   }
 
@@ -195,7 +205,29 @@ export class FulfillmentModuleService implements IFulfillmentModuleService {
 
   async updateServiceZones(ids: string[], data: UpdateServiceZoneDTO, context?: Context): Promise<ServiceZoneDTO[]> {
     return this.withTransaction(context, async (ctx) => {
-      return this.serviceZoneRepository.update(ids, data, ctx)
+      return this.serviceZoneRepository.updateMany(ids, data, ctx)
+    })
+  }
+
+  async createServiceZone(data: CreateServiceZoneDTO, context?: Context): Promise<ServiceZoneDTO> {
+    return this.withTransaction(context, async (ctx) => {
+      const { geoZones: geoZoneInputs, ...zoneData } = data
+      const zone = await this.serviceZoneRepository.create(zoneData, ctx)
+
+      if (geoZoneInputs?.length) {
+        await this.geoZoneRepository.createMany(
+          geoZoneInputs.map((gz) => ({ ...gz, serviceZoneId: zone.id })),
+          ctx,
+        )
+      }
+
+      return zone
+    })
+  }
+
+  async updateServiceZone(id: string, data: UpdateServiceZoneDTO, context?: Context): Promise<ServiceZoneDTO> {
+    return this.withTransaction(context, async (ctx) => {
+      return this.serviceZoneRepository.update(id, data, ctx)
     })
   }
 
@@ -230,7 +262,20 @@ export class FulfillmentModuleService implements IFulfillmentModuleService {
 
   async updateGeoZones(ids: string[], data: UpdateGeoZoneDTO, context?: Context): Promise<GeoZoneDTO[]> {
     return this.withTransaction(context, async (ctx) => {
-      return this.geoZoneRepository.update(ids, data, ctx) as Promise<GeoZoneDTO[]>
+      return this.geoZoneRepository.updateMany(ids, data, ctx) as Promise<GeoZoneDTO[]>
+    })
+  }
+
+  async createGeoZone(data: CreateGeoZoneDTO, context?: Context): Promise<GeoZoneDTO> {
+    if (!data.serviceZoneId) {
+      throw new Error('serviceZoneId is required when creating geo zones directly')
+    }
+    return this.geoZoneRepository.create({ ...data, serviceZoneId: data.serviceZoneId }, context) as Promise<GeoZoneDTO>
+  }
+
+  async updateGeoZone(id: string, data: UpdateGeoZoneDTO, context?: Context): Promise<GeoZoneDTO> {
+    return this.withTransaction(context, async (ctx) => {
+      return this.geoZoneRepository.update(id, data, ctx) as Promise<GeoZoneDTO>
     })
   }
 
@@ -261,7 +306,21 @@ export class FulfillmentModuleService implements IFulfillmentModuleService {
     context?: Context,
   ): Promise<ShippingProfileDTO[]> {
     return this.withTransaction(context, async (ctx) => {
-      return this.shippingProfileRepository.update(ids, data, ctx)
+      return this.shippingProfileRepository.updateMany(ids, data, ctx)
+    })
+  }
+
+  async createShippingProfile(data: CreateShippingProfileDTO, context?: Context): Promise<ShippingProfileDTO> {
+    return this.shippingProfileRepository.create(data, context)
+  }
+
+  async updateShippingProfile(
+    id: string,
+    data: UpdateShippingProfileDTO,
+    context?: Context,
+  ): Promise<ShippingProfileDTO> {
+    return this.withTransaction(context, async (ctx) => {
+      return this.shippingProfileRepository.update(id, data, ctx)
     })
   }
 
@@ -295,7 +354,21 @@ export class FulfillmentModuleService implements IFulfillmentModuleService {
     context?: Context,
   ): Promise<ShippingOptionTypeDTO[]> {
     return this.withTransaction(context, async (ctx) => {
-      return this.shippingOptionTypeRepository.update(ids, data, ctx)
+      return this.shippingOptionTypeRepository.updateMany(ids, data, ctx)
+    })
+  }
+
+  async createShippingOptionType(data: CreateShippingOptionTypeDTO, context?: Context): Promise<ShippingOptionTypeDTO> {
+    return this.shippingOptionTypeRepository.create(data, context)
+  }
+
+  async updateShippingOptionType(
+    id: string,
+    data: UpdateShippingOptionTypeDTO,
+    context?: Context,
+  ): Promise<ShippingOptionTypeDTO> {
+    return this.withTransaction(context, async (ctx) => {
+      return this.shippingOptionTypeRepository.update(id, data, ctx)
     })
   }
 
@@ -352,7 +425,17 @@ export class FulfillmentModuleService implements IFulfillmentModuleService {
     context?: Context,
   ): Promise<ShippingOptionDTO[]> {
     return this.withTransaction(context, async (ctx) => {
-      return this.shippingOptionRepository.update(ids, data, ctx) as Promise<ShippingOptionDTO[]>
+      return this.shippingOptionRepository.updateMany(ids, data, ctx) as Promise<ShippingOptionDTO[]>
+    })
+  }
+
+  async createShippingOption(data: CreateShippingOptionDTO, context?: Context): Promise<ShippingOptionDTO> {
+    return this.shippingOptionRepository.create(data, context) as Promise<ShippingOptionDTO>
+  }
+
+  async updateShippingOption(id: string, data: UpdateShippingOptionDTO, context?: Context): Promise<ShippingOptionDTO> {
+    return this.withTransaction(context, async (ctx) => {
+      return this.shippingOptionRepository.update(id, data, ctx) as Promise<ShippingOptionDTO>
     })
   }
 
@@ -422,8 +505,8 @@ export class FulfillmentModuleService implements IFulfillmentModuleService {
 
       // Update with provider response data if available
       if (providerResult?.data && Object.keys(providerResult.data).length > 0) {
-        const [updated] = await this.fulfillmentRepository.update([fulfillment.id], { data: providerResult.data }, ctx)
-        return (updated ?? fulfillment) as FulfillmentDTO
+        const updated = await this.fulfillmentRepository.update(fulfillment.id, { data: providerResult.data }, ctx)
+        return updated as FulfillmentDTO
       }
 
       return fulfillment as FulfillmentDTO
@@ -456,11 +539,7 @@ export class FulfillmentModuleService implements IFulfillmentModuleService {
 
   async updateFulfillment(id: string, data: UpdateFulfillmentDTO, context?: Context): Promise<FulfillmentDTO> {
     return this.withTransaction(context, async (ctx) => {
-      const [updated] = await this.fulfillmentRepository.update([id], data, ctx)
-      if (!updated) {
-        throw new AppError({ type: ErrorTypes.NOT_FOUND, message: `Fulfillment "${id}" not found` })
-      }
-      return updated as FulfillmentDTO
+      return this.fulfillmentRepository.update(id, data, ctx) as Promise<FulfillmentDTO>
     })
   }
 
@@ -491,9 +570,9 @@ export class FulfillmentModuleService implements IFulfillmentModuleService {
         .cancelFulfillment(fulfillment.providerId, fulfillment as unknown as Record<string, unknown>)
         .catch((e) => this.logger.error(e))
 
-      const [updated] = await this.fulfillmentRepository.update([id], { canceledAt: new Date() }, ctx)
+      const updated = await this.fulfillmentRepository.update(id, { canceledAt: new Date() }, ctx)
 
-      return (updated ?? fulfillment) as FulfillmentDTO
+      return updated as FulfillmentDTO
     })
   }
 }

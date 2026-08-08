@@ -21,6 +21,9 @@ export type IInventoryModuleService = {
   ): Promise<InventoryItemDTO>
   createInventoryItems(data: CreateInventoryItemDTO[], context?: Context): Promise<InventoryItemDTO[]>
   updateInventoryItems(itemIds: string[], data: UpdateInventoryItemDTO, context?: Context): Promise<InventoryItemDTO[]>
+  createInventoryItem(data: CreateInventoryItemDTO, context?: Context): Promise<InventoryItemDTO>
+  updateInventoryItem(itemId: string, data: UpdateInventoryItemDTO, context?: Context): Promise<InventoryItemDTO>
+  createInventoryLevel(data: CreateInventoryLevelDTO, context?: Context): Promise<InventoryLevelDTO>
   deleteInventoryItems(itemIds: string[], context?: Context): Promise<void>
   listInventoryLevels(
     filters?: FilterableInventoryLevelProps,

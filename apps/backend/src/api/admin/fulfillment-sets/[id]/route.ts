@@ -1,4 +1,3 @@
-import { AppError, ErrorTypes } from '@core/errors/app-error.js'
 import type { IFulfillmentModuleService } from '@core/types/index.js'
 import { Modules } from '@core/utils/index.js'
 import {
@@ -29,10 +28,7 @@ export const PostOutput = AdminUpdateFulfillmentSetResponse
 
 export const POST = async (req: HttpRequest<typeof PostInput>): Promise<HttpResult<typeof PostOutput>> => {
   const service = req.scope.resolve<IFulfillmentModuleService>(Modules.FULFILLMENT)
-  const [fulfillmentSet] = await service.updateFulfillmentSets([req.params.id], req.body)
-  if (!fulfillmentSet) {
-    throw new AppError({ type: ErrorTypes.NOT_FOUND, message: `Fulfillment set with id "${req.params.id}" not found` })
-  }
+  const fulfillmentSet = await service.updateFulfillmentSet(req.params.id, req.body)
   return { status: 200, json: { fulfillmentSet } }
 }
 

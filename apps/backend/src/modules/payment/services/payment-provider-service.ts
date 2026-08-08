@@ -74,7 +74,7 @@ export class PaymentProviderService {
         const existing = await this.paymentProviderRepository.findById(provider.id, undefined, context)
         if (existing) {
           this.logger.debug(`Updating payment provider "${provider.id}"`)
-          await this.paymentProviderRepository.update([provider.id], { isEnabled: provider.isEnabled ?? true }, context)
+          await this.paymentProviderRepository.update(provider.id, { isEnabled: provider.isEnabled ?? true }, context)
         } else {
           this.logger.debug(`Registering new payment provider "${provider.id}"`)
           await this.paymentProviderRepository.create(provider, context)

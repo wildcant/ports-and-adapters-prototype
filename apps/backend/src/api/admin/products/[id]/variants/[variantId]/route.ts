@@ -1,4 +1,3 @@
-import { AppError, ErrorTypes } from '@core/errors/app-error.js'
 import type { IProductModuleService } from '@core/types/index.js'
 import { Modules } from '@core/utils/index.js'
 import {
@@ -24,10 +23,7 @@ export const PatchOutput = AdminUpdateProductVariantResponse
 
 export const PATCH = async (req: HttpRequest<typeof PatchInput>): Promise<HttpResult<typeof PatchOutput>> => {
   const productService = req.scope.resolve<IProductModuleService>(Modules.PRODUCT)
-  const [variant] = await productService.updateProductVariants([req.params.variantId], req.body)
-  if (!variant) {
-    throw new AppError({ type: ErrorTypes.NOT_FOUND, message: `Variant with id "${req.params.variantId}" not found` })
-  }
+  const variant = await productService.updateProductVariant(req.params.variantId, req.body)
   return { status: 200, json: { variant } }
 }
 

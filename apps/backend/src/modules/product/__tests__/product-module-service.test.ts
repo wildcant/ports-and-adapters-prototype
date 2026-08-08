@@ -1,6 +1,5 @@
 import { AppError, ErrorTypes } from '@core/errors/app-error.js'
 import { test } from '@tests/setup/test-extend.js'
-import { assertDefined } from '@tests/utils/assert-defined.js'
 import { describe } from 'vitest'
 import { buildSearchFilter } from '../../../core/utils/build-search-filter.js'
 import { createWithTransaction } from '../../../core/utils/with-transaction.js'
@@ -91,9 +90,8 @@ describe('ProductModuleService', () => {
     expect(rows).toHaveLength(2)
   })
 
-  test('createProducts auto-generates handle from title', async ({ expect }) => {
-    const [product] = await service.createProducts([{ title: 'My Cool Product' }])
-    assertDefined(product)
+  test('createProduct auto-generates handle from title', async ({ expect }) => {
+    const product = await service.createProduct({ title: 'My Cool Product' })
 
     expect(product.title).toBe('My Cool Product')
     expect(product.handle).toBe('my-cool-product')
@@ -102,20 +100,17 @@ describe('ProductModuleService', () => {
     expect(product.createdAt).toBeInstanceOf(Date)
   })
 
-  test('updateProducts', async ({ expect, dto }) => {
-    const [created] = await service.createProducts([dto.generate.createProduct()])
-    assertDefined(created)
+  test('updateProduct', async ({ expect, dto }) => {
+    const created = await service.createProduct(dto.generate.createProduct())
 
-    const [updated] = await service.updateProducts([created.id], { title: 'Updated Title' })
-    assertDefined(updated)
+    const updated = await service.updateProduct(created.id, { title: 'Updated Title' })
 
     expect(updated.title).toBe('Updated Title')
     expect(updated.id).toBe(created.id)
   })
 
   test('deleteProducts soft-deletes and excludes from list', async ({ expect, dto }) => {
-    const [created] = await service.createProducts([dto.generate.createProduct()])
-    assertDefined(created)
+    const created = await service.createProduct(dto.generate.createProduct())
 
     await service.deleteProducts([created.id])
 
@@ -124,8 +119,7 @@ describe('ProductModuleService', () => {
   })
 
   test('retrieveProduct by ID', async ({ expect, dto }) => {
-    const [created] = await service.createProducts([dto.generate.createProduct()])
-    assertDefined(created)
+    const created = await service.createProduct(dto.generate.createProduct())
 
     const product = await service.retrieveProduct(created.id)
 
@@ -134,8 +128,7 @@ describe('ProductModuleService', () => {
   })
 
   test('retrieveProduct throws NOT_FOUND for soft-deleted product', async ({ expect, dto }) => {
-    const [created] = await service.createProducts([dto.generate.createProduct()])
-    assertDefined(created)
+    const created = await service.createProduct(dto.generate.createProduct())
     await service.deleteProducts([created.id])
 
     const error = await service.retrieveProduct(created.id).catch((e) => e)

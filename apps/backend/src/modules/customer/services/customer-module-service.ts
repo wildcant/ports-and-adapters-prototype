@@ -88,7 +88,26 @@ export class CustomerModuleService implements ICustomerModuleService {
 
   async updateCustomers(customerIds: string[], data: UpdateCustomerDTO, context?: Context): Promise<CustomerDTO[]> {
     return this.withTransaction(context, async (ctx) => {
-      return this.customerRepository.update(customerIds, data, ctx)
+      return this.customerRepository.updateMany(customerIds, data, ctx)
+    })
+  }
+
+  async createCustomer(data: CreateCustomerDTO, context?: Context): Promise<CustomerDTO> {
+    return this.withTransaction(context, async (ctx) => {
+      const customer = await this.customerRepository.create(data, ctx)
+
+      const addressData = (data.addresses ?? []).map((addr) => ({ ...addr, customerId: customer.id }))
+      if (addressData.length > 0) {
+        await this.customerAddressRepository.createMany(addressData, ctx)
+      }
+
+      return customer
+    })
+  }
+
+  async updateCustomer(customerId: string, data: UpdateCustomerDTO, context?: Context): Promise<CustomerDTO> {
+    return this.withTransaction(context, async (ctx) => {
+      return this.customerRepository.update(customerId, data, ctx)
     })
   }
 
@@ -128,13 +147,29 @@ export class CustomerModuleService implements ICustomerModuleService {
     })
   }
 
+  async createCustomerAddress(data: CreateCustomerAddressDTO, context?: Context): Promise<CustomerAddressDTO> {
+    return this.withTransaction(context, async (ctx) => {
+      return this.customerAddressRepository.create(data, ctx)
+    })
+  }
+
+  async updateCustomerAddress(
+    addressId: string,
+    data: UpdateCustomerAddressDTO,
+    context?: Context,
+  ): Promise<CustomerAddressDTO> {
+    return this.withTransaction(context, async (ctx) => {
+      return this.customerAddressRepository.update(addressId, data, ctx)
+    })
+  }
+
   async updateCustomerAddresses(
     addressIds: string[],
     data: UpdateCustomerAddressDTO,
     context?: Context,
   ): Promise<CustomerAddressDTO[]> {
     return this.withTransaction(context, async (ctx) => {
-      return this.customerAddressRepository.update(addressIds, data, ctx)
+      return this.customerAddressRepository.updateMany(addressIds, data, ctx)
     })
   }
 }

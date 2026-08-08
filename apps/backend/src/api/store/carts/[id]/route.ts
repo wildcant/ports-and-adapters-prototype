@@ -1,4 +1,3 @@
-import { AppError, ErrorTypes } from '@core/errors/app-error.js'
 import type { ICartModuleService } from '@core/types/index.js'
 import { Modules } from '@core/utils/index.js'
 import { IdParams, StoreCartDetailResponse, StoreUpdateCartResponse, UpdateCart } from '@proteus/http-schemas/store'
@@ -24,8 +23,7 @@ export const PostOutput = StoreUpdateCartResponse
 
 export const POST = async (req: HttpRequest<typeof PostInput>): Promise<HttpResult<typeof PostOutput>> => {
   const cartService = req.scope.resolve<ICartModuleService>(Modules.CART)
-  const [cart] = await cartService.updateCarts([req.params.id], req.body)
-  if (!cart) throw new AppError({ type: ErrorTypes.NOT_FOUND, message: `Cart with id "${req.params.id}" not found` })
+  const cart = await cartService.updateCart(req.params.id, req.body)
 
   return { status: 200, json: { cart } }
 }

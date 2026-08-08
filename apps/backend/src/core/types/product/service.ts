@@ -33,8 +33,11 @@ export type IProductModuleService = {
   retrieveProduct(productId: string, config?: FindConfig<ProductDTO>, context?: Context): Promise<ProductDTO>
   createProducts(data: CreateProductDTO[], context?: Context): Promise<ProductDTO[]>
   updateProducts(productIds: string[], data: UpdateProductDTO, context?: Context): Promise<ProductDTO[]>
+  createProduct(data: CreateProductDTO, context?: Context): Promise<ProductDTO>
+  updateProduct(productId: string, data: UpdateProductDTO, context?: Context): Promise<ProductDTO>
   deleteProducts(productIds: string[], context?: Context): Promise<void>
   createProductVariants(data: CreateProductVariantDTO[], context?: Context): Promise<ProductVariantDTO[]>
+  createProductVariant(data: CreateProductVariantDTO, context?: Context): Promise<ProductVariantDTO>
   listProductVariants(
     filters?: FilterableProductVariantProps,
     config?: FindConfig<ProductVariantDTO>,
@@ -55,8 +58,12 @@ export type IProductModuleService = {
     data: UpdateProductVariantDTO,
     context?: Context,
   ): Promise<ProductVariantDTO[]>
+  updateProductVariant(variantId: string, data: UpdateProductVariantDTO, context?: Context): Promise<ProductVariantDTO>
   deleteProductVariants(variantIds: string[], context?: Context): Promise<void>
   createProductOptions(data: CreateProductOptionDTO[], context?: Context): Promise<ProductOptionDTO[]>
+  createProductOption(data: CreateProductOptionDTO, context?: Context): Promise<ProductOptionDTO>
   createProductOptionValues(data: CreateProductOptionValueDTO[], context?: Context): Promise<ProductOptionValueDTO[]>
+  createProductOptionValue(data: CreateProductOptionValueDTO, context?: Context): Promise<ProductOptionValueDTO>
   createProductImages(data: CreateProductImageDTO[], context?: Context): Promise<ProductImageDTO[]>
+  createProductImage(data: CreateProductImageDTO, context?: Context): Promise<ProductImageDTO>
 }

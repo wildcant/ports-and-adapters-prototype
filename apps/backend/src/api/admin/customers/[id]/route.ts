@@ -1,4 +1,3 @@
-import { AppError, ErrorTypes } from '@core/errors/app-error.js'
 import type { ICustomerModuleService } from '@core/types/index.js'
 import { Modules } from '@core/utils/index.js'
 import {
@@ -24,10 +23,7 @@ export const PatchOutput = AdminUpdateCustomerResponse
 
 export const PATCH = async (req: HttpRequest<typeof PatchInput>): Promise<HttpResult<typeof PatchOutput>> => {
   const customerService = req.scope.resolve<ICustomerModuleService>(Modules.CUSTOMER)
-  const [customer] = await customerService.updateCustomers([req.params.id], req.body)
-  if (!customer) {
-    throw new AppError({ type: ErrorTypes.NOT_FOUND, message: `Customer with id "${req.params.id}" not found` })
-  }
+  const customer = await customerService.updateCustomer(req.params.id, req.body)
   return { status: 200, json: { customer } }
 }
 

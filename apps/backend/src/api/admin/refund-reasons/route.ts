@@ -1,4 +1,3 @@
-import { AppError, ErrorTypes } from '@core/errors/app-error.js'
 import type { IPaymentModuleService } from '@core/types/index.js'
 import { Modules } from '@core/utils/index.js'
 import {
@@ -22,11 +21,7 @@ export const PostOutput = AdminCreateRefundReasonResponse
 
 export const POST = async (req: HttpRequest<typeof PostInput>): Promise<HttpResult<typeof PostOutput>> => {
   const paymentService = req.scope.resolve<IPaymentModuleService>(Modules.PAYMENT)
-  const [refundReason] = await paymentService.createRefundReasons([req.body])
-
-  if (!refundReason) {
-    throw new AppError({ type: ErrorTypes.UNEXPECTED_STATE, message: 'Failed to create refund reason' })
-  }
+  const refundReason = await paymentService.createRefundReason(req.body)
 
   return { status: 201, json: { refundReason } }
 }

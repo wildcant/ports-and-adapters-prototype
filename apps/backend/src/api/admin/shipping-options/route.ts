@@ -1,4 +1,3 @@
-import { AppError, ErrorTypes } from '@core/errors/app-error.js'
 import type { IFulfillmentModuleService } from '@core/types/index.js'
 import { Modules } from '@core/utils/index.js'
 import {
@@ -21,9 +20,6 @@ export const PostOutput = AdminCreateShippingOptionResponse
 
 export const POST = async (req: HttpRequest<typeof PostInput>): Promise<HttpResult<typeof PostOutput>> => {
   const service = req.scope.resolve<IFulfillmentModuleService>(Modules.FULFILLMENT)
-  const [shippingOption] = await service.createShippingOptions([req.body])
-  if (!shippingOption) {
-    throw new AppError({ type: ErrorTypes.UNEXPECTED_STATE, message: 'Shipping option not returned after create' })
-  }
+  const shippingOption = await service.createShippingOption(req.body)
   return { status: 201, json: { shippingOption } }
 }

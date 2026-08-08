@@ -15,6 +15,8 @@ export type IUserModuleService = {
   ): Promise<[UserDTO[], number]>
   createUsers(data: CreateUserDTO[], context?: Context): Promise<UserDTO[]>
   updateUsers(userIds: string[], data: UpdateUserDTO, context?: Context): Promise<UserDTO[]>
+  createUser(data: CreateUserDTO, context?: Context): Promise<UserDTO>
+  updateUser(userId: string, data: UpdateUserDTO, context?: Context): Promise<UserDTO>
   deleteUsers(userIds: string[], context?: Context): Promise<void>
   softDeleteUsers(userIds: string[], context?: Context): Promise<void>
   restoreUsers(userIds: string[], context?: Context): Promise<void>
@@ -29,6 +31,8 @@ export type IUserModuleService = {
     context?: Context,
   ): Promise<[InviteDTO[], number]>
   updateInvites(inviteIds: string[], data: UpdateInviteDTO, context?: Context): Promise<InviteDTO[]>
+  createInvite(data: CreateInviteDTO, context?: Context): Promise<InviteDTO>
+  updateInvite(inviteId: string, data: UpdateInviteDTO, context?: Context): Promise<InviteDTO>
   softDeleteInvites(inviteIds: string[], context?: Context): Promise<void>
   restoreInvites(inviteIds: string[], context?: Context): Promise<void>
   validateInviteToken(token: string): Promise<InviteDTO>

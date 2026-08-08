@@ -28,32 +28,32 @@ function makeTestWorkflow(input: SetAuthAppMetadataInput) {
 describe('setAuthAppMetadataStep', () => {
   test('writes userId into app_metadata', async ({ dto }) => {
     const identity = dto.generate.authIdentity()
-    const updateCalls: Array<{ ids: string[]; data: UpdateAuthIdentityDTO }> = []
+    const updateCalls: Array<{ id: string; data: UpdateAuthIdentityDTO }> = []
 
     setupWorkflowEngine({
       retrieveAuthIdentity: async () => identity,
-      updateAuthIdentities: async (ids, data) => {
-        updateCalls.push({ ids, data })
-        return [dto.generate.authIdentity({ appMetadata: data.appMetadata ?? null })]
+      updateAuthIdentity: async (id, data) => {
+        updateCalls.push({ id, data })
+        return dto.generate.authIdentity({ appMetadata: data.appMetadata ?? null })
       },
     })
 
     await makeTestWorkflow({ authIdentityId: 'authid_test1', actorType: 'user', actorId: 'usr_abc' })
 
     expect(updateCalls).toHaveLength(1)
-    expect(updateCalls[0]?.ids).toEqual(['authid_test1'])
+    expect(updateCalls[0]?.id).toEqual('authid_test1')
     expect(updateCalls[0]?.data.appMetadata).toEqual({ userId: 'usr_abc' })
   })
 
   test('preserves existing app_metadata keys', async ({ dto }) => {
     const identity = dto.generate.authIdentity({ appMetadata: { registered: true } })
-    const updateCalls: Array<{ ids: string[]; data: UpdateAuthIdentityDTO }> = []
+    const updateCalls: Array<{ id: string; data: UpdateAuthIdentityDTO }> = []
 
     setupWorkflowEngine({
       retrieveAuthIdentity: async () => identity,
-      updateAuthIdentities: async (ids, data) => {
-        updateCalls.push({ ids, data })
-        return [dto.generate.authIdentity({ appMetadata: data.appMetadata ?? null })]
+      updateAuthIdentity: async (id, data) => {
+        updateCalls.push({ id, data })
+        return dto.generate.authIdentity({ appMetadata: data.appMetadata ?? null })
       },
     })
 
@@ -67,7 +67,7 @@ describe('setAuthAppMetadataStep', () => {
 
     setupWorkflowEngine({
       retrieveAuthIdentity: async () => identity,
-      updateAuthIdentities: vi.fn(),
+      updateAuthIdentity: vi.fn(),
     })
 
     await expect(
@@ -81,13 +81,13 @@ describe('setAuthAppMetadataStep', () => {
 
   test('allows clearing an existing link with null', async ({ dto }) => {
     const identity = dto.generate.authIdentity({ appMetadata: { userId: 'usr_existing' } })
-    const updateCalls: Array<{ ids: string[]; data: UpdateAuthIdentityDTO }> = []
+    const updateCalls: Array<{ id: string; data: UpdateAuthIdentityDTO }> = []
 
     setupWorkflowEngine({
       retrieveAuthIdentity: async () => identity,
-      updateAuthIdentities: async (ids, data) => {
-        updateCalls.push({ ids, data })
-        return [dto.generate.authIdentity({ appMetadata: data.appMetadata ?? null })]
+      updateAuthIdentity: async (id, data) => {
+        updateCalls.push({ id, data })
+        return dto.generate.authIdentity({ appMetadata: data.appMetadata ?? null })
       },
     })
 
@@ -99,13 +99,13 @@ describe('setAuthAppMetadataStep', () => {
 
   test('compensation restores previous app_metadata on rollback', async ({ dto }) => {
     const identity = dto.generate.authIdentity({ appMetadata: { registered: true } })
-    const updateCalls: Array<{ ids: string[]; data: UpdateAuthIdentityDTO }> = []
+    const updateCalls: Array<{ id: string; data: UpdateAuthIdentityDTO }> = []
 
     setupWorkflowEngine({
       retrieveAuthIdentity: async () => identity,
-      updateAuthIdentities: async (ids, data) => {
-        updateCalls.push({ ids, data })
-        return [dto.generate.authIdentity({ appMetadata: data.appMetadata ?? null })]
+      updateAuthIdentity: async (id, data) => {
+        updateCalls.push({ id, data })
+        return dto.generate.authIdentity({ appMetadata: data.appMetadata ?? null })
       },
     })
 
@@ -129,13 +129,13 @@ describe('setAuthAppMetadataStep', () => {
 
   test('compensation restores null when app_metadata was originally null', async ({ dto }) => {
     const identity = dto.generate.authIdentity({ appMetadata: null })
-    const updateCalls: Array<{ ids: string[]; data: UpdateAuthIdentityDTO }> = []
+    const updateCalls: Array<{ id: string; data: UpdateAuthIdentityDTO }> = []
 
     setupWorkflowEngine({
       retrieveAuthIdentity: async () => identity,
-      updateAuthIdentities: async (ids, data) => {
-        updateCalls.push({ ids, data })
-        return [dto.generate.authIdentity({ appMetadata: data.appMetadata ?? null })]
+      updateAuthIdentity: async (id, data) => {
+        updateCalls.push({ id, data })
+        return dto.generate.authIdentity({ appMetadata: data.appMetadata ?? null })
       },
     })
 
@@ -163,9 +163,9 @@ describe('setAuthAppMetadataStep', () => {
 
     setupWorkflowEngine({
       retrieveAuthIdentity: async () => identity,
-      updateAuthIdentities: async (_ids, data) => {
+      updateAuthIdentity: async (_id, data) => {
         storedMetadata = (data.appMetadata as Record<string, unknown>) ?? null
-        return [dto.generate.authIdentity({ appMetadata: storedMetadata })]
+        return dto.generate.authIdentity({ appMetadata: storedMetadata })
       },
     })
 

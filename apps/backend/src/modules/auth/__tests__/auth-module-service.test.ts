@@ -48,8 +48,7 @@ describe('AuthModuleService — AuthIdentity', () => {
   })
 
   test('retrieveAuthIdentity', async ({ expect, dto }) => {
-    const [created] = await service.createAuthIdentities([dto.generate.createAuthIdentity()])
-    assertDefined(created)
+    const created = await service.createAuthIdentity(dto.generate.createAuthIdentity())
 
     const result = await service.retrieveAuthIdentity(created.id)
 
@@ -77,20 +76,17 @@ describe('AuthModuleService — AuthIdentity', () => {
     expect(count).toBe(2)
   })
 
-  test('updateAuthIdentities', async ({ expect, dto }) => {
-    const [created] = await service.createAuthIdentities([dto.generate.createAuthIdentity()])
-    assertDefined(created)
+  test('updateAuthIdentity', async ({ expect, dto }) => {
+    const created = await service.createAuthIdentity(dto.generate.createAuthIdentity())
 
-    const [updated] = await service.updateAuthIdentities([created.id], { appMetadata: { role: 'admin' } })
-    assertDefined(updated)
+    const updated = await service.updateAuthIdentity(created.id, { appMetadata: { role: 'admin' } })
 
     expect(updated.appMetadata).toEqual({ role: 'admin' })
     expect(updated.id).toBe(created.id)
   })
 
   test('deleteAuthIdentities', async ({ expect, dto }) => {
-    const [created] = await service.createAuthIdentities([dto.generate.createAuthIdentity()])
-    assertDefined(created)
+    const created = await service.createAuthIdentity(dto.generate.createAuthIdentity())
 
     await service.deleteAuthIdentities([created.id])
 
@@ -100,8 +96,7 @@ describe('AuthModuleService — AuthIdentity', () => {
   })
 
   test('softDeleteAuthIdentities', async ({ expect, dto }) => {
-    const [created] = await service.createAuthIdentities([dto.generate.createAuthIdentity()])
-    assertDefined(created)
+    const created = await service.createAuthIdentity(dto.generate.createAuthIdentity())
 
     await service.softDeleteAuthIdentities([created.id])
 
@@ -110,8 +105,7 @@ describe('AuthModuleService — AuthIdentity', () => {
   })
 
   test('restoreAuthIdentities', async ({ expect, dto }) => {
-    const [created] = await service.createAuthIdentities([dto.generate.createAuthIdentity()])
-    assertDefined(created)
+    const created = await service.createAuthIdentity(dto.generate.createAuthIdentity())
     await service.softDeleteAuthIdentities([created.id])
 
     await service.restoreAuthIdentities([created.id])
@@ -125,14 +119,12 @@ describe('AuthModuleService — AuthIdentity', () => {
 describe('AuthModuleService — ProviderIdentity', () => {
   test('CRUD on provider_identity', async ({ expect, dto }) => {
     // Create parent auth identity
-    const [authIdentity] = await service.createAuthIdentities([dto.generate.createAuthIdentity()])
-    assertDefined(authIdentity)
+    const authIdentity = await service.createAuthIdentity(dto.generate.createAuthIdentity())
 
     // Create
-    const [created] = await service.createProviderIdentities([
+    const created = await service.createProviderIdentity(
       dto.generate.createProviderIdentity({ authIdentityId: authIdentity.id }),
-    ])
-    assertDefined(created)
+    )
     expect(created.id).toMatch(/^provid_/)
     expect(created.authIdentityId).toBe(authIdentity.id)
 
@@ -145,10 +137,9 @@ describe('AuthModuleService — ProviderIdentity', () => {
     expect(list).toHaveLength(1)
 
     // Update
-    const [updated] = await service.updateProviderIdentities([created.id], {
+    const updated = await service.updateProviderIdentity(created.id, {
       providerMetadata: { passwordHash: 'abc123' },
     })
-    assertDefined(updated)
     expect(updated.providerMetadata).toEqual({ passwordHash: 'abc123' })
 
     // Soft delete
@@ -169,18 +160,17 @@ describe('AuthModuleService — ProviderIdentity', () => {
   })
 
   test('unique constraint on (entity_id, provider)', async ({ expect, dto }) => {
-    const [authIdentity] = await service.createAuthIdentities([dto.generate.createAuthIdentity()])
-    assertDefined(authIdentity)
+    const authIdentity = await service.createAuthIdentity(dto.generate.createAuthIdentity())
     const entityId = 'shared@example.com'
 
-    await service.createProviderIdentities([
+    await service.createProviderIdentity(
       dto.generate.createProviderIdentity({ authIdentityId: authIdentity.id, entityId, provider: 'email-password' }),
-    ])
+    )
 
     const error = await service
-      .createProviderIdentities([
+      .createProviderIdentity(
         dto.generate.createProviderIdentity({ authIdentityId: authIdentity.id, entityId, provider: 'email-password' }),
-      ])
+      )
       .catch((e) => e)
 
     expect(AppError.isError(error)).toBe(true)
@@ -188,38 +178,34 @@ describe('AuthModuleService — ProviderIdentity', () => {
   })
 
   test('unique constraint allows same entity_id with different provider', async ({ expect, dto }) => {
-    const [authIdentity] = await service.createAuthIdentities([dto.generate.createAuthIdentity()])
-    assertDefined(authIdentity)
+    const authIdentity = await service.createAuthIdentity(dto.generate.createAuthIdentity())
     const entityId = 'shared@example.com'
 
-    await service.createProviderIdentities([
+    await service.createProviderIdentity(
       dto.generate.createProviderIdentity({ authIdentityId: authIdentity.id, entityId, provider: 'email-password' }),
-    ])
+    )
 
-    const [second] = await service.createProviderIdentities([
+    const second = await service.createProviderIdentity(
       dto.generate.createProviderIdentity({ authIdentityId: authIdentity.id, entityId, provider: 'google' }),
-    ])
+    )
 
-    expect(second?.id).toMatch(/^provid_/)
+    expect(second.id).toMatch(/^provid_/)
   })
 })
 
 describe('AuthModuleService — AuthVerification', () => {
   test('CRUD on auth_verification', async ({ expect, dto }) => {
-    const [authIdentity] = await service.createAuthIdentities([dto.generate.createAuthIdentity()])
-    assertDefined(authIdentity)
+    const authIdentity = await service.createAuthIdentity(dto.generate.createAuthIdentity())
 
     // Create
-    const [created] = await service.createAuthVerifications([
+    const created = await service.createAuthVerification(
       dto.generate.createAuthVerification({ authIdentityId: authIdentity.id }),
-    ])
-    assertDefined(created)
+    )
     expect(created.id).toMatch(/^authver_/)
     expect(created.verifiedAt).toBeNull()
 
     // Update (mark verified)
-    const [updated] = await service.updateAuthVerifications([created.id], { verifiedAt: new Date() })
-    assertDefined(updated)
+    const updated = await service.updateAuthVerification(created.id, { verifiedAt: new Date() })
     expect(updated.verifiedAt).toBeInstanceOf(Date)
 
     // List & count
@@ -240,13 +226,12 @@ describe('AuthModuleService — AuthVerification', () => {
   })
 
   test('unique constraint on (auth_identity_id, entity_id, entity_type)', async ({ expect, dto }) => {
-    const [authIdentity] = await service.createAuthIdentities([dto.generate.createAuthIdentity()])
-    assertDefined(authIdentity)
+    const authIdentity = await service.createAuthIdentity(dto.generate.createAuthIdentity())
     const shared = { authIdentityId: authIdentity.id, entityId: 'user@example.com', entityType: 'email' }
 
-    await service.createAuthVerifications([dto.generate.createAuthVerification(shared)])
+    await service.createAuthVerification(dto.generate.createAuthVerification(shared))
 
-    const error = await service.createAuthVerifications([dto.generate.createAuthVerification(shared)]).catch((e) => e)
+    const error = await service.createAuthVerification(dto.generate.createAuthVerification(shared)).catch((e) => e)
 
     expect(AppError.isError(error)).toBe(true)
     expect(error.type).toBe(ErrorTypes.DUPLICATE_ERROR)
@@ -255,12 +240,10 @@ describe('AuthModuleService — AuthVerification', () => {
 
 describe('AuthModuleService — AuthPasswordResetToken', () => {
   test('create and find by token hash', async ({ expect, dto }) => {
-    const [authIdentity] = await service.createAuthIdentities([dto.generate.createAuthIdentity()])
-    assertDefined(authIdentity)
-    const [providerIdentity] = await service.createProviderIdentities([
+    const authIdentity = await service.createAuthIdentity(dto.generate.createAuthIdentity())
+    const providerIdentity = await service.createProviderIdentity(
       dto.generate.createProviderIdentity({ authIdentityId: authIdentity.id }),
-    ])
-    assertDefined(providerIdentity)
+    )
 
     const tokenHash = 'abc123hash'
     const token = await service.createAuthPasswordResetToken(
@@ -285,12 +268,10 @@ describe('AuthModuleService — AuthPasswordResetToken', () => {
   })
 
   test('deleteByProviderIdentity removes all tokens for that provider', async ({ expect, dto }) => {
-    const [authIdentity] = await service.createAuthIdentities([dto.generate.createAuthIdentity()])
-    assertDefined(authIdentity)
-    const [providerIdentity] = await service.createProviderIdentities([
+    const authIdentity = await service.createAuthIdentity(dto.generate.createAuthIdentity())
+    const providerIdentity = await service.createProviderIdentity(
       dto.generate.createProviderIdentity({ authIdentityId: authIdentity.id }),
-    ])
-    assertDefined(providerIdentity)
+    )
 
     const hash1 = 'hash_one'
     const hash2 = 'hash_two'
@@ -316,12 +297,10 @@ describe('AuthModuleService — AuthPasswordResetToken', () => {
   })
 
   test('hardDelete removes token permanently', async ({ expect, dto }) => {
-    const [authIdentity] = await service.createAuthIdentities([dto.generate.createAuthIdentity()])
-    assertDefined(authIdentity)
-    const [providerIdentity] = await service.createProviderIdentities([
+    const authIdentity = await service.createAuthIdentity(dto.generate.createAuthIdentity())
+    const providerIdentity = await service.createProviderIdentity(
       dto.generate.createProviderIdentity({ authIdentityId: authIdentity.id }),
-    ])
-    assertDefined(providerIdentity)
+    )
 
     const tokenHash = 'to_be_deleted'
     const token = await service.createAuthPasswordResetToken(

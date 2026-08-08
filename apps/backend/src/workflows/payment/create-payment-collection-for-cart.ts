@@ -49,8 +49,7 @@ export const createPaymentCollectionForCartWorkflow = createWorkflow<
         `[create-payment-collection-for-cart] Creating collection for cart "${input.cartId}" with amount ${amount}`,
       )
 
-      const [collection] = await paymentService.createPaymentCollections([{ amount, currencyCode: cart.currencyCode }])
-      if (!collection) throw new WorkflowTerminalError('Failed to create payment collection')
+      const collection = await paymentService.createPaymentCollection({ amount, currencyCode: cart.currencyCode })
 
       await linkService.repo('cartPaymentCollection').create({
         cartId: input.cartId,

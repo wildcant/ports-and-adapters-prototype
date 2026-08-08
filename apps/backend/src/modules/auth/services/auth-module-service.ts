@@ -127,23 +127,11 @@ export class AuthModuleService implements IAuthModuleService {
 
       create: async ({ entityId, providerMetadata, appMetadata }) => {
         return this.withTransaction(context, async (ctx) => {
-          const authIdentities = await this.authIdentityRepository.createMany(
-            [{ appMetadata: appMetadata ?? null }],
+          const authIdentity = await this.authIdentityRepository.create({ appMetadata: appMetadata ?? null }, ctx)
+          const providerIdentity = await this.providerIdentityRepository.create(
+            { authIdentityId: authIdentity.id, entityId, provider, providerMetadata: providerMetadata ?? null },
             ctx,
           )
-          const authIdentity = authIdentities[0]
-          if (!authIdentity)
-            throw new AppError({ type: ErrorTypes.UNEXPECTED_STATE, message: 'Expected auth identity to be created' })
-          const providerIdentities = await this.providerIdentityRepository.createMany(
-            [{ authIdentityId: authIdentity.id, entityId, provider, providerMetadata: providerMetadata ?? null }],
-            ctx,
-          )
-          const providerIdentity = providerIdentities[0]
-          if (!providerIdentity)
-            throw new AppError({
-              type: ErrorTypes.UNEXPECTED_STATE,
-              message: 'Expected provider identity to be created',
-            })
           return { authIdentity, providerIdentity }
         })
       },
@@ -156,29 +144,19 @@ export class AuthModuleService implements IAuthModuleService {
             throw new AppError({ type: ErrorTypes.NOT_FOUND, message: 'Provider identity not found' })
           }
 
-          const updatedProviderIdentities = await this.providerIdentityRepository.update(
-            [existing.id],
+          const providerIdentity = await this.providerIdentityRepository.update(
+            existing.id,
             { providerMetadata: data.providerMetadata },
             ctx,
           )
-          const providerIdentity = updatedProviderIdentities[0]
-          if (!providerIdentity)
-            throw new AppError({
-              type: ErrorTypes.UNEXPECTED_STATE,
-              message: 'Expected provider identity to be updated',
-            })
 
           let authIdentity: AuthIdentityDTO
           if (data.appMetadata !== undefined) {
-            const updatedAuthIdentities = await this.authIdentityRepository.update(
-              [existing.authIdentityId],
+            authIdentity = await this.authIdentityRepository.update(
+              existing.authIdentityId,
               { appMetadata: data.appMetadata },
               ctx,
             )
-            const updated = updatedAuthIdentities[0]
-            if (!updated)
-              throw new AppError({ type: ErrorTypes.UNEXPECTED_STATE, message: 'Expected auth identity to be updated' })
-            authIdentity = updated
           } else {
             authIdentity = await this.authIdentityRepository.findByIdOrFail(existing.authIdentityId, undefined, ctx)
           }
@@ -192,8 +170,10 @@ export class AuthModuleService implements IAuthModuleService {
   getAuthVerificationService(context?: Context): AuthVerificationService {
     return {
       list: (filters) => this.authVerificationRepository.find(filters, undefined, context),
-      create: (data) => this.authVerificationRepository.createMany(data, context),
-      update: (ids, data) => this.authVerificationRepository.update(ids, data, context),
+      create: (data) => this.authVerificationRepository.create(data, context),
+      createMany: (data) => this.authVerificationRepository.createMany(data, context),
+      update: (id, data) => this.authVerificationRepository.update(id, data, context),
+      updateMany: (ids, data) => this.authVerificationRepository.updateMany(ids, data, context),
     }
   }
 
@@ -334,7 +314,19 @@ export class AuthModuleService implements IAuthModuleService {
     context?: Context,
   ): Promise<AuthIdentityDTO[]> {
     return this.withTransaction(context, async (ctx) => {
-      return this.authIdentityRepository.update(ids, data, ctx)
+      return this.authIdentityRepository.updateMany(ids, data, ctx)
+    })
+  }
+
+  async createAuthIdentity(data: CreateAuthIdentityDTO, context?: Context): Promise<AuthIdentityDTO> {
+    return this.withTransaction(context, async (ctx) => {
+      return this.authIdentityRepository.create(data, ctx)
+    })
+  }
+
+  async updateAuthIdentity(id: string, data: UpdateAuthIdentityDTO, context?: Context): Promise<AuthIdentityDTO> {
+    return this.withTransaction(context, async (ctx) => {
+      return this.authIdentityRepository.update(id, data, ctx)
     })
   }
 
@@ -395,7 +387,23 @@ export class AuthModuleService implements IAuthModuleService {
     context?: Context,
   ): Promise<ProviderIdentityDTO[]> {
     return this.withTransaction(context, async (ctx) => {
-      return this.providerIdentityRepository.update(ids, data, ctx)
+      return this.providerIdentityRepository.updateMany(ids, data, ctx)
+    })
+  }
+
+  async createProviderIdentity(data: CreateProviderIdentityDTO, context?: Context): Promise<ProviderIdentityDTO> {
+    return this.withTransaction(context, async (ctx) => {
+      return this.providerIdentityRepository.create(data, ctx)
+    })
+  }
+
+  async updateProviderIdentity(
+    id: string,
+    data: UpdateProviderIdentityDTO,
+    context?: Context,
+  ): Promise<ProviderIdentityDTO> {
+    return this.withTransaction(context, async (ctx) => {
+      return this.providerIdentityRepository.update(id, data, ctx)
     })
   }
 
@@ -456,7 +464,23 @@ export class AuthModuleService implements IAuthModuleService {
     context?: Context,
   ): Promise<AuthVerificationDTO[]> {
     return this.withTransaction(context, async (ctx) => {
-      return this.authVerificationRepository.update(ids, data, ctx)
+      return this.authVerificationRepository.updateMany(ids, data, ctx)
+    })
+  }
+
+  async createAuthVerification(data: CreateAuthVerificationDTO, context?: Context): Promise<AuthVerificationDTO> {
+    return this.withTransaction(context, async (ctx) => {
+      return this.authVerificationRepository.create(data, ctx)
+    })
+  }
+
+  async updateAuthVerification(
+    id: string,
+    data: UpdateAuthVerificationDTO,
+    context?: Context,
+  ): Promise<AuthVerificationDTO> {
+    return this.withTransaction(context, async (ctx) => {
+      return this.authVerificationRepository.update(id, data, ctx)
     })
   }
 

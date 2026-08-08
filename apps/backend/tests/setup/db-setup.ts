@@ -1,3 +1,4 @@
+import { readdirSync } from 'node:fs'
 import { join } from 'node:path'
 import { sql as dsql } from 'drizzle-orm'
 import { drizzle } from 'drizzle-orm/postgres-js'
@@ -7,36 +8,40 @@ import { afterAll, beforeEach } from 'vitest'
 import { DRIZZLE_OPTIONS } from '../../src/core/db/config.js'
 import { env } from '../../src/env.js'
 
-const sql = postgres(env.DATABASE_URL, { prepare: false })
+const sql = postgres(env.DATABASE_URL, { prepare: false, onnotice: () => {} })
 export const db = drizzle(sql, DRIZZLE_OPTIONS)
 
-const migrationsRoot = join(import.meta.dirname, '../../')
+const backendRoot = join(import.meta.dirname, '../../src')
+const modulesRoot = join(backendRoot, 'modules')
+
+const moduleMigrations = readdirSync(modulesRoot, { withFileTypes: true })
+  .filter((entry) => entry.isDirectory())
+  .map((entry) => ({
+    migrationsFolder: join(modulesRoot, entry.name, 'migrations'),
+    migrationsTable: `migrations_${entry.name}`,
+  }))
+  .filter(({ migrationsFolder }) => {
+    try {
+      readdirSync(migrationsFolder)
+      return true
+    } catch {
+      return false
+    }
+  })
+
+moduleMigrations.push({
+  migrationsFolder: join(backendRoot, 'link-modules/migrations'),
+  migrationsTable: 'migrations_link_modules',
+})
 
 beforeEach(async () => {
   await db.execute(dsql`SET client_min_messages = WARNING`)
   await db.execute(dsql`DROP SCHEMA IF EXISTS drizzle CASCADE`)
   await db.execute(dsql`DROP SCHEMA IF EXISTS public CASCADE`)
   await db.execute(dsql`CREATE SCHEMA public`)
-  await migrate(db, {
-    migrationsFolder: join(migrationsRoot, 'src/modules/auth/migrations'),
-    migrationsTable: 'migrations_auth',
-  })
-  await migrate(db, {
-    migrationsFolder: join(migrationsRoot, 'src/modules/user/migrations'),
-    migrationsTable: 'migrations_user',
-  })
-  await migrate(db, {
-    migrationsFolder: join(migrationsRoot, 'src/modules/customer/migrations'),
-    migrationsTable: 'migrations_customer',
-  })
-  await migrate(db, {
-    migrationsFolder: join(migrationsRoot, 'src/modules/payment/migrations'),
-    migrationsTable: 'migrations_payment',
-  })
-  await migrate(db, {
-    migrationsFolder: join(migrationsRoot, 'src/modules/product/migrations'),
-    migrationsTable: 'migrations_product',
-  })
+  for (const config of moduleMigrations) {
+    await migrate(db, config)
+  }
   await db.execute(dsql`SET client_min_messages = NOTICE`)
 })
 

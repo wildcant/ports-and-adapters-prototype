@@ -74,7 +74,19 @@ export class UserModuleService implements IUserModuleService {
 
   async updateUsers(userIds: string[], data: UpdateUserDTO, context?: Context): Promise<UserDTO[]> {
     return this.withTransaction(context, async (ctx) => {
-      return this.userRepository.update(userIds, data, ctx)
+      return this.userRepository.updateMany(userIds, data, ctx)
+    })
+  }
+
+  async createUser(data: CreateUserDTO, context?: Context): Promise<UserDTO> {
+    return this.withTransaction(context, async (ctx) => {
+      return this.userRepository.create(data, ctx)
+    })
+  }
+
+  async updateUser(userId: string, data: UpdateUserDTO, context?: Context): Promise<UserDTO> {
+    return this.withTransaction(context, async (ctx) => {
+      return this.userRepository.update(userId, data, ctx)
     })
   }
 
@@ -148,7 +160,32 @@ export class UserModuleService implements IUserModuleService {
 
   async updateInvites(inviteIds: string[], data: UpdateInviteDTO, context?: Context): Promise<InviteDTO[]> {
     return this.withTransaction(context, async (ctx) => {
-      return this.inviteRepository.update(inviteIds, data, ctx)
+      return this.inviteRepository.updateMany(inviteIds, data, ctx)
+    })
+  }
+
+  async createInvite(data: CreateInviteDTO, context?: Context): Promise<InviteDTO> {
+    this.logger.debug(`Creating invite for ${data.email}`)
+
+    const existingUsers = await this.userRepository.find({ email: { $in: [data.email] } }, undefined, context)
+    if (existingUsers.length > 0) {
+      throw new AppError({
+        type: ErrorTypes.CONFLICT,
+        message: `User already exists for: ${data.email}`,
+      })
+    }
+
+    return this.withTransaction(context, async (ctx) => {
+      const { token, expiresAt } = this.generateInviteToken(data.email)
+      const invite = await this.inviteRepository.create({ email: data.email, token, expiresAt }, ctx)
+      this.logger.debug(`Invite link for ${invite.email}: http://localhost:3002/invite?token=${invite.token}`)
+      return invite
+    })
+  }
+
+  async updateInvite(inviteId: string, data: UpdateInviteDTO, context?: Context): Promise<InviteDTO> {
+    return this.withTransaction(context, async (ctx) => {
+      return this.inviteRepository.update(inviteId, data, ctx)
     })
   }
 
@@ -204,10 +241,7 @@ export class UserModuleService implements IUserModuleService {
       inviteIds.map(async (id) => {
         const invite = await this.inviteRepository.findByIdOrFail(id, undefined, context)
         const { token, expiresAt } = this.generateInviteToken(invite.email)
-        const [updated] = await this.inviteRepository.update([id], { token, expiresAt }, context)
-        if (!updated) {
-          throw new AppError({ type: ErrorTypes.NOT_FOUND, message: `Invite with id "${id}" not found` })
-        }
+        const updated = await this.inviteRepository.update(id, { token, expiresAt }, context)
         // TODO(notification): replace with notification module
         this.logger.debug(`Invite link for ${updated.email}: http://localhost:3002/invite?token=${updated.token}`)
         return updated

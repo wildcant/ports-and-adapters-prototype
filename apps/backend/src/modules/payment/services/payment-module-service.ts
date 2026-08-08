@@ -132,7 +132,31 @@ export class PaymentModuleService implements IPaymentModuleService {
     context?: Context,
   ): Promise<PaymentCollectionDTO[]> {
     return this.withTransaction(context, async (ctx) => {
-      return this.paymentCollectionRepository.update(ids, data, ctx)
+      return this.paymentCollectionRepository.updateMany(ids, data, ctx)
+    })
+  }
+
+  async createPaymentCollection(data: CreatePaymentCollectionDTO, context?: Context): Promise<PaymentCollectionDTO> {
+    return this.withTransaction(context, async (ctx) => {
+      return this.paymentCollectionRepository.create(
+        {
+          amount: data.amount,
+          currencyCode: data.currencyCode ?? 'usd',
+          status: 'not_paid' as const,
+          metadata: data.metadata ?? null,
+        },
+        ctx,
+      )
+    })
+  }
+
+  async updatePaymentCollection(
+    id: string,
+    data: UpdatePaymentCollectionDTO,
+    context?: Context,
+  ): Promise<PaymentCollectionDTO> {
+    return this.withTransaction(context, async (ctx) => {
+      return this.paymentCollectionRepository.update(id, data, ctx)
     })
   }
 
@@ -193,8 +217,8 @@ export class PaymentModuleService implements IPaymentModuleService {
         context: input.context,
       })
 
-      const [updated] = await this.paymentSessionRepository.update(
-        [session.id],
+      const updated = await this.paymentSessionRepository.update(
+        session.id,
         {
           data: provider.data ?? input.data ?? {},
           status: provider.status ?? 'pending',
@@ -203,10 +227,6 @@ export class PaymentModuleService implements IPaymentModuleService {
       )
 
       await this.maybeUpdatePaymentCollection_(paymentCollectionId, context)
-
-      if (!updated) {
-        throw new AppError({ type: ErrorTypes.NOT_FOUND, message: `Payment session "${session.id}" not found` })
-      }
 
       return updated
     } catch (error) {
@@ -238,7 +258,7 @@ export class PaymentModuleService implements IPaymentModuleService {
 
     // Always sync our session with what the provider told us
     await this.paymentSessionRepository.update(
-      [session.id],
+      session.id,
       {
         status,
         data: provider.data ?? session.data,
@@ -351,7 +371,7 @@ export class PaymentModuleService implements IPaymentModuleService {
       // Mark payment as fully captured once all funds are accounted for
       const totalCaptured = alreadyCaptured + captureAmount
       if (totalCaptured >= payment.amount) {
-        await this.paymentRepository.update([payment.id], { capturedAt: new Date() }, ctx)
+        await this.paymentRepository.update(payment.id, { capturedAt: new Date() }, ctx)
       }
 
       await this.maybeUpdatePaymentCollection_(payment.paymentCollectionId, ctx)
@@ -407,7 +427,7 @@ export class PaymentModuleService implements IPaymentModuleService {
 
       // Provider may return updated payment data (e.g. refund reference id)
       if (provider.data) {
-        await this.paymentRepository.update([payment.id], { data: provider.data }, ctx)
+        await this.paymentRepository.update(payment.id, { data: provider.data }, ctx)
       }
 
       await this.maybeUpdatePaymentCollection_(payment.paymentCollectionId, ctx)
@@ -429,7 +449,7 @@ export class PaymentModuleService implements IPaymentModuleService {
         data: payment.data ?? undefined,
       })
 
-      await this.paymentRepository.update([payment.id], { canceledAt: new Date() }, ctx)
+      await this.paymentRepository.update(payment.id, { canceledAt: new Date() }, ctx)
 
       await this.maybeUpdatePaymentCollection_(payment.paymentCollectionId, ctx)
 
@@ -552,7 +572,19 @@ export class PaymentModuleService implements IPaymentModuleService {
 
   async updateRefundReasons(ids: string[], data: UpdateRefundReasonDTO, context?: Context): Promise<RefundReasonDTO[]> {
     return this.withTransaction(context, async (ctx) => {
-      return this.refundReasonRepository.update(ids, data, ctx)
+      return this.refundReasonRepository.updateMany(ids, data, ctx)
+    })
+  }
+
+  async createRefundReason(data: CreateRefundReasonDTO, context?: Context): Promise<RefundReasonDTO> {
+    return this.withTransaction(context, async (ctx) => {
+      return this.refundReasonRepository.create(data, ctx)
+    })
+  }
+
+  async updateRefundReason(id: string, data: UpdateRefundReasonDTO, context?: Context): Promise<RefundReasonDTO> {
+    return this.withTransaction(context, async (ctx) => {
+      return this.refundReasonRepository.update(id, data, ctx)
     })
   }
 
@@ -626,7 +658,7 @@ export class PaymentModuleService implements IPaymentModuleService {
     )
 
     await this.paymentCollectionRepository.update(
-      [collectionId],
+      collectionId,
       {
         status,
         authorizedAmount: authorizedAmount || null,

@@ -56,7 +56,7 @@ export class FulfillmentProviderService {
         if (existing) {
           this.logger.debug(`Updating fulfillment provider "${provider.id}"`)
           await this.fulfillmentProviderRepository.update(
-            [provider.id],
+            provider.id,
             { isEnabled: provider.isEnabled ?? true },
             context,
           )

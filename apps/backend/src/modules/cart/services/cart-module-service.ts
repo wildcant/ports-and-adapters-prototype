@@ -85,7 +85,26 @@ export class CartModuleService implements ICartModuleService {
 
   async updateCarts(cartIds: string[], data: UpdateCartDTO, context?: Context): Promise<CartDTO[]> {
     return this.withTransaction(context, async (ctx) => {
-      return this.cartRepository.update(cartIds, data, ctx)
+      return this.cartRepository.updateMany(cartIds, data, ctx)
+    })
+  }
+
+  async createCart(data: CreateCartDTO, context?: Context): Promise<CartDTO> {
+    return this.withTransaction(context, async (ctx) => {
+      const cart = await this.cartRepository.create(data, ctx)
+
+      const lineItemInputs = (data.items ?? []).map((item) => ({ ...item, cartId: cart.id }))
+      if (lineItemInputs.length) {
+        await this.cartLineItemRepository.createMany(lineItemInputs, ctx)
+      }
+
+      return cart
+    })
+  }
+
+  async updateCart(cartId: string, data: UpdateCartDTO, context?: Context): Promise<CartDTO> {
+    return this.withTransaction(context, async (ctx) => {
+      return this.cartRepository.update(cartId, data, ctx)
     })
   }
 
@@ -133,7 +152,28 @@ export class CartModuleService implements ICartModuleService {
 
   async updateLineItems(lineItemIds: string[], data: UpdateLineItemDTO, context?: Context): Promise<CartLineItemDTO[]> {
     return this.withTransaction(context, async (ctx) => {
-      return this.cartLineItemRepository.update(lineItemIds, data, ctx)
+      return this.cartLineItemRepository.updateMany(lineItemIds, data, ctx)
+    })
+  }
+
+  async addLineItem(cartId: string, item: CreateLineItemDTO, context?: Context): Promise<CartLineItemDTO> {
+    return this.withTransaction(context, async (ctx) => {
+      const cart = await this.cartRepository.findByIdOrFail(cartId, undefined, ctx)
+
+      if (cart.status !== 'active') {
+        throw new AppError({
+          type: ErrorTypes.NOT_ALLOWED,
+          message: `Cart ${cartId} is not active (current status: ${cart.status})`,
+        })
+      }
+
+      return this.cartLineItemRepository.create({ ...item, cartId }, ctx)
+    })
+  }
+
+  async updateLineItem(lineItemId: string, data: UpdateLineItemDTO, context?: Context): Promise<CartLineItemDTO> {
+    return this.withTransaction(context, async (ctx) => {
+      return this.cartLineItemRepository.update(lineItemId, data, ctx)
     })
   }
 
@@ -188,13 +228,7 @@ export class CartModuleService implements ICartModuleService {
         })
       }
 
-      const [updated] = await this.cartRepository.update(
-        [cartId],
-        { status: 'completed', completedAt: new Date() },
-        ctx,
-      )
-      if (!updated) throw new AppError({ type: ErrorTypes.NOT_FOUND, message: `Cart "${cartId}" not found` })
-      return updated
+      return this.cartRepository.update(cartId, { status: 'completed', completedAt: new Date() }, ctx)
     })
   }
 }

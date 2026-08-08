@@ -1,4 +1,3 @@
-import { AppError, ErrorTypes } from '@core/errors/app-error.js'
 import type { IFulfillmentModuleService } from '@core/types/index.js'
 import { Modules } from '@core/utils/index.js'
 import {
@@ -29,10 +28,7 @@ export const PostOutput = AdminUpdateServiceZoneResponse
 
 export const POST = async (req: HttpRequest<typeof PostInput>): Promise<HttpResult<typeof PostOutput>> => {
   const service = req.scope.resolve<IFulfillmentModuleService>(Modules.FULFILLMENT)
-  const [serviceZone] = await service.updateServiceZones([req.params.zoneId], req.body)
-  if (!serviceZone) {
-    throw new AppError({ type: ErrorTypes.NOT_FOUND, message: `Service zone with id "${req.params.zoneId}" not found` })
-  }
+  const serviceZone = await service.updateServiceZone(req.params.zoneId, req.body)
   return { status: 200, json: { serviceZone } }
 }
 

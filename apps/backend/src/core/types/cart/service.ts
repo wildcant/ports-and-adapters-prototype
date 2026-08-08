@@ -26,6 +26,8 @@ export type ICartModuleService = {
   ): Promise<[CartDTO[], number]>
   createCarts(data: CreateCartDTO[], context?: Context): Promise<CartDTO[]>
   updateCarts(cartIds: string[], data: UpdateCartDTO, context?: Context): Promise<CartDTO[]>
+  createCart(data: CreateCartDTO, context?: Context): Promise<CartDTO>
+  updateCart(cartId: string, data: UpdateCartDTO, context?: Context): Promise<CartDTO>
   deleteCarts(cartIds: string[], context?: Context): Promise<void>
   softDeleteCarts(cartIds: string[], context?: Context): Promise<void>
   restoreCarts(cartIds: string[], context?: Context): Promise<void>
@@ -37,6 +39,8 @@ export type ICartModuleService = {
   ): Promise<CartLineItemDTO[]>
   addLineItems(cartId: string, items: CreateLineItemDTO[], context?: Context): Promise<CartLineItemDTO[]>
   updateLineItems(lineItemIds: string[], data: UpdateLineItemDTO, context?: Context): Promise<CartLineItemDTO[]>
+  addLineItem(cartId: string, item: CreateLineItemDTO, context?: Context): Promise<CartLineItemDTO>
+  updateLineItem(lineItemId: string, data: UpdateLineItemDTO, context?: Context): Promise<CartLineItemDTO>
   deleteLineItems(lineItemIds: string[], context?: Context): Promise<void>
   listShippingMethods(
     filters?: FilterableCartShippingMethodProps,

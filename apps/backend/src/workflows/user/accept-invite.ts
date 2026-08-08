@@ -47,12 +47,7 @@ export const acceptInviteWorkflow = createWorkflow<AcceptInviteInput, UserDTO>('
     'create-user',
     async ({ container }) => {
       const userService = container.resolve<IUserModuleService>(Modules.USER)
-      const users = await userService.createUsers([{ email: invite.email, name: input.name }])
-      const created = users[0]
-      if (!created) {
-        throw new WorkflowTerminalError('Expected user to be created')
-      }
-      return created
+      return userService.createUser({ email: invite.email, name: input.name })
     },
     async (createdUser, { container }) => {
       const userService = container.resolve<IUserModuleService>(Modules.USER)
@@ -74,13 +69,13 @@ export const acceptInviteWorkflow = createWorkflow<AcceptInviteInput, UserDTO>('
       }
 
       const updatedMetadata = { ...(identity.appMetadata ?? {}), userId: user.id }
-      await authService.updateAuthIdentities([authIdentity.id], { appMetadata: updatedMetadata })
+      await authService.updateAuthIdentity(authIdentity.id, { appMetadata: updatedMetadata })
 
       return { authIdentityId: authIdentity.id, previousMetadata }
     },
     async ({ authIdentityId, previousMetadata }, { container }) => {
       const authService = container.resolve<IAuthModuleService>(Modules.AUTH)
-      await authService.updateAuthIdentities([authIdentityId], { appMetadata: previousMetadata })
+      await authService.updateAuthIdentity(authIdentityId, { appMetadata: previousMetadata })
     },
   )
 

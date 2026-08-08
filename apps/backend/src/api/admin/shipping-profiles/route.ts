@@ -1,4 +1,3 @@
-import { AppError, ErrorTypes } from '@core/errors/app-error.js'
 import type { IFulfillmentModuleService } from '@core/types/index.js'
 import { Modules } from '@core/utils/index.js'
 import {
@@ -21,9 +20,6 @@ export const PostOutput = AdminCreateShippingProfileResponse
 
 export const POST = async (req: HttpRequest<typeof PostInput>): Promise<HttpResult<typeof PostOutput>> => {
   const service = req.scope.resolve<IFulfillmentModuleService>(Modules.FULFILLMENT)
-  const [shippingProfile] = await service.createShippingProfiles([req.body])
-  if (!shippingProfile) {
-    throw new AppError({ type: ErrorTypes.UNEXPECTED_STATE, message: 'Shipping profile not returned after create' })
-  }
+  const shippingProfile = await service.createShippingProfile(req.body)
   return { status: 201, json: { shippingProfile } }
 }

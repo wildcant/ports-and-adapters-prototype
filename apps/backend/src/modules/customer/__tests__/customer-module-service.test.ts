@@ -1,6 +1,5 @@
 import { AppError, ErrorTypes } from '@core/errors/app-error.js'
 import { test } from '@tests/setup/test-extend.js'
-import { assertDefined } from '@tests/utils/assert-defined.js'
 import { describe, vi } from 'vitest'
 import { createWithTransaction } from '../../../core/utils/with-transaction.js'
 import { CustomerRepository } from '../repositories/customer.js'
@@ -32,18 +31,15 @@ describe('CustomerModuleService', () => {
     expect(result[0]?.createdAt).toBeInstanceOf(Date)
   })
 
-  test('createCustomers with addresses persists both', async ({ expect, dto }) => {
-    const input = [
+  test('createCustomer with addresses persists both', async ({ expect, dto }) => {
+    const created = await service.createCustomer(
       dto.generate.createCustomer({
         addresses: [
           dto.generate.createCustomerAddress({ isDefaultShipping: true }),
           dto.generate.createCustomerAddress({ isDefaultBilling: true }),
         ],
       }),
-    ]
-
-    const [created] = await service.createCustomers(input)
-    assertDefined(created)
+    )
 
     const customer = await service.retrieveCustomerWithAddresses(created.id)
 
@@ -52,17 +48,17 @@ describe('CustomerModuleService', () => {
     expect(customer.addresses.map((a) => a.customerId)).toEqual([customer.id, customer.id])
   })
 
-  test('createCustomers rolls back customer when address insert fails', async ({ expect, dto }) => {
-    const input = [
-      dto.generate.createCustomer({
-        addresses: [
-          dto.generate.createCustomerAddress({ isDefaultShipping: true }),
-          dto.generate.createCustomerAddress({ isDefaultShipping: true }), // violates partial unique index
-        ],
-      }),
-    ]
-
-    const error = await service.createCustomers(input).catch((e) => e)
+  test('createCustomer rolls back customer when address insert fails', async ({ expect, dto }) => {
+    const error = await service
+      .createCustomer(
+        dto.generate.createCustomer({
+          addresses: [
+            dto.generate.createCustomerAddress({ isDefaultShipping: true }),
+            dto.generate.createCustomerAddress({ isDefaultShipping: true }), // violates partial unique index
+          ],
+        }),
+      )
+      .catch((e) => e)
 
     expect(AppError.isError(error)).toBe(true)
     expect(error.type).toBe(ErrorTypes.DUPLICATE_ERROR)
@@ -73,8 +69,7 @@ describe('CustomerModuleService', () => {
   })
 
   test('retrieveCustomer', async ({ expect, dto }) => {
-    const [created] = await service.createCustomers([dto.generate.createCustomer()])
-    assertDefined(created)
+    const created = await service.createCustomer(dto.generate.createCustomer())
 
     const result = await service.retrieveCustomer(created.id)
 
@@ -111,21 +106,18 @@ describe('CustomerModuleService', () => {
     expect(count).toBe(3)
   })
 
-  test('updateCustomers', async ({ expect, dto }) => {
-    const [created] = await service.createCustomers([dto.generate.createCustomer()])
-    assertDefined(created)
+  test('updateCustomer', async ({ expect, dto }) => {
+    const created = await service.createCustomer(dto.generate.createCustomer())
     const update = dto.generate.updateCustomer({ firstName: 'Updated' })
 
-    const [updated] = await service.updateCustomers([created.id], update)
-    assertDefined(updated)
+    const updated = await service.updateCustomer(created.id, update)
 
     expect(updated.firstName).toBe('Updated')
     expect(updated.id).toBe(created.id)
   })
 
   test('deleteCustomers', async ({ expect, dto }) => {
-    const [created] = await service.createCustomers([dto.generate.createCustomer()])
-    assertDefined(created)
+    const created = await service.createCustomer(dto.generate.createCustomer())
 
     await service.deleteCustomers([created.id])
 
@@ -135,16 +127,14 @@ describe('CustomerModuleService', () => {
   })
 
   test('softDeleteCustomers also soft-deletes addresses', async ({ expect, dto }) => {
-    const input = [
+    const created = await service.createCustomer(
       dto.generate.createCustomer({
         addresses: [
           dto.generate.createCustomerAddress({ isDefaultShipping: true }),
           dto.generate.createCustomerAddress({ isDefaultBilling: true }),
         ],
       }),
-    ]
-    const [created] = await service.createCustomers(input)
-    assertDefined(created)
+    )
 
     await service.softDeleteCustomers([created.id])
 
@@ -156,13 +146,11 @@ describe('CustomerModuleService', () => {
   })
 
   test('softDeleteCustomers rolls back when address soft-delete fails', async ({ expect, dto }) => {
-    const input = [
+    const created = await service.createCustomer(
       dto.generate.createCustomer({
         addresses: [dto.generate.createCustomerAddress({ isDefaultShipping: true })],
       }),
-    ]
-    const [created] = await service.createCustomers(input)
-    assertDefined(created)
+    )
 
     const spy = vi
       .spyOn(CustomerAddressRepository.prototype, 'softDeleteByCustomerIds')
@@ -181,8 +169,7 @@ describe('CustomerModuleService', () => {
   })
 
   test('restoreCustomers', async ({ expect, dto }) => {
-    const [created] = await service.createCustomers([dto.generate.createCustomer()])
-    assertDefined(created)
+    const created = await service.createCustomer(dto.generate.createCustomer())
     await service.softDeleteCustomers([created.id])
 
     await service.restoreCustomers([created.id])
@@ -202,8 +189,7 @@ describe('CustomerModuleService', () => {
     })
 
     test('retrieveCustomer throws NOT_FOUND for soft-deleted customer', async ({ expect, dto }) => {
-      const [created] = await service.createCustomers([dto.generate.createCustomer()])
-      assertDefined(created)
+      const created = await service.createCustomer(dto.generate.createCustomer())
       await service.softDeleteCustomers([created.id])
 
       const error = await service.retrieveCustomer(created.id).catch((e) => e)
@@ -231,8 +217,7 @@ describe('CustomerModuleService', () => {
     })
 
     test('updateCustomers with soft-deleted id returns empty array', async ({ expect, dto }) => {
-      const [created] = await service.createCustomers([dto.generate.createCustomer()])
-      assertDefined(created)
+      const created = await service.createCustomer(dto.generate.createCustomer())
       await service.softDeleteCustomers([created.id])
       const update = dto.generate.updateCustomer({ firstName: 'Ghost' })
 
@@ -250,8 +235,7 @@ describe('CustomerModuleService', () => {
     })
 
     test('restoreCustomers on non-soft-deleted customer does not throw', async ({ expect, dto }) => {
-      const [created] = await service.createCustomers([dto.generate.createCustomer()])
-      assertDefined(created)
+      const created = await service.createCustomer(dto.generate.createCustomer())
 
       await expect(service.restoreCustomers([created.id])).resolves.toBeUndefined()
     })

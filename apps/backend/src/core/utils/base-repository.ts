@@ -157,7 +157,11 @@ export function BaseRepository<TTable extends PgTable & BaseColumns>(table: TTab
     async create(data: Insert, context?: Context): Promise<Select> {
       const client = this.getClient_(context)
       const rows = await client.insert(this.table).values(data).returning()
-      return rows[0] as Select
+      const row = rows[0] as Select | undefined
+      if (!row) {
+        throw new AppError({ type: ErrorTypes.UNEXPECTED_STATE, message: 'Expected row to be created' })
+      }
+      return row
     }
 
     async createMany(data: Insert[], context?: Context): Promise<Select[]> {
@@ -168,6 +172,24 @@ export function BaseRepository<TTable extends PgTable & BaseColumns>(table: TTab
     }
 
     async update(
+      id: string,
+      data: { [K in keyof Insert]?: Insert[K] | undefined },
+      context?: Context,
+    ): Promise<Select> {
+      const client = this.getClient_(context)
+      const rows = await client
+        .update(this.table)
+        .set(data)
+        .where(and(eq(this.table.id, id), isNull(this.table.deletedAt)))
+        .returning()
+      const row = rows[0] as Select | undefined
+      if (!row) {
+        throw new AppError({ type: ErrorTypes.NOT_FOUND, message: `Entity with id "${id}" not found` })
+      }
+      return row
+    }
+
+    async updateMany(
       ids: string[],
       data: { [K in keyof Insert]?: Insert[K] | undefined },
       context?: Context,

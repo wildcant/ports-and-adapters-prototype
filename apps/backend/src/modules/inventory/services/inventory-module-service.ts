@@ -64,7 +64,29 @@ export class InventoryModuleService implements IInventoryModuleService {
     context?: Context,
   ): Promise<InventoryItemDTO[]> {
     return this.withTransaction(context, async (ctx) => {
-      return this.inventoryItemRepository.update(itemIds, data, ctx)
+      return this.inventoryItemRepository.updateMany(itemIds, data, ctx)
+    })
+  }
+
+  async createInventoryItem(data: CreateInventoryItemDTO, context?: Context): Promise<InventoryItemDTO> {
+    return this.withTransaction(context, async (ctx) => {
+      return this.inventoryItemRepository.create(data, ctx)
+    })
+  }
+
+  async updateInventoryItem(
+    itemId: string,
+    data: UpdateInventoryItemDTO,
+    context?: Context,
+  ): Promise<InventoryItemDTO> {
+    return this.withTransaction(context, async (ctx) => {
+      return this.inventoryItemRepository.update(itemId, data, ctx)
+    })
+  }
+
+  async createInventoryLevel(data: CreateInventoryLevelDTO, context?: Context): Promise<InventoryLevelDTO> {
+    return this.withTransaction(context, async (ctx) => {
+      return this.inventoryLevelRepository.create(data, ctx)
     })
   }
 

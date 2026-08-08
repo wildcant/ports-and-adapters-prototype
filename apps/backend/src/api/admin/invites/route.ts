@@ -24,9 +24,6 @@ export const PostOutput = AdminInviteResponse
 
 export const POST = async (req: HttpRequest<typeof PostInput>): Promise<HttpResult<typeof PostOutput>> => {
   const userService = req.scope.resolve<IUserModuleService>(Modules.USER)
-  const [invite] = await userService.createInvites([req.body])
-  if (!invite) {
-    throw new Error('Expected invite to be created')
-  }
+  const invite = await userService.createInvite(req.body)
   return { status: 201, json: { invite } }
 }

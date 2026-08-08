@@ -1,4 +1,3 @@
-import { AppError, ErrorTypes } from '@core/errors/app-error.js'
 import type { IFulfillmentModuleService } from '@core/types/index.js'
 import { Modules } from '@core/utils/index.js'
 import {
@@ -24,10 +23,7 @@ export const PostOutput = AdminUpdateShippingOptionResponse
 
 export const POST = async (req: HttpRequest<typeof PostInput>): Promise<HttpResult<typeof PostOutput>> => {
   const service = req.scope.resolve<IFulfillmentModuleService>(Modules.FULFILLMENT)
-  const [shippingOption] = await service.updateShippingOptions([req.params.id], req.body)
-  if (!shippingOption) {
-    throw new AppError({ type: ErrorTypes.NOT_FOUND, message: `Shipping option with id "${req.params.id}" not found` })
-  }
+  const shippingOption = await service.updateShippingOption(req.params.id, req.body)
   return { status: 200, json: { shippingOption } }
 }
 

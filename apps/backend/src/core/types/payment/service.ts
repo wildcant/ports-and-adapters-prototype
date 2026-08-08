@@ -39,6 +39,12 @@ export type IPaymentModuleService = {
     data: UpdatePaymentCollectionDTO,
     context?: Context,
   ): Promise<PaymentCollectionDTO[]>
+  createPaymentCollection(data: CreatePaymentCollectionDTO, context?: Context): Promise<PaymentCollectionDTO>
+  updatePaymentCollection(
+    id: string,
+    data: UpdatePaymentCollectionDTO,
+    context?: Context,
+  ): Promise<PaymentCollectionDTO>
   deletePaymentCollections(ids: string[], context?: Context): Promise<void>
   softDeletePaymentCollections(ids: string[], context?: Context): Promise<void>
   restorePaymentCollections(ids: string[], context?: Context): Promise<void>
@@ -87,6 +93,8 @@ export type IPaymentModuleService = {
   createRefundReasons(data: CreateRefundReasonDTO[], context?: Context): Promise<RefundReasonDTO[]>
   listRefundReasons(context?: Context): Promise<RefundReasonDTO[]>
   updateRefundReasons(ids: string[], data: UpdateRefundReasonDTO, context?: Context): Promise<RefundReasonDTO[]>
+  createRefundReason(data: CreateRefundReasonDTO, context?: Context): Promise<RefundReasonDTO>
+  updateRefundReason(id: string, data: UpdateRefundReasonDTO, context?: Context): Promise<RefundReasonDTO>
   deleteRefundReasons(ids: string[], context?: Context): Promise<void>
   softDeleteRefundReasons(ids: string[], context?: Context): Promise<void>
   restoreRefundReasons(ids: string[], context?: Context): Promise<void>

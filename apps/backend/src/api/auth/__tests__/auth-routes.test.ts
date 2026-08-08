@@ -113,7 +113,7 @@ describe('POST /auth/:actorType/:authProvider (authenticate)', () => {
     // Simulate linking: set userId in app_metadata
     const regDecoded = jwt.verify(regBody.token as string, SECRET) as Record<string, unknown>
     const authIdentityId = regDecoded.authIdentityId as string
-    await authService.updateAuthIdentities([authIdentityId], {
+    await authService.updateAuthIdentity(authIdentityId, {
       appMetadata: { registered: true, userId: 'usr_linked' },
     })
 
@@ -141,7 +141,7 @@ describe('POST /auth/token/refresh', () => {
     const authIdentityId = regDecoded.authIdentityId as string
 
     // Simulate linking
-    await authService.updateAuthIdentities([authIdentityId], {
+    await authService.updateAuthIdentity(authIdentityId, {
       appMetadata: { registered: true, userId: 'usr_refresh' },
     })
 
@@ -152,7 +152,7 @@ describe('POST /auth/token/refresh', () => {
     })
 
     // Update app_metadata again (simulate role change)
-    await authService.updateAuthIdentities([authIdentityId], {
+    await authService.updateAuthIdentity(authIdentityId, {
       appMetadata: { registered: true, userId: 'usr_refresh', role: 'admin' },
     })
 
@@ -178,7 +178,7 @@ describe('POST /auth/token/refresh', () => {
     const authIdentityId = regDecoded.authIdentityId as string
 
     // Simulate linking after invite accept
-    await authService.updateAuthIdentities([authIdentityId], {
+    await authService.updateAuthIdentity(authIdentityId, {
       appMetadata: { registered: true, userId: 'usr_refreshed' },
     })
 

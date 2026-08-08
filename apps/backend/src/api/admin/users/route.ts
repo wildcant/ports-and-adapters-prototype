@@ -1,4 +1,3 @@
-import { AppError, ErrorTypes } from '@core/errors/app-error.js'
 import type { IUserModuleService } from '@core/types/index.js'
 import { Modules } from '@core/utils/index.js'
 import {
@@ -25,7 +24,6 @@ export const PostOutput = AdminUserResponse
 
 export const POST = async (req: HttpRequest<typeof PostInput>): Promise<HttpResult<typeof PostOutput>> => {
   const userService = req.scope.resolve<IUserModuleService>(Modules.USER)
-  const [user] = await userService.createUsers([req.body])
-  if (!user) throw new AppError({ type: ErrorTypes.UNEXPECTED_STATE, message: 'User not returned after create' })
+  const user = await userService.createUser(req.body)
   return { status: 201, json: { user } }
 }

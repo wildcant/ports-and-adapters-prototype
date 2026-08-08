@@ -88,8 +88,9 @@ if (adminIdentity) {
 }
 
 // --- Dev customer (registered + email-verified, ready for store auth) ---
+const DEV_CUSTOMER_ID = 'cus_6021b88819c64605807aebf26260d7b7'
 const DEV_CUSTOMER_EMAIL = 'customer@example.com'
-const DEV_CUSTOMER_PASSWORD = 'password'
+const DEV_CUSTOMER_PASSWORD = '123'
 
 const existingCustomerIdentities = await authService.listProviderIdentities({
   entityId: DEV_CUSTOMER_EMAIL,
@@ -126,7 +127,7 @@ if (customerIdentity) {
       customerId = existingCustomers[0].id
     } else {
       const [created] = await customerService.createCustomers([
-        { firstName: 'Dev', lastName: 'Customer', email: DEV_CUSTOMER_EMAIL },
+        { id: DEV_CUSTOMER_ID, firstName: 'Dev', lastName: 'Customer', email: DEV_CUSTOMER_EMAIL },
       ])
       if (!created) throw new Error('Failed to create dev customer entity')
       customerId = created.id

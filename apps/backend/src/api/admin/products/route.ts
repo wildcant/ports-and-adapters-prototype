@@ -1,4 +1,3 @@
-import { AppError, ErrorTypes } from '@core/errors/app-error.js'
 import type { IProductModuleService } from '@core/types/index.js'
 import { Modules } from '@core/utils/index.js'
 import {
@@ -25,7 +24,6 @@ export const PostOutput = AdminCreateProductResponse
 
 export const POST = async (req: HttpRequest<typeof PostInput>): Promise<HttpResult<typeof PostOutput>> => {
   const productService = req.scope.resolve<IProductModuleService>(Modules.PRODUCT)
-  const [product] = await productService.createProducts([req.body])
-  if (!product) throw new AppError({ type: ErrorTypes.UNEXPECTED_STATE, message: 'Product not returned after create' })
+  const product = await productService.createProduct(req.body)
   return { status: 201, json: { product } }
 }
