@@ -14,7 +14,7 @@ type ToolbarSectionProps = {
 }
 
 function ToolbarRow({ children }: ToolbarRowProps) {
-  return <div className="flex items-center justify-between px-6 py-2 first:pt-4 last:border-b">{children}</div>
+  return <div className="flex items-center justify-between py-2 first:pt-4 last:border-b">{children}</div>
 }
 
 function ToolbarSection({ children, position }: ToolbarSectionProps) {

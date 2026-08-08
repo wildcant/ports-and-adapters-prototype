@@ -32,7 +32,7 @@ export const POST = async (req: HttpRequest<typeof PostInput>): Promise<HttpResu
       getAuthJwtConfig(),
     )
 
-    // TODO: replace with notification module
+    // TODO(notification): replace with notification module
     const resetLink = `http://localhost:3001/reset-password?token=${resetToken}`
     logger.debug(`[password-reset] reset link for ${email}: ${resetLink}`)
   } catch (error) {

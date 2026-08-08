@@ -12,13 +12,16 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as PublicRouteRouteImport } from './routes/_public/route'
 import { Route as AuthedRouteRouteImport } from './routes/_authed/route'
 import { Route as PublicLoginRouteImport } from './routes/_public/login'
+import { Route as PublicInviteRouteImport } from './routes/_public/invite'
 import { Route as AuthedSettingsRouteRouteImport } from './routes/_authed/settings/route'
 import { Route as AuthedShellRouteRouteImport } from './routes/_authed/_shell/route'
 import { Route as AuthedShellIndexRouteImport } from './routes/_authed/_shell/index'
 import { Route as AuthedSettingsStoreRouteImport } from './routes/_authed/settings/store'
 import { Route as AuthedShellCustomersRouteImport } from './routes/_authed/_shell/customers'
+import { Route as AuthedSettingsUsersRouteRouteImport } from './routes/_authed/settings/users/route'
 import { Route as AuthedShellProductsRouteRouteImport } from './routes/_authed/_shell/products/route'
 import { Route as AuthedShellProductsIndexRouteImport } from './routes/_authed/_shell/products/index'
+import { Route as AuthedSettingsUsersInviteRouteImport } from './routes/_authed/settings/users/invite'
 import { Route as AuthedShellProductsCreateRouteImport } from './routes/_authed/_shell/products/create'
 import { Route as AuthedShellProductsIdRouteRouteImport } from './routes/_authed/_shell/products/$id/route'
 import { Route as AuthedShellProductsIdEditRouteImport } from './routes/_authed/_shell/products/$id/edit'
@@ -34,6 +37,11 @@ const AuthedRouteRoute = AuthedRouteRouteImport.update({
 const PublicLoginRoute = PublicLoginRouteImport.update({
   id: '/login',
   path: '/login',
+  getParentRoute: () => PublicRouteRoute,
+} as any)
+const PublicInviteRoute = PublicInviteRouteImport.update({
+  id: '/invite',
+  path: '/invite',
   getParentRoute: () => PublicRouteRoute,
 } as any)
 const AuthedSettingsRouteRoute = AuthedSettingsRouteRouteImport.update({
@@ -60,6 +68,12 @@ const AuthedShellCustomersRoute = AuthedShellCustomersRouteImport.update({
   path: '/customers',
   getParentRoute: () => AuthedShellRouteRoute,
 } as any)
+const AuthedSettingsUsersRouteRoute =
+  AuthedSettingsUsersRouteRouteImport.update({
+    id: '/users',
+    path: '/users',
+    getParentRoute: () => AuthedSettingsRouteRoute,
+  } as any)
 const AuthedShellProductsRouteRoute =
   AuthedShellProductsRouteRouteImport.update({
     id: '/products',
@@ -71,6 +85,12 @@ const AuthedShellProductsIndexRoute =
     id: '/',
     path: '/',
     getParentRoute: () => AuthedShellProductsRouteRoute,
+  } as any)
+const AuthedSettingsUsersInviteRoute =
+  AuthedSettingsUsersInviteRouteImport.update({
+    id: '/invite',
+    path: '/invite',
+    getParentRoute: () => AuthedSettingsUsersRouteRoute,
   } as any)
 const AuthedShellProductsCreateRoute =
   AuthedShellProductsCreateRouteImport.update({
@@ -94,23 +114,29 @@ const AuthedShellProductsIdEditRoute =
 export interface FileRoutesByFullPath {
   '/': typeof AuthedShellIndexRoute
   '/settings': typeof AuthedSettingsRouteRouteWithChildren
+  '/invite': typeof PublicInviteRoute
   '/login': typeof PublicLoginRoute
   '/products': typeof AuthedShellProductsRouteRouteWithChildren
+  '/settings/users': typeof AuthedSettingsUsersRouteRouteWithChildren
   '/customers': typeof AuthedShellCustomersRoute
   '/settings/store': typeof AuthedSettingsStoreRoute
   '/products/$id': typeof AuthedShellProductsIdRouteRouteWithChildren
   '/products/create': typeof AuthedShellProductsCreateRoute
+  '/settings/users/invite': typeof AuthedSettingsUsersInviteRoute
   '/products/': typeof AuthedShellProductsIndexRoute
   '/products/$id/edit': typeof AuthedShellProductsIdEditRoute
 }
 export interface FileRoutesByTo {
   '/': typeof AuthedShellIndexRoute
   '/settings': typeof AuthedSettingsRouteRouteWithChildren
+  '/invite': typeof PublicInviteRoute
   '/login': typeof PublicLoginRoute
+  '/settings/users': typeof AuthedSettingsUsersRouteRouteWithChildren
   '/customers': typeof AuthedShellCustomersRoute
   '/settings/store': typeof AuthedSettingsStoreRoute
   '/products/$id': typeof AuthedShellProductsIdRouteRouteWithChildren
   '/products/create': typeof AuthedShellProductsCreateRoute
+  '/settings/users/invite': typeof AuthedSettingsUsersInviteRoute
   '/products': typeof AuthedShellProductsIndexRoute
   '/products/$id/edit': typeof AuthedShellProductsIdEditRoute
 }
@@ -120,13 +146,16 @@ export interface FileRoutesById {
   '/_public': typeof PublicRouteRouteWithChildren
   '/_authed/_shell': typeof AuthedShellRouteRouteWithChildren
   '/_authed/settings': typeof AuthedSettingsRouteRouteWithChildren
+  '/_public/invite': typeof PublicInviteRoute
   '/_public/login': typeof PublicLoginRoute
   '/_authed/_shell/products': typeof AuthedShellProductsRouteRouteWithChildren
+  '/_authed/settings/users': typeof AuthedSettingsUsersRouteRouteWithChildren
   '/_authed/_shell/customers': typeof AuthedShellCustomersRoute
   '/_authed/settings/store': typeof AuthedSettingsStoreRoute
   '/_authed/_shell/': typeof AuthedShellIndexRoute
   '/_authed/_shell/products/$id': typeof AuthedShellProductsIdRouteRouteWithChildren
   '/_authed/_shell/products/create': typeof AuthedShellProductsCreateRoute
+  '/_authed/settings/users/invite': typeof AuthedSettingsUsersInviteRoute
   '/_authed/_shell/products/': typeof AuthedShellProductsIndexRoute
   '/_authed/_shell/products/$id/edit': typeof AuthedShellProductsIdEditRoute
 }
@@ -135,23 +164,29 @@ export interface FileRouteTypes {
   fullPaths:
     | '/'
     | '/settings'
+    | '/invite'
     | '/login'
     | '/products'
+    | '/settings/users'
     | '/customers'
     | '/settings/store'
     | '/products/$id'
     | '/products/create'
+    | '/settings/users/invite'
     | '/products/'
     | '/products/$id/edit'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
     | '/settings'
+    | '/invite'
     | '/login'
+    | '/settings/users'
     | '/customers'
     | '/settings/store'
     | '/products/$id'
     | '/products/create'
+    | '/settings/users/invite'
     | '/products'
     | '/products/$id/edit'
   id:
@@ -160,13 +195,16 @@ export interface FileRouteTypes {
     | '/_public'
     | '/_authed/_shell'
     | '/_authed/settings'
+    | '/_public/invite'
     | '/_public/login'
     | '/_authed/_shell/products'
+    | '/_authed/settings/users'
     | '/_authed/_shell/customers'
     | '/_authed/settings/store'
     | '/_authed/_shell/'
     | '/_authed/_shell/products/$id'
     | '/_authed/_shell/products/create'
+    | '/_authed/settings/users/invite'
     | '/_authed/_shell/products/'
     | '/_authed/_shell/products/$id/edit'
   fileRoutesById: FileRoutesById
@@ -197,6 +235,13 @@ declare module '@tanstack/react-router' {
       path: '/login'
       fullPath: '/login'
       preLoaderRoute: typeof PublicLoginRouteImport
+      parentRoute: typeof PublicRouteRoute
+    }
+    '/_public/invite': {
+      id: '/_public/invite'
+      path: '/invite'
+      fullPath: '/invite'
+      preLoaderRoute: typeof PublicInviteRouteImport
       parentRoute: typeof PublicRouteRoute
     }
     '/_authed/settings': {
@@ -234,6 +279,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthedShellCustomersRouteImport
       parentRoute: typeof AuthedShellRouteRoute
     }
+    '/_authed/settings/users': {
+      id: '/_authed/settings/users'
+      path: '/users'
+      fullPath: '/settings/users'
+      preLoaderRoute: typeof AuthedSettingsUsersRouteRouteImport
+      parentRoute: typeof AuthedSettingsRouteRoute
+    }
     '/_authed/_shell/products': {
       id: '/_authed/_shell/products'
       path: '/products'
@@ -247,6 +299,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/products/'
       preLoaderRoute: typeof AuthedShellProductsIndexRouteImport
       parentRoute: typeof AuthedShellProductsRouteRoute
+    }
+    '/_authed/settings/users/invite': {
+      id: '/_authed/settings/users/invite'
+      path: '/invite'
+      fullPath: '/settings/users/invite'
+      preLoaderRoute: typeof AuthedSettingsUsersInviteRouteImport
+      parentRoute: typeof AuthedSettingsUsersRouteRoute
     }
     '/_authed/_shell/products/create': {
       id: '/_authed/_shell/products/create'
@@ -320,11 +379,27 @@ const AuthedShellRouteRouteChildren: AuthedShellRouteRouteChildren = {
 const AuthedShellRouteRouteWithChildren =
   AuthedShellRouteRoute._addFileChildren(AuthedShellRouteRouteChildren)
 
+interface AuthedSettingsUsersRouteRouteChildren {
+  AuthedSettingsUsersInviteRoute: typeof AuthedSettingsUsersInviteRoute
+}
+
+const AuthedSettingsUsersRouteRouteChildren: AuthedSettingsUsersRouteRouteChildren =
+  {
+    AuthedSettingsUsersInviteRoute: AuthedSettingsUsersInviteRoute,
+  }
+
+const AuthedSettingsUsersRouteRouteWithChildren =
+  AuthedSettingsUsersRouteRoute._addFileChildren(
+    AuthedSettingsUsersRouteRouteChildren,
+  )
+
 interface AuthedSettingsRouteRouteChildren {
+  AuthedSettingsUsersRouteRoute: typeof AuthedSettingsUsersRouteRouteWithChildren
   AuthedSettingsStoreRoute: typeof AuthedSettingsStoreRoute
 }
 
 const AuthedSettingsRouteRouteChildren: AuthedSettingsRouteRouteChildren = {
+  AuthedSettingsUsersRouteRoute: AuthedSettingsUsersRouteRouteWithChildren,
   AuthedSettingsStoreRoute: AuthedSettingsStoreRoute,
 }
 
@@ -346,10 +421,12 @@ const AuthedRouteRouteWithChildren = AuthedRouteRoute._addFileChildren(
 )
 
 interface PublicRouteRouteChildren {
+  PublicInviteRoute: typeof PublicInviteRoute
   PublicLoginRoute: typeof PublicLoginRoute
 }
 
 const PublicRouteRouteChildren: PublicRouteRouteChildren = {
+  PublicInviteRoute: PublicInviteRoute,
   PublicLoginRoute: PublicLoginRoute,
 }
 

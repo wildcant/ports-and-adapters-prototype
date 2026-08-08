@@ -1,6 +1,8 @@
 import type { FindConfig } from '../common.js'
 import type { Context } from '../context.js'
 import type { FilterableUserProps, UserDTO } from './common.js'
+import type { FilterableInviteProps, InviteDTO } from './invite-common.js'
+import type { CreateInviteDTO, UpdateInviteDTO } from './invite-mutations.js'
 import type { CreateUserDTO, UpdateUserDTO } from './mutations.js'
 
 export type IUserModuleService = {
@@ -16,4 +18,19 @@ export type IUserModuleService = {
   deleteUsers(userIds: string[], context?: Context): Promise<void>
   softDeleteUsers(userIds: string[], context?: Context): Promise<void>
   restoreUsers(userIds: string[], context?: Context): Promise<void>
+
+  // Invites
+  createInvites(data: CreateInviteDTO[], context?: Context): Promise<InviteDTO[]>
+  retrieveInvite(inviteId: string, config?: FindConfig<InviteDTO>, context?: Context): Promise<InviteDTO>
+  listInvites(filters?: FilterableInviteProps, config?: FindConfig<InviteDTO>, context?: Context): Promise<InviteDTO[]>
+  listAndCountInvites(
+    filters?: FilterableInviteProps,
+    config?: FindConfig<InviteDTO>,
+    context?: Context,
+  ): Promise<[InviteDTO[], number]>
+  updateInvites(inviteIds: string[], data: UpdateInviteDTO, context?: Context): Promise<InviteDTO[]>
+  softDeleteInvites(inviteIds: string[], context?: Context): Promise<void>
+  restoreInvites(inviteIds: string[], context?: Context): Promise<void>
+  validateInviteToken(token: string): Promise<InviteDTO>
+  refreshInviteTokens(inviteIds: string[], context?: Context): Promise<InviteDTO[]>
 }

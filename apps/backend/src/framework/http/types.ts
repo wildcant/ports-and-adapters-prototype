@@ -23,6 +23,7 @@ export const Tags = {
   REFUND_REASONS: 'Refund Reasons',
   SHIPPING_OPTIONS: 'Shipping Options',
   SHIPPING_PROFILES: 'Shipping Profiles',
+  INVITES: 'Invites',
   USERS: 'Users',
   WEBHOOKS: 'Webhooks',
 } as const

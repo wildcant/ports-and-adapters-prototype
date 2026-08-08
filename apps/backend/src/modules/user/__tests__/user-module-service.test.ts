@@ -3,15 +3,17 @@ import { test } from '@tests/setup/test-extend.js'
 import { assertDefined } from '@tests/utils/assert-defined.js'
 import { describe } from 'vitest'
 import { createWithTransaction } from '../../../core/utils/with-transaction.js'
+import { InviteRepository } from '../repositories/invite.js'
 import { UserRepository } from '../repositories/user.js'
 import { UserModuleService } from '../services/user-module-service.js'
 
 let service: UserModuleService
 
 test.beforeEach(({ getDb, logger }) => {
+  const inviteRepository = new InviteRepository({ getDb })
   const userRepository = new UserRepository({ getDb })
   const withTransaction = createWithTransaction(getDb)
-  service = new UserModuleService({ userRepository, withTransaction, logger })
+  service = new UserModuleService({ inviteRepository, userRepository, withTransaction, logger })
 })
 
 describe('UserModuleService', () => {

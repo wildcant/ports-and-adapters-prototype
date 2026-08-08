@@ -34,8 +34,9 @@ if (existingUsers.length === 0) {
 }
 
 // --- Dev admin user (registered + linked, ready for admin auth) ---
+const DEV_ADMIN_ID = 'usr_91b8c8f5875146199cba4ea388f31163'
 const DEV_ADMIN_EMAIL = 'admin@example.com'
-const DEV_ADMIN_PASSWORD = 'password'
+const DEV_ADMIN_PASSWORD = '123'
 
 const existingAdminIdentities = await authService.listProviderIdentities({
   entityId: DEV_ADMIN_EMAIL,
@@ -73,7 +74,7 @@ if (adminIdentity) {
     if (existingAdminUsers.length > 0 && existingAdminUsers[0]) {
       userId = existingAdminUsers[0].id
     } else {
-      const [created] = await userService.createUsers([{ name: 'Dev Admin', email: DEV_ADMIN_EMAIL }])
+      const [created] = await userService.createUsers([{ id: DEV_ADMIN_ID, name: 'Dev Admin', email: DEV_ADMIN_EMAIL }])
       if (!created) throw new Error('Failed to create dev admin user entity')
       userId = created.id
     }
