@@ -1,24 +1,12 @@
-import { describe, expect, test } from 'vitest'
+import { test } from '@tests/setup/test-extend.js'
+import { describe, expect } from 'vitest'
 import { z } from 'zod'
-import type { HttpRequest } from '../../../server/ports.js'
 import { applyMiddleware } from '../apply-middleware.js'
 import type { MiddlewareFunction, RouteDefinition } from '../types.js'
 import { Tags } from '../types.js'
 
-function makeRequest(overrides?: Partial<HttpRequest>): HttpRequest {
-  return {
-    params: {},
-    query: {},
-    validatedQuery: {},
-    body: undefined,
-    scope: {} as HttpRequest['scope'],
-    headers: {},
-    ...overrides,
-  }
-}
-
 describe('applyMiddleware', () => {
-  test('validates path params through input.params', async () => {
+  test('validates path params through input.params', async ({ makeRequest }) => {
     const definition: RouteDefinition = {
       method: 'GET',
       matcher: '/admin/users/:id',
@@ -35,7 +23,7 @@ describe('applyMiddleware', () => {
     expect(result.json).toEqual({ id: 'usr_123' })
   })
 
-  test('rejects invalid path params', async () => {
+  test('rejects invalid path params', async ({ makeRequest }) => {
     const definition: RouteDefinition = {
       method: 'GET',
       matcher: '/admin/users/:id',
@@ -51,7 +39,7 @@ describe('applyMiddleware', () => {
     await expect(handler(makeRequest({ params: { id: 'bad' } }))).rejects.toThrow('Invalid path params')
   })
 
-  test('validates request body through input.body', async () => {
+  test('validates request body through input.body', async ({ makeRequest }) => {
     const definition: RouteDefinition = {
       method: 'POST',
       matcher: '/admin/users',
@@ -68,7 +56,7 @@ describe('applyMiddleware', () => {
     expect(result.json).toEqual({ email: 'test@example.com' })
   })
 
-  test('rejects invalid request body', async () => {
+  test('rejects invalid request body', async ({ makeRequest }) => {
     const definition: RouteDefinition = {
       method: 'POST',
       matcher: '/admin/users',
@@ -84,7 +72,7 @@ describe('applyMiddleware', () => {
     await expect(handler(makeRequest({ body: { email: 'not-an-email' } }))).rejects.toThrow('Invalid request body')
   })
 
-  test('validates response through output', async () => {
+  test('validates response through output', async ({ makeRequest }) => {
     const definition: RouteDefinition = {
       method: 'GET',
       matcher: '/admin/users',
@@ -101,7 +89,7 @@ describe('applyMiddleware', () => {
     expect(result.json).toEqual({ name: 'Alice' })
   })
 
-  test('runs middlewares in order before handler', async () => {
+  test('runs middlewares in order before handler', async ({ makeRequest }) => {
     const order: string[] = []
 
     const middleware1: MiddlewareFunction = (req) => {
@@ -132,7 +120,7 @@ describe('applyMiddleware', () => {
     expect(order).toEqual(['middleware1', 'middleware2', 'handler'])
   })
 
-  test('auth middleware from namespace runs before custom middleware', async () => {
+  test('auth middleware from namespace runs before custom middleware', async ({ makeRequest }) => {
     const order: string[] = []
 
     const authMiddleware: MiddlewareFunction = (req) => {

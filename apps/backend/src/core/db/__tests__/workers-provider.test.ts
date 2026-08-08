@@ -1,15 +1,16 @@
-import { describe, expect, it } from 'vitest'
+import { test } from '@tests/setup/test-extend.js'
+import { describe, expect } from 'vitest'
 import { env } from '../../../env.js'
 import { createWorkersDbProvider } from '../workers-provider.js'
 
 describe('createWorkersDbProvider', () => {
   const provider = createWorkersDbProvider(env.DATABASE_URL)
 
-  it('getDb throws outside withConnection', () => {
+  test('getDb throws outside withConnection', () => {
     expect(() => provider.getDb()).toThrow('Called outside withConnection()')
   })
 
-  it('getDb returns a valid drizzle instance inside withConnection', async () => {
+  test('getDb returns a valid drizzle instance inside withConnection', async () => {
     await provider.withConnection(async () => {
       const db = provider.getDb()
       expect(db).toBeDefined()
@@ -17,7 +18,7 @@ describe('createWorkersDbProvider', () => {
     })
   })
 
-  it('each withConnection call creates a fresh instance', async () => {
+  test('each withConnection call creates a fresh instance', async () => {
     let firstDb: unknown
     let secondDb: unknown
 

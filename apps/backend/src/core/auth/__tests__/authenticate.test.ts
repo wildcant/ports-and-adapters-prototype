@@ -1,6 +1,6 @@
 import { authenticate } from '@framework/http/middlewares/authenticate.js'
-import { afterEach, describe, expect, test, vi } from 'vitest'
-import type { HttpRequest } from '../../../server/ports.js'
+import { test } from '@tests/setup/test-extend.js'
+import { afterEach, describe, expect, vi } from 'vitest'
 import { ErrorTypes } from '../../errors/app-error.js'
 import { generateJwtToken } from '../utils/token.js'
 
@@ -14,25 +14,13 @@ vi.mock('../../../env.js', () => ({
   },
 }))
 
-function makeRequest(overrides: Partial<HttpRequest> = {}): HttpRequest {
-  return {
-    params: {},
-    query: {},
-    validatedQuery: {},
-    body: undefined,
-    scope: {} as HttpRequest['scope'],
-    headers: {},
-    ...overrides,
-  }
-}
-
 afterEach(() => {
   vi.useRealTimers()
 })
 
 describe('authenticate middleware', () => {
   describe('valid token', () => {
-    test('populates authContext from JWT payload', async () => {
+    test('populates authContext from JWT payload', async ({ makeRequest }) => {
       const middleware = authenticate('user')
       const token = generateJwtToken(
         {
@@ -64,7 +52,7 @@ describe('authenticate middleware', () => {
   })
 
   describe('expired token', () => {
-    test('throws 401', async () => {
+    test('throws 401', async ({ makeRequest }) => {
       vi.useFakeTimers()
       const middleware = authenticate('user')
       const token = generateJwtToken(
@@ -88,7 +76,7 @@ describe('authenticate middleware', () => {
   })
 
   describe('missing token on protected route', () => {
-    test('throws 401', async () => {
+    test('throws 401', async ({ makeRequest }) => {
       const middleware = authenticate('user')
 
       await expect(middleware(makeRequest())).rejects.toMatchObject({
@@ -98,7 +86,7 @@ describe('authenticate middleware', () => {
   })
 
   describe('wrong actor type', () => {
-    test('throws 401 when token has customer type but route expects user', async () => {
+    test('throws 401 when token has customer type but route expects user', async ({ makeRequest }) => {
       const middleware = authenticate('user')
       const token = generateJwtToken(
         {
@@ -119,7 +107,7 @@ describe('authenticate middleware', () => {
   })
 
   describe('actorless token (empty actorId)', () => {
-    test('blocked on regular admin routes', async () => {
+    test('blocked on regular admin routes', async ({ makeRequest }) => {
       const middleware = authenticate('user')
       const token = generateJwtToken(
         {
@@ -139,7 +127,7 @@ describe('authenticate middleware', () => {
       })
     })
 
-    test('allowed with allowUnregistered: true', async () => {
+    test('allowed with allowUnregistered: true', async ({ makeRequest }) => {
       const middleware = authenticate('user', { allowUnregistered: true })
       const token = generateJwtToken(
         {
@@ -161,7 +149,7 @@ describe('authenticate middleware', () => {
   })
 
   describe('allowUnauthenticated', () => {
-    test('missing token allowed with allowUnauthenticated: true', async () => {
+    test('missing token allowed with allowUnauthenticated: true', async ({ makeRequest }) => {
       const middleware = authenticate('customer', { allowUnauthenticated: true })
 
       const result = await middleware(makeRequest())
@@ -169,7 +157,7 @@ describe('authenticate middleware', () => {
       expect(result.authContext).toBeUndefined()
     })
 
-    test('valid token still populates authContext', async () => {
+    test('valid token still populates authContext', async ({ makeRequest }) => {
       const middleware = authenticate('customer', { allowUnauthenticated: true })
       const token = generateJwtToken(
         {
@@ -191,7 +179,7 @@ describe('authenticate middleware', () => {
   })
 
   describe('malformed tokens', () => {
-    test('garbage token throws 401', async () => {
+    test('garbage token throws 401', async ({ makeRequest }) => {
       const middleware = authenticate('user')
 
       await expect(
@@ -199,7 +187,7 @@ describe('authenticate middleware', () => {
       ).rejects.toMatchObject({ type: ErrorTypes.UNAUTHORIZED })
     })
 
-    test('token signed with wrong secret throws 401', async () => {
+    test('token signed with wrong secret throws 401', async ({ makeRequest }) => {
       const middleware = authenticate('user')
       const token = generateJwtToken(
         {

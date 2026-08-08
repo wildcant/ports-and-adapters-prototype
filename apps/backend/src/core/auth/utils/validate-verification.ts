@@ -1,7 +1,7 @@
 import type { ActorType } from '@proteus/http-schemas/auth'
+import type { ConfigModule } from '../../config/types.js'
 import { AppError, ErrorTypes } from '../../errors/app-error.js'
 import type { AuthIdentityDTO, IAuthModuleService, ProviderIdentityDTO } from '../../types/index.js'
-import { authVerificationsPerActor } from '../config.js'
 
 type AuthIdentityWithProviders = AuthIdentityDTO & {
   providerIdentities?: ProviderIdentityDTO[]
@@ -25,8 +25,9 @@ type VerificationResult = { verificationRequired: false } | { verificationRequir
 export async function validateVerification(
   authModuleService: IAuthModuleService,
   { authIdentity, actorType, authProvider }: ValidateVerificationInput,
+  verificationsConfig: ConfigModule['projectConfig']['http']['authVerificationsPerActor'],
 ): Promise<VerificationResult> {
-  const verificationConfig = authVerificationsPerActor[actorType]
+  const verificationConfig = verificationsConfig[actorType]
   if (!verificationConfig) return { verificationRequired: false }
 
   const matchingConfig = verificationConfig.find((entry) => entry.authProvider === authProvider)

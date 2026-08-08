@@ -1,6 +1,7 @@
 import { AppError } from '@core/errors/app-error.js'
+import { test } from '@tests/setup/test-extend.js'
 import { asValue, createContainer } from 'awilix'
-import { describe, expect, it, vi } from 'vitest'
+import { describe, expect, vi } from 'vitest'
 import { createSimpleWorkflowEngine } from '../simple-adapter.js'
 import { createWorkflow, WorkflowTerminalError } from '../types.js'
 
@@ -11,7 +12,7 @@ function makeContainer() {
 }
 
 describe('simple workflow engine', () => {
-  it('executes steps in order and returns the final output', async () => {
+  test('executes steps in order and returns the final output', async () => {
     const workflow = createWorkflow<{ x: number }, number>('add-ten', async (ctx, input) => {
       const a = await ctx.step('add-five', async () => input.x + 5)
       const b = await ctx.step('add-five-more', async () => a + 5)
@@ -23,7 +24,7 @@ describe('simple workflow engine', () => {
     expect(result).toBe(11)
   })
 
-  it('passes the container to step actions', async () => {
+  test('passes the container to step actions', async () => {
     const workflow = createWorkflow<void, string>('resolve-greeting', async (ctx) => {
       return ctx.step('greet', async ({ container }) => {
         return container.resolve('greeting') as string
@@ -35,7 +36,7 @@ describe('simple workflow engine', () => {
     expect(result).toBe('hello')
   })
 
-  it('runs compensations in reverse order on WorkflowTerminalError', async () => {
+  test('runs compensations in reverse order on WorkflowTerminalError', async () => {
     const order: string[] = []
 
     const workflow = createWorkflow<void, void>('compensate-test', async (ctx) => {
@@ -78,7 +79,7 @@ describe('simple workflow engine', () => {
     expect(order).toEqual(['action-1', 'action-2', 'action-3-fail', 'compensate-2:result-2', 'compensate-1:result-1'])
   })
 
-  it('treats regular errors as terminal in the simple adapter', async () => {
+  test('treats regular errors as terminal in the simple adapter', async () => {
     const compensated = vi.fn()
 
     const workflow = createWorkflow<void, void>('regular-error', async (ctx) => {
@@ -95,7 +96,7 @@ describe('simple workflow engine', () => {
     expect(compensated).toHaveBeenCalledWith('done', expect.objectContaining({ container: expect.anything() }))
   })
 
-  it('does not compensate a step whose action failed', async () => {
+  test('does not compensate a step whose action failed', async () => {
     const events: string[] = []
 
     const workflow = createWorkflow<void, void>('failed-step-no-compensate', async (ctx) => {
@@ -120,7 +121,7 @@ describe('simple workflow engine', () => {
     expect(events).toEqual(['action'])
   })
 
-  it('continues compensating even if a compensation throws', async () => {
+  test('continues compensating even if a compensation throws', async () => {
     const events: string[] = []
 
     const workflow = createWorkflow<void, void>('compensation-failure', async (ctx) => {
@@ -148,7 +149,7 @@ describe('simple workflow engine', () => {
     expect(events).toContain('comp-1')
   })
 
-  it('skips steps with no compensation during rollback', async () => {
+  test('skips steps with no compensation during rollback', async () => {
     const compensated = vi.fn()
 
     const workflow = createWorkflow<void, void>('partial-compensation', async (ctx) => {

@@ -7,8 +7,9 @@ import type { ILinkService } from '@core/types/link/service.js'
 import { ContainerRegistrationKeys, Modules } from '@core/utils/index.js'
 import { createSimpleWorkflowEngine } from '@core/workflows/simple-adapter.js'
 import { setWorkflowEngine } from '@core/workflows/types.js'
+import { test } from '@tests/setup/test-extend.js'
 import { asValue, createContainer } from 'awilix'
-import { describe, expect, it } from 'vitest'
+import { describe, expect } from 'vitest'
 import { noopLogger } from '../../../framework/logger/noop-logger.js'
 import { confirmInventoryWorkflow } from '../confirm-inventory-workflow.js'
 
@@ -109,7 +110,7 @@ function setupWorkflow(opts: {
 }
 
 describe('confirmInventoryWorkflow', () => {
-  it('succeeds when stock covers all line items', async () => {
+  test('succeeds when stock covers all line items', async () => {
     setupWorkflow({
       lineItems: [makeLineItem({ id: 'li_1', cartId: 'cart_1', variantId: 'var_1', quantity: 2 })],
       mappings: [makeMapping({ variantId: 'var_1', inventoryItemId: 'inv_1' })],
@@ -133,7 +134,7 @@ describe('confirmInventoryWorkflow', () => {
     })
   })
 
-  it('throws when stock is insufficient', async () => {
+  test('throws when stock is insufficient', async () => {
     setupWorkflow({
       lineItems: [makeLineItem({ id: 'li_1', cartId: 'cart_1', variantId: 'var_1', quantity: 5 })],
       mappings: [makeMapping({ variantId: 'var_1', inventoryItemId: 'inv_1' })],
@@ -145,7 +146,7 @@ describe('confirmInventoryWorkflow', () => {
     )
   })
 
-  it('passes when stock across multiple locations covers the requirement', async () => {
+  test('passes when stock across multiple locations covers the requirement', async () => {
     setupWorkflow({
       lineItems: [makeLineItem({ id: 'li_1', cartId: 'cart_1', variantId: 'var_1', quantity: 8 })],
       mappings: [makeMapping({ variantId: 'var_1', inventoryItemId: 'inv_1' })],
@@ -161,7 +162,7 @@ describe('confirmInventoryWorkflow', () => {
     expect(result.items[0]?.locationIds).toEqual(['loc_1', 'loc_2'])
   })
 
-  it('skips line items without a variant', async () => {
+  test('skips line items without a variant', async () => {
     setupWorkflow({
       lineItems: [makeLineItem({ id: 'li_custom', cartId: 'cart_1', variantId: null, quantity: 1 })],
       mappings: [],
@@ -173,7 +174,7 @@ describe('confirmInventoryWorkflow', () => {
     expect(result.items).toEqual([])
   })
 
-  it('multiplies quantity by requiredQuantity when checking coverage', async () => {
+  test('multiplies quantity by requiredQuantity when checking coverage', async () => {
     setupWorkflow({
       lineItems: [makeLineItem({ id: 'li_1', cartId: 'cart_1', variantId: 'var_1', quantity: 2 })],
       mappings: [makeMapping({ variantId: 'var_1', inventoryItemId: 'inv_1', requiredQuantity: 3 })],
@@ -186,7 +187,7 @@ describe('confirmInventoryWorkflow', () => {
     )
   })
 
-  it('throws when any variant in a multi-item cart is insufficient', async () => {
+  test('throws when any variant in a multi-item cart is insufficient', async () => {
     setupWorkflow({
       lineItems: [
         makeLineItem({ id: 'li_1', cartId: 'cart_1', variantId: 'var_1', quantity: 1 }),

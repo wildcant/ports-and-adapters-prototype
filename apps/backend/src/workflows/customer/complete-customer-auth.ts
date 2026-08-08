@@ -3,6 +3,7 @@ import {
   generateJwtTokenWithChecks,
   getAuthJwtConfig,
 } from '@core/auth/utils/generate-jwt-token.js'
+import type { ConfigModule } from '@core/config/types.js'
 import type { IAuthModuleService } from '@core/types/auth/service.js'
 import type { CreateCustomerDTO } from '@core/types/customer/mutations.js'
 import type { Logger } from '@core/types/logger.js'
@@ -30,6 +31,7 @@ export const completeCustomerAuthWorkflow = createWorkflow<CompleteCustomerAuthI
   async (ctx, input) => {
     const verificationCheck = await ctx.step<VerificationCheckResult>('check-verification', async ({ container }) => {
       const authService = container.resolve<IAuthModuleService>(Modules.AUTH)
+      const config = container.resolve<ConfigModule>(ContainerRegistrationKeys.CONFIG_MODULE)
       const jwtConfig = getAuthJwtConfig()
 
       const { authIdentity } = await authService.validateAuthIdentity(input.authIdentityId, input.authProvider)
@@ -38,6 +40,7 @@ export const completeCustomerAuthWorkflow = createWorkflow<CompleteCustomerAuthI
         authService,
         { authIdentity, actorType: 'customer', authProvider: input.authProvider },
         jwtConfig,
+        config.projectConfig.http.authVerificationsPerActor,
       )
 
       if (tokenResult.verificationRequired) {

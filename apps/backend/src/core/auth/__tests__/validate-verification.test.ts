@@ -1,7 +1,13 @@
-import { describe, expect, test, vi } from 'vitest'
+import { test } from '@tests/setup/test-extend.js'
+import { describe, expect, vi } from 'vitest'
+import type { ConfigModule } from '../../config/types.js'
 import { ErrorTypes } from '../../errors/app-error.js'
 import type { AuthIdentityDTO, IAuthModuleService, ProviderIdentityDTO } from '../../types/index.js'
 import { validateVerification } from '../utils/validate-verification.js'
+
+const customerVerificationConfig: ConfigModule['projectConfig']['http']['authVerificationsPerActor'] = {
+  customer: [{ entityType: 'email', authProvider: 'emailpass' }],
+}
 
 function makeAuthIdentity(overrides: Partial<AuthIdentityDTO> & { providerIdentities?: ProviderIdentityDTO[] } = {}) {
   return {
@@ -40,11 +46,11 @@ describe('validateVerification', () => {
     const mockService = makeMockService()
     const authIdentity = makeAuthIdentity({ providerIdentities: [makeProviderIdentity()] })
 
-    const result = await validateVerification(mockService, {
-      authIdentity,
-      actorType: 'user',
-      authProvider: 'emailpass',
-    })
+    const result = await validateVerification(
+      mockService,
+      { authIdentity, actorType: 'user', authProvider: 'emailpass' },
+      customerVerificationConfig,
+    )
 
     expect(result.verificationRequired).toBe(false)
     expect(mockService.listAuthVerifications).not.toHaveBeenCalled()
@@ -57,11 +63,11 @@ describe('validateVerification', () => {
     })
 
     // customer has verification config for emailpass, but not google
-    const result = await validateVerification(mockService, {
-      authIdentity,
-      actorType: 'customer',
-      authProvider: 'google',
-    })
+    const result = await validateVerification(
+      mockService,
+      { authIdentity, actorType: 'customer', authProvider: 'google' },
+      customerVerificationConfig,
+    )
 
     expect(result.verificationRequired).toBe(false)
     expect(mockService.listAuthVerifications).not.toHaveBeenCalled()
@@ -72,11 +78,11 @@ describe('validateVerification', () => {
     const authIdentity = makeAuthIdentity({ providerIdentities: [] })
 
     await expect(
-      validateVerification(mockService, {
-        authIdentity,
-        actorType: 'customer',
-        authProvider: 'emailpass',
-      }),
+      validateVerification(
+        mockService,
+        { authIdentity, actorType: 'customer', authProvider: 'emailpass' },
+        customerVerificationConfig,
+      ),
     ).rejects.toMatchObject({ type: ErrorTypes.INVALID_DATA })
   })
 
@@ -86,11 +92,11 @@ describe('validateVerification', () => {
       providerIdentities: [makeProviderIdentity()],
     })
 
-    const result = await validateVerification(mockService, {
-      authIdentity,
-      actorType: 'customer',
-      authProvider: 'emailpass',
-    })
+    const result = await validateVerification(
+      mockService,
+      { authIdentity, actorType: 'customer', authProvider: 'emailpass' },
+      customerVerificationConfig,
+    )
 
     expect(result.verificationRequired).toBe(true)
   })
@@ -109,11 +115,11 @@ describe('validateVerification', () => {
       providerIdentities: [makeProviderIdentity()],
     })
 
-    const result = await validateVerification(mockService, {
-      authIdentity,
-      actorType: 'customer',
-      authProvider: 'emailpass',
-    })
+    const result = await validateVerification(
+      mockService,
+      { authIdentity, actorType: 'customer', authProvider: 'emailpass' },
+      customerVerificationConfig,
+    )
 
     expect(result.verificationRequired).toBe(true)
   })
@@ -132,11 +138,11 @@ describe('validateVerification', () => {
       providerIdentities: [makeProviderIdentity()],
     })
 
-    const result = await validateVerification(mockService, {
-      authIdentity,
-      actorType: 'customer',
-      authProvider: 'emailpass',
-    })
+    const result = await validateVerification(
+      mockService,
+      { authIdentity, actorType: 'customer', authProvider: 'emailpass' },
+      customerVerificationConfig,
+    )
 
     expect(result.verificationRequired).toBe(false)
   })

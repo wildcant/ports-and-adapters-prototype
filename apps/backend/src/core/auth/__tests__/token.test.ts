@@ -1,5 +1,6 @@
+import { test } from '@tests/setup/test-extend.js'
 import jwt from 'jsonwebtoken'
-import { afterEach, describe, expect, test, vi } from 'vitest'
+import { afterEach, describe, expect, vi } from 'vitest'
 import { AppError } from '../../errors/app-error.js'
 import type { AuthTokenPayload } from '../types.js'
 import { generateJwtToken } from '../utils/token.js'

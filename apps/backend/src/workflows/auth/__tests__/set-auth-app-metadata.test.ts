@@ -4,10 +4,10 @@ import type { IAuthModuleService } from '@core/types/auth/service.js'
 import { Modules } from '@core/utils/index.js'
 import { createSimpleWorkflowEngine } from '@core/workflows/simple-adapter.js'
 import { createWorkflow, setWorkflowEngine, WorkflowTerminalError } from '@core/workflows/types.js'
-import { generateAuthIdentityDTO } from '@tests/factories/auth-dto.js'
+import { test } from '@tests/setup/test-extend.js'
 import { asValue, createContainer } from 'awilix'
 import jwt from 'jsonwebtoken'
-import { describe, expect, it, vi } from 'vitest'
+import { describe, expect, vi } from 'vitest'
 import type { SetAuthAppMetadataInput } from '../steps/set-auth-app-metadata.js'
 import { setAuthAppMetadataStep } from '../steps/set-auth-app-metadata.js'
 
@@ -26,15 +26,15 @@ function makeTestWorkflow(input: SetAuthAppMetadataInput) {
 }
 
 describe('setAuthAppMetadataStep', () => {
-  it('writes userId into app_metadata', async () => {
-    const identity = generateAuthIdentityDTO()
+  test('writes userId into app_metadata', async ({ dto }) => {
+    const identity = dto.generate.authIdentity()
     const updateCalls: Array<{ ids: string[]; data: UpdateAuthIdentityDTO }> = []
 
     setupWorkflowEngine({
       retrieveAuthIdentity: async () => identity,
       updateAuthIdentities: async (ids, data) => {
         updateCalls.push({ ids, data })
-        return [generateAuthIdentityDTO({ appMetadata: data.appMetadata ?? null })]
+        return [dto.generate.authIdentity({ appMetadata: data.appMetadata ?? null })]
       },
     })
 
@@ -45,15 +45,15 @@ describe('setAuthAppMetadataStep', () => {
     expect(updateCalls[0]?.data.appMetadata).toEqual({ userId: 'usr_abc' })
   })
 
-  it('preserves existing app_metadata keys', async () => {
-    const identity = generateAuthIdentityDTO({ appMetadata: { registered: true } })
+  test('preserves existing app_metadata keys', async ({ dto }) => {
+    const identity = dto.generate.authIdentity({ appMetadata: { registered: true } })
     const updateCalls: Array<{ ids: string[]; data: UpdateAuthIdentityDTO }> = []
 
     setupWorkflowEngine({
       retrieveAuthIdentity: async () => identity,
       updateAuthIdentities: async (ids, data) => {
         updateCalls.push({ ids, data })
-        return [generateAuthIdentityDTO({ appMetadata: data.appMetadata ?? null })]
+        return [dto.generate.authIdentity({ appMetadata: data.appMetadata ?? null })]
       },
     })
 
@@ -62,8 +62,8 @@ describe('setAuthAppMetadataStep', () => {
     expect(updateCalls[0]?.data.appMetadata).toEqual({ registered: true, userId: 'usr_abc' })
   })
 
-  it('throws on overwrite attempt', async () => {
-    const identity = generateAuthIdentityDTO({ appMetadata: { userId: 'usr_existing' } })
+  test('throws on overwrite attempt', async ({ dto }) => {
+    const identity = dto.generate.authIdentity({ appMetadata: { userId: 'usr_existing' } })
 
     setupWorkflowEngine({
       retrieveAuthIdentity: async () => identity,
@@ -79,15 +79,15 @@ describe('setAuthAppMetadataStep', () => {
     ).rejects.toThrow('already has "userId" set')
   })
 
-  it('allows clearing an existing link with null', async () => {
-    const identity = generateAuthIdentityDTO({ appMetadata: { userId: 'usr_existing' } })
+  test('allows clearing an existing link with null', async ({ dto }) => {
+    const identity = dto.generate.authIdentity({ appMetadata: { userId: 'usr_existing' } })
     const updateCalls: Array<{ ids: string[]; data: UpdateAuthIdentityDTO }> = []
 
     setupWorkflowEngine({
       retrieveAuthIdentity: async () => identity,
       updateAuthIdentities: async (ids, data) => {
         updateCalls.push({ ids, data })
-        return [generateAuthIdentityDTO({ appMetadata: data.appMetadata ?? null })]
+        return [dto.generate.authIdentity({ appMetadata: data.appMetadata ?? null })]
       },
     })
 
@@ -97,15 +97,15 @@ describe('setAuthAppMetadataStep', () => {
     expect(updateCalls[0]?.data.appMetadata).toEqual({ userId: null })
   })
 
-  it('compensation restores previous app_metadata on rollback', async () => {
-    const identity = generateAuthIdentityDTO({ appMetadata: { registered: true } })
+  test('compensation restores previous app_metadata on rollback', async ({ dto }) => {
+    const identity = dto.generate.authIdentity({ appMetadata: { registered: true } })
     const updateCalls: Array<{ ids: string[]; data: UpdateAuthIdentityDTO }> = []
 
     setupWorkflowEngine({
       retrieveAuthIdentity: async () => identity,
       updateAuthIdentities: async (ids, data) => {
         updateCalls.push({ ids, data })
-        return [generateAuthIdentityDTO({ appMetadata: data.appMetadata ?? null })]
+        return [dto.generate.authIdentity({ appMetadata: data.appMetadata ?? null })]
       },
     })
 
@@ -127,15 +127,15 @@ describe('setAuthAppMetadataStep', () => {
     expect(updateCalls[1]?.data.appMetadata).toEqual({ registered: true })
   })
 
-  it('compensation restores null when app_metadata was originally null', async () => {
-    const identity = generateAuthIdentityDTO({ appMetadata: null })
+  test('compensation restores null when app_metadata was originally null', async ({ dto }) => {
+    const identity = dto.generate.authIdentity({ appMetadata: null })
     const updateCalls: Array<{ ids: string[]; data: UpdateAuthIdentityDTO }> = []
 
     setupWorkflowEngine({
       retrieveAuthIdentity: async () => identity,
       updateAuthIdentities: async (ids, data) => {
         updateCalls.push({ ids, data })
-        return [generateAuthIdentityDTO({ appMetadata: data.appMetadata ?? null })]
+        return [dto.generate.authIdentity({ appMetadata: data.appMetadata ?? null })]
       },
     })
 
@@ -157,15 +157,15 @@ describe('setAuthAppMetadataStep', () => {
     expect(updateCalls[1]?.data.appMetadata).toBeNull()
   })
 
-  it('produces a JWT with actorId after the step sets app_metadata', async () => {
+  test('produces a JWT with actorId after the step sets app_metadata', async ({ dto }) => {
     let storedMetadata: Record<string, unknown> | null = null
-    const identity = generateAuthIdentityDTO()
+    const identity = dto.generate.authIdentity()
 
     setupWorkflowEngine({
       retrieveAuthIdentity: async () => identity,
       updateAuthIdentities: async (_ids, data) => {
         storedMetadata = (data.appMetadata as Record<string, unknown>) ?? null
-        return [generateAuthIdentityDTO({ appMetadata: storedMetadata })]
+        return [dto.generate.authIdentity({ appMetadata: storedMetadata })]
       },
     })
 

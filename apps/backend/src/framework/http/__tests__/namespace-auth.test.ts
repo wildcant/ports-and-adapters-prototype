@@ -1,4 +1,5 @@
-import { describe, expect, test } from 'vitest'
+import { test } from '@tests/setup/test-extend.js'
+import { describe, expect } from 'vitest'
 import { z } from 'zod'
 import { applyNamespaceAuth } from '../namespace-auth.js'
 import type { MiddlewareFunction, RouteDefinition } from '../types.js'

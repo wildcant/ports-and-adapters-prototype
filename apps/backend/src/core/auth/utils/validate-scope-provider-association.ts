@@ -1,7 +1,8 @@
 import type { MiddlewareFunction } from '@framework/http/types.js'
 import type { ActorType } from '@proteus/http-schemas/auth'
+import type { ConfigModule } from '../../config/types.js'
 import { AppError, ErrorTypes } from '../../errors/app-error.js'
-import { authMethodsPerActor } from '../config.js'
+import { ContainerRegistrationKeys } from '../../utils/container.js'
 
 /**
  * Middleware that checks whether the requested auth provider is allowed
@@ -14,7 +15,8 @@ export function validateScopeProviderAssociation(): MiddlewareFunction {
   return async (req) => {
     const { actorType, authProvider } = req.params as { actorType: ActorType; authProvider: string }
 
-    const allowedProviders = authMethodsPerActor[actorType]
+    const config = req.scope.resolve<ConfigModule>(ContainerRegistrationKeys.CONFIG_MODULE)
+    const allowedProviders = config.projectConfig.http.authMethodsPerActor[actorType]
     if (!allowedProviders) {
       throw new AppError({
         type: ErrorTypes.NOT_ALLOWED,
