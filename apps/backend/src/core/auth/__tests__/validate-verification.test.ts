@@ -1,4 +1,5 @@
-import { describe, expect, test, vi } from 'vitest'
+import { test } from '@tests/setup/test-extend.js'
+import { describe, expect, vi } from 'vitest'
 import type { ConfigModule } from '../../config/types.js'
 import { ErrorTypes } from '../../errors/app-error.js'
 import type { AuthIdentityDTO, IAuthModuleService, ProviderIdentityDTO } from '../../types/index.js'

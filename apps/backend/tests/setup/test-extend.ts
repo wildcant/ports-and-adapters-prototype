@@ -1,8 +1,9 @@
 import { test as testBase } from 'vitest'
 import type { Logger } from '../../src/core/types/logger.js'
-import { noopLogger } from '../../src/framework/logger/index.js'
+import { noopLogger } from '../../src/framework/logger/noop-logger.js'
 import type { Database } from '../../src/schema.type.js'
 import {
+  generateAuthIdentityDTO,
   generateCreateAuthIdentityDTO,
   generateCreateAuthPasswordResetTokenDTO,
   generateCreateAuthVerificationDTO,
@@ -29,17 +30,20 @@ import {
 import { generateCreateProductDTO, generateUpdateProductDTO } from '../factories/product-dto.js'
 import { generateUser } from '../factories/user.js'
 import { generateCreateUserDTO, generateUpdateUserDTO, generateUserDTO } from '../factories/user-dto.js'
+import { makeRequest } from '../utils/make-request.js'
 import { db as dbInstance } from './db-setup.js'
 
 type Fixtures = {
   db: Database
   getDb: () => Database
+  makeRequest: typeof makeRequest
   factories: {
     customer: typeof generateCustomer
     user: typeof generateUser
   }
   dto: {
     generate: {
+      authIdentity: typeof generateAuthIdentityDTO
       createAuthIdentity: typeof generateCreateAuthIdentityDTO
       updateAuthIdentity: typeof generateUpdateAuthIdentityDTO
       createProviderIdentity: typeof generateCreateProviderIdentityDTO
@@ -74,6 +78,9 @@ export const test = testBase.extend<Fixtures>({
   async getDb({ task: _ }, use) {
     await use(() => dbInstance)
   },
+  async makeRequest({ task: _ }, use) {
+    await use(makeRequest)
+  },
   async factories({ task: _ }, use) {
     await use({
       customer: generateCustomer,
@@ -83,6 +90,7 @@ export const test = testBase.extend<Fixtures>({
   async dto({ task: _ }, use) {
     await use({
       generate: {
+        authIdentity: generateAuthIdentityDTO,
         createAuthIdentity: generateCreateAuthIdentityDTO,
         updateAuthIdentity: generateUpdateAuthIdentityDTO,
         createProviderIdentity: generateCreateProviderIdentityDTO,
