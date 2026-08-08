@@ -35,7 +35,19 @@ test.beforeEach(async ({ getDb, logger }) => {
     getDb,
     withConnection: (fn) => fn(),
   }
-  const container = await bootstrapContainer({ logger, dbProvider })
+  const container = await bootstrapContainer({
+    logger,
+    dbProvider,
+    config: {
+      projectConfig: {
+        http: {
+          authVerificationsPerActor: {
+            customer: [{ entityType: 'email', authProvider: 'emailpass' }],
+          },
+        },
+      },
+    },
+  })
   authService = container.resolve<IAuthModuleService>(Modules.AUTH)
   app = createApp({ container })
 

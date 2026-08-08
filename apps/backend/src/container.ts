@@ -4,8 +4,10 @@
  * so each entry point only bundles its own provider (tree-shaking friendly).
  */
 
-import { asValue, createContainer } from 'awilix'
+import { asFunction, asValue, createContainer } from 'awilix'
+import { appConfig } from './config.js'
 import { bootstrapModule } from './core/bootstrap/index.js'
+import type { InputConfig } from './core/config/types.js'
 import type { DbProvider } from './core/db/ports.js'
 import type { Logger } from './core/types/logger.js'
 import { ContainerRegistrationKeys } from './core/utils/index.js'
@@ -21,11 +23,12 @@ import paymentModule, { paymentProviderDeclarations } from './modules/payment/in
 import productModule from './modules/product/index.js'
 import userModule from './modules/user/index.js'
 
-export async function bootstrapContainer(deps: { logger: Logger; dbProvider: DbProvider }) {
+export async function bootstrapContainer(deps: { logger: Logger; dbProvider: DbProvider; config?: InputConfig }) {
   const container = createContainer()
-  const { logger, dbProvider } = deps
+  const { logger, dbProvider, config } = deps
 
   container.register({
+    [ContainerRegistrationKeys.CONFIG_MODULE]: asFunction(() => config ?? appConfig),
     [ContainerRegistrationKeys.LOGGER]: asValue(logger),
     [ContainerRegistrationKeys.DB_PROVIDER]: asValue(dbProvider),
     [ContainerRegistrationKeys.GET_DB]: asValue(dbProvider.getDb),

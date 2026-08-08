@@ -1,5 +1,4 @@
 export { authenticate } from '@framework/http/middlewares/authenticate.js'
-export { authMethodsPerActor, authVerificationsPerActor } from './config.js'
 export type { AuthContext, AuthTokenPayload } from './types.js'
 export type { AuthJwtConfig } from './utils/generate-jwt-token.js'
 export {

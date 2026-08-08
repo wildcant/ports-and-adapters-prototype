@@ -1,5 +1,6 @@
 import jwt from 'jsonwebtoken'
 import { describe, expect, test, vi } from 'vitest'
+import type { ConfigModule } from '../../config/types.js'
 import type { AuthIdentityDTO, IAuthModuleService, ProviderIdentityDTO } from '../../types/index.js'
 import { generateJwtTokenForAuthIdentity, generateJwtTokenWithChecks } from '../utils/generate-jwt-token.js'
 
@@ -12,6 +13,10 @@ vi.mock('../../../env.js', () => ({
 
 const SECRET = 'test-jwt-secret-for-testing-only'
 const JWT_CONFIG = { secret: SECRET, expiresIn: '1d' as const }
+
+const customerVerificationConfig: ConfigModule['projectConfig']['http']['authVerificationsPerActor'] = {
+  customer: [{ entityType: 'email', authProvider: 'emailpass' }],
+}
 
 function makeAuthIdentity(overrides: Partial<AuthIdentityDTO> & { providerIdentities?: ProviderIdentityDTO[] } = {}) {
   return {
@@ -124,6 +129,7 @@ describe('generateJwtTokenWithChecks', () => {
       mockService,
       { authIdentity, actorType: 'user', authProvider: 'emailpass' },
       JWT_CONFIG,
+      customerVerificationConfig,
     )
 
     expect(result.verificationRequired).toBeUndefined()
@@ -145,6 +151,7 @@ describe('generateJwtTokenWithChecks', () => {
       mockService,
       { authIdentity, actorType: 'customer', authProvider: 'emailpass' },
       JWT_CONFIG,
+      customerVerificationConfig,
     )
 
     expect(result.verificationRequired).toBe(true)
@@ -174,6 +181,7 @@ describe('generateJwtTokenWithChecks', () => {
       mockService,
       { authIdentity, actorType: 'customer', authProvider: 'emailpass' },
       JWT_CONFIG,
+      customerVerificationConfig,
     )
 
     expect(result.verificationRequired).toBeUndefined()

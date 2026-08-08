@@ -1,6 +1,7 @@
 import type { ActorType } from '@proteus/http-schemas/auth'
 import type { StringValue } from 'ms'
 import { env } from '../../../env.js'
+import type { ConfigModule } from '../../config/types.js'
 import type { AuthIdentityDTO, IAuthModuleService, ProviderIdentityDTO } from '../../types/index.js'
 import { generateJwtToken } from './token.js'
 import { validateVerification } from './validate-verification.js'
@@ -102,8 +103,9 @@ export async function generateJwtTokenWithChecks(
   authModuleService: IAuthModuleService,
   input: GenerateTokenInput,
   jwtConfig: AuthJwtConfig,
+  verificationsConfig: ConfigModule['projectConfig']['http']['authVerificationsPerActor'],
 ): Promise<GenerateTokenWithChecksResult> {
-  const verificationResult = await validateVerification(authModuleService, input)
+  const verificationResult = await validateVerification(authModuleService, input, verificationsConfig)
 
   if (verificationResult.verificationRequired) {
     const actorlessToken = generateJwtTokenForAuthIdentity(input, jwtConfig, { actorless: true })

@@ -1,7 +1,11 @@
 import { describe, expect, test } from 'vitest'
 import type { HttpRequest } from '../../../server/ports.js'
+import { defineAppConfig } from '../../config/index.js'
 import { ErrorTypes } from '../../errors/app-error.js'
+import { ContainerRegistrationKeys } from '../../utils/container.js'
 import { validateScopeProviderAssociation } from '../utils/validate-scope-provider-association.js'
+
+const defaultConfig = defineAppConfig()
 
 function makeRequest(params: Record<string, string>): HttpRequest {
   return {
@@ -9,7 +13,12 @@ function makeRequest(params: Record<string, string>): HttpRequest {
     query: {},
     validatedQuery: {},
     body: undefined,
-    scope: {} as HttpRequest['scope'],
+    scope: {
+      resolve: (key: string) => {
+        if (key === ContainerRegistrationKeys.CONFIG_MODULE) return defaultConfig
+        throw new Error(`Unexpected resolve: ${key}`)
+      },
+    } as unknown as HttpRequest['scope'],
     headers: {},
   }
 }

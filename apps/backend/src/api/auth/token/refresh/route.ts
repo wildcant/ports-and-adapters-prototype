@@ -3,9 +3,10 @@ import {
   generateJwtTokenWithChecks,
   getAuthJwtConfig,
 } from '@core/auth/utils/generate-jwt-token.js'
+import type { ConfigModule } from '@core/config/types.js'
 import { AppError, ErrorTypes } from '@core/errors/app-error.js'
 import type { IAuthModuleService } from '@core/types/index.js'
-import { Modules } from '@core/utils/index.js'
+import { ContainerRegistrationKeys, Modules } from '@core/utils/index.js'
 import { AuthenticateResponse } from '@proteus/http-schemas/auth'
 import type { HttpRequest, HttpResult } from '../../../../server/ports.js'
 
@@ -40,6 +41,7 @@ export const POST = async (req: HttpRequest): Promise<HttpResult<typeof PostOutp
   }
 
   // Branch 2: Actorless token — re-validate and run verification checks
+  const config = req.scope.resolve<ConfigModule>(ContainerRegistrationKeys.CONFIG_MODULE)
   const { authIdentity } = await authService.validateAuthIdentity(authContext.authIdentityId, authContext.authProvider)
 
   const tokenResult = await generateJwtTokenWithChecks(
@@ -50,6 +52,7 @@ export const POST = async (req: HttpRequest): Promise<HttpResult<typeof PostOutp
       authProvider: authContext.authProvider,
     },
     jwtConfig,
+    config.projectConfig.http.authVerificationsPerActor,
   )
 
   return { status: 200, json: tokenResult }
