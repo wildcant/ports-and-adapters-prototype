@@ -2,7 +2,7 @@ import type { IPaymentModuleService } from '@core/types/index.js'
 import type { Logger } from '@core/types/logger.js'
 import type { PaymentActions } from '@core/types/payment/common.js'
 import { ContainerRegistrationKeys, Modules } from '@core/utils/index.js'
-import type { ProviderParams, WebhookReceivedResponse } from '@proteus/http-schemas/store'
+import { ProviderParams, WebhookReceivedResponse } from '@proteus/http-schemas/store'
 import type { HttpRequest, HttpResult } from '../../../../server/ports.js'
 
 const SKIP_ACTIONS: Set<PaymentActions> = new Set([
@@ -13,9 +13,10 @@ const SKIP_ACTIONS: Set<PaymentActions> = new Set([
   'pending_authorization',
 ])
 
-type Input = { params: ProviderParams }
+export const PostInput = { params: ProviderParams }
+export const PostOutput = WebhookReceivedResponse
 
-export const POST = async (req: HttpRequest<Input>): Promise<HttpResult<WebhookReceivedResponse>> => {
+export const POST = async (req: HttpRequest<typeof PostInput>): Promise<HttpResult<typeof PostOutput>> => {
   const logger = req.scope.resolve<Logger>(ContainerRegistrationKeys.LOGGER)
   const paymentService = req.scope.resolve<IPaymentModuleService>(Modules.PAYMENT)
 

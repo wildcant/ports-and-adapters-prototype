@@ -138,6 +138,7 @@ export type DataResult<T> = {
   data: T[]
   count: number | undefined
   isPending: boolean
+  isFetching?: boolean
 }
 
 // ---------------------------------------------------------------------------

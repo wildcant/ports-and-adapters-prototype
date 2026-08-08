@@ -1,18 +1,19 @@
 import { AppError, ErrorTypes } from '@core/errors/app-error.js'
 import type { IFulfillmentModuleService } from '@core/types/index.js'
 import { Modules } from '@core/utils/index.js'
-import type {
+import {
   AdminFulfillmentSetDetailResponse,
-  AdminUpdateFulfillmentSetBody,
+  AdminUpdateFulfillmentSet,
   AdminUpdateFulfillmentSetResponse,
   DeleteResponse,
   IdParams,
 } from '@proteus/http-schemas/admin'
 import type { HttpRequest, HttpResult } from '../../../../server/ports.js'
 
-type GetInput = { params: IdParams }
+export const GetInput = { params: IdParams }
+export const GetOutput = AdminFulfillmentSetDetailResponse
 
-export const GET = async (req: HttpRequest<GetInput>): Promise<HttpResult<AdminFulfillmentSetDetailResponse>> => {
+export const GET = async (req: HttpRequest<typeof GetInput>): Promise<HttpResult<typeof GetOutput>> => {
   const service = req.scope.resolve<IFulfillmentModuleService>(Modules.FULFILLMENT)
 
   const [fulfillmentSet, serviceZones] = await Promise.all([
@@ -23,9 +24,10 @@ export const GET = async (req: HttpRequest<GetInput>): Promise<HttpResult<AdminF
   return { status: 200, json: { fulfillmentSet: { ...fulfillmentSet, serviceZones } } }
 }
 
-type PostInput = { params: IdParams; body: AdminUpdateFulfillmentSetBody }
+export const PostInput = { params: IdParams, body: AdminUpdateFulfillmentSet }
+export const PostOutput = AdminUpdateFulfillmentSetResponse
 
-export const POST = async (req: HttpRequest<PostInput>): Promise<HttpResult<AdminUpdateFulfillmentSetResponse>> => {
+export const POST = async (req: HttpRequest<typeof PostInput>): Promise<HttpResult<typeof PostOutput>> => {
   const service = req.scope.resolve<IFulfillmentModuleService>(Modules.FULFILLMENT)
   const [fulfillmentSet] = await service.updateFulfillmentSets([req.params.id], req.body)
   if (!fulfillmentSet) {
@@ -34,9 +36,10 @@ export const POST = async (req: HttpRequest<PostInput>): Promise<HttpResult<Admi
   return { status: 200, json: { fulfillmentSet } }
 }
 
-type DeleteInput = { params: IdParams }
+export const DeleteInput = { params: IdParams }
+export const DeleteOutput = DeleteResponse
 
-export const DELETE = async (req: HttpRequest<DeleteInput>): Promise<HttpResult<DeleteResponse>> => {
+export const DELETE = async (req: HttpRequest<typeof DeleteInput>): Promise<HttpResult<typeof DeleteOutput>> => {
   const service = req.scope.resolve<IFulfillmentModuleService>(Modules.FULFILLMENT)
   await service.softDeleteFulfillmentSets([req.params.id])
   return { status: 200, json: { id: req.params.id, deleted: true } }

@@ -15,11 +15,12 @@ const statusVariants: Record<string, 'default' | 'secondary' | 'outline' | 'dest
 export const useProductTable = () =>
   useDefineTable<AdminProduct>({
     useData: (params) => {
-      const { data, isPending } = useProducts(params)
+      const { data, isPending, isFetching } = useProducts(params)
       return {
         data: data?.products ?? [],
         count: data?.count,
         isPending,
+        isFetching,
       }
     },
 

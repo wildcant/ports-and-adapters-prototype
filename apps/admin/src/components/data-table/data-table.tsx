@@ -62,7 +62,8 @@ export function DataTable<T>({ use, heading, actions, className }: DataTableProp
   }, [urlState.offset, urlState.order, urlState.q, urlState.filters, pageSize, config.paramMap])
 
   // Call useData during render
-  const { data, count, isPending } = config.useData(params)
+  const { data, count, isPending, isFetching: isRefetching } = config.useData(params)
+  const isFetching = isRefetching ?? isPending
 
   const pagination = usePagination(urlState, count, pageSize)
 
@@ -125,7 +126,7 @@ export function DataTable<T>({ use, heading, actions, className }: DataTableProp
             />
           </ToolbarSection>
           <ToolbarSection position="right">
-            <Search value={search.value} onChange={search.onChange} isPending={isPending} />
+            <Search value={search.value} onChange={search.onChange} isPending={isFetching} />
             <SortingMenu
               sortableColumns={sorting.sortableColumns}
               current={sorting.current}

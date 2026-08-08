@@ -1,8 +1,8 @@
 import { formOptions } from '@tanstack/form-core'
 import type { AdminCreateProductResponse } from '#/api/generated/model'
 import { useCreateProduct } from '#/features/products/api/products'
-import type { SubmitFormParams } from '#/lib/form.ts'
 import { useAppForm } from '#/lib/form-hook.ts'
+import type { SubmitFormParams } from '#/types/form.ts'
 import type { SubmitIntent } from '../components/create-product-form/constants'
 import { type ProductFormValues, productFormSchema } from '../components/create-product-form/schemas'
 

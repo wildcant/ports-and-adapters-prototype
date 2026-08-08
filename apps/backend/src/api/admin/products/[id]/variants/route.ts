@@ -1,19 +1,19 @@
 import { AppError, ErrorTypes } from '@core/errors/app-error.js'
 import type { IProductModuleService } from '@core/types/index.js'
 import { Modules } from '@core/utils/index.js'
-import type {
-  AdminCreateProductVariantBody,
+import {
+  AdminCreateProductVariant,
   AdminCreateProductVariantResponse,
-  AdminProductVariantListQuery,
+  AdminProductVariantListParams,
   AdminProductVariantListResponse,
   IdParams,
 } from '@proteus/http-schemas/admin'
 import type { HttpRequest, HttpResult } from '../../../../../server/ports.js'
 
-type ListVariantsInput = { params: IdParams; query: AdminProductVariantListQuery }
-export const GET = async (
-  req: HttpRequest<ListVariantsInput>,
-): Promise<HttpResult<AdminProductVariantListResponse>> => {
+export const GetInput = { params: IdParams, query: AdminProductVariantListParams }
+export const GetOutput = AdminProductVariantListResponse
+
+export const GET = async (req: HttpRequest<typeof GetInput>): Promise<HttpResult<typeof GetOutput>> => {
   const productService = req.scope.resolve<IProductModuleService>(Modules.PRODUCT)
   const { pagination, filters } = req.validatedQuery
   const [variants, count] = await productService.listAndCountProductVariants(
@@ -24,10 +24,10 @@ export const GET = async (
   return { status: 200, json: { variants, count, offset, limit } }
 }
 
-type CreateVariantInput = { params: IdParams; body: AdminCreateProductVariantBody }
-export const POST = async (
-  req: HttpRequest<CreateVariantInput>,
-): Promise<HttpResult<AdminCreateProductVariantResponse>> => {
+export const PostInput = { params: IdParams, body: AdminCreateProductVariant }
+export const PostOutput = AdminCreateProductVariantResponse
+
+export const POST = async (req: HttpRequest<typeof PostInput>): Promise<HttpResult<typeof PostOutput>> => {
   const productService = req.scope.resolve<IProductModuleService>(Modules.PRODUCT)
   const [variant] = await productService.createProductVariants([{ ...req.body, productId: req.params.id }])
   if (!variant) throw new AppError({ type: ErrorTypes.UNEXPECTED_STATE, message: 'Variant not returned after create' })

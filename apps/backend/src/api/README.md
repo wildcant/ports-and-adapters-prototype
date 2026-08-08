@@ -11,27 +11,29 @@ src/api/
 │       ├── route.ts           # GET (list), POST (create)
 │       ├── [id]/
 │       │   └── route.ts       # GET (retrieve), PATCH/POST (update), DELETE
-│       └── middlewares.ts     # OpenAPI metadata, validation schemas
+│       └── definitions.ts    # Route definitions (handler, auth, schemas, OpenAPI metadata)
 └── store/
     └── <domain>/              # Same structure
 ```
 
 ## Route Handler Pattern
 
-Export named HTTP methods (`GET`, `POST`, `PATCH`, `DELETE`). Each handler:
-1. Defines a local input type with `params`, `body`, and/or `query`
-2. Returns `Promise<HttpResult<ResponseType>>` with an explicit response type from `@proteus/http-schemas`
+Export named HTTP methods (`GET`, `POST`, `PATCH`, `DELETE`). Each handler co-exports its `Input` and `Output` constants so the definition file can reference them. Each handler:
+1. Co-exports an `Input` constant (`{ params?, body?, query? }`) and an `Output` schema
+2. Uses `HttpRequest<typeof Input>` and `Promise<HttpResult<typeof Output>>` for type safety
 3. Resolves services from `req.scope` (Awilix scoped container)
 
 ```ts
-import type { AdminCustomerResponse, AdminUpdateCustomerBody, IdParams } from '@proteus/http-schemas/admin'
-import type { HttpRequest, HttpResult } from '../../../../server/ports.js'
+import { AdminCreateCustomers, AdminCreateCustomersResponse } from '@proteus/http-schemas/admin'
+import type { HttpRequest, HttpResult } from '../../../server/ports.js'
 
-type UpdateInput = { params: IdParams; body: AdminUpdateCustomerBody }
-export const PATCH = async (req: HttpRequest<UpdateInput>): Promise<HttpResult<AdminCustomerResponse>> => {
-  const service = req.scope.resolve<ICustomerModuleService>(Modules.CUSTOMER)
-  const [customer] = await service.updateCustomers([req.params.id], req.body)
-  return { status: 200, json: { customer } }
+export const PostInput = { body: AdminCreateCustomers }
+export const PostOutput = AdminCreateCustomersResponse
+
+export const POST = async (req: HttpRequest<typeof PostInput>): Promise<HttpResult<typeof PostOutput>> => {
+  const customerService = req.scope.resolve<ICustomerModuleService>(Modules.CUSTOMER)
+  const customers = await customerService.createCustomers(req.body)
+  return { status: 201, json: { customers } }
 }
 ```
 
@@ -51,39 +53,54 @@ export const PATCH = async (req: HttpRequest<UpdateInput>): Promise<HttpResult<A
 | PATCH/POST update | 200 |
 | DELETE    | 200    |
 
-## Middleware File
+## Definition File
 
-Each domain has a `middlewares.ts` that exports a `MiddlewareRoute[]` array. This wires validation schemas and OpenAPI metadata:
+Each domain has a `definitions.ts` that default-exports a `RouteDefinition[]` array. Each definition wires a handler to its `input`/`output` schemas (co-exported from the route file), auth policy, and OpenAPI metadata:
 
 ```ts
-import { AdminCreateCustomers, AdminCustomerResponse, DeleteResponse, IdParams } from '@proteus/http-schemas/admin'
+import type { RouteDefinition } from '@framework/http/types.js'
+import { Tags } from '@framework/http/types.js'
+import * as customerRoutes from './route.js'
+import * as customerByIdRoutes from './[id]/route.js'
 
 export default [
   {
     method: 'POST',
     matcher: '/admin/customers',
-    bodySchema: AdminCreateCustomers,       // zod schema for request body validation
-    operationId: 'createCustomers',         // unique OpenAPI operation ID
+    handler: customerRoutes.POST,
+    input: customerRoutes.PostInput,
+    operationId: 'createCustomers',
     summary: 'Create customers',
     tags: [Tags.CUSTOMERS],
-    responseSchema: AdminCustomerListResponse, // zod schema for OpenAPI response docs
+    output: customerRoutes.PostOutput,
   },
   {
     method: 'DELETE',
     matcher: '/admin/customers/:id',
-    paramsSchema: IdParams,
+    handler: customerByIdRoutes.DELETE,
+    input: customerByIdRoutes.DeleteInput,
     operationId: 'deleteCustomer',
     summary: 'Delete a customer',
     tags: [Tags.CUSTOMERS],
-    responseSchema: DeleteResponse,
+    output: customerByIdRoutes.DeleteOutput,
   },
-] satisfies MiddlewareRoute[]
+] satisfies RouteDefinition[]
 ```
+
+### Auth Policy
+
+Admin and store routes default to `auth: 'required'`. Override with:
+- `auth: 'public'` — no auth (e.g. store product browsing)
+- `auth: 'optional'` — guests proceed, authenticated users get context
+- `auth: 'unregistered'` — valid JWT required, actor record not required
+
+Routes outside `/admin/` and `/store/` (e.g. `/auth/`, `/hooks/`) use explicit `middlewares` for auth.
 
 ## Checklist for Adding a New Endpoint
 
 1. Define entity, payload, query, and response schemas in `packages/http-schemas/src/<scope>/<domain>/`
 2. Create `route.ts` with typed handler(s)
-3. Create or update `middlewares.ts` with OpenAPI metadata
-4. Run `npm run --workspace=backend typecheck` — zero errors
-5. Run `npm run openapi:generate` to regenerate OpenAPI specs and clients
+3. Create or update `definitions.ts` with route definitions (handler, schemas, OpenAPI metadata)
+4. Add the definition import to `src/routes.ts`
+5. Run `npm run --workspace=backend typecheck` — zero errors
+6. Run `npm run openapi:generate` to regenerate OpenAPI specs and clients

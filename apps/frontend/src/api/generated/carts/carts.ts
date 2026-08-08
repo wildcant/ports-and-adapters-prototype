@@ -11,6 +11,7 @@ import type {
   DeleteResponse,
   ListStoreCartShippingOptionsParams,
   StoreCartDetailResponse,
+  StoreCartInventoryResponse,
   StoreCartResponse,
   StoreCreateCartLineItemResponse,
   StoreCreateCartResponse,
@@ -144,6 +145,17 @@ export const completeStoreCart = (
     },
       );
     }
+  /**
+ * @summary Check inventory availability for a cart
+ */
+export const checkStoreCartInventory = (
+    id: string,
+ ) => {
+      return fetcher<StoreCartInventoryResponse>(
+      {url: `/store/carts/${id}/inventory`, method: 'GET'
+    },
+      );
+    }
   export type CreateStoreCartResult = NonNullable<Awaited<ReturnType<typeof createStoreCart>>>
 export type GetStoreCartResult = NonNullable<Awaited<ReturnType<typeof getStoreCart>>>
 export type UpdateStoreCartResult = NonNullable<Awaited<ReturnType<typeof updateStoreCart>>>
@@ -153,3 +165,4 @@ export type DeleteStoreCartLineItemResult = NonNullable<Awaited<ReturnType<typeo
 export type ListStoreCartShippingOptionsResult = NonNullable<Awaited<ReturnType<typeof listStoreCartShippingOptions>>>
 export type AddStoreCartShippingMethodResult = NonNullable<Awaited<ReturnType<typeof addStoreCartShippingMethod>>>
 export type CompleteStoreCartResult = NonNullable<Awaited<ReturnType<typeof completeStoreCart>>>
+export type CheckStoreCartInventoryResult = NonNullable<Awaited<ReturnType<typeof checkStoreCartInventory>>>

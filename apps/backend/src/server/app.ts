@@ -48,7 +48,7 @@ export const createApp: CreateApp = ({ container }) => {
       const origin = request.headers.get('Origin') ?? ''
       const corsHeaders: Record<string, string> = {
         'Access-Control-Allow-Methods': 'GET, POST, PUT, PATCH, DELETE, OPTIONS',
-        'Access-Control-Allow-Headers': 'Content-Type',
+        'Access-Control-Allow-Headers': 'Content-Type, Authorization',
         Vary: 'Origin',
       }
       if (env.CORS_ORIGIN.includes(origin)) {
@@ -80,6 +80,8 @@ export const createApp: CreateApp = ({ container }) => {
         request.headers.forEach((value, key) => {
           headers[key] = value
         })
+
+        logger.http(`${method} ${url.pathname}`)
 
         try {
           const result = await route.handler({

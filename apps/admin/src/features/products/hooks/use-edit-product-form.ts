@@ -1,8 +1,8 @@
 import { AdminUpdateProduct } from '@proteus/http-schemas/admin'
 import type { AdminProduct, AdminUpdateProductResponse } from '#/api/generated/model'
 import { useUpdateProduct } from '#/features/products/api/products'
-import type { SubmitFormParams } from '#/lib/form.ts'
 import { useAppForm } from '#/lib/form-hook.ts'
+import type { SubmitFormParams } from '#/types/form.ts'
 
 export type EditProductFormParams = SubmitFormParams<AdminUpdateProductResponse>
 

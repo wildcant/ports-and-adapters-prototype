@@ -11,6 +11,120 @@
   ],
   "components": {
     "schemas": {
+      "AuthenticateResponse": {
+        "type": "object",
+        "properties": {
+          "token": {
+            "type": "string"
+          },
+          "verificationRequired": {
+            "type": "boolean"
+          }
+        },
+        "required": ["token"]
+      },
+      "StoreSignupBody": {
+        "type": "object",
+        "properties": {
+          "email": {
+            "type": "string",
+            "format": "email"
+          },
+          "password": {
+            "type": "string",
+            "minLength": 1
+          },
+          "firstName": {
+            "type": "string",
+            "minLength": 1
+          },
+          "lastName": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "required": ["email", "password", "firstName", "lastName"]
+      },
+      "StoreLoginBody": {
+        "type": "object",
+        "properties": {
+          "email": {
+            "type": "string",
+            "format": "email"
+          },
+          "password": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "required": ["email", "password"]
+      },
+      "ResetPasswordResponse": {
+        "type": "object",
+        "properties": {}
+      },
+      "ResetPasswordBody": {
+        "type": "object",
+        "properties": {
+          "email": {
+            "type": "string",
+            "format": "email"
+          }
+        },
+        "required": ["email"]
+      },
+      "UpdatePasswordResponse": {
+        "type": "object",
+        "properties": {
+          "success": {
+            "type": "boolean"
+          }
+        },
+        "required": ["success"]
+      },
+      "UpdatePasswordBody": {
+        "type": "object",
+        "properties": {
+          "password": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "required": ["password"]
+      },
+      "VerificationConfirmResponse": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "entityId": {
+            "type": "string"
+          },
+          "entityType": {
+            "type": "string"
+          },
+          "verifiedAt": {
+            "type": "string",
+            "format": "date-time"
+          }
+        },
+        "required": ["id", "entityId", "entityType", "verifiedAt"]
+      },
+      "VerificationConfirmBody": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "string",
+            "minLength": 1
+          },
+          "codeProvider": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "required": ["code"]
+      },
       "StoreCreateCartResponse": {
         "type": "object",
         "properties": {
@@ -427,6 +541,87 @@
         },
         "required": ["cart"]
       },
+      "StoreCartInventoryResponse": {
+        "type": "object",
+        "properties": {
+          "cartId": {
+            "type": "string"
+          },
+          "items": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/StoreConfirmInventoryItem"
+            }
+          }
+        },
+        "required": ["cartId", "items"]
+      },
+      "StoreConfirmInventoryItem": {
+        "type": "object",
+        "properties": {
+          "lineItemId": {
+            "type": "string"
+          },
+          "variantId": {
+            "type": "string"
+          },
+          "inventoryItemId": {
+            "type": "string"
+          },
+          "requiredQuantity": {
+            "type": "number"
+          },
+          "quantity": {
+            "type": "number"
+          },
+          "locationIds": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        },
+        "required": ["lineItemId", "variantId", "inventoryItemId", "requiredQuantity", "quantity", "locationIds"]
+      },
+      "CustomerResponse": {
+        "type": "object",
+        "properties": {
+          "customer": {
+            "$ref": "#/components/schemas/Customer"
+          }
+        },
+        "required": ["customer"]
+      },
+      "Customer": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "firstName": {
+            "type": "string"
+          },
+          "lastName": {
+            "type": "string"
+          },
+          "email": {
+            "type": "string"
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "updatedAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "deletedAt": {
+            "type": ["string", "null"],
+            "format": "date-time"
+          }
+        },
+        "required": ["id", "firstName", "lastName", "email", "createdAt", "updatedAt", "deletedAt"]
+      },
       "StoreCreatePaymentCollectionResponse": {
         "type": "object",
         "properties": {
@@ -738,6 +933,207 @@
     "parameters": {}
   },
   "paths": {
+    "/store/auth/signup": {
+      "post": {
+        "operationId": "storeAuthSignup",
+        "summary": "Register a new customer account",
+        "tags": ["Auth"],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/StoreSignupBody"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AuthenticateResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Validation error"
+          }
+        }
+      }
+    },
+    "/store/auth/login": {
+      "post": {
+        "operationId": "storeAuthLogin",
+        "summary": "Login as a customer",
+        "tags": ["Auth"],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/StoreLoginBody"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AuthenticateResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Validation error"
+          }
+        }
+      }
+    },
+    "/auth/{actorType}/{authProvider}/reset-password": {
+      "post": {
+        "operationId": "authResetPassword",
+        "summary": "Request a password reset token",
+        "tags": ["Auth"],
+        "parameters": [
+          {
+            "schema": {
+              "type": "string",
+              "enum": ["user", "customer"]
+            },
+            "required": true,
+            "name": "actorType",
+            "in": "path"
+          },
+          {
+            "schema": {
+              "type": "string",
+              "minLength": 1
+            },
+            "required": true,
+            "name": "authProvider",
+            "in": "path"
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ResetPasswordBody"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ResetPasswordResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Validation error"
+          },
+          "404": {
+            "description": "Not found"
+          }
+        }
+      }
+    },
+    "/auth/{actorType}/{authProvider}/update": {
+      "post": {
+        "operationId": "authUpdatePassword",
+        "summary": "Update password using a reset token",
+        "tags": ["Auth"],
+        "parameters": [
+          {
+            "schema": {
+              "type": "string",
+              "enum": ["user", "customer"]
+            },
+            "required": true,
+            "name": "actorType",
+            "in": "path"
+          },
+          {
+            "schema": {
+              "type": "string",
+              "minLength": 1
+            },
+            "required": true,
+            "name": "authProvider",
+            "in": "path"
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdatePasswordBody"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UpdatePasswordResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Validation error"
+          },
+          "404": {
+            "description": "Not found"
+          }
+        }
+      }
+    },
+    "/auth/verification/confirm": {
+      "post": {
+        "operationId": "authVerificationConfirm",
+        "summary": "Confirm a verification code",
+        "tags": ["Auth"],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/VerificationConfirmBody"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/VerificationConfirmResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Validation error"
+          }
+        }
+      }
+    },
     "/store/carts": {
       "post": {
         "operationId": "createStoreCart",
@@ -1237,6 +1633,64 @@
           },
           "404": {
             "description": "Not found"
+          }
+        }
+      }
+    },
+    "/store/carts/{id}/inventory": {
+      "get": {
+        "operationId": "checkStoreCartInventory",
+        "summary": "Check inventory availability for a cart",
+        "tags": ["Carts"],
+        "parameters": [
+          {
+            "schema": {
+              "type": "string",
+              "minLength": 1
+            },
+            "required": true,
+            "name": "id",
+            "in": "path"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/StoreCartInventoryResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Validation error"
+          },
+          "404": {
+            "description": "Not found"
+          }
+        }
+      }
+    },
+    "/store/customers/me": {
+      "get": {
+        "operationId": "getStoreCustomerMe",
+        "summary": "Get the authenticated customer",
+        "tags": ["Customers"],
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CustomerResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Validation error"
           }
         }
       }

@@ -1,4 +1,4 @@
-import { Button, DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger, Skeleton } from '@proteus/ui'
+import { Button, DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@proteus/ui'
 import type { FilterDef } from '../types'
 
 type FilterMenuProps = {
@@ -9,10 +9,8 @@ type FilterMenuProps = {
 }
 
 export function FilterMenu({ filterDefs, activeFilterIds, onAdd, isPending }: FilterMenuProps) {
-  if (isPending) return <Skeleton className="h-7 w-20" />
-
   const available = filterDefs.filter((f) => !activeFilterIds.includes(f.id))
-  if (available.length === 0) return null
+  if (isPending || available.length === 0) return null
 
   return (
     <DropdownMenu>

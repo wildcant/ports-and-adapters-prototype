@@ -12,6 +12,7 @@ import { ContainerRegistrationKeys } from './core/utils/index.js'
 import { createSimpleWorkflowEngine } from './core/workflows/simple-adapter.js'
 import { setWorkflowEngine } from './core/workflows/types.js'
 import { registerLinkService } from './link-modules/index.js'
+import authModule, { authProviderDeclarations } from './modules/auth/index.js'
 import cartModule from './modules/cart/index.js'
 import customerModule from './modules/customer/index.js'
 import fulfillmentModule, { fulfillmentProviderDeclarations } from './modules/fulfillment/index.js'
@@ -30,6 +31,7 @@ export async function bootstrapContainer(deps: { logger: Logger; dbProvider: DbP
     [ContainerRegistrationKeys.GET_DB]: asValue(dbProvider.getDb),
   })
 
+  await bootstrapModule(container, authModule, authProviderDeclarations)
   await bootstrapModule(container, cartModule)
   await bootstrapModule(container, customerModule)
   await bootstrapModule(container, fulfillmentModule, fulfillmentProviderDeclarations)

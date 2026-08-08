@@ -19,6 +19,17 @@ import type { BodyType } from '../../../lib/fetcher.ts';
 
 
   /**
+ * @summary Retrieve the authenticated user
+ */
+export const getMe = (
+
+ ) => {
+      return fetcher<AdminUserResponse>(
+      {url: `/admin/users/me`, method: 'GET'
+    },
+      );
+    }
+  /**
  * @summary List users
  */
 export const listUsers = (
@@ -79,7 +90,8 @@ export const deleteUser = (
     },
       );
     }
-  export type ListUsersResult = NonNullable<Awaited<ReturnType<typeof listUsers>>>
+  export type GetMeResult = NonNullable<Awaited<ReturnType<typeof getMe>>>
+export type ListUsersResult = NonNullable<Awaited<ReturnType<typeof listUsers>>>
 export type CreateUserResult = NonNullable<Awaited<ReturnType<typeof createUser>>>
 export type GetUserResult = NonNullable<Awaited<ReturnType<typeof getUser>>>
 export type UpdateUserResult = NonNullable<Awaited<ReturnType<typeof updateUser>>>

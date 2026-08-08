@@ -137,15 +137,17 @@ Tests construct services manually with injected repos. Vitest config at `apps/ba
 ## Code Style
 
 - **Biome** for linting and formatting (spaces, 120 char lines, single quotes, no semicolons, trailing commas)
-- Naming: `camelCase` for properties, `CONSTANT_CASE` for enum members
+- **Never use `snake_case`.** Use `camelCase` for variables, functions, parameters, and properties. Use `PascalCase` for classes, types, and components. Use `CONSTANT_CASE` for enum members and true constants. This is enforced by Biome's `useNamingConvention` rule.
 - Frontend: `type` over `interface` (enforced in frontend app)
 - Backend: TypeScript strict mode with `noUncheckedIndexedAccess`
-- Use simple, direct variable names. No unnecessary suffixes like `Result`, `Data`, `Value`, `Info`. Name variables for what they represent, not their type or origin.
+- Use simple, direct variable names. No unnecessary suffixes like `Result`, `Data`, `Value`, `Info`. Name variables for what they represent, not their type or origin. Never abbreviate variable names (e.g., `namespaceAuthMiddleware` not `nsAuth`, `configuration` not `cfg`, `repository` not `repo`). Clarity over brevity.
 - Prefer guard clauses over nested conditionals. Check unusual conditions early and return, keeping the happy path linear and unindented. See `docs/refactoring/replace_nested_conditional_with_guard_clauses.txt`.
 - Comments should explain *why*, not *what*. Don't restate the code — document the intent, business reason, or non-obvious constraint.
 - For best-effort async calls, use `.catch((e) => this.logger.error(e))` instead of wrapping in try/catch with an empty or comment-only catch block.
 - Use `Promise.all` with `.map()` instead of `for` loops with `await` inside when iterations are independent.
 - Use `type` instead of `interface`. Interfaces allow declaration merging on name overlap, which can cause subtle bugs. Composable `type` aliases with `&` intersections are safer and more predictable.
+- **Never use non-null assertions (`!`).** Use proper narrowing (guard clauses, `if` checks, `?.`, `?? fallback`, or explicit error throws) instead.
+- **Never use `any`.** If the type feels like `unknown`, stop and find a more precise type — a generic, a union, a mapped type, or a named type from the codebase.
  
 ## Documentation
 

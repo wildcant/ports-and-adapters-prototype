@@ -1,11 +1,16 @@
-import { createFileRoute, Outlet } from '@tanstack/react-router'
+import { createFileRoute, Outlet, redirect } from '@tanstack/react-router'
+import { meQueryOptions } from '#/features/auth/api/auth'
+import { getToken } from '#/lib/auth-token'
 
 export const Route = createFileRoute('/_authed')({
-  beforeLoad: () => {
-    // TODO(Auth): Placeholder — always passes. Add real auth check here later:
-    // const user = await context.queryClient.ensureQueryData(meQueryOptions())
-    // if (!user) throw redirect({ to: '/login', search: { redirect: location.href } })
-    // return { user }
+  beforeLoad: async ({ context }) => {
+    const token = getToken()
+    if (!token) {
+      throw redirect({ to: '/login' })
+    }
+
+    const { user } = await context.queryClient.ensureQueryData(meQueryOptions())
+    return { user }
   },
   component: () => <Outlet />,
 })

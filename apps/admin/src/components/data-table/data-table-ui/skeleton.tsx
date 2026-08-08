@@ -1,13 +1,5 @@
 import { Skeleton } from '@proteus/ui'
 
-export function SearchSkeleton() {
-  return <Skeleton className="h-7 w-32" />
-}
-
-export function ToolbarButtonSkeleton() {
-  return <Skeleton className="size-7" />
-}
-
 export function TableSkeleton({ columnCount, rowCount = 5 }: { columnCount: number; rowCount?: number }) {
   return (
     <div className="space-y-2 p-4">

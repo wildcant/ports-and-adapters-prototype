@@ -1,12 +1,13 @@
 import { AppError, ErrorTypes } from '@core/errors/app-error.js'
 import type { ICartModuleService } from '@core/types/index.js'
 import { Modules } from '@core/utils/index.js'
-import type { AddLineItemBody, IdParams, StoreCreateCartLineItemResponse } from '@proteus/http-schemas/store'
+import { AddLineItem, IdParams, StoreCreateCartLineItemResponse } from '@proteus/http-schemas/store'
 import type { HttpRequest, HttpResult } from '../../../../../server/ports.js'
 
-type Input = { params: IdParams; body: AddLineItemBody }
+export const PostInput = { params: IdParams, body: AddLineItem }
+export const PostOutput = StoreCreateCartLineItemResponse
 
-export const POST = async (req: HttpRequest<Input>): Promise<HttpResult<StoreCreateCartLineItemResponse>> => {
+export const POST = async (req: HttpRequest<typeof PostInput>): Promise<HttpResult<typeof PostOutput>> => {
   const cartService = req.scope.resolve<ICartModuleService>(Modules.CART)
   const [lineItem] = await cartService.addLineItems(req.params.id, [req.body])
   if (!lineItem) {

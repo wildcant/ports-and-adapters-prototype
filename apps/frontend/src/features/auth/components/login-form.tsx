@@ -1,0 +1,28 @@
+import type { LoginFormParams } from '#/features/auth/hooks/use-login-form'
+import { useLoginForm } from '#/features/auth/hooks/use-login-form'
+
+export function LoginForm(props: LoginFormParams) {
+  const { form, isPending } = useLoginForm(props)
+
+  return (
+    <form
+      onSubmit={(event) => {
+        event.preventDefault()
+        form.handleSubmit()
+      }}
+      className="w-full"
+    >
+      <div className="flex w-full flex-col gap-y-2">
+        <form.AppField name="email">
+          {(field) => <field.TextField label="Email" type="email" autoComplete="email" autoFocus />}
+        </form.AppField>
+        <form.AppField name="password">
+          {(field) => <field.TextField label="Password" type="password" autoComplete="current-password" />}
+        </form.AppField>
+      </div>
+      <button type="submit" disabled={isPending} className="demo-button mt-6 w-full">
+        {isPending ? 'Signing in...' : 'Sign in'}
+      </button>
+    </form>
+  )
+}

@@ -1,10 +1,11 @@
-import type { IdParams, StoreCartResponse } from '@proteus/http-schemas/store'
+import { IdParams, StoreCartResponse } from '@proteus/http-schemas/store'
 import { completeCartWorkflow } from '@workflows/cart/complete-cart.js'
 import type { HttpRequest, HttpResult } from '../../../../../server/ports.js'
 
-type Input = { params: IdParams }
+export const PostInput = { params: IdParams }
+export const PostOutput = StoreCartResponse
 
-export const POST = async (req: HttpRequest<Input>): Promise<HttpResult<StoreCartResponse>> => {
+export const POST = async (req: HttpRequest<typeof PostInput>): Promise<HttpResult<typeof PostOutput>> => {
   const cart = await completeCartWorkflow.run({ cartId: req.params.id })
 
   return { status: 200, json: { cart } }

@@ -1,8 +1,8 @@
 import { AdminUpdateCustomer, type AdminUpdateCustomerBody } from '@proteus/http-schemas/admin'
 import type { AdminCustomerResponse } from '#/api/generated/model'
 import { useUpdateCustomer } from '#/features/customers/api/customers'
-import type { SubmitFormParams } from '#/lib/form.ts'
 import { useAppForm } from '#/lib/form-hook.ts'
+import type { SubmitFormParams } from '#/types/form.ts'
 
 export type UpdateCustomerFormParams = SubmitFormParams<AdminCustomerResponse> & {
   id: string

@@ -1,26 +1,28 @@
 import { AppError, ErrorTypes } from '@core/errors/app-error.js'
 import type { IProductModuleService } from '@core/types/index.js'
 import { Modules } from '@core/utils/index.js'
-import type {
+import {
   AdminProductVariantResponse,
-  AdminUpdateProductVariantBody,
+  AdminUpdateProductVariant,
   AdminUpdateProductVariantResponse,
   DeleteResponse,
   VariantIdParams,
 } from '@proteus/http-schemas/admin'
 import type { HttpRequest, HttpResult } from '../../../../../../server/ports.js'
 
-type RetrieveVariantInput = { params: VariantIdParams }
-export const GET = async (req: HttpRequest<RetrieveVariantInput>): Promise<HttpResult<AdminProductVariantResponse>> => {
+export const GetInput = { params: VariantIdParams }
+export const GetOutput = AdminProductVariantResponse
+
+export const GET = async (req: HttpRequest<typeof GetInput>): Promise<HttpResult<typeof GetOutput>> => {
   const productService = req.scope.resolve<IProductModuleService>(Modules.PRODUCT)
   const variant = await productService.retrieveProductVariant(req.params.variantId)
   return { status: 200, json: { variant } }
 }
 
-type UpdateVariantInput = { params: VariantIdParams; body: AdminUpdateProductVariantBody }
-export const PATCH = async (
-  req: HttpRequest<UpdateVariantInput>,
-): Promise<HttpResult<AdminUpdateProductVariantResponse>> => {
+export const PatchInput = { params: VariantIdParams, body: AdminUpdateProductVariant }
+export const PatchOutput = AdminUpdateProductVariantResponse
+
+export const PATCH = async (req: HttpRequest<typeof PatchInput>): Promise<HttpResult<typeof PatchOutput>> => {
   const productService = req.scope.resolve<IProductModuleService>(Modules.PRODUCT)
   const [variant] = await productService.updateProductVariants([req.params.variantId], req.body)
   if (!variant) {
@@ -29,8 +31,10 @@ export const PATCH = async (
   return { status: 200, json: { variant } }
 }
 
-type DeleteVariantInput = { params: VariantIdParams }
-export const DELETE = async (req: HttpRequest<DeleteVariantInput>): Promise<HttpResult<DeleteResponse>> => {
+export const DeleteInput = { params: VariantIdParams }
+export const DeleteOutput = DeleteResponse
+
+export const DELETE = async (req: HttpRequest<typeof DeleteInput>): Promise<HttpResult<typeof DeleteOutput>> => {
   const productService = req.scope.resolve<IProductModuleService>(Modules.PRODUCT)
   await productService.deleteProductVariants([req.params.variantId])
   return { status: 200, json: { id: req.params.variantId, deleted: true } }

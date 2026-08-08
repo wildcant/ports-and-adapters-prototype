@@ -1,32 +1,52 @@
+import jwt from 'jsonwebtoken'
+import { AppError, ErrorTypes } from '../../../core/errors/app-error.js'
 import type {
   Context,
+  CreateInviteDTO,
   CreateUserDTO,
+  FilterableInviteProps,
   FilterableUserProps,
   FindConfig,
+  InviteDTO,
   IUserModuleService,
+  UpdateInviteDTO,
   UpdateUserDTO,
   UserDTO,
 } from '../../../core/types/index.js'
 import type { Logger } from '../../../core/types/logger.js'
 import type { WithTransaction } from '../../../core/utils/with-transaction.js'
+import { env } from '../../../env.js'
+import type { InviteRepository } from '../repositories/invite.js'
 import type { UserRepository } from '../repositories/user.js'
 
+const INVITE_EXPIRY_HOURS = 24
+
 type InjectedDependencies = {
+  inviteRepository: InviteRepository
   userRepository: UserRepository
   withTransaction: WithTransaction
   logger: Logger
 }
 
+type InviteTokenPayload = {
+  email: string
+  purpose: 'invite'
+}
+
 export class UserModuleService implements IUserModuleService {
+  private inviteRepository: InviteRepository
   private userRepository: UserRepository
   private withTransaction: WithTransaction
   private logger: Logger
 
-  constructor({ userRepository, withTransaction, logger }: InjectedDependencies) {
+  constructor({ inviteRepository, userRepository, withTransaction, logger }: InjectedDependencies) {
+    this.inviteRepository = inviteRepository
     this.userRepository = userRepository
     this.withTransaction = withTransaction
     this.logger = logger
   }
+
+  // ---- Users ----
 
   async retrieveUser(userId: string, config?: FindConfig<UserDTO>, context?: Context): Promise<UserDTO> {
     return this.userRepository.findByIdOrFail(userId, config, context)
@@ -74,5 +94,137 @@ export class UserModuleService implements IUserModuleService {
     return this.withTransaction(context, async (ctx) => {
       await this.userRepository.restore(userIds, ctx)
     })
+  }
+
+  // ---- Invites ----
+
+  async createInvites(data: CreateInviteDTO[], context?: Context): Promise<InviteDTO[]> {
+    this.logger.debug(`Creating ${data.length} invite(s)`)
+
+    const emails = data.map((d) => d.email)
+    const existingUsers = await this.userRepository.find({ email: { $in: emails } }, undefined, context)
+    if (existingUsers.length > 0) {
+      const taken = existingUsers.map((u) => u.email).join(', ')
+      throw new AppError({
+        type: ErrorTypes.CONFLICT,
+        message: `Users already exist for: ${taken}`,
+      })
+    }
+
+    return this.withTransaction(context, async (ctx) => {
+      const inviteData = data.map((d) => {
+        const { token, expiresAt } = this.generateInviteToken(d.email)
+        return { email: d.email, token, expiresAt }
+      })
+      const invites = await this.inviteRepository.createMany(inviteData, ctx)
+      for (const invite of invites) {
+        // TODO(notification): replace with notification module
+        this.logger.debug(`Invite link for ${invite.email}: http://localhost:3002/invite?token=${invite.token}`)
+      }
+      return invites
+    })
+  }
+
+  async retrieveInvite(inviteId: string, config?: FindConfig<InviteDTO>, context?: Context): Promise<InviteDTO> {
+    return this.inviteRepository.findByIdOrFail(inviteId, config, context)
+  }
+
+  async listInvites(
+    filters?: FilterableInviteProps,
+    config?: FindConfig<InviteDTO>,
+    context?: Context,
+  ): Promise<InviteDTO[]> {
+    return this.inviteRepository.find(filters, config, context)
+  }
+
+  async listAndCountInvites(
+    filters?: FilterableInviteProps,
+    config?: FindConfig<InviteDTO>,
+    context?: Context,
+  ): Promise<[InviteDTO[], number]> {
+    const [rows, count] = await this.inviteRepository.findAndCount(filters, config, context)
+    return [rows, count]
+  }
+
+  async updateInvites(inviteIds: string[], data: UpdateInviteDTO, context?: Context): Promise<InviteDTO[]> {
+    return this.withTransaction(context, async (ctx) => {
+      return this.inviteRepository.update(inviteIds, data, ctx)
+    })
+  }
+
+  async softDeleteInvites(inviteIds: string[], context?: Context): Promise<void> {
+    return this.withTransaction(context, async (ctx) => {
+      await this.inviteRepository.softDelete(inviteIds, ctx)
+    })
+  }
+
+  async restoreInvites(inviteIds: string[], context?: Context): Promise<void> {
+    return this.withTransaction(context, async (ctx) => {
+      await this.inviteRepository.restore(inviteIds, ctx)
+    })
+  }
+
+  async validateInviteToken(token: string): Promise<InviteDTO> {
+    let decoded: InviteTokenPayload
+    try {
+      decoded = jwt.verify(token, env.JWT_SECRET) as InviteTokenPayload
+    } catch {
+      throw new AppError({ type: ErrorTypes.INVALID_DATA, message: 'Invalid or expired invite token' })
+    }
+
+    if (decoded.purpose !== 'invite') {
+      throw new AppError({ type: ErrorTypes.INVALID_DATA, message: 'Invalid invite token' })
+    }
+
+    const [invite] = await this.inviteRepository.find({ email: decoded.email })
+    if (!invite) {
+      throw new AppError({ type: ErrorTypes.NOT_FOUND, message: 'Invite not found' })
+    }
+
+    // Rotation guard: only the latest token is valid
+    if (invite.token !== token) {
+      throw new AppError({ type: ErrorTypes.INVALID_DATA, message: 'Invite token has been superseded' })
+    }
+
+    if (invite.expiresAt < new Date()) {
+      throw new AppError({ type: ErrorTypes.INVALID_DATA, message: 'Invite token has expired' })
+    }
+
+    if (invite.accepted) {
+      throw new AppError({ type: ErrorTypes.CONFLICT, message: 'Invite has already been accepted' })
+    }
+
+    return invite
+  }
+
+  async refreshInviteTokens(inviteIds: string[], context?: Context): Promise<InviteDTO[]> {
+    this.logger.debug(`Refreshing tokens for ${inviteIds.length} invite(s)`)
+
+    const results = await Promise.all(
+      inviteIds.map(async (id) => {
+        const invite = await this.inviteRepository.findByIdOrFail(id, undefined, context)
+        const { token, expiresAt } = this.generateInviteToken(invite.email)
+        const [updated] = await this.inviteRepository.update([id], { token, expiresAt }, context)
+        if (!updated) {
+          throw new AppError({ type: ErrorTypes.NOT_FOUND, message: `Invite with id "${id}" not found` })
+        }
+        // TODO(notification): replace with notification module
+        this.logger.debug(`Invite link for ${updated.email}: http://localhost:3002/invite?token=${updated.token}`)
+        return updated
+      }),
+    )
+
+    return results
+  }
+
+  private generateInviteToken(email: string): { token: string; expiresAt: Date } {
+    const expiresAt = new Date(Date.now() + INVITE_EXPIRY_HOURS * 60 * 60 * 1000)
+
+    const token = jwt.sign({ email, purpose: 'invite' } satisfies InviteTokenPayload, env.JWT_SECRET, {
+      expiresIn: `${INVITE_EXPIRY_HOURS}h`,
+      jwtid: crypto.randomUUID(),
+    })
+
+    return { token, expiresAt }
   }
 }

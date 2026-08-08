@@ -1,17 +1,18 @@
 import { AppError, ErrorTypes } from '@core/errors/app-error.js'
 import type { ICartModuleService } from '@core/types/index.js'
 import { Modules } from '@core/utils/index.js'
-import type {
+import {
   DeleteResponse,
   LineIdParams,
   StoreUpdateCartLineItemResponse,
-  UpdateLineItemBody,
+  UpdateLineItem,
 } from '@proteus/http-schemas/store'
 import type { HttpRequest, HttpResult } from '../../../../../../server/ports.js'
 
-type PostInput = { params: LineIdParams; body: UpdateLineItemBody }
+export const PostInput = { params: LineIdParams, body: UpdateLineItem }
+export const PostOutput = StoreUpdateCartLineItemResponse
 
-export const POST = async (req: HttpRequest<PostInput>): Promise<HttpResult<StoreUpdateCartLineItemResponse>> => {
+export const POST = async (req: HttpRequest<typeof PostInput>): Promise<HttpResult<typeof PostOutput>> => {
   const cartService = req.scope.resolve<ICartModuleService>(Modules.CART)
   const [lineItem] = await cartService.updateLineItems([req.params.lineId], req.body)
   if (!lineItem) {
@@ -21,9 +22,10 @@ export const POST = async (req: HttpRequest<PostInput>): Promise<HttpResult<Stor
   return { status: 200, json: { lineItem } }
 }
 
-type DeleteInput = { params: LineIdParams }
+export const DeleteInput = { params: LineIdParams }
+export const DeleteOutput = DeleteResponse
 
-export const DELETE = async (req: HttpRequest<DeleteInput>): Promise<HttpResult<DeleteResponse>> => {
+export const DELETE = async (req: HttpRequest<typeof DeleteInput>): Promise<HttpResult<typeof DeleteOutput>> => {
   const cartService = req.scope.resolve<ICartModuleService>(Modules.CART)
   await cartService.deleteLineItems([req.params.lineId])
 

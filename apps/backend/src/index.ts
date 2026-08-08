@@ -1,9 +1,8 @@
-import { join } from 'node:path'
 import { container } from './container.node.js'
 import { createRegistry, generateDocument } from './core/openapi/registry.js'
 import type { Logger } from './core/types/logger.js'
 import { ContainerRegistrationKeys } from './core/utils/index.js'
-import { loadRoutes } from './routes-loader.js'
+import { registerRoutes } from './routes.js'
 import { createApp } from './server/app.js'
 import { serveExpress } from './server/platforms.js'
 import type { RouteHandler } from './server/ports.js'
@@ -14,17 +13,13 @@ const logger: Logger = container.resolve(ContainerRegistrationKeys.LOGGER)
 
 const app = createApp({ container })
 
-// ---- File-based routing ----
+// ---- Static routing ----
 
 const adminRegistry = createRegistry()
 const storeRegistry = createRegistry()
 
 logger.info('Registering routes:')
-await loadRoutes(app, join(import.meta.dirname, 'api'), logger, (routePath) => {
-  if (routePath.startsWith('/admin/')) return adminRegistry
-  if (routePath.startsWith('/store/')) return storeRegistry
-  return undefined
-})
+registerRoutes(app, logger, { admin: adminRegistry, store: storeRegistry })
 
 // ---- OpenAPI ----
 

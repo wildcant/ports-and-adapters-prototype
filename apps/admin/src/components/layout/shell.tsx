@@ -2,6 +2,7 @@ import {
   Separator,
   Sidebar,
   SidebarContent,
+  SidebarFooter,
   SidebarGroup,
   SidebarGroupContent,
   SidebarHeader,
@@ -17,6 +18,7 @@ import {
 import { Link, Outlet, useRouterState } from '@tanstack/react-router'
 import { Breadcrumbs } from './breadcrumbs'
 import { navItems } from './nav'
+import { UserMenu } from './user-menu'
 
 export function Shell() {
   return (
@@ -85,6 +87,9 @@ function AppSidebar() {
           </SidebarGroupContent>
         </SidebarGroup>
       </SidebarContent>
+      <SidebarFooter>
+        <UserMenu />
+      </SidebarFooter>
       <SidebarRail />
     </Sidebar>
   )
